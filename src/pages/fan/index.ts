@@ -7,3 +7,6 @@ export { default as Points } from './Points';
 export { default as Ranking } from './Ranking';
 export { default as Favorites } from './Favorites';
 export { default as BrandRegister } from './BrandRegister';
+export { default as Shop } from './Shop';
+export { default as ShopDetail } from './ShopDetail';
+export { default as Orders } from './Orders';
