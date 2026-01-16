@@ -1,4 +1,5 @@
-export { default as FanHome } from './FanHome';
+export { default as FanHome } from './FanDashboard';
+export { default as FanDashboard } from './FanDashboard';
 export { default as FanLogin } from './FanLogin';
 export { default as FanRegister } from './FanRegister';
 export { default as Votes } from './Votes';

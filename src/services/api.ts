@@ -956,6 +956,14 @@ class ApiService {
   // Points API
   // ============================================
 
+  // Public: 포인트 랭킹 조회
+  async getPointRanking(limit?: number) {
+    const response = await this.client.get<ApiResponse<any>>('/points/ranking', {
+      params: { limit },
+    });
+    return response.data;
+  }
+
   // Fan: 내 포인트 잔액 조회
   async getMyPointBalance() {
     const response = await this.client.get<ApiResponse<any>>('/points/me');
