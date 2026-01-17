@@ -8,7 +8,6 @@ import {
   Trophy,
   Clock,
   ArrowRight,
-  Loader2,
   Crown,
   Gift,
   Heart,
@@ -69,7 +68,7 @@ interface FavoriteData {
 }
 
 export default function FanDashboard() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   // A) 내 포인트 (로그인 시만)
   const { data: pointData, isLoading: loadingPoints } = useQuery({

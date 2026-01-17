@@ -7,7 +7,6 @@ import {
   CheckCircle,
   XCircle,
   Loader2,
-  ChevronRight,
   Truck,
   AlertCircle,
 } from 'lucide-react';

@@ -7,7 +7,6 @@ import {
   Gift,
   Package,
   Loader2,
-  ChevronRight,
   Truck,
 } from 'lucide-react';
 import { cn } from '../../utils';
