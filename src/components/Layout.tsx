@@ -456,12 +456,42 @@ export function Layout({ children }: LayoutProps) {
       </aside>
       )}
 
+      {/* Public Header - only show when not logged in */}
+      {!user && (
+        <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <Link to="/" className="flex items-center gap-3">
+                <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/25">
+                  <Hexagon className="w-4 h-4 text-white" strokeWidth={2.5} />
+                </div>
+                <span className="font-bold text-slate-900 tracking-tight text-lg">SPONSOR</span>
+              </Link>
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/login"
+                  className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                >
+                  로그인
+                </Link>
+                <Link
+                  to="/register"
+                  className="btn btn-primary text-sm px-4 py-2"
+                >
+                  시작하기
+                </Link>
+              </div>
+            </div>
+          </div>
+        </header>
+      )}
+
       {/* Main Content */}
       <main className={cn(
         "min-h-screen",
         user ? "lg:ml-64 pt-14 lg:pt-0" : "pt-0"
       )}>
-        <div className={user ? "p-4 lg:p-8" : ""}>{children}</div>
+        <div className={user ? "p-4 lg:p-8" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"}>{children}</div>
       </main>
     </div>
   );
