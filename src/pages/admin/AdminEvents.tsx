@@ -32,6 +32,22 @@ export function AdminEvents() {
     queryFn: () => api.getEvents({ page, status: statusFilter !== 'all' ? statusFilter : undefined }),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (eventId: string) => api.deleteEvent(eventId),
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (err: any) => {
+      alert(err.response?.data?.message || '이벤트 삭제에 실패했습니다');
+    },
+  });
+
+  const handleDelete = (event: any) => {
+    if (window.confirm(`"${event.name}" 이벤트를 삭제하시겠습니까?`)) {
+      deleteMutation.mutate(event.id);
+    }
+  };
+
   const events = eventsData?.data || [];
 
   const filteredEvents = events.filter((event: any) =>
@@ -223,7 +239,9 @@ export function AdminEvents() {
                             <Edit className="w-4 h-4" />
                           </button>
                           <button
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            onClick={() => handleDelete(event)}
+                            disabled={deleteMutation.isPending}
+                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                             title="삭제"
                           >
                             <Trash2 className="w-4 h-4" />
