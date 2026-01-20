@@ -37,6 +37,9 @@ import {
   Banknote,
   Award,
   ListChecks,
+  Shield,
+  UserCog,
+  Receipt,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { cn } from '../utils';
@@ -169,6 +172,7 @@ export function Layout({ children }: LayoutProps) {
     { path: '/auctions', label: '경매', icon: Gavel },
     { path: '/contracts', label: '계약 관리', icon: FileText },
     { path: '/brand/wallet', label: '지갑', icon: Wallet },
+    { path: '/brand/billing', label: '청구/명세서', icon: Receipt },
     { path: '/campaigns', label: '캠페인', icon: Megaphone },
     { path: '/brand/sponsored-votes', label: '후원 투표', icon: Heart },
     { path: '/brand/reports/roi', label: 'ROI 리포트', icon: TrendingUp },
@@ -199,6 +203,8 @@ export function Layout({ children }: LayoutProps) {
     { path: '/admin/fan-votes', label: '팬 투표 심사', icon: ListChecks },
     { path: '/admin/payments', label: '결제 관리', icon: CreditCard },
     { path: '/admin/finance', label: '재무 콘솔', icon: Wallet },
+    { path: '/admin/reconciliation', label: '대사 관리', icon: Shield },
+    { path: '/admin/users', label: '관리자 관리', icon: UserCog },
     { path: '/admin/faq', label: 'FAQ 관리', icon: HelpCircle },
     { path: '/admin/penalties', label: '페널티', icon: AlertTriangle },
     { path: '/admin/disputes', label: '분쟁 관리', icon: Flag },

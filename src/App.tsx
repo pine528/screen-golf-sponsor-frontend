@@ -41,6 +41,7 @@ import CampaignDetail from './pages/brand/CampaignDetail';
 import BrandWallet from './pages/brand/BrandWallet';
 import BrandSponsoredVotes from './pages/brand/BrandSponsoredVotes';
 import BrandROIDashboard from './pages/brand/BrandROIDashboard';
+import BrandBilling from './pages/brand/BrandBilling';
 import { FanHome, FanLogin, FanRegister, Votes, VoteDetail, FanVoteDetail, Points, Ranking, Favorites, BrandRegister, Shop, ShopDetail, Orders } from './pages/fan';
 import FanVoteCreate from './pages/fan/FanVoteCreate';
 import MyFanVotes from './pages/fan/MyFanVotes';
@@ -57,6 +58,8 @@ import AdminDisputes from './pages/admin/AdminDisputes';
 import AdminDisputeDetail from './pages/admin/AdminDisputeDetail';
 import AdminSeasons from './pages/admin/AdminSeasons';
 import AdminExposure from './pages/admin/AdminExposure';
+import AdminReconciliation from './pages/admin/AdminReconciliation';
+import AdminUsers from './pages/admin/AdminUsers';
 import Faq from './pages/Faq';
 import Guide from './pages/Guide';
 import Contact from './pages/Contact';
@@ -265,6 +268,14 @@ function App() {
         element={
           <ProtectedRoute>
             <BrandROIDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/brand/billing"
+        element={
+          <ProtectedRoute>
+            <BrandBilling />
           </ProtectedRoute>
         }
       />
@@ -569,6 +580,22 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminExposure />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/reconciliation"
+        element={
+          <ProtectedRoute>
+            <AdminReconciliation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute>
+            <AdminUsers />
           </ProtectedRoute>
         }
       />

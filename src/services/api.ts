@@ -2015,6 +2015,176 @@ class ApiService {
     const response = await this.client.post<ApiResponse<any>>('/exposure/admin/rates', data);
     return response.data;
   }
+
+  // ============================================
+  // Phase 10-3: Reconciliation API (결제/환불 대사)
+  // ============================================
+
+  // Admin: 대사 실행 목록 조회
+  async getReconciliationRuns(params?: {
+    status?: string;
+    limit?: number;
+    offset?: number;
+  }) {
+    const response = await this.client.get<ApiResponse<any>>('/admin/reconciliation/runs', { params });
+    return response.data;
+  }
+
+  // Admin: 수동 대사 실행
+  async createReconciliationRun(data?: {
+    scope?: string;
+    fromDate?: string;
+    toDate?: string;
+  }) {
+    const response = await this.client.post<ApiResponse<any>>('/admin/reconciliation/runs', data || {});
+    return response.data;
+  }
+
+  // Admin: 대사 이슈 목록 조회
+  async getReconciliationIssues(params?: {
+    runId?: string;
+    severity?: string;
+    issueType?: string;
+    status?: string;
+    limit?: number;
+    offset?: number;
+  }) {
+    const response = await this.client.get<ApiResponse<any>>('/admin/reconciliation/issues', { params });
+    return response.data;
+  }
+
+  // Admin: 대사 이슈 요약 통계
+  async getReconciliationIssuesSummary() {
+    const response = await this.client.get<ApiResponse<any>>('/admin/reconciliation/issues/summary');
+    return response.data;
+  }
+
+  // Admin: 대사 이슈 상태 변경
+  async updateReconciliationIssueStatus(id: string, data: { status: string; note?: string }) {
+    const response = await this.client.patch<ApiResponse<any>>(`/admin/reconciliation/issues/${id}/status`, data);
+    return response.data;
+  }
+
+  // Admin: 대사 이슈 CSV 내보내기
+  async exportReconciliationIssuesCsv(params?: {
+    severity?: string;
+    issueType?: string;
+    status?: string;
+  }) {
+    const response = await this.client.get('/admin/reconciliation/issues.csv', {
+      params,
+      responseType: 'blob',
+    });
+    return response.data;
+  }
+
+  // ============================================
+  // Phase 11-1: Admin Management API (RBAC)
+  // ============================================
+
+  // Admin: 관리자 목록 조회
+  async getAdmins(params?: {
+    page?: number;
+    limit?: number;
+  }) {
+    const response = await this.client.get<ApiResponse<any>>('/admin/admins', { params });
+    return response.data;
+  }
+
+  // Admin: 관리자 역할 변경 (Danger Zone)
+  async changeAdminRole(adminId: string, data: {
+    role: string;
+    confirmText: string;
+    reason: string;
+  }) {
+    const response = await this.client.patch<ApiResponse<any>>(`/admin/admins/${adminId}/role`, data);
+    return response.data;
+  }
+
+  // Admin: 관리자 권한 변경
+  async updateAdminPermissions(adminId: string, data: {
+    permissions: string[];
+    reason: string;
+  }) {
+    const response = await this.client.patch<ApiResponse<any>>(`/admin/admins/${adminId}/permissions`, data);
+    return response.data;
+  }
+
+  // ============================================
+  // Phase 11-2A: Brand Billing API (청구/명세서)
+  // ============================================
+
+  // Brand: 청구 프로필 조회
+  async getBillingProfile() {
+    const response = await this.client.get<ApiResponse<any>>('/brand/billing/profile');
+    return response.data;
+  }
+
+  // Brand: 청구 프로필 생성
+  async createBillingProfile(data: {
+    businessName: string;
+    businessNumber: string;
+    representativeName: string;
+    businessType?: string;
+    businessCategory?: string;
+    billingEmail: string;
+    billingPhone?: string;
+    address: string;
+    addressDetail?: string;
+  }) {
+    const response = await this.client.post<ApiResponse<any>>('/brand/billing/profile', data);
+    return response.data;
+  }
+
+  // Brand: 청구 프로필 수정
+  async updateBillingProfile(data: {
+    businessName?: string;
+    businessNumber?: string;
+    representativeName?: string;
+    businessType?: string;
+    businessCategory?: string;
+    billingEmail?: string;
+    billingPhone?: string;
+    address?: string;
+    addressDetail?: string;
+  }) {
+    const response = await this.client.patch<ApiResponse<any>>('/brand/billing/profile', data);
+    return response.data;
+  }
+
+  // Brand: 기간별 요약 조회
+  async getStatementSummary(from: string, to: string) {
+    const response = await this.client.get<ApiResponse<any>>('/brand/billing/statements/summary', {
+      params: { from, to },
+    });
+    return response.data;
+  }
+
+  // Brand: 거래 내역 조회
+  async getStatementItems(from: string, to: string, page?: number, pageSize?: number) {
+    const response = await this.client.get<ApiResponse<any>>('/brand/billing/statements/items', {
+      params: { from, to, page, pageSize },
+    });
+    return response.data;
+  }
+
+  // Brand: CSV 내보내기
+  async exportStatementCsv(from: string, to: string) {
+    const response = await this.client.get('/brand/billing/statements/export.csv', {
+      params: { from, to },
+      responseType: 'blob',
+    });
+    return response.data;
+  }
+
+  // Brand: PDF 내보내기
+  async exportStatementPdf(from: string, to: string) {
+    const response = await this.client.get('/brand/billing/statements/export.pdf', {
+      params: { from, to },
+      responseType: 'blob',
+    });
+    return response.data;
+  }
 }
 
 export const api = new ApiService();
