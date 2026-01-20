@@ -255,7 +255,8 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 transition-colors duration-300">
-      {/* Mobile Header */}
+      {/* Mobile Header - only show when logged in */}
+      {user && (
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4">
         <Link to={user?.role === 'FAN' ? '/fan' : '/dashboard'} className="flex items-center gap-2">
           <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/25">
@@ -289,16 +290,18 @@ export function Layout({ children }: LayoutProps) {
           </button>
         </div>
       </header>
+      )}
 
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
+      {/* Mobile Menu Overlay - only show when logged in */}
+      {user && isMobileMenuOpen && (
         <div
           className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
           onClick={closeMobileMenu}
         />
       )}
 
-      {/* Sidebar - Desktop fixed, Mobile slide-in */}
+      {/* Sidebar - Desktop fixed, Mobile slide-in - only show when logged in */}
+      {user && (
       <aside
         className={cn(
           'fixed top-0 left-0 z-50 w-64 h-screen bg-white border-r border-slate-200 transition-transform duration-300',
@@ -451,10 +454,14 @@ export function Layout({ children }: LayoutProps) {
           </div>
         </div>
       </aside>
+      )}
 
       {/* Main Content */}
-      <main className="lg:ml-64 min-h-screen pt-14 lg:pt-0">
-        <div className="p-4 lg:p-8">{children}</div>
+      <main className={cn(
+        "min-h-screen",
+        user ? "lg:ml-64 pt-14 lg:pt-0" : "pt-0"
+      )}>
+        <div className={user ? "p-4 lg:p-8" : ""}>{children}</div>
       </main>
     </div>
   );
