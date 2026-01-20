@@ -678,9 +678,9 @@ export function Home() {
             <div>
               <h4 className="text-slate-900 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">서비스</h4>
               <ul className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-slate-500">
-                <li><a href="#" className="hover:text-slate-900 transition-colors">경매 참여</a></li>
-                <li><a href="#" className="hover:text-slate-900 transition-colors">슬롯 탐색</a></li>
-                <li><a href="#" className="hover:text-slate-900 transition-colors">계약 관리</a></li>
+                <li><Link to="/auctions" className="hover:text-slate-900 transition-colors">경매 참여</Link></li>
+                <li><Link to="/inventory" className="hover:text-slate-900 transition-colors">슬롯 탐색</Link></li>
+                <li><Link to="/contracts" className="hover:text-slate-900 transition-colors">계약 관리</Link></li>
               </ul>
             </div>
             <div>
