@@ -169,30 +169,9 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/auctions"
-        element={
-          <ProtectedRoute>
-            <Auctions />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/auctions/:id"
-        element={
-          <ProtectedRoute>
-            <AuctionDetail />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/inventory"
-        element={
-          <ProtectedRoute>
-            <Inventory />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/auctions" element={<Auctions />} />
+      <Route path="/auctions/:id" element={<AuctionDetail />} />
+      <Route path="/inventory" element={<Inventory />} />
       <Route
         path="/contracts"
         element={
