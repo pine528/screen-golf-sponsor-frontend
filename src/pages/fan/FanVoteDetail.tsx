@@ -25,8 +25,8 @@ interface FanVoteEvent {
   status: 'DRAFT' | 'SUBMITTED' | 'ACTIVE' | 'CLOSED' | 'SETTLED';
   startsAt: string;
   endsAt: string;
-  entryFee: number;
-  prizePool: number;
+  entryFeePoints: number | string;  // Decimal from backend
+  sponsorContribution?: number | string;  // 스폰서 기여금
   _count?: {
     entries: number;
   };
@@ -36,10 +36,24 @@ interface FanVoteEvent {
   };
 }
 
+// Helper to calculate prize pool
+function calculatePrizePool(event: FanVoteEvent): number {
+  const entryFee = Number(event.entryFeePoints) || 0;
+  const entriesCount = event._count?.entries ?? 0;
+  const sponsorContribution = Number(event.sponsorContribution) || 0;
+  return entryFee * entriesCount + sponsorContribution;
+}
+
+// Helper to get entry fee as number
+function getEntryFee(event: FanVoteEvent): number {
+  return Number(event.entryFeePoints) || 0;
+}
+
 interface MyEntry {
   id: string;
-  fanVoteEventId: string;
-  selectedOptionIndex: number;
+  eventId: string;
+  optionIndex: number;
+  paidPoints: number | string;
   createdAt: string;
 }
 
@@ -49,24 +63,20 @@ export default function FanVoteDetail() {
   const queryClient = useQueryClient();
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
-  const { data: event, isLoading: loadingEvent } = useQuery({
+  const { data: eventData, isLoading: loadingEvent } = useQuery({
     queryKey: ['fanVoteEvent', id],
     queryFn: async () => {
       const res = await api.getFanVoteEvent(id!);
-      return res.data as FanVoteEvent;
+      // Backend returns { event, myEntry, voteCounts }
+      return res.data as { event: FanVoteEvent; myEntry: MyEntry | null; voteCounts: Record<number, number> };
     },
     enabled: !!id,
   });
 
-  const { data: myEntries } = useQuery({
-    queryKey: ['myFanVoteEntries'],
-    queryFn: async () => {
-      const res = await api.getMyFanVoteEntries();
-      return res.data || [];
-    },
-  });
+  const event = eventData?.event;
 
-  const myEntry = myEntries?.find((e: MyEntry) => e.fanVoteEventId === id) as MyEntry | undefined;
+  // myEntry is included in eventData from backend
+  const myEntry = eventData?.myEntry;
   const hasEntered = !!myEntry;
   const isActive = event?.status === 'ACTIVE';
   const isEnded = event?.status === 'CLOSED' || event?.status === 'SETTLED';
@@ -177,10 +187,10 @@ export default function FanVoteDetail() {
                 </span>
               )}
             </div>
-            {event.prizePool > 0 && (
+            {calculatePrizePool(event) > 0 && (
               <span className="flex items-center gap-1 text-sm font-medium text-pink-600">
                 <Trophy className="w-4 h-4" />
-                상금 {formatNumber(event.prizePool)}P
+                상금 {formatNumber(calculatePrizePool(event))}P
               </span>
             )}
           </div>
@@ -200,10 +210,10 @@ export default function FanVoteDetail() {
               <Clock className="w-4 h-4" />
               {isEnded ? '종료됨' : getTimeRemaining()}
             </span>
-            {event.entryFee > 0 && (
+            {getEntryFee(event) > 0 && (
               <span className="flex items-center gap-1 text-pink-600 font-medium">
                 <Coins className="w-4 h-4" />
-                참가비 {formatNumber(event.entryFee)}P
+                참가비 {formatNumber(getEntryFee(event))}P
               </span>
             )}
           </div>
@@ -217,7 +227,7 @@ export default function FanVoteDetail() {
           <div className="space-y-3">
             {event.options.map((option, index) => {
               const isSelected = selectedOption === index;
-              const isMyEntry = myEntry?.selectedOptionIndex === index;
+              const isMyEntry = myEntry?.optionIndex === index;
 
               return (
                 <button
@@ -280,13 +290,13 @@ export default function FanVoteDetail() {
                 ) : (
                   <>
                     <Vote className="w-4 h-4 mr-2" />
-                    {event.entryFee > 0 ? `${formatNumber(event.entryFee)}P로 참여하기` : '참여하기'}
+                    {getEntryFee(event) > 0 ? `${formatNumber(getEntryFee(event))}P로 참여하기` : '참여하기'}
                   </>
                 )}
               </button>
-              {event.entryFee > 0 && (
+              {getEntryFee(event) > 0 && (
                 <p className="text-center text-xs text-slate-500 mt-2">
-                  참여 시 {formatNumber(event.entryFee)}P가 차감됩니다
+                  참여 시 {formatNumber(getEntryFee(event))}P가 차감됩니다
                 </p>
               )}
             </div>
@@ -350,12 +360,12 @@ export default function FanVoteDetail() {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="bg-slate-50 rounded-lg p-3">
               <p className="text-slate-500">총 상금 풀</p>
-              <p className="font-bold text-lg text-pink-600">{formatNumber(event.prizePool)}P</p>
+              <p className="font-bold text-lg text-pink-600">{formatNumber(calculatePrizePool(event))}P</p>
             </div>
             <div className="bg-slate-50 rounded-lg p-3">
               <p className="text-slate-500">참가비</p>
               <p className="font-bold text-lg text-slate-900">
-                {event.entryFee > 0 ? `${formatNumber(event.entryFee)}P` : '무료'}
+                {getEntryFee(event) > 0 ? `${formatNumber(getEntryFee(event))}P` : '무료'}
               </p>
             </div>
           </div>

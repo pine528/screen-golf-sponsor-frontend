@@ -52,9 +52,9 @@ interface FanVoteEvent {
   status: string;
   startsAt: string;
   endsAt: string;
-  entryFee: number;
-  prizePool: number;
-  options: { id: string; label: string }[];
+  entryFeePoints: number | string;  // Decimal from backend
+  sponsorContribution?: number | string;  // 스폰서 기여금
+  options: string[];  // Backend returns string array
   _count?: {
     entries: number;
   };
@@ -250,8 +250,8 @@ export default function Votes() {
       description: v.description,
       question: v.question,
       voteType: 'fan' as const,
-      entryFee: v.entryFee,
-      prizePool: v.prizePool,
+      entryFee: Number(v.entryFeePoints) || 0,
+      prizePool: (Number(v.entryFeePoints) || 0) * (v._count?.entries ?? 0) + (Number(v.sponsorContribution) || 0),
       status: v.status,
       endAt: v.endsAt,
       participantCount: v._count?.entries ?? 0,
@@ -279,8 +279,8 @@ export default function Votes() {
       description: v.description,
       question: v.question,
       voteType: 'fan' as const,
-      entryFee: v.entryFee,
-      prizePool: v.prizePool,
+      entryFee: Number(v.entryFeePoints) || 0,
+      prizePool: (Number(v.entryFeePoints) || 0) * (v._count?.entries ?? 0) + (Number(v.sponsorContribution) || 0),
       status: v.status,
       endAt: v.endsAt,
       participantCount: v._count?.entries ?? 0,
