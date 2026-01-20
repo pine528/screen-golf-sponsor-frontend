@@ -41,10 +41,11 @@ export default function BrandCheckout() {
 
   const orderId = searchParams.get('orderId');
   const amount = searchParams.get('amount');
+  const topupId = searchParams.get('topupId');
 
   useEffect(() => {
     // 파라미터 검증
-    if (!orderId || !amount) {
+    if (!orderId || !amount || !topupId) {
       setError('결제 정보가 올바르지 않습니다.');
       return;
     }
@@ -91,8 +92,9 @@ export default function BrandCheckout() {
         const tossPayments = window.TossPayments!(TOSS_CLIENT_KEY);
 
         // 현재 URL 기반으로 success/fail URL 생성
+        // TossPayments가 paymentKey, orderId, amount를 자동으로 추가함
         const baseUrl = window.location.origin;
-        const successUrl = `${baseUrl}/brand/wallet?topup=success`;
+        const successUrl = `${baseUrl}/brand/wallet?topup=pending&topupId=${topupId}`;
         const failUrl = `${baseUrl}/brand/wallet?topup=fail`;
 
         // 결제 요청
@@ -115,7 +117,7 @@ export default function BrandCheckout() {
     };
 
     loadAndPay();
-  }, [orderId, amount, navigate]);
+  }, [orderId, amount, topupId, navigate]);
 
   // 에러 상태
   if (error) {

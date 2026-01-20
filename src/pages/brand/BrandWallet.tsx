@@ -3,9 +3,9 @@
  * 브랜드 지갑 충전 및 조회
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import {
   Wallet,
   CreditCard,
@@ -59,26 +59,60 @@ const txTypeConfig: Record<string, { label: string; isCredit: boolean }> = {
 export default function BrandWallet() {
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const confirmAttempted = useRef(false);
 
   // 충전 폼 상태
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState('');
   const [selectedProvider, setSelectedProvider] = useState<'TOSS'>('TOSS');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // URL 파라미터에서 결제 결과 확인
+  // URL 파라미터에서 결제 결과 확인 및 confirm 처리
   useEffect(() => {
     const topupResult = searchParams.get('topup');
+
     if (topupResult === 'success') {
       setSuccessMessage('충전이 완료되었습니다!');
       queryClient.invalidateQueries({ queryKey: ['brandWallet'] });
       queryClient.invalidateQueries({ queryKey: ['myTopups'] });
     } else if (topupResult === 'fail') {
       setError('충전에 실패했습니다. 다시 시도해주세요.');
+    } else if (topupResult === 'pending') {
+      // TossPayments에서 돌아옴 - confirm 필요
+      const topupId = searchParams.get('topupId');
+      const paymentKey = searchParams.get('paymentKey');
+
+      if (topupId && paymentKey && !confirmAttempted.current) {
+        confirmAttempted.current = true;
+        setIsConfirming(true);
+
+        // 결제 확인 API 호출
+        api.confirmTopup(topupId, paymentKey)
+          .then(() => {
+            setSuccessMessage('충전이 완료되었습니다!');
+            queryClient.invalidateQueries({ queryKey: ['brandWallet'] });
+            queryClient.invalidateQueries({ queryKey: ['myTopups'] });
+            // URL 정리
+            navigate('/brand/wallet?topup=success', { replace: true });
+          })
+          .catch((err: any) => {
+            console.error('Confirm error:', err);
+            setError(err.response?.data?.message || '결제 확인 중 오류가 발생했습니다.');
+          })
+          .finally(() => {
+            setIsConfirming(false);
+          });
+      } else if (!topupId || !paymentKey) {
+        setError('결제 정보가 올바르지 않습니다.');
+      }
+    } else if (topupResult === 'cancel') {
+      setError('결제가 취소되었습니다.');
     }
-  }, [searchParams, queryClient]);
+  }, [searchParams, queryClient, navigate]);
 
   // 지갑 조회
   const { data: walletData, isLoading: walletLoading } = useQuery({
@@ -98,10 +132,14 @@ export default function BrandWallet() {
     mutationFn: (data: { amount: number; provider: 'TOSS' }) =>
       api.createTopup(data),
     onSuccess: (response) => {
-      // checkoutUrl로 리다이렉트
+      // checkoutUrl로 리다이렉트 (topupId 포함)
       const checkoutUrl = response.data?.checkoutUrl;
-      if (checkoutUrl) {
-        window.location.href = checkoutUrl;
+      const topupId = response.data?.topupPayment?.id;
+      if (checkoutUrl && topupId) {
+        // topupId를 checkout URL에 추가
+        const url = new URL(checkoutUrl, window.location.origin);
+        url.searchParams.set('topupId', topupId);
+        window.location.href = url.toString();
       } else {
         setError('결제 페이지 URL을 받지 못했습니다.');
         setIsProcessing(false);
@@ -183,6 +221,12 @@ export default function BrandWallet() {
         </div>
 
         {/* 알림 메시지 */}
+        {isConfirming && (
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 flex items-center gap-2">
+            <Loader2 className="w-5 h-5 animate-spin" />
+            결제를 확인하고 있습니다...
+          </div>
+        )}
         {successMessage && (
           <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-700 flex items-center gap-2">
             <CheckCircle className="w-5 h-5" />
