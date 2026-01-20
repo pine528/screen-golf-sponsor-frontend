@@ -12,13 +12,14 @@ import {
   CheckCircle2,
   Activity,
   Sparkles,
-  Play,
   ChevronDown,
   LayoutDashboard,
   Menu,
   X,
   Vote,
   Star,
+  Gavel,
+  Users,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
@@ -267,7 +268,7 @@ export function Home() {
                 투명하고 공정하게 거래하세요
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
                 {isAuthenticated ? (
                   <Link
                     to="/dashboard"
@@ -285,10 +286,20 @@ export function Home() {
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 )}
-                <button className="btn btn-secondary text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-4 inline-flex items-center justify-center gap-2">
-                  <Play className="w-4 h-4" />
-                  서비스 소개
-                </button>
+                <Link
+                  to="/auctions"
+                  className="btn btn-secondary text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-4 inline-flex items-center justify-center gap-2"
+                >
+                  <Gavel className="w-4 h-4" />
+                  경매 둘러보기
+                </Link>
+                <Link
+                  to="/inventory"
+                  className="btn btn-secondary text-sm sm:text-base px-6 sm:px-8 py-3 sm:py-4 inline-flex items-center justify-center gap-2"
+                >
+                  <Users className="w-4 h-4" />
+                  선수 둘러보기
+                </Link>
               </div>
 
               {/* Stats Row */}
