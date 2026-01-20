@@ -941,6 +941,16 @@ class ApiService {
     return response.data;
   }
 
+  async deleteAdminBrand(brandId: string) {
+    const response = await this.client.delete<ApiResponse<any>>(`/admin/entities/brands/${brandId}`);
+    return response.data;
+  }
+
+  async deleteAdminAthlete(athleteId: string) {
+    const response = await this.client.delete<ApiResponse<any>>(`/admin/entities/athletes/${athleteId}`);
+    return response.data;
+  }
+
   // ============================================
   // Fan Favorites API
   // ============================================
