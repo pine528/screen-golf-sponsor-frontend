@@ -308,8 +308,14 @@ class ApiService {
   }
 
   // Brand Topup (지갑 충전)
-  async createTopup(data: { amount: number; provider: 'TOSS' | 'STRIPE' }) {
+  async createTopup(data: { amount: number; provider: 'TOSS' }) {
     const response = await this.client.post<ApiResponse<any>>('/brand/topups', data);
+    return response.data;
+  }
+
+  // 테스트용 모의 충전
+  async mockTopup(amount: number) {
+    const response = await this.client.post<ApiResponse<any>>('/brand/topups/mock', { amount });
     return response.data;
   }
 

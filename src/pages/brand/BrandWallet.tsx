@@ -27,7 +27,6 @@ const TOPUP_AMOUNTS = [10000, 50000, 100000, 500000, 1000000];
 // Provider 옵션
 const PROVIDERS = [
   { value: 'TOSS', label: 'Toss Payments', description: '간편결제, 카드, 계좌이체' },
-  { value: 'STRIPE', label: 'Stripe', description: '해외 카드 결제' },
 ] as const;
 
 // 상태별 설정
@@ -64,7 +63,7 @@ export default function BrandWallet() {
   // 충전 폼 상태
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState('');
-  const [selectedProvider, setSelectedProvider] = useState<'TOSS' | 'STRIPE'>('TOSS');
+  const [selectedProvider, setSelectedProvider] = useState<'TOSS'>('TOSS');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -96,7 +95,7 @@ export default function BrandWallet() {
 
   // 충전 생성 뮤테이션
   const createTopupMutation = useMutation({
-    mutationFn: (data: { amount: number; provider: 'TOSS' | 'STRIPE' }) =>
+    mutationFn: (data: { amount: number; provider: 'TOSS' }) =>
       api.createTopup(data),
     onSuccess: (response) => {
       // checkoutUrl로 리다이렉트
@@ -111,6 +110,21 @@ export default function BrandWallet() {
     onError: (err: any) => {
       setError(err.response?.data?.message || '충전 요청 실패');
       setIsProcessing(false);
+    },
+  });
+
+  // 테스트 충전 뮤테이션 (데모용)
+  const mockTopupMutation = useMutation({
+    mutationFn: (amount: number) => api.mockTopup(amount),
+    onSuccess: () => {
+      setSuccessMessage('테스트 충전이 완료되었습니다!');
+      queryClient.invalidateQueries({ queryKey: ['brandWallet'] });
+      queryClient.invalidateQueries({ queryKey: ['myTopups'] });
+      setSelectedAmount(null);
+      setCustomAmount('');
+    },
+    onError: (err: any) => {
+      setError(err.response?.data?.message || '테스트 충전 실패');
     },
   });
 
@@ -296,6 +310,34 @@ export default function BrandWallet() {
                   {effectiveAmount
                     ? `${formatCurrency(effectiveAmount)} 충전하기`
                     : '충전하기'}
+                </>
+              )}
+            </button>
+
+            {/* 테스트 충전 버튼 (데모용) */}
+            <button
+              onClick={() => {
+                setError('');
+                setSuccessMessage('');
+                if (!effectiveAmount || effectiveAmount < 1000) {
+                  setError('최소 충전 금액은 1,000원입니다.');
+                  return;
+                }
+                mockTopupMutation.mutate(effectiveAmount);
+              }}
+              disabled={!effectiveAmount || mockTopupMutation.isPending}
+              className="btn btn-outline w-full mt-2 flex items-center justify-center gap-2"
+            >
+              {mockTopupMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  처리 중...
+                </>
+              ) : (
+                <>
+                  {effectiveAmount
+                    ? `${formatCurrency(effectiveAmount)} 테스트 충전`
+                    : '테스트 충전'} (데모용)
                 </>
               )}
             </button>
