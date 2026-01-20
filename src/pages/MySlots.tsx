@@ -922,11 +922,18 @@ function CreateSlotModal({
     createSlotsMutation.mutate();
   };
 
-  // Get active events (future or ongoing)
-  const activeEvents = events.filter((event: any) => {
+  // Sort events by date (future first, then past)
+  const sortedEvents = [...events].sort((a: any, b: any) => {
+    const dateA = new Date(a.dateEnd || a.endDate || 0);
+    const dateB = new Date(b.dateEnd || b.endDate || 0);
+    return dateB.getTime() - dateA.getTime();
+  });
+
+  // Check if event is active (end date in future)
+  const isEventActive = (event: any) => {
     const endDate = new Date(event.dateEnd || event.endDate);
     return endDate >= new Date();
-  });
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
@@ -954,6 +961,12 @@ function CreateSlotModal({
             </div>
           )}
 
+          {events.length === 0 && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-sm">
+              등록된 이벤트가 없습니다. 관리자에게 이벤트 등록을 요청하세요.
+            </div>
+          )}
+
           {/* Event Selection */}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -968,11 +981,14 @@ function CreateSlotModal({
               className="input w-full"
             >
               <option value="">이벤트를 선택하세요</option>
-              {activeEvents.map((event: any) => (
-                <option key={event.id} value={event.id}>
-                  {event.name} ({new Date(event.dateStart || event.startDate).toLocaleDateString('ko-KR')})
-                </option>
-              ))}
+              {sortedEvents.map((event: any) => {
+                const active = isEventActive(event);
+                return (
+                  <option key={event.id} value={event.id}>
+                    {!active ? '[종료] ' : ''}{event.name} ({new Date(event.dateStart || event.startDate).toLocaleDateString('ko-KR')})
+                  </option>
+                );
+              })}
             </select>
           </div>
 

@@ -174,7 +174,7 @@ export function AdminEvents() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2 text-sm text-slate-600">
                           <Clock className="w-4 h-4" />
-                          <span>{formatDate(event.startDate)} - {formatDate(event.endDate)}</span>
+                          <span>{formatDate(event.dateStart || event.startDate)} - {formatDate(event.dateEnd || event.endDate)}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
@@ -287,12 +287,23 @@ interface EventModalProps {
 }
 
 function EventModal({ event, onClose, onSave }: EventModalProps) {
+  // Default dates for new events: start = today, end = 7 days later
+  const getDefaultStartDate = () => {
+    const date = new Date();
+    return date.toISOString().split('T')[0];
+  };
+  const getDefaultEndDate = () => {
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
+    return date.toISOString().split('T')[0];
+  };
+
   const [formData, setFormData] = useState({
     name: event?.name || '',
     tour: event?.tour || 'KPGA',
     venue: event?.venue || '',
-    startDate: event?.startDate?.split('T')[0] || event?.dateStart?.split('T')[0] || '',
-    endDate: event?.endDate?.split('T')[0] || event?.dateEnd?.split('T')[0] || '',
+    startDate: event?.startDate?.split('T')[0] || event?.dateStart?.split('T')[0] || getDefaultStartDate(),
+    endDate: event?.endDate?.split('T')[0] || event?.dateEnd?.split('T')[0] || getDefaultEndDate(),
     description: event?.description || '',
     broadcastEpisode: event?.broadcastEpisode || '',
   });
@@ -316,13 +327,27 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
     e.preventDefault();
     setError('');
 
+    // Validate dates
+    if (!formData.startDate || !formData.endDate) {
+      setError('시작일과 종료일을 모두 입력해주세요');
+      return;
+    }
+
+    const startDate = new Date(formData.startDate);
+    const endDate = new Date(formData.endDate);
+
+    if (endDate < startDate) {
+      setError('종료일은 시작일보다 같거나 늦어야 합니다');
+      return;
+    }
+
     // 날짜를 ISO datetime 형식으로 변환
     const payload = {
       name: formData.name,
       tour: formData.tour,
       venue: formData.venue || undefined,
-      dateStart: formData.startDate ? new Date(formData.startDate).toISOString() : undefined,
-      dateEnd: formData.endDate ? new Date(formData.endDate).toISOString() : undefined,
+      dateStart: startDate.toISOString(),
+      dateEnd: endDate.toISOString(),
       description: formData.description || undefined,
       broadcastEpisode: formData.broadcastEpisode || undefined,
     };
