@@ -39,6 +39,7 @@ import FinanceReports from './pages/admin/reports/ReportsDashboard';
 import BrandCampaigns from './pages/brand/Campaigns';
 import CampaignDetail from './pages/brand/CampaignDetail';
 import BrandWallet from './pages/brand/BrandWallet';
+import BrandCheckout from './pages/brand/BrandCheckout';
 import BrandSponsoredVotes from './pages/brand/BrandSponsoredVotes';
 import BrandROIDashboard from './pages/brand/BrandROIDashboard';
 import BrandBilling from './pages/brand/BrandBilling';
@@ -237,6 +238,14 @@ function App() {
         element={
           <ProtectedRoute>
             <BrandCampaigns />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/brand/wallet/checkout"
+        element={
+          <ProtectedRoute>
+            <BrandCheckout />
           </ProtectedRoute>
         }
       />
