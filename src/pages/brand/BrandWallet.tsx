@@ -124,7 +124,8 @@ export default function BrandWallet() {
       setCustomAmount('');
     },
     onError: (err: any) => {
-      setError(err.response?.data?.message || '테스트 충전 실패');
+      const errorMsg = err.response?.data?.message || err.response?.data?.error || err.message || '테스트 충전 실패';
+      setError(errorMsg);
     },
   });
 
