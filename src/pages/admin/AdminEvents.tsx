@@ -53,8 +53,11 @@ export function AdminEvents() {
     CANCELLED: '취소',
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ko-KR', {
+  const formatDate = (dateString: string | undefined | null) => {
+    if (!dateString) return '날짜 미정';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return '날짜 미정';
+    return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
