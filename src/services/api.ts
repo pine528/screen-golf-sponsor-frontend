@@ -123,6 +123,25 @@ class ApiService {
     return response.data;
   }
 
+  async createSlotInstance(data: {
+    eventId: string;
+    athleteId: string;
+    slotTemplateId: string;
+    reservePrice?: number;
+  }) {
+    const response = await this.client.post<ApiResponse<any>>('/slots/instances', data);
+    return response.data;
+  }
+
+  async bulkCreateSlotInstances(eventId: string, athleteId: string, templateIds: string[]) {
+    const response = await this.client.post<ApiResponse<any>>('/slots/instances/bulk', {
+      eventId,
+      athleteId,
+      templateIds,
+    });
+    return response.data;
+  }
+
   async updateSlotSaleMode(slotId: string, data: {
     enableAuction?: boolean;
     enableDirectBuy?: boolean;
