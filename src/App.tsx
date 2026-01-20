@@ -60,6 +60,7 @@ import AdminSeasons from './pages/admin/AdminSeasons';
 import AdminExposure from './pages/admin/AdminExposure';
 import AdminReconciliation from './pages/admin/AdminReconciliation';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminTaxInvoices from './pages/admin/AdminTaxInvoices';
 import Faq from './pages/Faq';
 import Guide from './pages/Guide';
 import Contact from './pages/Contact';
@@ -588,6 +589,14 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminReconciliation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/finance/tax-invoices"
+        element={
+          <ProtectedRoute>
+            <AdminTaxInvoices />
           </ProtectedRoute>
         }
       />

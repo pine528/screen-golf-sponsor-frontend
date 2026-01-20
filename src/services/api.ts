@@ -2185,6 +2185,62 @@ class ApiService {
     });
     return response.data;
   }
+
+  // ============================================
+  // Tax Invoice (Brand)
+  // ============================================
+
+  async requestTaxInvoice(data: {
+    billingProfileId: string;
+    from: string;
+    to: string;
+    idempotencyKey: string;
+  }) {
+    const response = await this.client.post('/brand/billing/tax-invoices/request', data);
+    return response.data;
+  }
+
+  async getMyTaxInvoices(params: { status?: string; page?: number; pageSize?: number } = {}) {
+    const response = await this.client.get('/brand/billing/tax-invoices/my', { params });
+    return response.data;
+  }
+
+  // ============================================
+  // Tax Invoice (Admin)
+  // ============================================
+
+  async getAdminTaxInvoices(params: { status?: string; page?: number; pageSize?: number } = {}) {
+    const response = await this.client.get('/admin/finance/tax-invoices', { params });
+    return response.data;
+  }
+
+  async getAdminTaxInvoiceStats() {
+    const response = await this.client.get('/admin/finance/tax-invoices/stats');
+    return response.data;
+  }
+
+  async getAdminTaxInvoiceById(id: string) {
+    const response = await this.client.get(`/admin/finance/tax-invoices/${id}`);
+    return response.data;
+  }
+
+  async approveTaxInvoice(id: string) {
+    const response = await this.client.post(`/admin/finance/tax-invoices/${id}/approve`);
+    return response.data;
+  }
+
+  async rejectTaxInvoice(id: string, reason: string) {
+    const response = await this.client.post(`/admin/finance/tax-invoices/${id}/reject`, { reason });
+    return response.data;
+  }
+
+  async issueTaxInvoice(id: string, invoiceNumber: string, confirmText: string) {
+    const response = await this.client.post(`/admin/finance/tax-invoices/${id}/issue`, {
+      invoiceNumber,
+      confirmText,
+    });
+    return response.data;
+  }
 }
 
 export const api = new ApiService();

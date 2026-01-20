@@ -17,13 +17,25 @@ import {
   Loader2,
   CheckCircle,
   XCircle,
+  FileCheck,
+  Clock,
+  AlertCircle,
+  Send,
 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
 import { formatCurrency, cn } from '../../utils';
 
 // 탭 타입
-type TabType = 'statements' | 'profile';
+type TabType = 'statements' | 'profile' | 'taxInvoice';
+
+// 세금계산서 상태
+const TAX_INVOICE_STATUS: Record<string, { label: string; color: string; icon: any }> = {
+  REQUESTED: { label: '요청됨', color: 'text-blue-600 bg-blue-50', icon: Clock },
+  APPROVED: { label: '승인됨', color: 'text-emerald-600 bg-emerald-50', icon: CheckCircle },
+  ISSUED: { label: '발행완료', color: 'text-green-600 bg-green-50', icon: FileCheck },
+  REJECTED: { label: '거부됨', color: 'text-red-600 bg-red-50', icon: XCircle },
+};
 
 // 기간 프리셋
 type PeriodPreset = 'thisMonth' | 'lastMonth' | 'last3Months' | 'custom';
@@ -105,6 +117,9 @@ export default function BrandBilling() {
     addressDetail: '',
   });
 
+  // 세금계산서 페이지 상태
+  const [taxInvoicePage, setTaxInvoicePage] = useState(1);
+
   // 기간 계산
   const { from, to } = periodPreset === 'custom'
     ? { from: customFrom, to: customTo }
@@ -165,10 +180,49 @@ export default function BrandBilling() {
     },
   });
 
+  // 내 세금계산서 요청 목록
+  const { data: taxInvoicesData, isLoading: taxInvoicesLoading } = useQuery({
+    queryKey: ['myTaxInvoices', taxInvoicePage],
+    queryFn: () => api.getMyTaxInvoices({ page: taxInvoicePage, pageSize: 10 }),
+    enabled: activeTab === 'taxInvoice',
+  });
+
+  // 세금계산서 발행 요청 뮤테이션
+  const taxInvoiceMutation = useMutation({
+    mutationFn: (data: { billingProfileId: string; from: string; to: string; idempotencyKey: string }) =>
+      api.requestTaxInvoice(data),
+    onSuccess: () => {
+      setSuccess('세금계산서 발행 요청이 완료되었습니다.');
+      queryClient.invalidateQueries({ queryKey: ['myTaxInvoices'] });
+    },
+    onError: (err: any) => {
+      setError(err.response?.data?.message || '요청 실패');
+    },
+  });
+
   const summary = summaryData?.data;
   const items = itemsData?.data || [];
   const pagination = itemsData?.pagination;
   const profile = profileData?.data;
+  const taxInvoices = taxInvoicesData?.data || [];
+  const taxInvoicePagination = taxInvoicesData?.pagination;
+
+  // 세금계산서 발행 요청
+  const handleRequestTaxInvoice = () => {
+    if (!profile?.id) {
+      setError('먼저 청구 정보를 등록해주세요.');
+      setActiveTab('profile');
+      return;
+    }
+
+    const idempotencyKey = `tax-invoice-${profile.id}-${from}-${to}-${Date.now()}`;
+    taxInvoiceMutation.mutate({
+      billingProfileId: profile.id,
+      from,
+      to,
+      idempotencyKey,
+    });
+  };
 
   // CSV 다운로드
   const handleDownloadCsv = async () => {
@@ -268,6 +322,18 @@ export default function BrandBilling() {
             >
               <Building className="w-4 h-4 inline mr-2" />
               청구정보
+            </button>
+            <button
+              onClick={() => setActiveTab('taxInvoice')}
+              className={cn(
+                'py-3 px-1 border-b-2 text-sm font-medium transition-colors',
+                activeTab === 'taxInvoice'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              )}
+            >
+              <FileCheck className="w-4 h-4 inline mr-2" />
+              세금계산서
             </button>
           </nav>
         </div>
@@ -652,13 +718,206 @@ export default function BrandBilling() {
           </div>
         )}
 
+        {/* Tax Invoice Tab */}
+        {activeTab === 'taxInvoice' && (
+          <div className="space-y-6">
+            {/* 발행 요청 카드 */}
+            <div className="card p-6">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <Send className="w-5 h-5 text-blue-600" />
+                세금계산서 발행 요청
+              </h2>
+              <p className="text-sm text-slate-500 mb-4">
+                선택한 기간의 거래 내역에 대한 세금계산서 발행을 요청합니다.
+              </p>
+
+              {/* 기간 선택 */}
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                {PERIOD_PRESETS.map((preset) => (
+                  <button
+                    key={preset.value}
+                    onClick={() => setPeriodPreset(preset.value)}
+                    className={cn(
+                      'px-3 py-1.5 text-sm rounded-lg border transition-colors',
+                      periodPreset === preset.value
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-slate-200 text-slate-600 hover:border-blue-300'
+                    )}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+
+              {periodPreset === 'custom' && (
+                <div className="flex items-center gap-3 mb-4">
+                  <Calendar className="w-4 h-4 text-slate-400" />
+                  <input
+                    type="date"
+                    value={customFrom}
+                    onChange={(e) => setCustomFrom(e.target.value)}
+                    className="input"
+                  />
+                  <span className="text-slate-400">~</span>
+                  <input
+                    type="date"
+                    value={customTo}
+                    onChange={(e) => setCustomTo(e.target.value)}
+                    className="input"
+                  />
+                </div>
+              )}
+
+              {from && to && (
+                <div className="p-4 bg-slate-50 rounded-lg mb-4">
+                  <div className="text-sm text-slate-600 mb-2">
+                    요청 기간: <span className="font-medium">{from} ~ {to}</span>
+                  </div>
+                  {summary && (
+                    <div className="text-sm text-slate-600">
+                      예상 금액: <span className="font-medium text-blue-600">{formatCurrency(Math.abs(summary.netSpend || 0))}</span>
+                      <span className="text-xs text-slate-400 ml-2">(VAT 포함)</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {!profile && (
+                <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg mb-4 text-amber-700 flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5" />
+                  <span>세금계산서 발행을 위해 먼저 <button onClick={() => setActiveTab('profile')} className="underline font-medium">청구 정보</button>를 등록해주세요.</span>
+                </div>
+              )}
+
+              <button
+                onClick={handleRequestTaxInvoice}
+                disabled={!from || !to || !profile || taxInvoiceMutation.isPending}
+                className="btn btn-primary flex items-center gap-2"
+              >
+                {taxInvoiceMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    요청 중...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    발행 요청
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* 내 요청 목록 */}
+            <div className="card p-6">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4">
+                내 요청 내역 ({taxInvoicePagination?.total || 0}건)
+              </h2>
+
+              {taxInvoicesLoading ? (
+                <div className="text-center py-8 text-slate-500">
+                  <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
+                  로딩 중...
+                </div>
+              ) : taxInvoices.length === 0 ? (
+                <div className="text-center py-8 text-slate-500">
+                  세금계산서 발행 요청 내역이 없습니다.
+                </div>
+              ) : (
+                <>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-slate-200">
+                          <th className="text-left py-3 px-2 font-medium text-slate-600">요청일</th>
+                          <th className="text-left py-3 px-2 font-medium text-slate-600">기간</th>
+                          <th className="text-right py-3 px-2 font-medium text-slate-600">금액</th>
+                          <th className="text-center py-3 px-2 font-medium text-slate-600">상태</th>
+                          <th className="text-left py-3 px-2 font-medium text-slate-600 hidden sm:table-cell">계산서 번호</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {taxInvoices.map((invoice: any) => {
+                          const statusInfo = TAX_INVOICE_STATUS[invoice.status] || TAX_INVOICE_STATUS.REQUESTED;
+                          const StatusIcon = statusInfo.icon;
+                          return (
+                            <tr key={invoice.id} className="border-b border-slate-100">
+                              <td className="py-3 px-2 text-slate-600">
+                                {new Date(invoice.requestedAt).toLocaleDateString('ko-KR')}
+                              </td>
+                              <td className="py-3 px-2 text-slate-600">
+                                {new Date(invoice.fromDate).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
+                                {' ~ '}
+                                {new Date(invoice.toDate).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
+                              </td>
+                              <td className="py-3 px-2 text-right font-medium text-slate-900">
+                                {formatCurrency(Number(invoice.totalAmount))}
+                              </td>
+                              <td className="py-3 px-2 text-center">
+                                <span className={cn('inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium', statusInfo.color)}>
+                                  <StatusIcon className="w-3 h-3" />
+                                  {statusInfo.label}
+                                </span>
+                              </td>
+                              <td className="py-3 px-2 text-slate-500 hidden sm:table-cell">
+                                {invoice.invoiceNumber || '-'}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* 페이지네이션 */}
+                  {taxInvoicePagination && taxInvoicePagination.totalPages > 1 && (
+                    <div className="flex justify-center gap-2 mt-4">
+                      <button
+                        onClick={() => setTaxInvoicePage(Math.max(1, taxInvoicePage - 1))}
+                        disabled={taxInvoicePage === 1}
+                        className="btn btn-outline btn-sm"
+                      >
+                        이전
+                      </button>
+                      <span className="flex items-center px-3 text-sm text-slate-600">
+                        {taxInvoicePage} / {taxInvoicePagination.totalPages}
+                      </span>
+                      <button
+                        onClick={() => setTaxInvoicePage(Math.min(taxInvoicePagination.totalPages, taxInvoicePage + 1))}
+                        disabled={taxInvoicePage === taxInvoicePagination.totalPages}
+                        className="btn btn-outline btn-sm"
+                      >
+                        다음
+                      </button>
+                    </div>
+                  )}
+
+                  {/* 거부된 요청 상세 */}
+                  {taxInvoices.some((inv: any) => inv.status === 'REJECTED' && inv.rejectionReason) && (
+                    <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm font-medium text-red-700 mb-2">거부된 요청 사유</p>
+                      {taxInvoices
+                        .filter((inv: any) => inv.status === 'REJECTED' && inv.rejectionReason)
+                        .map((inv: any) => (
+                          <div key={inv.id} className="text-sm text-red-600">
+                            <span className="font-medium">{new Date(inv.requestedAt).toLocaleDateString('ko-KR')}</span>: {inv.rejectionReason}
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* 안내 사항 */}
         <div className="text-sm text-slate-500 bg-slate-50 p-4 rounded-lg">
           <p className="font-medium text-slate-700 mb-1">안내사항</p>
           <ul className="list-disc list-inside space-y-1">
             <li>거래 명세서는 CSV 또는 PDF로 다운로드할 수 있습니다.</li>
             <li>청구 정보는 세금계산서 발행에 사용됩니다.</li>
-            <li>세금계산서 발행 요청은 고객센터로 문의해주세요.</li>
+            <li>세금계산서 발행 요청 후 관리자 승인을 거쳐 발행됩니다.</li>
           </ul>
         </div>
       </div>
