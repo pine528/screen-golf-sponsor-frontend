@@ -102,12 +102,13 @@ class ApiService {
 
   async createEvent(data: {
     name: string;
-    type?: string;
+    tour: string;
     venue?: string;
     dateStart: string;
     dateEnd: string;
     description?: string;
-    expectedViewers?: number;
+    broadcastEpisode?: string;
+    multiplier?: number;
   }) {
     const response = await this.client.post<ApiResponse<any>>('/events', data);
     return response.data;
@@ -115,12 +116,13 @@ class ApiService {
 
   async updateEvent(id: string, data: {
     name?: string;
-    type?: string;
+    tour?: string;
     venue?: string;
     dateStart?: string;
     dateEnd?: string;
     description?: string;
-    expectedViewers?: number;
+    broadcastEpisode?: string;
+    multiplier?: number;
     status?: string;
   }) {
     const response = await this.client.patch<ApiResponse<any>>(`/events/${id}`, data);

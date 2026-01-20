@@ -289,12 +289,12 @@ interface EventModalProps {
 function EventModal({ event, onClose, onSave }: EventModalProps) {
   const [formData, setFormData] = useState({
     name: event?.name || '',
-    type: event?.type || 'TOURNAMENT',
+    tour: event?.tour || 'KPGA',
     venue: event?.venue || '',
     startDate: event?.startDate?.split('T')[0] || event?.dateStart?.split('T')[0] || '',
     endDate: event?.endDate?.split('T')[0] || event?.dateEnd?.split('T')[0] || '',
     description: event?.description || '',
-    expectedViewers: event?.expectedViewers || '',
+    broadcastEpisode: event?.broadcastEpisode || '',
   });
   const [error, setError] = useState('');
 
@@ -316,14 +316,15 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
     e.preventDefault();
     setError('');
 
+    // 날짜를 ISO datetime 형식으로 변환
     const payload = {
       name: formData.name,
-      type: formData.type,
+      tour: formData.tour,
       venue: formData.venue || undefined,
-      dateStart: formData.startDate,
-      dateEnd: formData.endDate,
+      dateStart: formData.startDate ? new Date(formData.startDate).toISOString() : undefined,
+      dateEnd: formData.endDate ? new Date(formData.endDate).toISOString() : undefined,
       description: formData.description || undefined,
-      expectedViewers: formData.expectedViewers ? Number(formData.expectedViewers) : undefined,
+      broadcastEpisode: formData.broadcastEpisode || undefined,
     };
 
     if (event) {
@@ -366,15 +367,17 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
             />
           </div>
           <div>
-            <label className="label">이벤트 유형</label>
+            <label className="label">투어</label>
             <select
-              value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              value={formData.tour}
+              onChange={(e) => setFormData({ ...formData, tour: e.target.value })}
               className="input"
+              required
             >
-              <option value="TOURNAMENT">대회</option>
-              <option value="EXHIBITION">전시회</option>
-              <option value="PROMOTION">프로모션</option>
+              <option value="KPGA">KPGA</option>
+              <option value="KLPGA">KLPGA</option>
+              <option value="KGTOUR">KG투어</option>
+              <option value="OTHER">기타</option>
             </select>
           </div>
           <div>
@@ -410,13 +413,13 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
             </div>
           </div>
           <div>
-            <label className="label">예상 시청자 수</label>
+            <label className="label">방송 회차 (선택)</label>
             <input
-              type="number"
-              value={formData.expectedViewers}
-              onChange={(e) => setFormData({ ...formData, expectedViewers: e.target.value })}
+              type="text"
+              value={formData.broadcastEpisode}
+              onChange={(e) => setFormData({ ...formData, broadcastEpisode: e.target.value })}
               className="input"
-              placeholder="10000"
+              placeholder="예: EP01, 1회차"
             />
           </div>
           <div>
