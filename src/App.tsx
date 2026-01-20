@@ -58,6 +58,10 @@ import AdminDisputeDetail from './pages/admin/AdminDisputeDetail';
 import AdminSeasons from './pages/admin/AdminSeasons';
 import AdminExposure from './pages/admin/AdminExposure';
 import Faq from './pages/Faq';
+import Guide from './pages/Guide';
+import Contact from './pages/Contact';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 import { Inventory } from './pages/Inventory';
 import { Contracts } from './pages/Contracts';
 import { Profile } from './pages/Profile';
@@ -147,6 +151,10 @@ function App() {
       <Route path="/how-it-works" element={<HowItWorks />} />
       <Route path="/for-who" element={<ForWho />} />
       <Route path="/faq" element={<Faq />} />
+      <Route path="/guide" element={<Guide />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
 
       {/* Fan Auth Routes (Public) */}
       <Route path="/fan/login" element={<FanLogin />} />
