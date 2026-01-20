@@ -196,6 +196,7 @@ export function Layout({ children }: LayoutProps) {
     { path: '/admin/brand-registrations', label: '브랜드 신청', icon: Building2 },
     { path: '/admin/reviews', label: '검수 관리', icon: FileText },
     { path: '/admin/votes', label: '투표 이벤트', icon: Vote },
+    { path: '/admin/fan-votes', label: '팬 투표 심사', icon: ListChecks },
     { path: '/admin/payments', label: '결제 관리', icon: CreditCard },
     { path: '/admin/finance', label: '재무 콘솔', icon: Wallet },
     { path: '/admin/faq', label: 'FAQ 관리', icon: HelpCircle },
