@@ -100,6 +100,38 @@ class ApiService {
     return response.data;
   }
 
+  async createEvent(data: {
+    name: string;
+    type?: string;
+    venue?: string;
+    dateStart: string;
+    dateEnd: string;
+    description?: string;
+    expectedViewers?: number;
+  }) {
+    const response = await this.client.post<ApiResponse<any>>('/events', data);
+    return response.data;
+  }
+
+  async updateEvent(id: string, data: {
+    name?: string;
+    type?: string;
+    venue?: string;
+    dateStart?: string;
+    dateEnd?: string;
+    description?: string;
+    expectedViewers?: number;
+    status?: string;
+  }) {
+    const response = await this.client.patch<ApiResponse<any>>(`/events/${id}`, data);
+    return response.data;
+  }
+
+  async deleteEvent(id: string) {
+    const response = await this.client.delete<ApiResponse<any>>(`/events/${id}`);
+    return response.data;
+  }
+
   // Slots
   async getSlotTemplates() {
     const response = await this.client.get<ApiResponse<any[]>>('/slots/templates');

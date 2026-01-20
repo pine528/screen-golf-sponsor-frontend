@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
 import {
@@ -15,6 +15,8 @@ import {
   Trash2,
   ChevronLeft,
   ChevronRight,
+  Loader2,
+  X,
 } from 'lucide-react';
 import { cn } from '../../utils';
 
@@ -289,29 +291,69 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
     name: event?.name || '',
     type: event?.type || 'TOURNAMENT',
     venue: event?.venue || '',
-    startDate: event?.startDate?.split('T')[0] || '',
-    endDate: event?.endDate?.split('T')[0] || '',
+    startDate: event?.startDate?.split('T')[0] || event?.dateStart?.split('T')[0] || '',
+    endDate: event?.endDate?.split('T')[0] || event?.dateEnd?.split('T')[0] || '',
     description: event?.description || '',
     expectedViewers: event?.expectedViewers || '',
   });
+  const [error, setError] = useState('');
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => api.createEvent(data),
+    onSuccess: () => onSave(),
+    onError: (err: any) => setError(err.response?.data?.message || '이벤트 생성에 실패했습니다'),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => api.updateEvent(event.id, data),
+    onSuccess: () => onSave(),
+    onError: (err: any) => setError(err.response?.data?.message || '이벤트 수정에 실패했습니다'),
+  });
+
+  const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would call the API to create/update the event
-    console.log('Saving event:', formData);
-    onSave();
+    setError('');
+
+    const payload = {
+      name: formData.name,
+      type: formData.type,
+      venue: formData.venue || undefined,
+      dateStart: formData.startDate,
+      dateEnd: formData.endDate,
+      description: formData.description || undefined,
+      expectedViewers: formData.expectedViewers ? Number(formData.expectedViewers) : undefined,
+    };
+
+    if (event) {
+      updateMutation.mutate(payload);
+    } else {
+      createMutation.mutate(payload);
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-slate-200">
+        <div className="p-6 border-b border-slate-200 flex items-center justify-between">
           <h2 className="text-xl font-bold text-slate-900">
             {event ? '이벤트 수정' : '새 이벤트 등록'}
           </h2>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5 text-slate-500" />
+          </button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              {error}
+            </div>
+          )}
           <div>
             <label className="label">이벤트명</label>
             <input
@@ -387,11 +429,18 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
             />
           </div>
           <div className="flex gap-3 pt-4">
-            <button type="button" onClick={onClose} className="btn btn-secondary flex-1">
+            <button type="button" onClick={onClose} disabled={isSubmitting} className="btn btn-secondary flex-1">
               취소
             </button>
-            <button type="submit" className="btn btn-primary flex-1">
-              {event ? '수정' : '등록'}
+            <button type="submit" disabled={isSubmitting} className="btn btn-primary flex-1 inline-flex items-center justify-center gap-2">
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  저장 중...
+                </>
+              ) : (
+                event ? '수정' : '등록'
+              )}
             </button>
           </div>
         </form>
