@@ -750,6 +750,25 @@ class ApiService {
   }
 
   // ============================================
+  // Admin Topup (브랜드 충전 관리)
+  // ============================================
+
+  async getAdminTopups(params?: { status?: string; provider?: string; brandId?: string; limit?: number; offset?: number }) {
+    const response = await this.client.get<ApiResponse<any>>('/admin/finance/topups', { params });
+    return response.data;
+  }
+
+  async getAdminTopupStats() {
+    const response = await this.client.get<ApiResponse<any>>('/admin/finance/topups/stats');
+    return response.data;
+  }
+
+  async getAdminTopupDetail(id: string) {
+    const response = await this.client.get<ApiResponse<any>>(`/admin/finance/topups/${id}`);
+    return response.data;
+  }
+
+  // ============================================
   // Review API (Admin - Asset/Verification Review)
   // ============================================
 
