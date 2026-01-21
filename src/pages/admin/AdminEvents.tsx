@@ -50,6 +50,15 @@ export function AdminEvents() {
 
   const events = eventsData?.data || [];
 
+  // Debug: log events data
+  console.log('[AdminEvents] eventsData:', eventsData);
+  console.log('[AdminEvents] events:', events);
+  if (events.length > 0) {
+    console.log('[AdminEvents] First event:', events[0]);
+    console.log('[AdminEvents] First event dateStart:', events[0].dateStart);
+    console.log('[AdminEvents] First event dateEnd:', events[0].dateEnd);
+  }
+
   const filteredEvents = events.filter((event: any) =>
     event.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     event.venue?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -70,8 +79,10 @@ export function AdminEvents() {
   };
 
   const formatDate = (dateString: string | undefined | null) => {
+    console.log('[formatDate] input:', dateString, typeof dateString);
     if (!dateString) return '날짜 미정';
     const date = new Date(dateString);
+    console.log('[formatDate] parsed date:', date, isNaN(date.getTime()));
     if (isNaN(date.getTime())) return '날짜 미정';
     return date.toLocaleDateString('ko-KR', {
       year: 'numeric',
