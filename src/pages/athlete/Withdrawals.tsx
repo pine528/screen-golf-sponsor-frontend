@@ -263,7 +263,16 @@ export default function AthleteWithdrawals() {
               {createMutation.isError && (
                 <div className="p-3 bg-red-50 text-red-600 rounded-lg flex items-center gap-2">
                   <AlertCircle className="w-5 h-5" />
-                  {(createMutation.error as any)?.response?.data?.error?.message || '출금 요청에 실패했습니다'}
+                  {(() => {
+                    const err = createMutation.error as any;
+                    const data = err?.response?.data;
+                    // 통일된 에러 형식: { error: { message: '...' } }
+                    if (data?.error?.message) return data.error.message;
+                    // 구형 에러 형식: { error: '...' }
+                    if (typeof data?.error === 'string') return data.error;
+                    // 기타
+                    return '출금 요청에 실패했습니다';
+                  })()}
                 </div>
               )}
             </form>
