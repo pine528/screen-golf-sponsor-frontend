@@ -68,7 +68,8 @@ export function Profile() {
   });
 
   useEffect(() => {
-    if (profile) {
+    console.log('[Profile] useEffect triggered, profile:', profile, 'isBrand:', isBrand);
+    if (profile && Object.keys(profile).length > 0) {
       if (isBrand) {
         setBrandForm({
           companyName: profile.companyName || '',
@@ -82,14 +83,24 @@ export function Profile() {
           address: profile.address || '',
         });
       } else {
+        // bankAccount는 JSON 객체: { bankName, accountNumber, accountHolder }
+        const bankInfo = profile.bankAccount || {};
+        console.log('[Profile] Setting athlete form from profile:', {
+          name: profile.name,
+          realName: profile.realName,
+          bio: profile.bio,
+          socialLinks: profile.socialLinks,
+          bankAccount: profile.bankAccount,
+          bankInfo,
+        });
         setAthleteForm({
-          displayName: profile.displayName || '',
+          displayName: profile.name || profile.displayName || '',
           realName: profile.realName || '',
           bio: profile.bio || '',
-          socialMedia: profile.socialMedia || '',
-          bankName: profile.bankName || '',
-          bankAccount: profile.bankAccount || '',
-          bankHolder: profile.bankHolder || '',
+          socialMedia: typeof profile.socialLinks === 'object' ? (profile.socialLinks?.instagram || '') : (profile.socialMedia || ''),
+          bankName: bankInfo.bankName || '',
+          bankAccount: bankInfo.accountNumber || '',
+          bankHolder: bankInfo.accountHolder || '',
         });
       }
     }
@@ -110,14 +121,16 @@ export function Profile() {
 
   const updateAthleteMutation = useMutation({
     mutationFn: (data: any) => api.updateMyAthlete(data),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      console.log('[Profile] Athlete update success:', response);
       queryClient.invalidateQueries({ queryKey: ['my-athlete'] });
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     },
     onError: (error: any) => {
-      const message = error.response?.data?.error?.message || '프로필 업데이트에 실패했습니다.';
-      alert(message);
+      console.error('[Profile] Athlete update error:', error);
+      const message = error.response?.data?.error?.message || error.message || '프로필 업데이트에 실패했습니다.';
+      alert(`저장 실패: ${message}`);
     },
   });
 
@@ -257,10 +270,19 @@ export function Profile() {
     setIsSaving(true);
     try {
       if (isBrand) {
-        await updateBrandMutation.mutateAsync(brandForm);
+        console.log('[Profile] Saving brand form:', brandForm);
+        const result = await updateBrandMutation.mutateAsync(brandForm);
+        console.log('[Profile] Brand save result:', result);
       } else {
-        await updateAthleteMutation.mutateAsync(athleteForm);
+        console.log('[Profile] Saving athlete form:', athleteForm);
+        console.log('[Profile] Current profile:', profile);
+        const result = await updateAthleteMutation.mutateAsync(athleteForm);
+        console.log('[Profile] Athlete save result:', result);
       }
+    } catch (error: any) {
+      console.error('[Profile] Save error:', error);
+      console.error('[Profile] Error response:', error.response?.data);
+      // mutation의 onError에서 이미 alert을 표시하므로 여기서는 중복 alert 생략
     } finally {
       setIsSaving(false);
     }

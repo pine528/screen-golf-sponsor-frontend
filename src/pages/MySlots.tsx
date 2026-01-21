@@ -5,7 +5,6 @@ import { api } from '../services/api';
 import {
   Calendar,
   Search,
-  Clock,
   DollarSign,
   Eye,
   Gavel,
@@ -307,11 +306,11 @@ export function MySlots() {
                           <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-slate-600">
                             <div className="flex items-center gap-1">
                               <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                              <span className="truncate">{slot.slotTemplate?.position}</span>
+                              <span className="truncate">{slot.slotTemplate?.bodyPart || '-'}</span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                              <span>{slot.slotTemplate?.duration}초</span>
+                              <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                              <span>{formatCurrency(slot.reservePrice || slot.slotTemplate?.defaultReservePrice || 0)}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -576,16 +575,20 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
                   <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
                     <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">위치</p>
-                    <p className="font-medium text-slate-900 text-sm sm:text-base">{slot.slotTemplate?.position}</p>
+                    <p className="font-medium text-slate-900 text-sm sm:text-base">{slot.slotTemplate?.bodyPart || '-'}</p>
                   </div>
                   <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                    <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">노출 시간</p>
-                    <p className="font-medium text-slate-900 text-sm sm:text-base">{slot.slotTemplate?.duration}초</p>
-                  </div>
-                  <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                    <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">예상 노출</p>
+                    <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최대 크기</p>
                     <p className="font-medium text-slate-900 text-sm sm:text-base">
-                      {slot.slotTemplate?.estimatedImpressions?.toLocaleString()}회
+                      {slot.slotTemplate?.sizeMaxWMm && slot.slotTemplate?.sizeMaxHMm
+                        ? `${slot.slotTemplate.sizeMaxWMm}×${slot.slotTemplate.sizeMaxHMm}mm`
+                        : '-'}
+                    </p>
+                  </div>
+                  <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
+                    <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최소가</p>
+                    <p className="font-medium text-slate-900 text-sm sm:text-base">
+                      {slot.reservePrice ? formatCurrency(slot.reservePrice) : formatCurrency(slot.slotTemplate?.defaultReservePrice || 0)}
                     </p>
                   </div>
                   <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
@@ -831,29 +834,29 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
 
               <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">예상 노출수</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">슬롯 위치</p>
                   <p className="text-sm sm:text-xl font-bold text-slate-900">
-                    {slot.slotTemplate?.estimatedImpressions?.toLocaleString() || 'N/A'}
+                    {slot.slotTemplate?.bodyPart || '-'}
                   </p>
                 </div>
                 <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">실제 노출수</p>
+                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최대 크기</p>
                   <p className="text-sm sm:text-xl font-bold text-slate-900">
-                    {slot.actualImpressions?.toLocaleString() || '-'}
-                  </p>
-                </div>
-                <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">평균 시청자</p>
-                  <p className="text-sm sm:text-xl font-bold text-slate-900">
-                    {slot.averageViewers?.toLocaleString() || '-'}
-                  </p>
-                </div>
-                <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">노출 달성률</p>
-                  <p className="text-sm sm:text-xl font-bold text-slate-900">
-                    {slot.actualImpressions && slot.slotTemplate?.estimatedImpressions
-                      ? `${Math.round((slot.actualImpressions / slot.slotTemplate.estimatedImpressions) * 100)}%`
+                    {slot.slotTemplate?.sizeMaxWMm && slot.slotTemplate?.sizeMaxHMm
+                      ? `${slot.slotTemplate.sizeMaxWMm}×${slot.slotTemplate.sizeMaxHMm}mm`
                       : '-'}
+                  </p>
+                </div>
+                <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
+                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최소가</p>
+                  <p className="text-sm sm:text-xl font-bold text-slate-900">
+                    {formatCurrency(slot.reservePrice || slot.slotTemplate?.defaultReservePrice || 0)}
+                  </p>
+                </div>
+                <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
+                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">이벤트 상태</p>
+                  <p className="text-sm sm:text-xl font-bold text-slate-900">
+                    {slot.event?.status || '-'}
                   </p>
                 </div>
               </div>
