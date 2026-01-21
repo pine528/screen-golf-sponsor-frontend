@@ -432,12 +432,16 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onBuySucce
   });
 
   const handleBid = async () => {
+    if (!slot.auction?.id) {
+      alert('경매 정보를 찾을 수 없습니다. 아직 경매가 시작되지 않았을 수 있습니다.');
+      return;
+    }
     try {
-      await api.placeBid(slot.auction?.id, parseInt(bidAmount), autoBid);
+      await api.placeBid(slot.auction.id, parseInt(bidAmount), autoBid);
       alert('입찰이 완료되었습니다!');
       onClose();
-    } catch (error) {
-      alert('입찰에 실패했습니다. 다시 시도해주세요.');
+    } catch (error: any) {
+      alert(error.response?.data?.error?.message || '입찰에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -624,11 +628,11 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onBuySucce
 
                 <button
                   onClick={handleBid}
-                  disabled={!bidAmount || parseInt(bidAmount) < minimumBid}
+                  disabled={!slot.auction?.id || !bidAmount || parseInt(bidAmount) < minimumBid}
                   className="btn btn-primary w-full inline-flex items-center justify-center gap-1.5 sm:gap-2 text-sm sm:text-base"
                 >
                   <Gavel className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  입찰하기
+                  {slot.auction?.id ? '입찰하기' : '경매 준비 중'}
                 </button>
               </div>
             </div>
