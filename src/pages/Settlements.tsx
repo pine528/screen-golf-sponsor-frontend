@@ -38,8 +38,14 @@ export function Settlements() {
     queryFn: () => api.getMySettlementStats(),
   });
 
+  const { data: monthlyData } = useQuery({
+    queryKey: ['my-monthly-settlements'],
+    queryFn: () => api.getMonthlySettlements(),
+  });
+
   const settlements = settlementsData?.data || [];
   const stats = statsData?.data || {};
+  const monthlySettlements = monthlyData?.data || [];
 
   const filteredSettlements = settlements
     .filter((settlement: any) => {
@@ -354,39 +360,41 @@ export function Settlements() {
         <div className="card p-4 sm:p-6">
           <h2 className="text-base sm:text-lg font-semibold text-slate-900 mb-3 sm:mb-4">월별 정산 현황</h2>
           <div className="space-y-2 sm:space-y-4">
-            {[
-              { month: '2024년 1월', amount: 2500000, count: 5, status: 'completed' },
-              { month: '2024년 2월', amount: 3200000, count: 7, status: 'completed' },
-              { month: '2024년 3월', amount: 1800000, count: 4, status: 'pending' },
-            ].map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                <div className="flex items-center gap-2 sm:gap-4">
-                  <div className={cn(
-                    'w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0',
-                    item.status === 'completed' ? 'bg-emerald-100' : 'bg-amber-100'
-                  )}>
-                    {item.status === 'completed' ? (
-                      <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
-                    ) : (
-                      <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-900 text-sm sm:text-base">{item.month}</p>
-                    <p className="text-xs sm:text-sm text-slate-500">{item.count}건 정산</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-slate-900 text-sm sm:text-base">{formatCurrency(item.amount)}</p>
-                  <p className={cn(
-                    'text-[10px] sm:text-xs',
-                    item.status === 'completed' ? 'text-emerald-600' : 'text-amber-600'
-                  )}>
-                    {item.status === 'completed' ? '정산 완료' : '정산 예정'}
-                  </p>
-                </div>
+            {monthlySettlements.length === 0 ? (
+              <div className="text-center py-8 text-slate-500">
+                월별 정산 내역이 없습니다
               </div>
-            ))}
+            ) : (
+              monthlySettlements.map((item: any, index: number) => (
+                <div key={index} className="flex items-center justify-between p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
+                  <div className="flex items-center gap-2 sm:gap-4">
+                    <div className={cn(
+                      'w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0',
+                      item.status === 'completed' ? 'bg-emerald-100' : 'bg-amber-100'
+                    )}>
+                      {item.status === 'completed' ? (
+                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                      ) : (
+                        <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-medium text-slate-900 text-sm sm:text-base">{item.month}</p>
+                      <p className="text-xs sm:text-sm text-slate-500">{item.count}건 정산</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-slate-900 text-sm sm:text-base">{formatCurrency(item.amount)}</p>
+                    <p className={cn(
+                      'text-[10px] sm:text-xs',
+                      item.status === 'completed' ? 'text-emerald-600' : 'text-amber-600'
+                    )}>
+                      {item.status === 'completed' ? '정산 완료' : '정산 예정'}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
