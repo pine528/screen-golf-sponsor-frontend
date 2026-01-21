@@ -427,7 +427,19 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onBuySucce
       setTimeout(() => onClose(), 2000);
     },
     onError: (error: any) => {
-      setBuyError(error.response?.data?.error?.message || '구매에 실패했습니다. 다시 시도해주세요.');
+      // Handle different error scenarios
+      if (!error.response) {
+        // Network error or CORS error
+        setBuyError('네트워크 오류가 발생했습니다. 인터넷 연결을 확인하고 다시 시도해주세요.');
+      } else if (error.response.status === 409) {
+        // Conflict error - slot already purchased or reserved
+        setBuyError(error.response.data?.error?.message || '이 슬롯은 이미 다른 사람에 의해 구매되었거나 예약되었습니다. 목록을 새로고침해주세요.');
+      } else if (error.response.status === 400) {
+        // Bad request - insufficient balance, etc.
+        setBuyError(error.response.data?.error?.message || '구매 조건을 확인해주세요. 잔액이 부족할 수 있습니다.');
+      } else {
+        setBuyError(error.response.data?.error?.message || '구매에 실패했습니다. 다시 시도해주세요.');
+      }
     },
   });
 
@@ -451,7 +463,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onBuySucce
     }
   };
 
-  const minimumBid = (slot.auction?.currentPrice || slot.auction?.startingPrice || slot.auctionMinBid || slot.reservePrice || 0) + 10000;
+  const minimumBid = Number(slot.auction?.currentPrice || slot.auction?.startingPrice || slot.auctionMinBid || slot.reservePrice || 0) + 10000;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
@@ -480,7 +492,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onBuySucce
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
               <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">이벤트 기간</p>
               <p className="font-medium text-slate-900 text-sm sm:text-base">
-                {formatDate(slot.event?.startDate)} - {formatDate(slot.event?.endDate)}
+                {formatDate(slot.event?.dateStart)} - {formatDate(slot.event?.dateEnd)}
               </p>
             </div>
           </div>

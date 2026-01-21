@@ -446,7 +446,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
   const [enableAuction, setEnableAuction] = useState(slot.enableAuction ?? true);
   const [enableDirectBuy, setEnableDirectBuy] = useState(slot.enableDirectBuy ?? false);
   const [directBuyPrice, setDirectBuyPrice] = useState(slot.directBuyPrice ? String(slot.directBuyPrice) : '');
-  const [auctionMinBid, setAuctionMinBid] = useState(slot.auctionMinBid ? String(slot.auctionMinBid) : String(slot.reservePrice || '100000'));
+  const [auctionMinBid, setAuctionMinBid] = useState(slot.auctionMinBid ? String(Number(slot.auctionMinBid)) : String(Number(slot.reservePrice) || 100000));
   const [auctionEndAt, setAuctionEndAt] = useState(
     slot.auctionEndAt ? new Date(slot.auctionEndAt).toISOString().slice(0, 16) : ''
   );
@@ -582,7 +582,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                   <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
                     <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">이벤트 기간</p>
                     <p className="font-medium text-slate-900 text-sm sm:text-base">
-                      {formatDate(slot.event?.startDate)} - {formatDate(slot.event?.endDate)}
+                      {formatDate(slot.event?.dateStart)} - {formatDate(slot.event?.dateEnd)}
                     </p>
                   </div>
                 </div>
