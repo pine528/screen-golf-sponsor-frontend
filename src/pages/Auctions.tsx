@@ -76,6 +76,7 @@ export function Auctions() {
       api.placeBid(auctionId, maxBid),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['auctions'] });
+      queryClient.invalidateQueries({ queryKey: ['brands', 'me', 'bids'] }); // 내 입찰 목록 새로고침
       setSelectedAuction(null);
       setBidAmount('');
       setBidError(null);
