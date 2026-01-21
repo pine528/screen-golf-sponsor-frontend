@@ -32,6 +32,7 @@ import {
   FinanceWithdrawalDetail,
   FinanceWithdrawalBatches,
   FinanceWithdrawalBatchDetail,
+  FinanceTopups,
 } from './pages/admin/finance';
 import AthleteWithdrawals from './pages/athlete/Withdrawals';
 import AthletePendingSignatures from './pages/athlete/PendingSignatures';
@@ -692,6 +693,14 @@ function App() {
         element={
           <ProtectedRoute>
             <FinanceWithdrawalBatchDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/finance/topups"
+        element={
+          <ProtectedRoute>
+            <FinanceTopups />
           </ProtectedRoute>
         }
       />

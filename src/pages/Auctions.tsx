@@ -96,7 +96,7 @@ export function Auctions() {
       setBuyNowError(null);
       // 계약 페이지로 이동
       if (data?.data?.id) {
-        navigate(`/brand/contracts/${data.data.id}`);
+        navigate(`/contracts/${data.data.id}`);
       }
     },
     onError: (error: any) => {
@@ -429,7 +429,7 @@ export function Auctions() {
 
                     {/* Action */}
                     <Link
-                      to={`/brand/contracts/${reservation.id}`}
+                      to={`/contracts/${reservation.id}`}
                       className="btn btn-secondary w-full text-center text-sm"
                     >
                       계약 보기
@@ -499,30 +499,19 @@ export function Auctions() {
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="flex gap-2">
-                        {user?.role === 'BRAND' && (
-                          <button
-                            onClick={() => {
-                              setSelectedSlotForBuyNow(slot);
-                              setShowBuyNowModal(true);
-                              setBuyNowError(null);
-                            }}
-                            className="btn btn-primary flex-1 text-sm flex items-center justify-center gap-1"
-                          >
-                            <ShoppingCart className="w-4 h-4" />
-                            즉시구매
-                          </button>
-                        )}
-                        <Link
-                          to={`/slots/${slot.id}`}
-                          className={cn(
-                            'btn btn-secondary text-center block text-sm',
-                            user?.role === 'BRAND' ? 'flex-1' : 'w-full'
-                          )}
+                      {user?.role === 'BRAND' && (
+                        <button
+                          onClick={() => {
+                            setSelectedSlotForBuyNow(slot);
+                            setShowBuyNowModal(true);
+                            setBuyNowError(null);
+                          }}
+                          className="btn btn-primary w-full text-sm flex items-center justify-center gap-1"
                         >
-                          상세 보기
-                        </Link>
-                      </div>
+                          <ShoppingCart className="w-4 h-4" />
+                          즉시구매
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))

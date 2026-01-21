@@ -52,7 +52,7 @@ export default function FanVoteResult() {
             <h2 className="text-lg font-semibold text-slate-900 mb-2">
               결과를 불러올 수 없습니다
             </h2>
-            <Link to="/fan-votes" className="btn btn-primary">
+            <Link to="/votes" className="btn btn-primary">
               투표 목록으로
             </Link>
           </div>
