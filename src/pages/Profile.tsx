@@ -102,6 +102,10 @@ export function Profile() {
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.error?.message || '프로필 업데이트에 실패했습니다.';
+      alert(message);
+    },
   });
 
   const updateAthleteMutation = useMutation({
@@ -110,6 +114,10 @@ export function Profile() {
       queryClient.invalidateQueries({ queryKey: ['my-athlete'] });
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.error?.message || '프로필 업데이트에 실패했습니다.';
+      alert(message);
     },
   });
 

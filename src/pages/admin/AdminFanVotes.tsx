@@ -82,6 +82,10 @@ export default function AdminFanVotes() {
       queryClient.invalidateQueries({ queryKey: ['pendingFanVotes'] });
       queryClient.invalidateQueries({ queryKey: ['activeFanVotes'] });
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.error?.message || '승인에 실패했습니다.';
+      alert(message);
+    },
   });
 
   const closeMutation = useMutation({
@@ -90,12 +94,20 @@ export default function AdminFanVotes() {
       queryClient.invalidateQueries({ queryKey: ['activeFanVotes'] });
       queryClient.invalidateQueries({ queryKey: ['endedFanVotes'] });
     },
+    onError: (error: any) => {
+      const message = error.response?.data?.error?.message || '투표 종료에 실패했습니다.';
+      alert(message);
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.deleteFanVote(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['endedFanVotes'] });
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.error?.message || '삭제에 실패했습니다.';
+      alert(message);
     },
   });
 

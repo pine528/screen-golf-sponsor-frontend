@@ -178,7 +178,7 @@ export default function AdminFanVoteSettle() {
 
           <div className="space-y-3">
             {options.map((option: string, index: number) => {
-              const count = voteCounts[index] || 0;
+              const count = voteCounts[index] ?? 0;
               const percentage = totalEntries > 0 ? (count / totalEntries) * 100 : 0;
 
               return (

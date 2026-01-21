@@ -494,7 +494,7 @@ export function Auctions() {
                       <div className="mb-3 sm:mb-4">
                         <p className="text-xs sm:text-sm text-slate-600">즉시구매가</p>
                         <p className="text-lg sm:text-xl font-bold text-blue-600">
-                          {formatCurrency(Number(slot.directBuyPrice))}
+                          {formatCurrency(Number(slot.directBuyPrice || 0))}
                         </p>
                       </div>
 
