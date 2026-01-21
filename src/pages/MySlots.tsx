@@ -897,8 +897,15 @@ function CreateSlotModal({
 
   const createSlotsMutation = useMutation({
     mutationFn: () => api.bulkCreateSlotInstances(selectedEventId, athleteId, selectedTemplateIds),
-    onSuccess: () => {
-      onCreated();
+    onSuccess: (response: any) => {
+      const result = response?.data;
+      if (result?.failed?.length > 0) {
+        const failedNames = result.failed.map((f: any) => f.templateName).join(', ');
+        setError(`일부 슬롯 생성 실패: ${failedNames} (이미 존재하거나 오류 발생)`);
+      }
+      if (result?.created?.length > 0) {
+        onCreated();
+      }
     },
     onError: (err: any) => {
       setError(err.response?.data?.error?.message || '슬롯 생성에 실패했습니다');
