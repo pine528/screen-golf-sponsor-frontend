@@ -204,6 +204,7 @@ export function Layout({ children }: LayoutProps) {
     { path: '/admin/fan-votes', label: '팬 투표 심사', icon: ListChecks },
     { path: '/admin/payments', label: '결제 관리', icon: CreditCard },
     { path: '/admin/finance', label: '재무 콘솔', icon: Wallet },
+    { path: '/admin/finance/withdrawals', label: '출금 관리', icon: Banknote },
     { path: '/admin/finance/tax-invoices', label: '세금계산서', icon: FileCheck },
     { path: '/admin/reconciliation', label: '대사 관리', icon: Shield },
     { path: '/admin/users', label: '관리자 관리', icon: UserCog },
