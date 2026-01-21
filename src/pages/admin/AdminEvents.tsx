@@ -57,14 +57,14 @@ export function AdminEvents() {
 
   const statusStyles: Record<string, string> = {
     UPCOMING: 'bg-sky-100 text-sky-700 border-sky-200',
-    ONGOING: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    LIVE: 'bg-emerald-100 text-emerald-700 border-emerald-200',
     COMPLETED: 'bg-slate-100 text-slate-700 border-slate-200',
     CANCELLED: 'bg-red-100 text-red-700 border-red-200',
   };
 
   const statusLabels: Record<string, string> = {
     UPCOMING: '예정',
-    ONGOING: '진행중',
+    LIVE: '진행중',
     COMPLETED: '완료',
     CANCELLED: '취소',
   };
@@ -123,7 +123,7 @@ export function AdminEvents() {
               >
                 <option value="all">전체 상태</option>
                 <option value="UPCOMING">예정</option>
-                <option value="ONGOING">진행중</option>
+                <option value="LIVE">진행중</option>
                 <option value="COMPLETED">완료</option>
                 <option value="CANCELLED">취소</option>
               </select>
