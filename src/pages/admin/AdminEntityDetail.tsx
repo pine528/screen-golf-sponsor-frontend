@@ -958,33 +958,15 @@ export default function AdminEntityDetail() {
         <div className="card p-6">
           <h2 className="text-lg font-semibold text-slate-900 mb-4">빠른 링크</h2>
           <div className="flex flex-wrap gap-3">
-            <Link
-              to={`/admin/contracts?${isAthlete ? 'athleteId' : 'brandId'}=${id}`}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
-            >
-              <CreditCard className="w-4 h-4" />
-              계약 목록
-              <ExternalLink className="w-3 h-3" />
-            </Link>
             {isAthlete && (
-              <>
-                <Link
-                  to={`/admin/slots?athleteId=${id}`}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
-                >
-                  <Briefcase className="w-4 h-4" />
-                  슬롯 목록
-                  <ExternalLink className="w-3 h-3" />
-                </Link>
-                <Link
-                  to={`/admin/finance/withdrawals?athleteId=${id}`}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
-                >
-                  <Banknote className="w-4 h-4" />
-                  출금 목록
-                  <ExternalLink className="w-3 h-3" />
-                </Link>
-              </>
+              <Link
+                to={`/admin/finance/withdrawals?athleteId=${id}`}
+                className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+              >
+                <Banknote className="w-4 h-4" />
+                출금 목록
+                <ExternalLink className="w-3 h-3" />
+              </Link>
             )}
             {!isAthlete && (
               <Link

@@ -495,7 +495,7 @@ export function AuctionDetail() {
                 {/* 경매 종료 후 계약 보러가기 버튼 */}
                 {auctionData.status === 'ENDED' && auctionData.contract?.id && (
                   <Link
-                    to={`/contracts?highlight=${auctionData.contract.id}`}
+                    to={`/contracts/${auctionData.contract.id}`}
                     className="btn btn-primary w-full text-sm flex items-center justify-center gap-2"
                   >
                     <FileText className="w-4 h-4" />
