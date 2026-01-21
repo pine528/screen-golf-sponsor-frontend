@@ -11,6 +11,7 @@ import {
   XCircle,
   Loader2,
   ChevronRight,
+  Trash2,
 } from 'lucide-react';
 import { cn } from '../../utils';
 
@@ -91,6 +92,13 @@ export default function AdminFanVotes() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.deleteFanVote(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['endedFanVotes'] });
+    },
+  });
+
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('ko-KR', {
       month: 'short',
@@ -109,6 +117,12 @@ export default function AdminFanVotes() {
   const handleClose = (id: string) => {
     if (confirm('이 투표를 종료하시겠습니까?')) {
       closeMutation.mutate(id);
+    }
+  };
+
+  const handleDelete = (event: FanVoteEvent) => {
+    if (confirm(`"${event.title}" 투표를 삭제하시겠습니까?\n\n삭제하면 복구할 수 없습니다.`)) {
+      deleteMutation.mutate(event.id);
     }
   };
 
@@ -198,13 +212,29 @@ export default function AdminFanVotes() {
           )}
 
           {event.status === 'SETTLED' && (
-            <Link
-              to={`/fan-votes/${event.id}/result`}
-              className="btn btn-secondary text-sm"
-            >
-              결과 보기
-              <ChevronRight className="w-4 h-4 ml-1" />
-            </Link>
+            <>
+              <Link
+                to={`/fan-votes/${event.id}/result`}
+                className="btn btn-secondary text-sm"
+              >
+                결과 보기
+                <ChevronRight className="w-4 h-4 ml-1" />
+              </Link>
+              <button
+                onClick={() => handleDelete(event)}
+                disabled={deleteMutation.isPending}
+                className="btn text-sm bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+              >
+                {deleteMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-1" />
+                    삭제
+                  </>
+                )}
+              </button>
+            </>
           )}
         </div>
       </div>

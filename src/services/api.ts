@@ -1254,6 +1254,12 @@ class ApiService {
     return response.data;
   }
 
+  // Admin: 정산 완료된 투표 삭제
+  async deleteFanVote(id: string) {
+    const response = await this.client.delete<ApiResponse<any>>(`/fan-votes/admin/${id}`);
+    return response.data;
+  }
+
   // ============================================
   // Vote Sponsorship (투표 스폰서십) - Phase G
   // ============================================
