@@ -126,7 +126,7 @@ export function Settlements() {
               <div className="min-w-0">
                 <p className="text-xs sm:text-sm text-slate-600">총 정산액</p>
                 <p className="text-base sm:text-2xl font-bold text-slate-900 truncate">
-                  {formatCurrency(stats.totalSettled || 0)}
+                  {formatCurrency(stats.totalPaid || 0)}
                 </p>
               </div>
             </div>
@@ -152,7 +152,7 @@ export function Settlements() {
               <div className="min-w-0">
                 <p className="text-xs sm:text-sm text-slate-600">이번 달</p>
                 <p className="text-base sm:text-2xl font-bold text-slate-900 truncate">
-                  {formatCurrency(stats.thisMonthAmount || 0)}
+                  {formatCurrency(stats.thisMonth || 0)}
                 </p>
               </div>
             </div>
@@ -164,7 +164,7 @@ export function Settlements() {
               </div>
               <div className="min-w-0">
                 <p className="text-xs sm:text-sm text-slate-600">정산 건수</p>
-                <p className="text-base sm:text-2xl font-bold text-slate-900">{stats.totalCount || settlements.length}</p>
+                <p className="text-base sm:text-2xl font-bold text-slate-900">{stats.settlementCount || settlements.length}</p>
               </div>
             </div>
           </div>
