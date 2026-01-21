@@ -50,8 +50,8 @@ export function Settlements() {
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
         return (
-          settlement.contract?.slotInstance?.slotTemplate?.name?.toLowerCase().includes(searchLower) ||
-          settlement.contract?.brand?.companyName?.toLowerCase().includes(searchLower)
+          settlement.contract?.auction?.slotInstance?.slotTemplate?.name?.toLowerCase().includes(searchLower) ||
+          settlement.contract?.brand?.name?.toLowerCase().includes(searchLower)
         );
       }
       return true;
@@ -75,14 +75,14 @@ export function Settlements() {
   const statusStyles: Record<string, string> = {
     PENDING: 'bg-amber-100 text-amber-700 border-amber-200',
     PROCESSING: 'bg-sky-100 text-sky-700 border-sky-200',
-    COMPLETED: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    PAID: 'bg-emerald-100 text-emerald-700 border-emerald-200',
     FAILED: 'bg-red-100 text-red-700 border-red-200',
   };
 
   const statusLabels: Record<string, string> = {
     PENDING: '대기중',
     PROCESSING: '처리중',
-    COMPLETED: '완료',
+    PAID: '완료',
     FAILED: '실패',
   };
 
@@ -229,7 +229,7 @@ export function Settlements() {
                 <option value="all">전체 상태</option>
                 <option value="PENDING">대기중</option>
                 <option value="PROCESSING">처리중</option>
-                <option value="COMPLETED">완료</option>
+                <option value="PAID">완료</option>
               </select>
               <select
                 value={periodFilter}
@@ -269,10 +269,10 @@ export function Settlements() {
                     <div className="flex items-start gap-3 sm:gap-4">
                       <div className={cn(
                         'w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0',
-                        settlement.status === 'COMPLETED' ? 'bg-emerald-100' :
+                        settlement.status === 'PAID' ? 'bg-emerald-100' :
                         settlement.status === 'PENDING' ? 'bg-amber-100' : 'bg-sky-100'
                       )}>
-                        {settlement.status === 'COMPLETED' ? (
+                        {settlement.status === 'PAID' ? (
                           <ArrowDownRight className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
                         ) : (
                           <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" />
@@ -281,7 +281,7 @@ export function Settlements() {
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                           <h3 className="font-semibold text-slate-900 text-sm sm:text-base">
-                            {settlement.contract?.slotInstance?.slotTemplate?.name || '슬롯'}
+                            {settlement.contract?.auction?.slotInstance?.slotTemplate?.name || '슬롯'}
                           </h3>
                           <span className={cn('badge text-xs', statusStyles[settlement.status])}>
                             {statusLabels[settlement.status]}
@@ -290,34 +290,34 @@ export function Settlements() {
                         <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-slate-600">
                           <div className="flex items-center gap-1">
                             <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            <span className="truncate">{settlement.contract?.brand?.companyName || '브랜드'}</span>
+                            <span className="truncate">{settlement.contract?.brand?.name || '브랜드'}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            <span className="truncate">{settlement.contract?.slotInstance?.event?.name || '이벤트'}</span>
+                            <span className="truncate">{settlement.contract?.auction?.slotInstance?.event?.name || '이벤트'}</span>
                           </div>
                         </div>
                         <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-xs sm:text-sm">
                           <span className="text-slate-500">
-                            계약금: {formatCurrency(settlement.contract?.finalPrice || 0)}
+                            계약금: {formatCurrency(settlement.contract?.priceFinal || 0)}
                           </span>
                           <span className="text-slate-500">
-                            수수료: {formatCurrency(settlement.feeAmount || 0)}
+                            수수료: {formatCurrency(settlement.platformFee || 0)}
                           </span>
                         </div>
                       </div>
                     </div>
                     <div className="text-left sm:text-right pl-13 sm:pl-0 flex-shrink-0">
                       <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">
-                        {settlement.status === 'COMPLETED' ? '정산 완료' : '정산 예정'}
+                        {settlement.status === 'PAID' ? '정산 완료' : '정산 예정'}
                       </p>
                       <p className="text-lg sm:text-xl font-bold text-emerald-600">
-                        {formatCurrency(settlement.netAmount || 0)}
+                        {formatCurrency(settlement.payoutAmount || 0)}
                       </p>
                       <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">
-                        {settlement.status === 'COMPLETED'
-                          ? formatDate(settlement.completedAt)
-                          : `예정: ${formatDate(settlement.expectedDate)}`}
+                        {settlement.status === 'PAID'
+                          ? formatDate(settlement.paidAt)
+                          : `예정: ${formatDate(settlement.createdAt)}`}
                       </p>
                     </div>
                   </div>

@@ -596,6 +596,11 @@ class ApiService {
     return response.data;
   }
 
+  async getEndedVoteEvents(params?: any) {
+    const response = await this.client.get<ApiResponse<any[]>>('/votes/ended', { params });
+    return response.data;
+  }
+
   async getVoteEvents(params?: any) {
     const response = await this.client.get<ApiResponse<any[]>>('/votes/events', { params });
     return response.data;

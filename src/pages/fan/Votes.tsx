@@ -197,7 +197,7 @@ export default function Votes() {
   const { data: activeAdminVotes, isLoading: loadingActiveAdmin } = useQuery({
     queryKey: ['voteEvents', 'active'],
     queryFn: async () => {
-      const res = await api.getVoteEvents({ status: 'ACTIVE' });
+      const res = await api.getActiveVoteEvents();
       return (res.data || []) as VoteEvent[];
     },
   });
@@ -215,7 +215,7 @@ export default function Votes() {
   const { data: endedAdminVotes, isLoading: loadingEndedAdmin } = useQuery({
     queryKey: ['voteEvents', 'ended'],
     queryFn: async () => {
-      const res = await api.getVoteEvents({ status: 'CLOSED,SETTLED' });
+      const res = await api.getEndedVoteEvents();
       return (res.data || []) as VoteEvent[];
     },
   });
