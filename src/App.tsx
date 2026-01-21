@@ -291,14 +291,8 @@ function App() {
       />
 
       {/* Fan Routes */}
-      <Route
-        path="/fan"
-        element={
-          <ProtectedRoute>
-            <FanHome />
-          </ProtectedRoute>
-        }
-      />
+      {/* /fan은 비로그인도 접근 가능 (optionalAuth) */}
+      <Route path="/fan" element={<FanHome />} />
       <Route
         path="/votes"
         element={
@@ -399,14 +393,8 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/fan-votes/:id/result"
-        element={
-          <ProtectedRoute>
-            <FanVoteResult />
-          </ProtectedRoute>
-        }
-      />
+      {/* /fan-votes/:id/result은 비로그인도 접근 가능 (결과 조회) */}
+      <Route path="/fan-votes/:id/result" element={<FanVoteResult />} />
       <Route
         path="/seasons/:id/leaderboard"
         element={
