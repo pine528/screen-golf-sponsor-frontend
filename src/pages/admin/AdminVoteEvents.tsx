@@ -312,6 +312,20 @@ export default function AdminVoteEvents() {
                             <Award className="w-4 h-4" />
                           </button>
                         )}
+                        {event.status === 'SETTLED' && (
+                          <button
+                            onClick={() => {
+                              if (confirm(`"${event.title}" 투표를 삭제하시겠습니까?\n\n삭제하면 복구할 수 없습니다.`)) {
+                                deleteMutation.mutate(event.id);
+                              }
+                            }}
+                            disabled={deleteMutation.isPending}
+                            className="btn btn-ghost text-red-600 hover:text-red-700 p-2"
+                            title="삭제"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
