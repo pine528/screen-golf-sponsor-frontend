@@ -65,6 +65,12 @@ export default function AthleteWithdrawals() {
   });
   const [statusFilter, setStatusFilter] = useState<string>('');
 
+  // 내 프로필 (은행 정보 가져오기)
+  const { data: profileData } = useQuery({
+    queryKey: ['my-athlete'],
+    queryFn: () => api.getMyAthlete(),
+  });
+
   // 출금 가능 잔액 조회
   const { data: balanceData, isLoading: loadingBalance } = useQuery({
     queryKey: ['withdrawalBalance'],
@@ -153,7 +159,19 @@ export default function AthleteWithdrawals() {
         <div className="bg-white rounded-lg border p-4">
           {!showForm ? (
             <button
-              onClick={() => setShowForm(true)}
+              onClick={() => {
+                // 프로필에서 등록된 계좌 정보 자동 입력
+                const profile = profileData?.data;
+                const bankInfo = profile?.bankAccount || {};
+                setForm({
+                  amount: '',
+                  bankName: bankInfo.bankName || '',
+                  bankAccountNumber: bankInfo.accountNumber || '',
+                  accountHolder: bankInfo.accountHolder || '',
+                  reason: '',
+                });
+                setShowForm(true);
+              }}
               className="w-full py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center justify-center gap-2"
             >
               <Send className="w-5 h-5" />
