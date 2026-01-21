@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Layout } from '../components/Layout';
 import { api } from '../services/api';
@@ -21,6 +22,7 @@ import {
 import { cn } from '../utils';
 
 export function Settlements() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [periodFilter, setPeriodFilter] = useState<string>('all');
@@ -182,7 +184,10 @@ export function Settlements() {
                 </p>
               </div>
             </div>
-            <button className="text-xs sm:text-sm text-emerald-600 hover:text-emerald-700 font-medium self-end sm:self-auto">
+            <button
+              onClick={() => navigate('/athlete/withdrawals')}
+              className="text-xs sm:text-sm text-emerald-600 hover:text-emerald-700 font-medium self-end sm:self-auto"
+            >
               계좌 변경
             </button>
           </div>

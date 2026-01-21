@@ -45,6 +45,12 @@ export function Contracts() {
       queryClient.invalidateQueries({ queryKey: ['my-contracts'] });
       setShowModal(false);
       setSelectedContract(null);
+      alert('계약 서명이 완료되었습니다!');
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.error?.message || '서명에 실패했습니다. 다시 시도해주세요.';
+      alert(message);
+      console.error('Contract sign error:', error);
     },
   });
 
@@ -459,7 +465,9 @@ function ContractDetailModal({
     try {
       // 1. 파일들 업로드
       const uploadResult = await api.uploadFiles(verificationFiles, 'verification');
-      const photoUrls = uploadResult.data?.urls || uploadResult.data?.map((f: any) => f.url || f.fileUrl) || [];
+      const photoUrls = uploadResult.data?.urls
+        || uploadResult.data?.files?.map((f: any) => f.fileUrl || f.url)
+        || (Array.isArray(uploadResult.data) ? uploadResult.data.map((f: any) => f.fileUrl || f.url) : []);
 
       if (photoUrls.length === 0) {
         throw new Error('파일 업로드 실패');
