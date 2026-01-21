@@ -318,7 +318,7 @@ export function Auctions() {
                         <p className="font-semibold text-slate-900">{formatCurrency(bid.myBidAmount)}</p>
                       </div>
                       <div className="p-2 bg-slate-50 rounded-lg">
-                        <p className="text-xs text-slate-500">현재 최고가</p>
+                        <p className="text-xs text-slate-500">현재 경매가</p>
                         <p className="font-semibold text-slate-900">{formatCurrency(bid.currentHighest)}</p>
                       </div>
                     </div>
