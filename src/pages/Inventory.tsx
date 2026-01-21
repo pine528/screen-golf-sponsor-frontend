@@ -51,7 +51,7 @@ export function Inventory() {
         const searchLower = searchTerm.toLowerCase();
         return (
           slot.slotTemplate?.name?.toLowerCase().includes(searchLower) ||
-          slot.athlete?.displayName?.toLowerCase().includes(searchLower) ||
+          slot.athlete?.name?.toLowerCase().includes(searchLower) ||
           slot.event?.name?.toLowerCase().includes(searchLower)
         );
       }
@@ -222,17 +222,17 @@ export function Inventory() {
                         </div>
                         <div>
                           <p className="font-medium text-slate-900">{slot.slotTemplate?.name}</p>
-                          <p className="text-sm text-slate-500">{slot.slotTemplate?.position}</p>
+                          <p className="text-sm text-slate-500">{slot.slotTemplate?.bodyPart}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-medium text-slate-900">{slot.athlete?.displayName}</p>
+                      <p className="font-medium text-slate-900">{slot.athlete?.name}</p>
                       <p className="text-sm text-slate-500">랭킹 {slot.athlete?.rank}위</p>
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-sm text-slate-600">{slot.event?.name}</p>
-                      <p className="text-xs text-slate-400">{formatDate(slot.event?.startDate)}</p>
+                      <p className="text-xs text-slate-400">{formatDate(slot.event?.dateStart)}</p>
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-semibold text-slate-900">
@@ -335,7 +335,7 @@ function SlotCard({ slot, onSelect, formatCurrency, formatDate }: SlotCardProps)
             <h3 className="font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors text-sm sm:text-base">
               {slot.slotTemplate?.name}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-500">{slot.slotTemplate?.position}</p>
+            <p className="text-xs sm:text-sm text-slate-500">{slot.slotTemplate?.bodyPart}</p>
           </div>
           <span className="badge badge-info text-xs">{slot.slotTemplate?.duration}초</span>
         </div>
@@ -346,7 +346,7 @@ function SlotCard({ slot, onSelect, formatCurrency, formatDate }: SlotCardProps)
             <Users className="w-4 h-4 sm:w-5 sm:h-5 text-slate-500" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-slate-900 text-sm sm:text-base truncate">{slot.athlete?.displayName}</p>
+            <p className="font-medium text-slate-900 text-sm sm:text-base truncate">{slot.athlete?.name}</p>
             <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-slate-500">
               <span>랭킹 {slot.athlete?.rank}위</span>
               <span>•</span>
@@ -360,7 +360,7 @@ function SlotCard({ slot, onSelect, formatCurrency, formatDate }: SlotCardProps)
           <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
           <span className="truncate">{slot.event?.name}</span>
           <span className="text-slate-300">|</span>
-          <span className="flex-shrink-0">{formatDate(slot.event?.startDate)}</span>
+          <span className="flex-shrink-0">{formatDate(slot.event?.dateStart)}</span>
         </div>
 
         {/* Price & Action */}
@@ -479,7 +479,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onBuySucce
           <div className="grid grid-cols-2 gap-2 sm:gap-4">
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
               <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">위치</p>
-              <p className="font-medium text-slate-900 text-sm sm:text-base">{slot.slotTemplate?.position}</p>
+              <p className="font-medium text-slate-900 text-sm sm:text-base">{slot.slotTemplate?.bodyPart}</p>
             </div>
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
               <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">노출 시간</p>
@@ -505,7 +505,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onBuySucce
                 <Users className="w-6 h-6 sm:w-8 sm:h-8 text-slate-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-slate-900 text-sm sm:text-base">{slot.athlete?.displayName}</p>
+                <p className="font-semibold text-slate-900 text-sm sm:text-base">{slot.athlete?.name}</p>
                 <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[10px] sm:text-sm text-slate-600 mt-1">
                   <span className="flex items-center gap-1">
                     <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
