@@ -35,7 +35,7 @@ export function MySlots() {
   const queryClient = useQueryClient();
 
   // Get athlete profile to get athlete ID
-  const { data: athleteData } = useQuery({
+  const { data: athleteData, isLoading: athleteLoading } = useQuery({
     queryKey: ['my-athlete'],
     queryFn: () => api.getMyAthlete(),
   });
@@ -134,10 +134,21 @@ export function MySlots() {
             <p className="text-sm sm:text-base text-slate-600 mt-1">내 광고 슬롯을 관리합니다</p>
           </div>
           <button
-            onClick={() => setShowCreateModal(true)}
-            className="btn btn-primary inline-flex items-center gap-2 text-sm"
+            onClick={() => {
+              if (!athlete) {
+                alert('선수 프로필을 먼저 등록해주세요');
+                return;
+              }
+              setShowCreateModal(true);
+            }}
+            disabled={athleteLoading}
+            className="btn btn-primary inline-flex items-center gap-2 text-sm disabled:opacity-50"
           >
-            <Plus className="w-4 h-4" />
+            {athleteLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Plus className="w-4 h-4" />
+            )}
             슬롯 추가
           </button>
         </div>
