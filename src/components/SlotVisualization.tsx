@@ -88,7 +88,7 @@ function getPosition(bodyPart: string): {
 }
 
 /**
- * 골프 폴로 셔츠 시각화 - 개선된 디자인
+ * 골프 폴로 셔츠 시각화 - 깔끔한 디자인
  */
 function ShirtVisualization({
   bodyPart,
@@ -99,196 +99,168 @@ function ShirtVisualization({
   const pos = getPosition(bodyPart || '');
 
   return (
-    <div className={cn('relative', className)}>
-      <svg
-        viewBox="0 0 300 320"
-        className="w-full h-auto"
-        style={{ maxWidth: '350px' }}
+    <div className={cn('relative flex flex-col items-center', className)}>
+      <div
+        className="relative bg-slate-50 rounded-2xl p-4"
+        style={{ maxWidth: '320px' }}
       >
-        {/* 배경 */}
-        <rect width="300" height="320" fill="#f8fafc" rx="16" />
-
-        {/* 그림자 효과 */}
-        <defs>
-          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="2" dy="4" stdDeviation="4" floodOpacity="0.1" />
-          </filter>
-          <linearGradient id="shirtGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="100%" stopColor="#f1f5f9" />
-          </linearGradient>
-          <linearGradient id="collarGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#e2e8f0" />
-            <stop offset="100%" stopColor="#cbd5e1" />
-          </linearGradient>
-        </defs>
-
-        {/* 셔츠 본체 */}
-        <g filter="url(#shadow)">
-          {/* 몸통 */}
-          <path
-            d="M150 55
-               L100 70
-               L65 55
-               L35 95
-               L60 110
-               L60 280
-               L240 280
-               L240 110
-               L265 95
-               L235 55
-               L200 70
-               L150 55"
-            fill="url(#shirtGradient)"
-            stroke="#cbd5e1"
-            strokeWidth="2"
-          />
-
-          {/* 왼쪽 소매 */}
-          <path
-            d="M65 55 L35 95 L60 110 L60 75 L65 55"
-            fill="url(#shirtGradient)"
-            stroke="#cbd5e1"
-            strokeWidth="2"
-          />
-
-          {/* 오른쪽 소매 */}
-          <path
-            d="M235 55 L265 95 L240 110 L240 75 L235 55"
-            fill="url(#shirtGradient)"
-            stroke="#cbd5e1"
-            strokeWidth="2"
-          />
-
-          {/* 소매 끝단 밴드 (왼쪽) */}
-          <path
-            d="M35 95 L60 110 L60 115 L33 99 Z"
-            fill="#e2e8f0"
-            stroke="#cbd5e1"
-            strokeWidth="1"
-          />
-
-          {/* 소매 끝단 밴드 (오른쪽) */}
-          <path
-            d="M265 95 L240 110 L240 115 L267 99 Z"
-            fill="#e2e8f0"
-            stroke="#cbd5e1"
-            strokeWidth="1"
-          />
-
-          {/* 칼라 베이스 */}
-          <ellipse
-            cx="150"
-            cy="55"
-            rx="52"
-            ry="18"
-            fill="url(#collarGradient)"
-            stroke="#94a3b8"
-            strokeWidth="1.5"
-          />
-
-          {/* 칼라 왼쪽 날개 */}
-          <path
-            d="M100 55 L85 40 L100 48 L115 40 L100 55"
-            fill="#e2e8f0"
-            stroke="#94a3b8"
-            strokeWidth="1.5"
-          />
-
-          {/* 칼라 오른쪽 날개 */}
-          <path
-            d="M200 55 L185 40 L200 48 L215 40 L200 55"
-            fill="#e2e8f0"
-            stroke="#94a3b8"
-            strokeWidth="1.5"
-          />
-
-          {/* 목 구멍 */}
-          <ellipse
-            cx="150"
-            cy="52"
-            rx="25"
-            ry="12"
-            fill="#f1f5f9"
-            stroke="#cbd5e1"
-            strokeWidth="1"
-          />
-
-          {/* 단추 라인 */}
-          <line x1="150" y1="65" x2="150" y2="130" stroke="#e2e8f0" strokeWidth="2" />
-
-          {/* 단추들 */}
-          <circle cx="150" cy="75" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
-          <circle cx="150" cy="95" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
-          <circle cx="150" cy="115" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
-
-          {/* 하단 밑단 */}
-          <path
-            d="M60 275 L60 280 Q150 290 240 280 L240 275"
-            fill="none"
-            stroke="#cbd5e1"
-            strokeWidth="1.5"
-          />
-        </g>
-
-        {/* 부착 위치 표시 영역 */}
-        <rect
-          x={pos.x - 30}
-          y={pos.y - 20}
-          width="60"
-          height="40"
-          fill="rgba(16, 185, 129, 0.15)"
-          stroke="#10b981"
-          strokeWidth="2"
-          strokeDasharray="6,3"
-          rx="6"
-        />
-
-        {/* 로고 또는 브랜드명 */}
-        {brandLogo ? (
-          <image
-            href={brandLogo}
-            x={pos.x - 25}
-            y={pos.y - 15}
-            width="50"
-            height="30"
-            preserveAspectRatio="xMidYMid meet"
-          />
-        ) : (
-          <text
-            x={pos.x}
-            y={pos.y}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill="#10b981"
-            fontSize="12"
-            fontWeight="bold"
-          >
-            {brandName}
-          </text>
-        )}
-
-        {/* 위치 설명 라벨 */}
-        <rect
-          x={pos.labelX - 35}
-          y={pos.labelY}
-          width="70"
-          height="22"
-          fill="#10b981"
-          rx="11"
-        />
-        <text
-          x={pos.labelX}
-          y={pos.labelY + 11}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fill="white"
-          fontSize="11"
-          fontWeight="600"
+        <svg
+          viewBox="0 0 300 320"
+          className="w-full h-auto"
         >
-          {pos.label}
-        </text>
-      </svg>
+          {/* 그림자 효과 */}
+          <defs>
+            <filter id="shirtShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="2" dy="4" stdDeviation="4" floodOpacity="0.1" />
+            </filter>
+            <linearGradient id="shirtGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="100%" stopColor="#f1f5f9" />
+            </linearGradient>
+          </defs>
+
+          {/* 셔츠 본체 */}
+          <g filter="url(#shirtShadow)">
+            {/* 몸통 - 더 자연스러운 형태 */}
+            <path
+              d="M150 65
+                 C120 65, 95 58, 75 50
+                 L45 85
+                 L65 100
+                 L65 280
+                 Q150 290, 235 280
+                 L235 100
+                 L255 85
+                 L225 50
+                 C205 58, 180 65, 150 65"
+              fill="url(#shirtGradient)"
+              stroke="#cbd5e1"
+              strokeWidth="2"
+            />
+
+            {/* 왼쪽 소매 */}
+            <path
+              d="M75 50 L45 85 L65 100 L75 70 Z"
+              fill="url(#shirtGradient)"
+              stroke="#cbd5e1"
+              strokeWidth="2"
+            />
+
+            {/* 오른쪽 소매 */}
+            <path
+              d="M225 50 L255 85 L235 100 L225 70 Z"
+              fill="url(#shirtGradient)"
+              stroke="#cbd5e1"
+              strokeWidth="2"
+            />
+
+            {/* 소매 밴드 (왼쪽) */}
+            <path
+              d="M45 82 Q55 95, 65 98 L65 102 Q55 99, 43 87 Z"
+              fill="#e2e8f0"
+              stroke="#cbd5e1"
+              strokeWidth="1"
+            />
+
+            {/* 소매 밴드 (오른쪽) */}
+            <path
+              d="M255 82 Q245 95, 235 98 L235 102 Q245 99, 257 87 Z"
+              fill="#e2e8f0"
+              stroke="#cbd5e1"
+              strokeWidth="1"
+            />
+
+            {/* 칼라 - 심플한 폴로 칼라 */}
+            <path
+              d="M105 48
+                 Q105 35, 120 32
+                 L130 45
+                 L150 55
+                 L170 45
+                 L180 32
+                 Q195 35, 195 48
+                 Q150 60, 105 48"
+              fill="#e2e8f0"
+              stroke="#94a3b8"
+              strokeWidth="1.5"
+            />
+
+            {/* 칼라 안쪽 */}
+            <path
+              d="M120 42 Q150 52, 180 42"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="1"
+            />
+
+            {/* V넥 라인 */}
+            <path
+              d="M130 45 L150 75 L170 45"
+              fill="#f8fafc"
+              stroke="#cbd5e1"
+              strokeWidth="1"
+            />
+
+            {/* 단추 플라켓 */}
+            <line x1="150" y1="75" x2="150" y2="140" stroke="#e2e8f0" strokeWidth="2" />
+
+            {/* 단추들 */}
+            <circle cx="150" cy="85" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
+            <circle cx="150" cy="105" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
+            <circle cx="150" cy="125" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
+
+            {/* 하단 밑단 */}
+            <path
+              d="M65 275 Q150 285, 235 275"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="1.5"
+            />
+          </g>
+
+          {/* 부착 위치 표시 영역 */}
+          <rect
+            x={pos.x - 30}
+            y={pos.y - 20}
+            width="60"
+            height="40"
+            fill="rgba(16, 185, 129, 0.15)"
+            stroke="#10b981"
+            strokeWidth="2"
+            strokeDasharray="6,3"
+            rx="6"
+          />
+
+          {/* 로고 또는 브랜드명 */}
+          {brandLogo ? (
+            <image
+              href={brandLogo}
+              x={pos.x - 25}
+              y={pos.y - 15}
+              width="50"
+              height="30"
+              preserveAspectRatio="xMidYMid meet"
+            />
+          ) : (
+            <text
+              x={pos.x}
+              y={pos.y}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill="#10b981"
+              fontSize="12"
+              fontWeight="bold"
+            >
+              {brandName}
+            </text>
+          )}
+        </svg>
+      </div>
+
+      {/* 위치 라벨 */}
+      <div className="mt-4 px-6 py-2 bg-emerald-500 text-white text-sm font-medium rounded-full">
+        {pos.label}
+      </div>
 
       {/* 범례 */}
       <div className="mt-3 flex items-center justify-center gap-4 text-xs text-slate-500">
