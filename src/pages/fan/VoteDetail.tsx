@@ -129,13 +129,13 @@ export default function VoteDetail() {
   };
 
   const getOptionPercentage = (optionId: string) => {
-    if (!stats) return 0;
+    if (!stats?.optionStats) return 0;
     const optionStat = stats.optionStats.find(s => s.optionId === optionId);
     return optionStat?.percentage || 0;
   };
 
   const getOptionVoteCount = (optionId: string) => {
-    if (!stats) return 0;
+    if (!stats?.optionStats) return 0;
     const optionStat = stats.optionStats.find(s => s.optionId === optionId);
     return optionStat?.count || 0;
   };
