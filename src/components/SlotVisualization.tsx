@@ -54,37 +54,37 @@ function getPosition(bodyPart: string): {
   // 소매 (SLEEVE) - 가장 먼저 체크 (UPPER_SLEEVE도 포함)
   if (part.includes('SLEEVE')) {
     if (part.includes('LEFT') || part.includes('L')) {
-      return { key: 'SLEEVE_L', x: 52, y: 115, label: '왼쪽 소매', labelX: 52, labelY: 155 };
+      return { key: 'SLEEVE_L', x: 60, y: 95, label: '왼쪽 소매', labelX: 60, labelY: 135 };
     }
     if (part.includes('RIGHT') || part.includes('R')) {
-      return { key: 'SLEEVE_R', x: 248, y: 115, label: '오른쪽 소매', labelX: 248, labelY: 155 };
+      return { key: 'SLEEVE_R', x: 240, y: 95, label: '오른쪽 소매', labelX: 240, labelY: 135 };
     }
   }
 
   // 가슴 (CHEST)
   if (part.includes('CHEST')) {
     if (part.includes('LEFT') || part.includes('L')) {
-      return { key: 'CHEST_L', x: 115, y: 135, label: '왼쪽 가슴', labelX: 115, labelY: 185 };
+      return { key: 'CHEST_L', x: 110, y: 155, label: '왼쪽 가슴', labelX: 110, labelY: 200 };
     }
     if (part.includes('RIGHT') || part.includes('R')) {
-      return { key: 'CHEST_R', x: 185, y: 135, label: '오른쪽 가슴', labelX: 185, labelY: 185 };
+      return { key: 'CHEST_R', x: 190, y: 155, label: '오른쪽 가슴', labelX: 190, labelY: 200 };
     }
     // 중앙 가슴
-    return { key: 'CHEST_C', x: 150, y: 135, label: '가슴 중앙', labelX: 150, labelY: 185 };
+    return { key: 'CHEST_C', x: 150, y: 155, label: '가슴 중앙', labelX: 150, labelY: 200 };
   }
 
   // 등판 (BACK)
   if (part.includes('BACK')) {
-    return { key: 'BACK', x: 150, y: 160, label: '등판', labelX: 150, labelY: 210 };
+    return { key: 'BACK', x: 150, y: 180, label: '등판', labelX: 150, labelY: 230 };
   }
 
   // 벨트/허리 (BELT, WAIST)
   if (part.includes('BELT') || part.includes('WAIST')) {
-    return { key: 'BELT', x: 150, y: 245, label: '벨트', labelX: 150, labelY: 280 };
+    return { key: 'BELT', x: 150, y: 250, label: '벨트', labelX: 150, labelY: 285 };
   }
 
   // 기본값: 오른쪽 가슴 (골프 셔츠의 일반적인 로고 위치)
-  return { key: 'CHEST_R', x: 185, y: 135, label: '오른쪽 가슴', labelX: 185, labelY: 185 };
+  return { key: 'CHEST_R', x: 190, y: 155, label: '오른쪽 가슴', labelX: 190, labelY: 200 };
 }
 
 /**
@@ -121,18 +121,18 @@ function ShirtVisualization({
 
           {/* 셔츠 본체 */}
           <g filter="url(#shirtShadow)">
-            {/* 몸통 - 더 자연스러운 형태 */}
+            {/* 몸통 */}
             <path
-              d="M150 65
-                 C120 65, 95 58, 75 50
-                 L45 85
-                 L65 100
-                 L65 280
-                 Q150 290, 235 280
-                 L235 100
-                 L255 85
-                 L225 50
-                 C205 58, 180 65, 150 65"
+              d="M150 75
+                 C125 75, 105 72, 85 65
+                 L50 95
+                 L70 115
+                 L70 280
+                 Q150 290, 230 280
+                 L230 115
+                 L250 95
+                 L215 65
+                 C195 72, 175 75, 150 75"
               fill="url(#shirtGradient)"
               stroke="#cbd5e1"
               strokeWidth="2"
@@ -140,7 +140,7 @@ function ShirtVisualization({
 
             {/* 왼쪽 소매 */}
             <path
-              d="M75 50 L45 85 L65 100 L75 70 Z"
+              d="M85 65 L50 95 L70 115 L85 85 Z"
               fill="url(#shirtGradient)"
               stroke="#cbd5e1"
               strokeWidth="2"
@@ -148,7 +148,7 @@ function ShirtVisualization({
 
             {/* 오른쪽 소매 */}
             <path
-              d="M225 50 L255 85 L235 100 L225 70 Z"
+              d="M215 65 L250 95 L230 115 L215 85 Z"
               fill="url(#shirtGradient)"
               stroke="#cbd5e1"
               strokeWidth="2"
@@ -156,7 +156,7 @@ function ShirtVisualization({
 
             {/* 소매 밴드 (왼쪽) */}
             <path
-              d="M45 82 Q55 95, 65 98 L65 102 Q55 99, 43 87 Z"
+              d="M50 92 Q60 105, 70 112 L70 117 Q58 108, 48 97 Z"
               fill="#e2e8f0"
               stroke="#cbd5e1"
               strokeWidth="1"
@@ -164,30 +164,30 @@ function ShirtVisualization({
 
             {/* 소매 밴드 (오른쪽) */}
             <path
-              d="M255 82 Q245 95, 235 98 L235 102 Q245 99, 257 87 Z"
+              d="M250 92 Q240 105, 230 112 L230 117 Q242 108, 252 97 Z"
               fill="#e2e8f0"
               stroke="#cbd5e1"
               strokeWidth="1"
             />
 
-            {/* 칼라 - 심플한 폴로 칼라 */}
+            {/* 칼라 - 폴로 칼라 (몸통과 연결) */}
             <path
-              d="M105 48
-                 Q105 35, 120 32
-                 L130 45
-                 L150 55
-                 L170 45
-                 L180 32
-                 Q195 35, 195 48
-                 Q150 60, 105 48"
+              d="M110 68
+                 Q110 55, 125 52
+                 L138 63
+                 L150 72
+                 L162 63
+                 L175 52
+                 Q190 55, 190 68
+                 Q150 78, 110 68"
               fill="#e2e8f0"
               stroke="#94a3b8"
               strokeWidth="1.5"
             />
 
-            {/* 칼라 안쪽 */}
+            {/* 칼라 안쪽 라인 */}
             <path
-              d="M120 42 Q150 52, 180 42"
+              d="M128 60 Q150 68, 172 60"
               fill="none"
               stroke="#cbd5e1"
               strokeWidth="1"
@@ -195,23 +195,23 @@ function ShirtVisualization({
 
             {/* V넥 라인 */}
             <path
-              d="M130 45 L150 75 L170 45"
+              d="M138 63 L150 90 L162 63"
               fill="#f8fafc"
               stroke="#cbd5e1"
               strokeWidth="1"
             />
 
             {/* 단추 플라켓 */}
-            <line x1="150" y1="75" x2="150" y2="140" stroke="#e2e8f0" strokeWidth="2" />
+            <line x1="150" y1="90" x2="150" y2="155" stroke="#e2e8f0" strokeWidth="2" />
 
             {/* 단추들 */}
-            <circle cx="150" cy="85" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
-            <circle cx="150" cy="105" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
-            <circle cx="150" cy="125" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
+            <circle cx="150" cy="100" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
+            <circle cx="150" cy="120" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
+            <circle cx="150" cy="140" r="3" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
 
             {/* 하단 밑단 */}
             <path
-              d="M65 275 Q150 285, 235 275"
+              d="M70 275 Q150 285, 230 275"
               fill="none"
               stroke="#cbd5e1"
               strokeWidth="1.5"
