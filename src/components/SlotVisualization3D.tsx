@@ -34,18 +34,26 @@ function createShirtShape() {
   return shape;
 }
 
-// 모자 챙(Bill) 형태 생성 - 곡선형
+// 모자 챙(Bill) 형태 생성 - 부드러운 곡선형 (bezierCurve)
 function createBillShape() {
   const shape = new THREE.Shape();
 
-  // 챙의 2D 형태 (위에서 본 모양) - 반원형으로 앞으로 뻗어나감
-  shape.moveTo(-0.65, 0);
-  shape.quadraticCurveTo(-0.7, 0.5, 0, 0.8);  // 왼쪽 곡선
-  shape.quadraticCurveTo(0.7, 0.5, 0.65, 0);   // 오른쪽 곡선
-  shape.lineTo(-0.65, 0);
+  // 더 자연스러운 곡선 (bezierCurveTo 사용)
+  shape.moveTo(-0.58, 0);
+  shape.bezierCurveTo(-0.62, 0.25, -0.45, 0.55, 0, 0.72);
+  shape.bezierCurveTo(0.45, 0.55, 0.62, 0.25, 0.58, 0);
+  shape.lineTo(-0.58, 0);
 
   return shape;
 }
+
+// 크라운 파라미터
+const CROWN = {
+  radius: 0.65,
+  height: 0.48,
+  squash: 0.88,
+  segments: 48,
+};
 
 // 로고 텍스처 컴포넌트
 function LogoPlane({ logoUrl, width, height }: { logoUrl: string; width: number; height: number }) {
@@ -111,8 +119,8 @@ function Shirt3D({ logoPosition, logoUrl }: { logoPosition: 'front' | 'back' | '
   );
 }
 
-// 6패널 스티칭 라인 생성
-function PanelSeams({ radius, height }: { radius: number; height: number }) {
+// 6패널 스티칭 라인 생성 (은은하게)
+function PanelSeams({ radius, height, squash }: { radius: number; height: number; squash: number }) {
   const seams = useMemo(() => {
     const lines: THREE.Vector3[][] = [];
     const panels = 6;
@@ -121,10 +129,10 @@ function PanelSeams({ radius, height }: { radius: number; height: number }) {
       const angle = (i / panels) * Math.PI * 2;
       const points: THREE.Vector3[] = [];
 
-      // 아래에서 꼭대기 버튼까지 곡선
-      for (let t = 0; t <= 1; t += 0.1) {
+      // 아래에서 꼭대기 버튼까지 곡선 (압축 적용)
+      for (let t = 0; t <= 1; t += 0.08) {
         const currentRadius = radius * Math.cos(t * Math.PI / 2);
-        const y = height * Math.sin(t * Math.PI / 2);
+        const y = height * Math.sin(t * Math.PI / 2) * squash;
         const x = Math.sin(angle) * currentRadius;
         const z = Math.cos(angle) * currentRadius;
         points.push(new THREE.Vector3(x, y, z));
@@ -132,7 +140,7 @@ function PanelSeams({ radius, height }: { radius: number; height: number }) {
       lines.push(points);
     }
     return lines;
-  }, [radius, height]);
+  }, [radius, height, squash]);
 
   return (
     <>
@@ -140,80 +148,88 @@ function PanelSeams({ radius, height }: { radius: number; height: number }) {
         <Line
           key={i}
           points={points}
-          color="#94a3b8"
-          lineWidth={1}
+          color="#E8E8E6"
+          lineWidth={0.8}
           transparent
-          opacity={0.6}
+          opacity={0.4}
         />
       ))}
     </>
   );
 }
 
-// 모자 3D - 실제 야구 모자 형태
+// 모자 3D - 반투명 패브릭 스타일 베이스볼 캡
 function Cap3D({ logoPosition, logoUrl }: { logoPosition: 'front' | 'side'; logoUrl?: string }) {
   const billShape = useMemo(() => createBillShape(), []);
 
-  const crownRadius = 0.7;
-  const crownHeight = 0.55;
-
-  // 모자 머티리얼 (흰색 반투명)
-  const capMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: '#ffffff',
+  // 패브릭 반투명 머티리얼 - 플라스틱 방지
+  const fabricMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: '#F4F4F2',           // 아이보리 화이트
     transparent: true,
-    opacity: 0.5,
-    roughness: 0.4,
+    opacity: 0.65,              // 0.55~0.75 범위
+    roughness: 0.82,            // 0.75~0.9 (무광 패브릭)
     metalness: 0,
+    transmission: 0,            // 플라스틱 방지
+    ior: 1.0,
+    sheen: 0.15,                // 패브릭 광택
+    sheenRoughness: 0.8,
+    sheenColor: new THREE.Color('#FAFAFA'),
+    side: THREE.DoubleSide,
+    depthWrite: false,
+    alphaTest: 0.01,
+  }), []);
+
+  // 챙 머티리얼 (약간 더 불투명)
+  const brimMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
+    color: '#F4F4F2',
+    transparent: true,
+    opacity: 0.72,
+    roughness: 0.78,
+    metalness: 0,
+    sheen: 0.12,
+    sheenRoughness: 0.85,
+    sheenColor: new THREE.Color('#FAFAFA'),
     side: THREE.DoubleSide,
     depthWrite: false,
   }), []);
 
-  const seamMaterial = useMemo(() => new THREE.MeshBasicMaterial({
-    color: '#cbd5e1',
-    transparent: true,
-    opacity: 0.7,
-  }), []);
+  const crownHeightAdjusted = CROWN.height * CROWN.squash;
 
   return (
     <group rotation={[0.2, logoPosition === 'side' ? -0.5 : 0, 0]} position={[0, -0.1, 0]}>
-      {/* 크라운 (반구형 돔) - 6패널 구조 */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[crownRadius, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <primitive object={capMaterial} />
+      {/* 크라운 (반구형 돔) - Y축 압축으로 자연스러운 형태 */}
+      <mesh position={[0, 0, 0]} scale={[1, CROWN.squash, 1]}>
+        <sphereGeometry args={[CROWN.radius, CROWN.segments, 24, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <primitive object={fabricMaterial} />
       </mesh>
 
-      {/* 크라운 살짝 압축된 느낌 (위쪽 약간 평평하게) */}
-      <mesh position={[0, 0, 0]} scale={[1, 0.85, 1]}>
-        <sphereGeometry args={[crownRadius * 0.98, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <primitive object={capMaterial} />
-      </mesh>
-
-      {/* 6패널 스티칭 라인 */}
+      {/* 6패널 스티칭 라인 (은은하게) */}
       <group position={[0, 0, 0]}>
-        <PanelSeams radius={crownRadius} height={crownHeight} />
+        <PanelSeams radius={CROWN.radius} height={CROWN.height} squash={CROWN.squash} />
       </group>
 
       {/* 꼭대기 버튼 */}
-      <mesh position={[0, crownHeight + 0.02, 0]}>
-        <cylinderGeometry args={[0.045, 0.045, 0.03, 16]} />
+      <mesh position={[0, crownHeightAdjusted + 0.015, 0]}>
+        <cylinderGeometry args={[0.038, 0.042, 0.025, 16]} />
         <meshPhysicalMaterial
-          color="#e2e8f0"
+          color="#F0F0EE"
           transparent
-          opacity={0.8}
-          roughness={0.2}
+          opacity={0.85}
+          roughness={0.7}
+          metalness={0}
         />
       </mesh>
-      {/* 버튼 테두리 */}
-      <mesh position={[0, crownHeight + 0.025, 0]}>
-        <torusGeometry args={[0.045, 0.008, 8, 16]} />
-        <primitive object={seamMaterial} />
+      {/* 버튼 중앙 디테일 */}
+      <mesh position={[0, crownHeightAdjusted + 0.028, 0]}>
+        <cylinderGeometry args={[0.015, 0.015, 0.005, 12]} />
+        <meshBasicMaterial color="#E8E8E6" transparent opacity={0.6} />
       </mesh>
 
-      {/* 통풍구 (아일릿) - 각 패널에 하나씩 */}
-      {[0, 1, 2, 3, 4, 5].map((i) => {
-        const angle = (i / 6) * Math.PI * 2 + Math.PI / 6;
-        const eyeletY = crownHeight * 0.6;
-        const eyeletRadius = crownRadius * 0.85;
+      {/* 통풍구 (아일릿) - 4개로 축소, 크기 감소 */}
+      {[0, 1, 2, 3].map((i) => {
+        const angle = (i / 4) * Math.PI * 2 + Math.PI / 4;
+        const eyeletY = crownHeightAdjusted * 0.65;
+        const eyeletRadius = CROWN.radius * 0.82;
         return (
           <mesh
             key={i}
@@ -224,57 +240,32 @@ function Cap3D({ logoPosition, logoUrl }: { logoPosition: 'front' | 'side'; logo
             ]}
             rotation={[0, -angle, 0]}
           >
-            <torusGeometry args={[0.025, 0.006, 8, 16]} />
-            <meshBasicMaterial color="#94a3b8" transparent opacity={0.5} />
+            <torusGeometry args={[0.018, 0.004, 6, 12]} />
+            <meshBasicMaterial color="#D4D4D2" transparent opacity={0.6} />
           </mesh>
         );
       })}
 
-      {/* 챙 (Bill) - 곡선형 */}
-      <group position={[0, -0.02, crownRadius * 0.7]} rotation={[-0.25, 0, 0]}>
+      {/* 챙 (Bill) - 곡선형, 아래로 휘어짐 */}
+      <group position={[0, -0.02, CROWN.radius * 0.68]} rotation={[-0.18, 0, 0]}>
         {/* 챙 본체 */}
         <mesh>
           <extrudeGeometry
             args={[
               billShape,
               {
-                depth: 0.035,
+                depth: 0.028,
                 bevelEnabled: true,
-                bevelThickness: 0.01,
-                bevelSize: 0.01,
+                bevelThickness: 0.008,
+                bevelSize: 0.008,
                 bevelSegments: 2,
               },
             ]}
           />
-          <meshPhysicalMaterial
-            color="#ffffff"
-            transparent
-            opacity={0.6}
-            roughness={0.3}
-            side={THREE.DoubleSide}
-          />
+          <primitive object={brimMaterial} />
         </mesh>
-        {/* 챙 아래 면 (약간 어둡게) */}
-        <mesh position={[0, 0, -0.01]} rotation={[Math.PI, 0, 0]}>
-          <extrudeGeometry
-            args={[
-              billShape,
-              {
-                depth: 0.01,
-                bevelEnabled: false,
-              },
-            ]}
-          />
-          <meshPhysicalMaterial
-            color="#f1f5f9"
-            transparent
-            opacity={0.4}
-            roughness={0.5}
-            side={THREE.DoubleSide}
-          />
-        </mesh>
-        {/* 챙 가장자리 스티칭 라인 */}
-        <mesh position={[0, 0, 0.02]}>
+        {/* 챙 테두리 스티칭 */}
+        <mesh position={[0, 0, 0.015]}>
           <extrudeGeometry
             args={[
               billShape,
@@ -284,46 +275,36 @@ function Cap3D({ logoPosition, logoUrl }: { logoPosition: 'front' | 'side'; logo
               },
             ]}
           />
-          <meshBasicMaterial color="#cbd5e1" transparent opacity={0.4} wireframe />
+          <meshBasicMaterial color="#E8E8E6" transparent opacity={0.35} wireframe />
         </mesh>
       </group>
 
-      {/* 스웨트밴드 (안쪽 밴드) */}
-      <mesh position={[0, 0.02, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[crownRadius - 0.02, 0.04, 8, 32]} />
+      {/* 스웨트밴드 (안쪽 밴드) - 얇게 */}
+      <mesh position={[0, 0.015, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[CROWN.radius - 0.015, 0.032, 8, 32]} />
         <meshPhysicalMaterial
-          color="#f8fafc"
+          color="#FAFAF8"
           transparent
-          opacity={0.5}
-          roughness={0.6}
-        />
-      </mesh>
-
-      {/* 뒤쪽 조절 스트랩 힌트 */}
-      <mesh position={[0, 0.08, -crownRadius * 0.85]} rotation={[0.3, 0, 0]}>
-        <boxGeometry args={[0.25, 0.06, 0.02]} />
-        <meshPhysicalMaterial
-          color="#e2e8f0"
-          transparent
-          opacity={0.5}
-          roughness={0.4}
+          opacity={0.55}
+          roughness={0.75}
+          metalness={0}
         />
       </mesh>
 
       {/* 로고 - 정면 */}
       {logoPosition === 'front' && (
-        <group position={[0, crownHeight * 0.5, crownRadius * 0.72]} rotation={[-0.15, 0, 0]}>
-          <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.35} height={0.28} />
+        <group position={[0, crownHeightAdjusted * 0.55, CROWN.radius * 0.68]} rotation={[-0.12, 0, 0]}>
+          <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.32} height={0.26} />
         </group>
       )}
 
       {/* 로고 - 측면 */}
       {logoPosition === 'side' && (
         <group
-          position={[crownRadius * 0.7, crownHeight * 0.5, crownRadius * 0.3]}
+          position={[CROWN.radius * 0.68, crownHeightAdjusted * 0.55, CROWN.radius * 0.28]}
           rotation={[0, Math.PI / 3, 0]}
         >
-          <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.3} height={0.24} />
+          <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.28} height={0.22} />
         </group>
       )}
     </group>
@@ -381,9 +362,10 @@ export default function SlotVisualization3D({ slotType, logoUrl, size = 'md' }: 
         gl={{ antialias: true, alpha: true }}
       >
         <Suspense fallback={<LoadingFallback />}>
-          <ambientLight intensity={0.8} />
-          <directionalLight position={[3, 5, 5]} intensity={0.5} />
-          <directionalLight position={[-3, 3, -3]} intensity={0.3} />
+          {/* 부드러운 조명 (하이라이트 최소화) */}
+          <ambientLight intensity={0.9} />
+          <directionalLight position={[2, 4, 3]} intensity={0.35} />
+          <directionalLight position={[-2, 2, -2]} intensity={0.2} />
 
           {isCap ? (
             <Cap3D logoPosition={logoPosition as 'front' | 'side'} logoUrl={logoUrl} />
