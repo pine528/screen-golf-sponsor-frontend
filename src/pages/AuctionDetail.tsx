@@ -46,9 +46,10 @@ export function AuctionDetail() {
   const [newBidAlert, setNewBidAlert] = useState<string | null>(null);
 
   // Real-time socket connection
-  const handleBidPlaced = useCallback((socketData: { brandName: string; currentPrice: number }) => {
+  const handleBidPlaced = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['auction', id] });
-    setNewBidAlert(`${socketData.brandName}님이 ${formatCurrency(socketData.currentPrice)}에 입찰했습니다!`);
+    // 비공개 경매: 입찰자 정보와 금액 숨김
+    setNewBidAlert('새로운 입찰이 접수되었습니다!');
     setTimeout(() => setNewBidAlert(null), 3000);
   }, [id, queryClient]);
 
@@ -221,12 +222,12 @@ export function AuctionDetail() {
             <div className="card p-4 sm:p-6">
               <div className="grid grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <p className="text-xs sm:text-sm text-slate-600 mb-1">현재가</p>
+                  <p className="text-xs sm:text-sm text-slate-600 mb-1">시작가</p>
                   <p className="text-2xl sm:text-3xl font-bold text-emerald-600">
-                    {formatCurrency(auctionData.currentPrice)}
+                    {formatCurrency(slot?.reservePrice || 0)}
                   </p>
                   <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    시작가: {formatCurrency(slot?.reservePrice || 0)}
+                    비공개 입찰
                   </p>
                 </div>
                 <div className="text-right">
@@ -267,7 +268,8 @@ export function AuctionDetail() {
               {user?.role === 'BRAND' && auctionData.status === 'LIVE' && (
                 <button
                   onClick={() => {
-                    setBidAmount(String(auctionData.currentPrice + auctionData.minBidIncrement));
+                    // 비공개 경매: 시작가를 초기값으로 설정
+                    setBidAmount(String(slot?.reservePrice || 0));
                     setBidError(null);
                     setShowBidModal(true);
                   }}
@@ -353,63 +355,20 @@ export function AuctionDetail() {
               )}
             </div>
 
-            {/* Bid History */}
-            <div className="card overflow-hidden">
-              <div className="p-4 sm:p-6 border-b border-slate-200">
-                <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-emerald-600" />
-                  입찰 내역
-                </h2>
+            {/* 비공개 경매: 입찰 내역 숨김, 입찰 현황만 표시 */}
+            <div className="card p-4 sm:p-6">
+              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-emerald-600" />
+                입찰 현황
+              </h2>
+              <div className="p-4 bg-slate-50 rounded-lg text-center">
+                <p className="text-sm text-slate-600 mb-2">비공개 경매</p>
+                <p className="text-3xl font-bold text-emerald-600">{bids.length}</p>
+                <p className="text-sm text-slate-500 mt-1">개의 입찰이 접수되었습니다</p>
               </div>
-              {bids.length === 0 ? (
-                <div className="p-8 text-center text-slate-500">
-                  아직 입찰이 없습니다
-                </div>
-              ) : (
-                <div className="divide-y divide-slate-200 max-h-80 overflow-y-auto">
-                  {bids.map((bid: any, index: number) => (
-                    <div
-                      key={bid.id}
-                      className={cn(
-                        'p-4 flex items-center justify-between',
-                        index === 0 && 'bg-emerald-50'
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={cn(
-                            'w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium',
-                            index === 0 ? 'bg-emerald-500' : 'bg-slate-400'
-                          )}
-                        >
-                          {index + 1}
-                        </div>
-                        <div>
-                          <p className="font-medium text-slate-900">
-                            {bid.brand?.name || '익명 브랜드'}
-                          </p>
-                          <p className="text-xs text-slate-500">
-                            {formatDateTime(bid.createdAt)}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className={cn(
-                          'font-semibold',
-                          index === 0 ? 'text-emerald-600' : 'text-slate-700'
-                        )}>
-                          {formatCurrency(bid.currentProxy)}
-                        </p>
-                        {bid.isWinning && (
-                          <span className="text-xs text-emerald-600 font-medium">
-                            최고 입찰
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <p className="text-xs text-slate-400 mt-4 text-center">
+                비공개 경매는 다른 입찰자의 입찰 금액을 확인할 수 없습니다
+              </p>
             </div>
           </div>
 
@@ -537,23 +496,20 @@ export function AuctionDetail() {
 
               <div className="mb-4 p-4 bg-emerald-50 rounded-lg space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">현재가</span>
+                  <span className="text-slate-600">시작가</span>
                   <span className="font-semibold text-emerald-700">
-                    {formatCurrency(auctionData.currentPrice)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">최소 증분</span>
-                  <span className="font-medium text-slate-900">
-                    {formatCurrency(auctionData.minBidIncrement)}
+                    {formatCurrency(slot?.reservePrice || 0)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-600">최소 입찰가</span>
                   <span className="font-semibold text-emerald-700">
-                    {formatCurrency(auctionData.currentPrice + auctionData.minBidIncrement)}
+                    {formatCurrency(slot?.reservePrice || 0)}
                   </span>
                 </div>
+                <p className="text-xs text-slate-500 pt-2 border-t border-emerald-200">
+                  비공개 경매: 다른 입찰자의 금액을 알 수 없습니다
+                </p>
               </div>
 
               {bidError && (
@@ -577,7 +533,7 @@ export function AuctionDetail() {
                 </div>
                 <p className="text-xs text-slate-500 mt-2">
                   <Info className="w-3 h-3 inline mr-1" />
-                  프록시 입찰: 다른 입찰자가 있으면 최대 입찰가까지 자동으로 경쟁합니다
+                  비공개 입찰: 경매 종료 시 최고 입찰자가 낙찰됩니다
                 </p>
               </div>
 

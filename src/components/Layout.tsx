@@ -196,6 +196,7 @@ export function Layout({ children }: LayoutProps) {
     { path: '/admin', label: '대시보드', icon: LayoutDashboard },
     { path: '/admin/events', label: '이벤트 관리', icon: Calendar },
     { path: '/admin/auctions', label: '경매 모니터링', icon: Gavel },
+    { path: '/admin/featured-auctions', label: '추천 경매', icon: Star },
     { path: '/admin/entities', label: '등록 회원', icon: Users },
     { path: '/admin/kyc', label: 'KYC 심사', icon: User },
     { path: '/admin/brand-registrations', label: '브랜드 신청', icon: Building2 },

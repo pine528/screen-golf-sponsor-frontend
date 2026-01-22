@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { Clock, User, Calendar, Gavel, AlertCircle, ShoppingCart, Tag, Trophy, Timer } from 'lucide-react';
+import { Clock, User, Calendar, Gavel, AlertCircle, ShoppingCart, Tag, Trophy, Timer, Star } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
@@ -71,6 +71,13 @@ export function Auctions() {
     refetchInterval: statusFilter === 'MY_RESERVATIONS' ? 30000 : false,
   });
 
+  // Featured auctions (어드민 설정 추천 경매)
+  const { data: featuredAuctions } = useQuery({
+    queryKey: ['auctions', 'featured'],
+    queryFn: () => api.getFeaturedAuctions(),
+    refetchInterval: 30000,
+  });
+
   const placeBidMutation = useMutation({
     mutationFn: ({ auctionId, maxBid }: { auctionId: string; maxBid: number }) =>
       api.placeBid(auctionId, maxBid),
@@ -126,6 +133,66 @@ export function Auctions() {
             <p className="text-sm sm:text-base text-slate-600 mt-1">스폰서 슬롯 경매에 참여하세요</p>
           </div>
         </div>
+
+        {/* Featured Auctions */}
+        {featuredAuctions?.data && featuredAuctions.data.length > 0 && (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 sm:p-6 border border-amber-200">
+            <div className="flex items-center gap-2 mb-4">
+              <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+              <h2 className="font-bold text-slate-900">추천 경매</h2>
+              <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+                {featuredAuctions.data.length}개 진행중
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {featuredAuctions.data.map((auction: any) => (
+                <div
+                  key={auction.id}
+                  className="bg-white rounded-lg p-4 shadow-sm border border-amber-100 hover:border-amber-300 transition-colors"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <span className={cn(
+                          'text-xs px-2 py-0.5 rounded-full font-medium',
+                          auction.status === 'LIVE' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'
+                        )}>
+                          {auction.status === 'LIVE' ? '진행중' : '예정'}
+                        </span>
+                        <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                      </div>
+                      <h3 className="font-semibold text-slate-900 text-sm">
+                        {auction.slotInstance?.athlete?.name}
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        {auction.slotInstance?.slotTemplate?.name}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-slate-500 mb-3">
+                    <Calendar className="w-3.5 h-3.5" />
+                    {auction.slotInstance?.event?.name}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs text-slate-500">현재 경매가</div>
+                      <div className="font-bold text-emerald-600">
+                        {formatCurrency(auction.currentPrice)}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setSelectedAuction(auction)}
+                      className="btn btn-primary text-xs px-3 py-1.5"
+                      disabled={auction.status !== 'LIVE' || user?.role !== 'BRAND'}
+                    >
+                      입찰하기
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible">
@@ -447,15 +514,12 @@ export function Auctions() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {!directBuySlots ? (
               <div className="col-span-full text-center py-12 text-slate-500">로딩 중...</div>
-            ) : ((directBuySlots as any).data?.instances || []).filter(
-                (slot: any) => slot.enableDirectBuy && slot.directBuyPrice
-              ).length === 0 ? (
+            ) : ((directBuySlots as any).data?.instances || []).length === 0 ? (
               <div className="col-span-full text-center py-12 text-slate-500">
                 즉시구매 가능한 슬롯이 없습니다
               </div>
             ) : (
               ((directBuySlots as any).data?.instances || [])
-                .filter((slot: any) => slot.enableDirectBuy && slot.directBuyPrice)
                 .map((slot: any) => (
                   <div key={slot.id} className="card overflow-hidden border-l-4 border-l-blue-500">
                     <div className="p-4 sm:p-6">
@@ -495,7 +559,7 @@ export function Auctions() {
                       <div className="mb-3 sm:mb-4">
                         <p className="text-xs sm:text-sm text-slate-600">즉시구매가</p>
                         <p className="text-lg sm:text-xl font-bold text-blue-600">
-                          {formatCurrency(Number(slot.directBuyPrice || 0))}
+                          {formatCurrency(Number(slot.directBuyPrice || slot.reservePrice || 0))}
                         </p>
                       </div>
 

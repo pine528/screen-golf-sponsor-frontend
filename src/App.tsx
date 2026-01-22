@@ -12,6 +12,7 @@ import { HowItWorks } from './pages/HowItWorks';
 import { ForWho } from './pages/ForWho';
 import { AdminEvents } from './pages/admin/AdminEvents';
 import { AdminAuctions } from './pages/admin/AdminAuctions';
+import { AdminFeaturedAuctions } from './pages/admin/AdminFeaturedAuctions';
 import { AdminKyc } from './pages/admin/AdminKyc';
 import { AdminReviews } from './pages/admin/AdminReviews';
 import { AdminSettings } from './pages/admin/AdminSettings';
@@ -435,6 +436,14 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminAuctions />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/featured-auctions"
+        element={
+          <ProtectedRoute>
+            <AdminFeaturedAuctions />
           </ProtectedRoute>
         }
       />

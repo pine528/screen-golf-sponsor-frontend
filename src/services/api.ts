@@ -245,6 +245,11 @@ class ApiService {
     return response.data;
   }
 
+  async getFeaturedAuctions() {
+    const response = await this.client.get<ApiResponse<any[]>>('/auctions/featured');
+    return response.data;
+  }
+
   // Contracts
   async getContracts(params?: any) {
     const response = await this.client.get<ApiResponse<any[]>>('/contracts', { params });
@@ -444,6 +449,36 @@ class ApiService {
 
   async getPendingReviews() {
     const response = await this.client.get<ApiResponse<any>>('/admin/monitoring/pending-reviews');
+    return response.data;
+  }
+
+  // Admin Featured Auctions
+  async createFeaturedAuction(data: {
+    athleteId: string;
+    eventId: string;
+    slotTemplateId: string;
+    startAt: string;
+    endAt: string;
+    reservePrice?: number;
+  }) {
+    const response = await this.client.post<ApiResponse<any>>('/admin/featured-auctions', data);
+    return response.data;
+  }
+
+  async bulkCreateFeaturedAuctions(items: Array<{
+    athleteId: string;
+    eventId: string;
+    slotTemplateId: string;
+    startAt: string;
+    endAt: string;
+    reservePrice?: number;
+  }>) {
+    const response = await this.client.post<ApiResponse<any>>('/admin/featured-auctions/bulk', { items });
+    return response.data;
+  }
+
+  async getAdminFeaturedAuctions() {
+    const response = await this.client.get<ApiResponse<any[]>>('/admin/featured-auctions');
     return response.data;
   }
 
