@@ -172,14 +172,14 @@ function ShirtVisualization({
 
             {/* 칼라 - 폴로 칼라 (몸통과 연결) */}
             <path
-              d="M110 68
-                 Q110 55, 125 52
-                 L138 63
-                 L150 72
-                 L162 63
-                 L175 52
-                 Q190 55, 190 68
-                 Q150 78, 110 68"
+              d="M110 78
+                 Q110 65, 125 62
+                 L138 73
+                 L150 82
+                 L162 73
+                 L175 62
+                 Q190 65, 190 78
+                 Q150 88, 110 78"
               fill="#e2e8f0"
               stroke="#94a3b8"
               strokeWidth="1.5"
@@ -187,7 +187,7 @@ function ShirtVisualization({
 
             {/* 칼라 안쪽 라인 */}
             <path
-              d="M128 60 Q150 68, 172 60"
+              d="M128 70 Q150 78, 172 70"
               fill="none"
               stroke="#cbd5e1"
               strokeWidth="1"
@@ -195,7 +195,7 @@ function ShirtVisualization({
 
             {/* V넥 라인 */}
             <path
-              d="M138 63 L150 90 L162 63"
+              d="M138 73 L150 100 L162 73"
               fill="#f8fafc"
               stroke="#cbd5e1"
               strokeWidth="1"
