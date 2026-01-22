@@ -1,250 +1,270 @@
 import { Canvas, useLoader } from '@react-three/fiber';
-import { OrbitControls, ContactShadows, Line } from '@react-three/drei';
-import { Suspense, useMemo } from 'react';
+import { OrbitControls, ContactShadows } from '@react-three/drei';
+import { Suspense, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
 interface SlotVisualization3DProps {
   slotType: 'SHIRT_FRONT' | 'SHIRT_BACK' | 'SHIRT_SLEEVE' | 'CAP_FRONT' | 'CAP_SIDE';
   logoUrl?: string;
   size?: 'sm' | 'md' | 'lg';
+  debug?: boolean;
 }
 
 const DEFAULT_LOGO = '/ccubelogo.png';
 
-// 티셔츠 형태 Shape (2D 실루엣)
+// ===== 티셔츠 형태 Shape (2D 실루엣) =====
 function createShirtShape() {
   const shape = new THREE.Shape();
+  shape.moveTo(-0.6, -1.0);
+  shape.lineTo(-0.6, 0.3);
+  shape.lineTo(-1.1, 0.5);
+  shape.lineTo(-1.1, 0.8);
+  shape.lineTo(-0.7, 0.9);
+  shape.lineTo(-0.25, 1.0);
+  shape.lineTo(0, 0.85);
+  shape.lineTo(0.25, 1.0);
+  shape.lineTo(0.7, 0.9);
+  shape.lineTo(1.1, 0.8);
+  shape.lineTo(1.1, 0.5);
+  shape.lineTo(0.6, 0.3);
+  shape.lineTo(0.6, -1.0);
+  shape.lineTo(-0.6, -1.0);
+  return shape;
+}
 
-  // 티셔츠 윤곽선 (왼쪽 아래에서 시작, 시계방향)
-  shape.moveTo(-0.6, -1.0);   // 왼쪽 아래
-  shape.lineTo(-0.6, 0.3);    // 왼쪽 허리
-  shape.lineTo(-1.1, 0.5);    // 왼쪽 소매 아래
-  shape.lineTo(-1.1, 0.8);    // 왼쪽 소매 끝
-  shape.lineTo(-0.7, 0.9);    // 왼쪽 어깨
-  shape.lineTo(-0.25, 1.0);   // 왼쪽 목
-  shape.lineTo(0, 0.85);      // 목 중앙 (V넥)
-  shape.lineTo(0.25, 1.0);    // 오른쪽 목
-  shape.lineTo(0.7, 0.9);     // 오른쪽 어깨
-  shape.lineTo(1.1, 0.8);     // 오른쪽 소매 끝
-  shape.lineTo(1.1, 0.5);     // 오른쪽 소매 아래
-  shape.lineTo(0.6, 0.3);     // 오른쪽 허리
-  shape.lineTo(0.6, -1.0);    // 오른쪽 아래
-  shape.lineTo(-0.6, -1.0);   // 아래 닫기
+// ===== 패브릭 반투명 머티리얼 생성 =====
+function createFabricMaterial(opacity: number): THREE.MeshPhysicalMaterial {
+  return new THREE.MeshPhysicalMaterial({
+    color: 0xF6F6F2,
+    transparent: true,
+    opacity: opacity,
+    roughness: 0.85,
+    metalness: 0,
+    transmission: 0,
+    clearcoat: 0,
+    ior: 1.0,
+    sheen: 0.1,
+    sheenRoughness: 0.8,
+    sheenColor: new THREE.Color(0xFAFAFA),
+    side: THREE.DoubleSide,
+    depthWrite: false,
+    alphaTest: 0.01,
+  });
+}
+
+// ===== 크라운 프로파일 곡선 생성 (Bezier 기반) =====
+function createCrownProfileCurve(
+  baseRadius: number,
+  height: number,
+  tension: number = 0.5
+): THREE.Vector2[] {
+  const points: THREE.Vector2[] = [];
+  const segments = 24;
+
+  // Bezier 컨트롤 포인트: 실제 캡 실루엣
+  const p0 = new THREE.Vector2(baseRadius, 0);
+  const p1 = new THREE.Vector2(baseRadius * (1 + tension * 0.08), height * 0.35);
+  const p2 = new THREE.Vector2(baseRadius * 0.55, height * 0.88);
+  const p3 = new THREE.Vector2(0.001, height);  // 0이면 LatheGeometry에서 문제
+
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const t2 = t * t;
+    const t3 = t2 * t;
+    const mt = 1 - t;
+    const mt2 = mt * mt;
+    const mt3 = mt2 * mt;
+
+    const x = mt3 * p0.x + 3 * mt2 * t * p1.x + 3 * mt * t2 * p2.x + t3 * p3.x;
+    const y = mt3 * p0.y + 3 * mt2 * t * p1.y + 3 * mt * t2 * p2.y + t3 * p3.y;
+
+    points.push(new THREE.Vector2(Math.max(0.001, x), y));
+  }
+
+  return points;
+}
+
+// ===== 챙 외곽 Shape 생성 (반달형) =====
+function createBrimShape(width: number, length: number): THREE.Shape {
+  const shape = new THREE.Shape();
+  const halfWidth = width / 2;
+
+  shape.moveTo(-halfWidth, 0);
+  shape.quadraticCurveTo(-halfWidth * 0.9, length * 0.5, -halfWidth * 0.65, length);
+  shape.quadraticCurveTo(0, length * 1.12, halfWidth * 0.65, length);
+  shape.quadraticCurveTo(halfWidth * 0.9, length * 0.5, halfWidth, 0);
+  shape.quadraticCurveTo(0, -length * 0.03, -halfWidth, 0);
 
   return shape;
 }
 
-// 캡 크라운 BufferGeometry 생성 (앞뒤 비대칭 - 앞 낮고 뒤 높음)
-function createCapCrownGeometry() {
-  const geometry = new THREE.BufferGeometry();
+// ===== 베이스볼 캡 생성 (LatheGeometry + ExtrudeGeometry) =====
+function createBaseballCapGroup(params: {
+  width?: number;
+  depth?: number;
+  height?: number;
+  opacity?: number;
+  debug?: boolean;
+}): THREE.Group {
+  const {
+    width = 0.19,
+    height = 0.12,
+    opacity = 0.65,
+    debug = false,
+  } = params;
 
-  // 파라미터
-  const segments = 32;      // 둘레 분할
-  const rings = 16;         // 높이 분할
-  const baseRadius = 0.48;  // 머리 둘레 반경
-  const height = 0.35;      // 크라운 높이
+  const group = new THREE.Group();
+  group.name = 'BaseballCap';
 
-  const vertices: number[] = [];
-  const indices: number[] = [];
-  const normals: number[] = [];
-  const uvs: number[] = [];
+  const crownRadius = width / 2;
+  const crownHeight = height;
+  const brimLength = 0.075;
+  const brimWidth = width * 0.85;
 
-  // 정점 생성
-  for (let ring = 0; ring <= rings; ring++) {
-    const t = ring / rings;  // 0 ~ 1 (아래 → 위)
+  // ===== 1. 크라운 (LatheGeometry) =====
+  const profilePoints = createCrownProfileCurve(crownRadius, crownHeight, 0.5);
+  const crownGeometry = new THREE.LatheGeometry(profilePoints, 48, 0, Math.PI * 2);
 
-    // 높이에 따른 반경 변화 (위로 갈수록 좁아짐)
-    const radius = baseRadius * (1 - t * 0.45);
+  // 타원형으로 변형 (앞뒤 더 길게)
+  const ovalScaleX = 0.88;
+  const ovalScaleZ = 1.05;
+  const crownPositions = crownGeometry.attributes.position;
+  for (let i = 0; i < crownPositions.count; i++) {
+    const x = crownPositions.getX(i);
+    const z = crownPositions.getZ(i);
+    crownPositions.setX(i, x * ovalScaleX);
+    crownPositions.setZ(i, z * ovalScaleZ);
+  }
+  crownGeometry.computeVertexNormals();
 
-    for (let seg = 0; seg <= segments; seg++) {
-      const angle = (seg / segments) * Math.PI * 2;
+  const crownMaterial = createFabricMaterial(opacity);
+  const crownMesh = new THREE.Mesh(crownGeometry, crownMaterial);
+  crownMesh.name = 'Cap_Crown';
+  group.add(crownMesh);
 
-      // 앞뒤 비대칭: 앞쪽(z>0)은 낮게, 뒤쪽(z<0)은 높게
-      const frontBackFactor = -Math.cos(angle) * 0.2;  // z 방향 (앞이 +z)
-      const adjustedHeight = height * (1 + frontBackFactor * t);
-      const y = adjustedHeight * Math.pow(t, 0.75);  // 비선형 높이
+  // ===== 2. 챙 (ExtrudeGeometry + Vertex Bend) =====
+  const brimShape = createBrimShape(brimWidth, brimLength);
+  const brimGeometry = new THREE.ExtrudeGeometry(brimShape, {
+    depth: 0.003,
+    bevelEnabled: true,
+    bevelThickness: 0.001,
+    bevelSize: 0.001,
+    bevelSegments: 2,
+  });
 
-      const x = Math.sin(angle) * radius;
-      const z = Math.cos(angle) * radius;
+  // 챙 아래로 휘기
+  const brimPositions = brimGeometry.attributes.position;
+  const curveAmount = 0.018;
+  for (let i = 0; i < brimPositions.count; i++) {
+    const x = brimPositions.getX(i);
+    const y = brimPositions.getY(i);  // 앞쪽 방향
+    const z = brimPositions.getZ(i);
 
-      vertices.push(x, y, z);
+    const lengthFactor = Math.max(0, y / brimLength);
+    const edgeFactor = Math.abs(x) / (brimWidth / 2);
 
-      // 노멀 계산 (대략적)
-      const nx = Math.sin(angle) * (1 - t * 0.3);
-      const ny = t * 0.5;
-      const nz = Math.cos(angle) * (1 - t * 0.3);
-      const len = Math.sqrt(nx * nx + ny * ny + nz * nz) || 1;
-      normals.push(nx / len, ny / len, nz / len);
+    const bendZ = -curveAmount * Math.pow(lengthFactor, 1.4);
+    const edgeBend = -curveAmount * 0.4 * edgeFactor * lengthFactor;
 
-      // UV
-      uvs.push(seg / segments, t);
+    brimPositions.setZ(i, z + bendZ + edgeBend);
+  }
+  brimGeometry.computeVertexNormals();
+
+  const brimMaterial = createFabricMaterial(Math.min(0.78, opacity * 1.15));
+  const brimMesh = new THREE.Mesh(brimGeometry, brimMaterial);
+  brimMesh.name = 'Cap_Brim';
+  brimMesh.rotation.x = -Math.PI / 2;
+  brimMesh.position.set(0, 0.002, crownRadius * ovalScaleZ * 0.95);
+  group.add(brimMesh);
+
+  // ===== 3. 버튼 =====
+  const buttonGeometry = new THREE.CylinderGeometry(0.006, 0.008, 0.005, 16);
+  const buttonMaterial = createFabricMaterial(Math.min(0.88, opacity * 1.3));
+  const buttonMesh = new THREE.Mesh(buttonGeometry, buttonMaterial);
+  buttonMesh.name = 'Cap_Button';
+  buttonMesh.position.set(0, crownHeight + 0.003, 0);
+  group.add(buttonMesh);
+
+  // ===== 4. 아일릿 =====
+  const eyeletsGroup = new THREE.Group();
+  eyeletsGroup.name = 'Cap_Eyelets';
+  const eyeletGeometry = new THREE.TorusGeometry(0.003, 0.0008, 8, 16);
+  const eyeletMaterial = new THREE.MeshBasicMaterial({
+    color: 0xD0D0D0,
+    transparent: true,
+    opacity: opacity * 0.9,
+  });
+
+  for (let i = 0; i < 4; i++) {
+    const angle = (i / 4) * Math.PI * 2 + Math.PI / 4;
+    const eyeletY = crownHeight * 0.58;
+    const eyeletRadius = crownRadius * 0.82;
+
+    const eyelet = new THREE.Mesh(eyeletGeometry, eyeletMaterial);
+    eyelet.position.set(
+      Math.sin(angle) * eyeletRadius * ovalScaleX,
+      eyeletY,
+      Math.cos(angle) * eyeletRadius * ovalScaleZ
+    );
+    eyelet.rotation.y = -angle;
+    eyelet.rotation.x = Math.PI / 2;
+    eyeletsGroup.add(eyelet);
+  }
+  group.add(eyeletsGroup);
+
+  // ===== 5. 6패널 스티칭 라인 =====
+  const seamsGroup = new THREE.Group();
+  seamsGroup.name = 'Cap_Seams';
+  const seamMaterial = new THREE.LineBasicMaterial({
+    color: 0xE8E8E4,
+    transparent: true,
+    opacity: 0.35,
+  });
+
+  for (let i = 0; i < 6; i++) {
+    const angle = (i / 6) * Math.PI * 2;
+    const seamPoints: THREE.Vector3[] = [];
+
+    for (let t = 0; t <= 1; t += 0.04) {
+      const profileIdx = Math.floor(t * (profilePoints.length - 1));
+      const pt = profilePoints[profileIdx];
+
+      const x = Math.sin(angle) * pt.x * ovalScaleX;
+      const z = Math.cos(angle) * pt.x * ovalScaleZ;
+      const y = pt.y;
+
+      seamPoints.push(new THREE.Vector3(x, y, z));
     }
+
+    const seamGeometry = new THREE.BufferGeometry().setFromPoints(seamPoints);
+    const seamLine = new THREE.Line(seamGeometry, seamMaterial);
+    seamsGroup.add(seamLine);
+  }
+  group.add(seamsGroup);
+
+  // ===== 디버그 =====
+  if (debug) {
+    const axesHelper = new THREE.AxesHelper(0.15);
+    group.add(axesHelper);
+
+    const box = new THREE.Box3().setFromObject(group);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    console.log('=== Baseball Cap Dimensions ===');
+    console.log(`Width (X):  ${size.x.toFixed(4)}m (target: 0.17~0.21m)`);
+    console.log(`Depth (Z):  ${size.z.toFixed(4)}m (target: 0.24~0.28m)`);
+    console.log(`Height (Y): ${size.y.toFixed(4)}m (target: 0.10~0.14m)`);
+
+    const boxHelper = new THREE.Box3Helper(box, new THREE.Color(0x00ff00));
+    group.add(boxHelper);
   }
 
-  // 인덱스 생성 (삼각형 연결)
-  for (let ring = 0; ring < rings; ring++) {
-    for (let seg = 0; seg < segments; seg++) {
-      const curr = ring * (segments + 1) + seg;
-      const next = curr + segments + 1;
-
-      indices.push(curr, next, curr + 1);
-      indices.push(curr + 1, next, next + 1);
-    }
-  }
-
-  // 꼭대기 캡 (마지막 링을 중앙점과 연결)
-  const topCenterIndex = vertices.length / 3;
-  vertices.push(0, height * 0.92, 0);  // 꼭대기 중앙
-  normals.push(0, 1, 0);
-  uvs.push(0.5, 1);
-
-  const lastRingStart = rings * (segments + 1);
-  for (let seg = 0; seg < segments; seg++) {
-    indices.push(lastRingStart + seg, lastRingStart + seg + 1, topCenterIndex);
-  }
-
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-  geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
-  geometry.setIndex(indices);
-  geometry.computeVertexNormals();
-
-  return geometry;
+  return group;
 }
 
-// 캡 챙(Brim) BufferGeometry 생성 - 앞으로 돌출 + 아래로 휘어짐
-function createCapBrimGeometry() {
-  const geometry = new THREE.BufferGeometry();
-
-  // 파라미터
-  const width = 0.50;        // 챙 폭 (크라운 연결부)
-  const length = 0.38;       // 챙 길이 (앞으로 돌출)
-  const curve = 0.12;        // 아래로 휘는 정도
-  const thickness = 0.025;   // 두께
-  const segX = 16;           // 폭 방향 분할
-  const segZ = 12;           // 길이 방향 분할
-
-  const vertices: number[] = [];
-  const indices: number[] = [];
-  const normals: number[] = [];
-  const uvs: number[] = [];
-
-  // 상면 생성
-  for (let zi = 0; zi <= segZ; zi++) {
-    const zT = zi / segZ;  // 0 ~ 1 (크라운에서 앞쪽으로)
-    const z = zT * length;
-
-    // 폭: 뒤쪽은 넓고 앞쪽은 좁게
-    const currentWidth = width * (1 - zT * 0.2);
-
-    // 아래로 휘는 곡률 (앞으로 갈수록)
-    const curveY = -curve * Math.pow(zT, 1.4);
-
-    for (let xi = 0; xi <= segX; xi++) {
-      const xT = (xi / segX - 0.5) * 2;  // -1 ~ 1
-      const x = xT * currentWidth * 0.5;
-
-      // 가장자리는 더 아래로 (챙의 컵 형태)
-      const edgeCurve = Math.abs(xT) * Math.abs(xT) * 0.04;
-
-      vertices.push(x, curveY - edgeCurve, z);
-      normals.push(0, 1, 0);
-      uvs.push(xi / segX, zi / segZ);
-    }
-  }
-
-  const topVertexCount = (segZ + 1) * (segX + 1);
-
-  // 하면 생성 (상면보다 thickness만큼 아래)
-  for (let zi = 0; zi <= segZ; zi++) {
-    const zT = zi / segZ;
-    const z = zT * length;
-    const currentWidth = width * (1 - zT * 0.2);
-    const curveY = -curve * Math.pow(zT, 1.4);
-
-    for (let xi = 0; xi <= segX; xi++) {
-      const xT = (xi / segX - 0.5) * 2;
-      const x = xT * currentWidth * 0.5;
-      const edgeCurve = Math.abs(xT) * Math.abs(xT) * 0.04;
-
-      vertices.push(x, curveY - edgeCurve - thickness, z);
-      normals.push(0, -1, 0);
-      uvs.push(xi / segX, zi / segZ);
-    }
-  }
-
-  // 상면 인덱스
-  for (let zi = 0; zi < segZ; zi++) {
-    for (let xi = 0; xi < segX; xi++) {
-      const curr = zi * (segX + 1) + xi;
-      const next = curr + segX + 1;
-
-      indices.push(curr, curr + 1, next);
-      indices.push(curr + 1, next + 1, next);
-    }
-  }
-
-  // 하면 인덱스 (역방향)
-  for (let zi = 0; zi < segZ; zi++) {
-    for (let xi = 0; xi < segX; xi++) {
-      const curr = topVertexCount + zi * (segX + 1) + xi;
-      const next = curr + segX + 1;
-
-      indices.push(curr, next, curr + 1);
-      indices.push(curr + 1, next, next + 1);
-    }
-  }
-
-  // 앞쪽 테두리 (끝부분)
-  for (let xi = 0; xi < segX; xi++) {
-    const topFront = segZ * (segX + 1) + xi;
-    const bottomFront = topVertexCount + segZ * (segX + 1) + xi;
-
-    indices.push(topFront, bottomFront, topFront + 1);
-    indices.push(topFront + 1, bottomFront, bottomFront + 1);
-  }
-
-  // 좌우 테두리
-  for (let zi = 0; zi < segZ; zi++) {
-    // 왼쪽
-    const topLeft = zi * (segX + 1);
-    const bottomLeft = topVertexCount + zi * (segX + 1);
-    const topLeftNext = (zi + 1) * (segX + 1);
-    const bottomLeftNext = topVertexCount + (zi + 1) * (segX + 1);
-
-    indices.push(topLeft, topLeftNext, bottomLeft);
-    indices.push(bottomLeft, topLeftNext, bottomLeftNext);
-
-    // 오른쪽
-    const topRight = zi * (segX + 1) + segX;
-    const bottomRight = topVertexCount + zi * (segX + 1) + segX;
-    const topRightNext = (zi + 1) * (segX + 1) + segX;
-    const bottomRightNext = topVertexCount + (zi + 1) * (segX + 1) + segX;
-
-    indices.push(topRight, bottomRight, topRightNext);
-    indices.push(bottomRight, bottomRightNext, topRightNext);
-  }
-
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-  geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
-  geometry.setIndex(indices);
-  geometry.computeVertexNormals();
-
-  return geometry;
-}
-
-// 크라운 파라미터 (새로운 값)
-const CROWN = {
-  baseRadius: 0.48,
-  height: 0.35,
-  segments: 32,
-};
-
-// 로고 텍스처 컴포넌트
+// ===== 로고 텍스처 컴포넌트 =====
 function LogoPlane({ logoUrl, width, height }: { logoUrl: string; width: number; height: number }) {
   const texture = useLoader(THREE.TextureLoader, logoUrl || DEFAULT_LOGO);
-
   return (
     <mesh>
       <planeGeometry args={[width, height]} />
@@ -253,7 +273,7 @@ function LogoPlane({ logoUrl, width, height }: { logoUrl: string; width: number;
   );
 }
 
-// 티셔츠 3D
+// ===== 티셔츠 3D =====
 function Shirt3D({ logoPosition, logoUrl }: { logoPosition: 'front' | 'back' | 'sleeve'; logoUrl?: string }) {
   const shirtShape = useMemo(() => createShirtShape(), []);
   const isBack = logoPosition === 'back';
@@ -268,7 +288,6 @@ function Shirt3D({ logoPosition, logoUrl }: { logoPosition: 'front' | 'back' | '
 
   return (
     <group rotation={[0, isBack ? Math.PI : 0, 0]}>
-      {/* 셔츠 본체 */}
       <mesh position={[0, 0, -0.04]}>
         <extrudeGeometry args={[shirtShape, extrudeSettings]} />
         <meshPhysicalMaterial
@@ -281,21 +300,16 @@ function Shirt3D({ logoPosition, logoUrl }: { logoPosition: 'front' | 'back' | '
         />
       </mesh>
 
-      {/* 로고 - 정면 가슴 */}
       {logoPosition === 'front' && (
         <group position={[-0.25, 0.35, 0.06]}>
           <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.35} height={0.28} />
         </group>
       )}
-
-      {/* 로고 - 등판 */}
       {logoPosition === 'back' && (
         <group position={[0, 0.1, 0.06]}>
           <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.6} height={0.45} />
         </group>
       )}
-
-      {/* 로고 - 소매 */}
       {logoPosition === 'sleeve' && (
         <group position={[-0.9, 0.65, 0.06]}>
           <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.22} height={0.18} />
@@ -305,179 +319,45 @@ function Shirt3D({ logoPosition, logoUrl }: { logoPosition: 'front' | 'back' | '
   );
 }
 
-// 6패널 스티칭 라인 생성 (은은하게) - 새 크라운 형태에 맞춤
-function PanelSeams({ radius, height, squash }: { radius: number; height: number; squash: number }) {
-  const seams = useMemo(() => {
-    const lines: THREE.Vector3[][] = [];
-    const panels = 6;
+// ===== 베이스볼 캡 3D (LatheGeometry 기반) =====
+function Cap3D({ logoPosition, logoUrl, debug = false }: { logoPosition: 'front' | 'side'; logoUrl?: string; debug?: boolean }) {
+  const groupRef = useRef<THREE.Group>(null);
 
-    for (let i = 0; i < panels; i++) {
-      const angle = (i / panels) * Math.PI * 2;
-      const points: THREE.Vector3[] = [];
+  // THREE.Group을 useMemo로 생성
+  const capGroup = useMemo(() => {
+    return createBaseballCapGroup({
+      width: 0.19,
+      height: 0.12,
+      opacity: 0.65,
+      debug: debug,
+    });
+  }, [debug]);
 
-      // 아래에서 꼭대기까지 곡선 (새 크라운 형태에 맞춤)
-      for (let t = 0; t <= 1; t += 0.06) {
-        // 위로 갈수록 반경 감소
-        const currentRadius = radius * (1 - t * 0.45);
-
-        // 앞뒤 비대칭 적용
-        const frontBackFactor = -Math.cos(angle) * 0.2;
-        const adjustedHeight = height * (1 + frontBackFactor * t);
-        const y = adjustedHeight * Math.pow(t, 0.75) * squash;
-
-        const x = Math.sin(angle) * currentRadius;
-        const z = Math.cos(angle) * currentRadius;
-        points.push(new THREE.Vector3(x, y, z));
-      }
-      lines.push(points);
-    }
-    return lines;
-  }, [radius, height, squash]);
+  // 스케일 조정 (화면에서 적절한 크기로)
+  const scale = 5.5;
 
   return (
-    <>
-      {seams.map((points, i) => (
-        <Line
-          key={i}
-          points={points}
-          color="#E8E8E6"
-          lineWidth={0.8}
-          transparent
-          opacity={0.4}
-        />
-      ))}
-    </>
-  );
-}
-
-// 모자 3D - 반투명 패브릭 스타일 베이스볼 캡 (BufferGeometry 사용)
-function Cap3D({ logoPosition, logoUrl }: { logoPosition: 'front' | 'side'; logoUrl?: string }) {
-  // 커스텀 BufferGeometry 생성
-  const crownGeometry = useMemo(() => createCapCrownGeometry(), []);
-  const brimGeometry = useMemo(() => createCapBrimGeometry(), []);
-
-  // 패브릭 반투명 머티리얼 - 플라스틱 방지
-  const fabricMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: '#F6F6F2',           // 아이보리 화이트
-    transparent: true,
-    opacity: 0.65,              // 0.55~0.75 범위
-    roughness: 0.80,            // 0.75~0.9 (무광 패브릭)
-    metalness: 0,
-    transmission: 0,            // 플라스틱 방지
-    ior: 1.0,
-    sheen: 0.15,                // 패브릭 광택
-    sheenRoughness: 0.8,
-    sheenColor: new THREE.Color('#FAFAFA'),
-    side: THREE.DoubleSide,
-    depthWrite: false,
-    alphaTest: 0.01,
-  }), []);
-
-  // 챙 머티리얼 (약간 더 불투명)
-  const brimMaterial = useMemo(() => new THREE.MeshPhysicalMaterial({
-    color: '#F4F4F2',
-    transparent: true,
-    opacity: 0.72,
-    roughness: 0.78,
-    metalness: 0,
-    transmission: 0,
-    sheen: 0.12,
-    sheenRoughness: 0.85,
-    sheenColor: new THREE.Color('#FAFAFA'),
-    side: THREE.DoubleSide,
-    depthWrite: false,
-  }), []);
-
-  const crownHeight = CROWN.height;
-
-  return (
-    <group rotation={[0.15, logoPosition === 'side' ? -0.5 : 0, 0]} position={[0, -0.05, 0]}>
-      {/* 크라운 (커스텀 BufferGeometry - 앞뒤 비대칭) */}
-      <mesh geometry={crownGeometry}>
-        <primitive object={fabricMaterial} />
-      </mesh>
-
-      {/* 6패널 스티칭 라인 (은은하게) */}
-      <group position={[0, 0, 0]}>
-        <PanelSeams radius={CROWN.baseRadius} height={CROWN.height} squash={1.0} />
-      </group>
-
-      {/* 꼭대기 버튼 */}
-      <mesh position={[0, crownHeight * 0.92 + 0.015, 0]}>
-        <cylinderGeometry args={[0.035, 0.04, 0.022, 16]} />
-        <meshPhysicalMaterial
-          color="#F0F0EE"
-          transparent
-          opacity={0.85}
-          roughness={0.7}
-          metalness={0}
-        />
-      </mesh>
-      {/* 버튼 중앙 디테일 */}
-      <mesh position={[0, crownHeight * 0.92 + 0.027, 0]}>
-        <cylinderGeometry args={[0.012, 0.012, 0.004, 12]} />
-        <meshBasicMaterial color="#E8E8E6" transparent opacity={0.6} />
-      </mesh>
-
-      {/* 통풍구 (아일릿) - 4개 */}
-      {[0, 1, 2, 3].map((i) => {
-        const angle = (i / 4) * Math.PI * 2 + Math.PI / 4;
-        const eyeletY = crownHeight * 0.55;
-        const eyeletRadius = CROWN.baseRadius * 0.78;
-        return (
-          <mesh
-            key={i}
-            position={[
-              Math.sin(angle) * eyeletRadius,
-              eyeletY,
-              Math.cos(angle) * eyeletRadius,
-            ]}
-            rotation={[0, -angle, 0]}
-          >
-            <torusGeometry args={[0.016, 0.004, 6, 12]} />
-            <meshBasicMaterial color="#D4D4D2" transparent opacity={0.6} />
-          </mesh>
-        );
-      })}
-
-      {/* 챙 (Brim) - BufferGeometry로 앞으로 돌출 */}
-      <mesh geometry={brimGeometry} position={[0, -0.01, CROWN.baseRadius * 0.95]}>
-        <primitive object={brimMaterial} />
-      </mesh>
-
-      {/* 스웨트밴드 (안쪽 밴드) */}
-      <mesh position={[0, 0.012, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[CROWN.baseRadius - 0.015, 0.028, 8, 32]} />
-        <meshPhysicalMaterial
-          color="#FAFAF8"
-          transparent
-          opacity={0.55}
-          roughness={0.75}
-          metalness={0}
-        />
-      </mesh>
+    <group ref={groupRef} rotation={[0.12, logoPosition === 'side' ? -0.4 : 0, 0]} position={[0, -0.15, 0]}>
+      <primitive object={capGroup} scale={[scale, scale, scale]} />
 
       {/* 로고 - 정면 */}
       {logoPosition === 'front' && (
-        <group position={[0, crownHeight * 0.45, CROWN.baseRadius * 0.52]} rotation={[-0.08, 0, 0]}>
-          <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.30} height={0.24} />
+        <group position={[0, 0.32, 0.48]} rotation={[-0.1, 0, 0]}>
+          <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.28} height={0.22} />
         </group>
       )}
 
       {/* 로고 - 측면 */}
       {logoPosition === 'side' && (
-        <group
-          position={[CROWN.baseRadius * 0.60, crownHeight * 0.45, CROWN.baseRadius * 0.25]}
-          rotation={[0, Math.PI / 3, 0]}
-        >
-          <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.26} height={0.20} />
+        <group position={[0.42, 0.32, 0.22]} rotation={[0, Math.PI / 3, 0]}>
+          <LogoPlane logoUrl={logoUrl || DEFAULT_LOGO} width={0.24} height={0.18} />
         </group>
       )}
     </group>
   );
 }
 
-// 로딩 폴백
+// ===== 로딩 폴백 =====
 function LoadingFallback() {
   return (
     <mesh>
@@ -487,8 +367,8 @@ function LoadingFallback() {
   );
 }
 
-// 메인 컴포넌트
-export default function SlotVisualization3D({ slotType, logoUrl, size = 'md' }: SlotVisualization3DProps) {
+// ===== 메인 컴포넌트 =====
+export default function SlotVisualization3D({ slotType, logoUrl, size = 'md', debug = false }: SlotVisualization3DProps) {
   const sizeClasses = {
     sm: 'h-32',
     md: 'h-48',
@@ -524,17 +404,16 @@ export default function SlotVisualization3D({ slotType, logoUrl, size = 'md' }: 
   return (
     <div className={`w-full ${sizeClasses[size]} bg-gradient-to-b from-slate-50 to-slate-100 rounded-lg overflow-hidden relative`}>
       <Canvas
-        camera={{ position: [0, 0, isCap ? 2.8 : 3.2], fov: 45 }}
+        camera={{ position: [0, 0, isCap ? 2.2 : 3.2], fov: 45 }}
         gl={{ antialias: true, alpha: true }}
       >
         <Suspense fallback={<LoadingFallback />}>
-          {/* 부드러운 조명 (하이라이트 최소화) */}
           <ambientLight intensity={0.9} />
           <directionalLight position={[2, 4, 3]} intensity={0.35} />
           <directionalLight position={[-2, 2, -2]} intensity={0.2} />
 
           {isCap ? (
-            <Cap3D logoPosition={logoPosition as 'front' | 'side'} logoUrl={logoUrl} />
+            <Cap3D logoPosition={logoPosition as 'front' | 'side'} logoUrl={logoUrl} debug={debug} />
           ) : (
             <Shirt3D logoPosition={logoPosition as 'front' | 'back' | 'sleeve'} logoUrl={logoUrl} />
           )}
