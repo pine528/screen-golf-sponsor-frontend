@@ -23,6 +23,7 @@ import {
   WifiOff,
 } from 'lucide-react';
 import { Layout } from '../components/Layout';
+import { SlotVisualization } from '../components/SlotVisualization';
 import { useAuth } from '../hooks/useAuth';
 import { useAuctionSocket } from '../hooks/useSocket';
 import { api } from '../services/api';
@@ -309,6 +310,17 @@ export function AuctionDetail() {
                 <Ruler className="w-5 h-5 text-emerald-600" />
                 슬롯 규격
               </h2>
+
+              {/* 부착 위치 시각화 */}
+              <div className="mb-6 p-4 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200">
+                <p className="text-sm font-medium text-slate-700 mb-3 text-center">부착 위치 미리보기</p>
+                <SlotVisualization
+                  bodyPart={template?.bodyPart}
+                  brandName="LOGO"
+                  className="mx-auto"
+                />
+              </div>
+
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 <div className="p-3 bg-slate-50 rounded-lg">
                   <p className="text-xs text-slate-500">부착 위치</p>

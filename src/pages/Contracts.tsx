@@ -414,7 +414,6 @@ function ContractDetailModal({
 }: ContractDetailModalProps) {
   const [activeTab, setActiveTab] = useState('details');
   const [assetFile, setAssetFile] = useState<File | null>(null);
-  const [assetType, setAssetType] = useState('IMAGE');
   const [isUploading, setIsUploading] = useState(false);
 
   // 선수 노출 인증용 상태
@@ -440,7 +439,7 @@ function ContractDetailModal({
       await api.uploadAsset(contract.id, {
         fileUrl,
         fileName: assetFile.name,
-        fileType: assetType,
+        fileType: 'IMAGE',
       });
 
       alert('에셋이 제출되었습니다!');
@@ -692,30 +691,18 @@ function ContractDetailModal({
                   <div className="p-4 bg-sky-50 rounded-xl border border-sky-200">
                     <div className="flex items-center gap-2 mb-2">
                       <Upload className="w-5 h-5 text-sky-600" />
-                      <span className="font-medium text-sky-900">에셋 제출이 필요합니다</span>
+                      <span className="font-medium text-sky-900">로고 이미지 제출이 필요합니다</span>
                     </div>
-                    <p className="text-sm text-sky-700">광고 이미지 또는 비디오를 업로드해주세요</p>
+                    <p className="text-sm text-sky-700">선수에게 부착할 브랜드 로고/문구 이미지를 업로드해주세요</p>
                   </div>
 
                   <div>
-                    <label className="label">에셋 타입</label>
-                    <select
-                      value={assetType}
-                      onChange={(e) => setAssetType(e.target.value)}
-                      className="input"
-                    >
-                      <option value="IMAGE">이미지</option>
-                      <option value="VIDEO">비디오</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="label">파일 업로드</label>
+                    <label className="label">로고 이미지 업로드</label>
                     <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:border-emerald-400 transition-colors">
                       <input
                         type="file"
                         onChange={(e) => setAssetFile(e.target.files?.[0] || null)}
-                        accept={assetType === 'IMAGE' ? 'image/*' : 'video/*'}
+                        accept="image/png,image/jpeg,image/svg+xml"
                         className="hidden"
                         id="asset-upload"
                       />
@@ -725,17 +712,18 @@ function ContractDetailModal({
                           {assetFile ? assetFile.name : '클릭하여 파일을 선택하세요'}
                         </p>
                         <p className="text-sm text-slate-400 mt-1">
-                          {assetType === 'IMAGE' ? 'PNG, JPG (최대 10MB)' : 'MP4 (최대 50MB)'}
+                          PNG, JPG, SVG (최대 10MB)
                         </p>
                       </label>
                     </div>
                   </div>
 
                   <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
-                    <h4 className="font-medium text-amber-900 mb-2">에셋 가이드라인</h4>
+                    <h4 className="font-medium text-amber-900 mb-2">로고 가이드라인</h4>
                     <ul className="text-sm text-amber-700 space-y-1">
-                      <li>• 이미지: 최소 1920x1080 해상도</li>
-                      <li>• 비디오: 최대 30초</li>
+                      <li>• 고해상도 이미지 권장 (300dpi 이상)</li>
+                      <li>• 투명 배경 PNG 또는 벡터(SVG) 권장</li>
+                      <li>• 슬롯 규격에 맞는 크기로 제작</li>
                       <li>• 부적절한 콘텐츠 금지</li>
                       <li>• 경쟁 브랜드 로고 포함 불가</li>
                     </ul>

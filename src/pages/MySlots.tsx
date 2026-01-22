@@ -70,8 +70,8 @@ export function MySlots() {
     .filter((slot: any) => {
       if (statusFilter !== 'all') {
         if (statusFilter === 'auction' && slot.auction?.status !== 'LIVE') return false;
-        if (statusFilter === 'contracted' && !slot.contract) return false;
-        if (statusFilter === 'available' && (slot.auction || slot.contract)) return false;
+        if (statusFilter === 'contracted' && !slot.auction?.contract) return false;
+        if (statusFilter === 'available' && (slot.auction || slot.auction?.contract)) return false;
       }
       return true;
     })
@@ -101,7 +101,8 @@ export function MySlots() {
   };
 
   const getSlotStatus = (slot: any) => {
-    if (slot.contract) {
+    const contract = slot.auction?.contract;
+    if (contract) {
       return { label: '계약됨', style: 'bg-emerald-100 text-emerald-700 border-emerald-200' };
     }
     if (slot.auction?.status === 'LIVE') {
@@ -195,7 +196,7 @@ export function MySlots() {
               <div className="min-w-0">
                 <p className="text-xs sm:text-sm text-slate-600">계약 완료</p>
                 <p className="text-base sm:text-2xl font-bold text-slate-900">
-                  {stats.contractedSlots || slots.filter((s: any) => s.contract).length}
+                  {stats.contractedSlots || slots.filter((s: any) => s.auction?.contract).length}
                 </p>
               </div>
             </div>
@@ -281,12 +282,12 @@ export function MySlots() {
                         <div className={cn(
                           'w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0',
                           slot.auction?.status === 'LIVE' ? 'bg-amber-100' :
-                          slot.contract ? 'bg-emerald-100' : 'bg-slate-100'
+                          slot.auction?.contract ? 'bg-emerald-100' : 'bg-slate-100'
                         )}>
                           <Calendar className={cn(
                             'w-5 h-5 sm:w-6 sm:h-6',
                             slot.auction?.status === 'LIVE' ? 'text-amber-600' :
-                            slot.contract ? 'text-emerald-600' : 'text-slate-500'
+                            slot.auction?.contract ? 'text-emerald-600' : 'text-slate-500'
                           )} />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -318,7 +319,7 @@ export function MySlots() {
                             </div>
                           </div>
                           {/* Sale Mode Info */}
-                          {!slot.contract && !slot.auction && (
+                          {!slot.auction?.contract && !slot.auction && (
                             <div className="flex flex-wrap items-center gap-2 mt-2 text-xs sm:text-sm">
                               <span className="text-slate-500">판매방식:</span>
                               <span className={cn(
@@ -342,19 +343,19 @@ export function MySlots() {
                                 </strong>
                               </span>
                               <span className="text-xs sm:text-sm text-slate-500">
-                                입찰: {slot.auction.bidCount || 0}건
+                                입찰: {slot.auction._count?.bids || 0}건
                               </span>
                             </div>
                           )}
-                          {slot.contract && (
+                          {slot.auction?.contract && (
                             <div className="flex flex-wrap items-center gap-2 mt-2 text-xs sm:text-sm">
                               <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500" />
                               <span className="text-slate-600">
-                                계약금: <strong>{formatCurrency(slot.contract.finalPrice || 0)}</strong>
+                                계약금: <strong>{formatCurrency(slot.auction.contract.priceFinal || 0)}</strong>
                               </span>
                               <span className="text-slate-400 hidden sm:inline">|</span>
                               <span className="text-slate-600 truncate">
-                                브랜드: {slot.contract.brand?.companyName}
+                                브랜드: {slot.auction.contract.brand?.name}
                               </span>
                             </div>
                           )}
@@ -512,10 +513,10 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
     saleModeSubmitting.mutate();
   };
 
-  const canEditSaleMode = slot.status === 'OPEN' && !slot.contract && slot.auction?.status !== 'LIVE';
+  const canEditSaleMode = slot.status === 'OPEN' && !slot.auction?.contract && slot.auction?.status !== 'LIVE';
 
   const status = (() => {
-    if (slot.contract) {
+    if (slot.auction?.contract) {
       return { label: '계약됨', style: 'bg-emerald-100 text-emerald-700 border-emerald-200' };
     }
     if (slot.auction?.status === 'LIVE') {
@@ -601,24 +602,24 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
               </div>
 
               {/* Contract Info */}
-              {slot.contract && (
+              {slot.auction?.contract && (
                 <div>
                   <h3 className="text-xs sm:text-sm font-semibold text-slate-900 mb-2 sm:mb-3">계약 정보</h3>
                   <div className="p-3 sm:p-4 bg-emerald-50 rounded-lg sm:rounded-xl border border-emerald-200">
                     <div className="flex items-center justify-between mb-2 sm:mb-3">
                       <span className="text-emerald-700 font-medium text-sm sm:text-base">계약 완료</span>
                       <span className="text-base sm:text-lg font-bold text-emerald-700">
-                        {formatCurrency(slot.contract.finalPrice || 0)}
+                        {formatCurrency(slot.auction.contract.priceFinal || 0)}
                       </span>
                     </div>
                     <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
                       <div>
                         <p className="text-emerald-600">브랜드</p>
-                        <p className="font-medium text-emerald-900">{slot.contract.brand?.companyName}</p>
+                        <p className="font-medium text-emerald-900">{slot.auction.contract.brand?.name}</p>
                       </div>
                       <div>
                         <p className="text-emerald-600">계약 상태</p>
-                        <p className="font-medium text-emerald-900">{slot.contract.status}</p>
+                        <p className="font-medium text-emerald-900">{slot.auction.contract.status}</p>
                       </div>
                     </div>
                   </div>
@@ -634,7 +635,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                   <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300 mx-auto mb-4" />
                   <h3 className="text-base sm:text-lg font-medium text-slate-900 mb-2">판매 설정을 수정할 수 없습니다</h3>
                   <p className="text-sm sm:text-base text-slate-600">
-                    {slot.contract ? '이미 계약된 슬롯입니다' :
+                    {slot.auction?.contract ? '이미 계약된 슬롯입니다' :
                      slot.auction?.status === 'LIVE' ? '경매 진행 중에는 수정할 수 없습니다' :
                      '슬롯 상태가 OPEN일 때만 수정 가능합니다'}
                   </p>
@@ -765,7 +766,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                     </div>
                     <div className="p-2.5 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
                       <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">입찰 수</p>
-                      <p className="text-sm sm:text-xl font-bold text-slate-900">{slot.auction.bidCount || 0}건</p>
+                      <p className="text-sm sm:text-xl font-bold text-slate-900">{slot.auction._count?.bids || 0}건</p>
                     </div>
                     <div className="p-2.5 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
                       <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">마감</p>
