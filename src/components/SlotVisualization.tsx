@@ -1,42 +1,97 @@
 import { cn } from '../utils';
+import { lazy, Suspense, useState } from 'react';
+
+// 3D 컴포넌트 동적 로드 (번들 최적화)
+const SlotVisualization3D = lazy(() => import('./SlotVisualization3D'));
 
 interface SlotVisualizationProps {
   bodyPart: string;
   brandLogo?: string;
   brandName?: string;
   className?: string;
+  use3D?: boolean;
 }
 
 /**
  * 슬롯 부착 위치 시각화 컴포넌트
  * - 골프 셔츠/모자 도안에 로고 부착 위치 표시
+ * - use3D=true로 3D 시각화 사용 (기본값: true)
  */
 export function SlotVisualization({
   bodyPart,
   brandLogo,
   brandName = 'LOGO',
   className,
+  use3D = true,
 }: SlotVisualizationProps) {
+  const [show3D, setShow3D] = useState(use3D);
   const isCap = bodyPart?.startsWith('CAP_');
 
-  if (isCap) {
+  // bodyPart를 3D 컴포넌트의 slotType으로 매핑
+  const mapBodyPartToSlotType = (part: string): 'SHIRT_FRONT' | 'SHIRT_BACK' | 'SHIRT_SLEEVE' | 'CAP_FRONT' | 'CAP_SIDE' => {
+    if (part === 'CAP_BACK' || part === 'CAP_FRONT') return 'CAP_FRONT';
+    if (part?.startsWith('CAP_')) return 'CAP_SIDE';
+    if (part === 'SHIRT_BACK') return 'SHIRT_BACK';
+    if (part?.includes('SLEEVE')) return 'SHIRT_SLEEVE';
+    return 'SHIRT_FRONT';
+  };
+
+  // 3D 렌더링
+  if (show3D) {
     return (
-      <CapVisualization
-        bodyPart={bodyPart}
-        brandLogo={brandLogo}
-        brandName={brandName}
-        className={className}
-      />
+      <div className={cn('relative', className)}>
+        <Suspense
+          fallback={
+            <div className="h-48 bg-slate-100 rounded-lg flex items-center justify-center">
+              <div className="text-slate-400 text-sm">3D 로딩 중...</div>
+            </div>
+          }
+        >
+          <SlotVisualization3D
+            slotType={mapBodyPartToSlotType(bodyPart)}
+            logoUrl={brandLogo}
+            size="md"
+          />
+        </Suspense>
+        {/* 2D/3D 토글 버튼 */}
+        <button
+          onClick={() => setShow3D(false)}
+          className="absolute top-2 left-2 bg-white/80 hover:bg-white px-2 py-1 rounded text-xs text-slate-600 transition-colors"
+        >
+          2D 보기
+        </button>
+      </div>
     );
   }
 
-  return (
+  // 기존 2D 렌더링
+  const content = isCap ? (
+    <CapVisualization
+      bodyPart={bodyPart}
+      brandLogo={brandLogo}
+      brandName={brandName}
+      className={className}
+    />
+  ) : (
     <ShirtVisualization
       bodyPart={bodyPart}
       brandLogo={brandLogo}
       brandName={brandName}
       className={className}
     />
+  );
+
+  return (
+    <div className={cn('relative', className)}>
+      {content}
+      {/* 2D/3D 토글 버튼 */}
+      <button
+        onClick={() => setShow3D(true)}
+        className="absolute top-2 left-2 bg-white/80 hover:bg-white px-2 py-1 rounded text-xs text-slate-600 transition-colors"
+      >
+        3D 보기
+      </button>
+    </div>
   );
 }
 

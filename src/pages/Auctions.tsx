@@ -48,10 +48,10 @@ export function Auctions() {
     refetchInterval: statusFilter === 'LIVE' ? 5000 : false,
   });
 
-  // 즉시구매 가능 슬롯 조회 (OPEN 상태 + enableDirectBuy)
+  // 즉시구매 가능 슬롯 조회 (enableDirectBuy: true, 경매중 슬롯도 포함)
   const { data: directBuySlots } = useQuery({
     queryKey: ['slots', 'directBuy'],
-    queryFn: () => api.getSlotInstances({ status: 'OPEN' }),
+    queryFn: () => api.getSlotInstances({ enableDirectBuy: true }),
     enabled: statusFilter === 'DIRECT_BUY',
   });
 
@@ -520,6 +520,8 @@ export function Auctions() {
               </div>
             ) : (
               ((directBuySlots as any).data?.instances || [])
+                // RESERVED/SOLD 상태 슬롯 제외 (계약 진행중/완료)
+                .filter((slot: any) => slot.status !== 'RESERVED' && slot.status !== 'SOLD')
                 .map((slot: any) => (
                   <div key={slot.id} className="card overflow-hidden border-l-4 border-l-blue-500">
                     <div className="p-4 sm:p-6">

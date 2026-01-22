@@ -338,8 +338,8 @@ export function MySlots() {
                           {slot.auction && (
                             <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2">
                               <span className="text-xs sm:text-sm text-slate-500">
-                                현재가: <strong className="text-emerald-600">
-                                  {formatCurrency(slot.auction.currentPrice || slot.auction.startingPrice || 0)}
+                                시작가: <strong className="text-emerald-600">
+                                  {formatCurrency(slot.auctionMinBid || slot.reservePrice || 0)}
                                 </strong>
                               </span>
                               <span className="text-xs sm:text-sm text-slate-500">
@@ -759,9 +759,9 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                   {/* Auction Status */}
                   <div className="grid grid-cols-3 gap-2 sm:gap-4">
                     <div className="p-2.5 sm:p-4 bg-emerald-50 rounded-lg sm:rounded-xl border border-emerald-200">
-                      <p className="text-[10px] sm:text-xs text-emerald-600 mb-0.5 sm:mb-1">현재가</p>
+                      <p className="text-[10px] sm:text-xs text-emerald-600 mb-0.5 sm:mb-1">시작가</p>
                       <p className="text-sm sm:text-xl font-bold text-emerald-700">
-                        {formatCurrency(slot.auction.currentPrice || slot.auction.startingPrice || 0)}
+                        {formatCurrency(slot.auctionMinBid || slot.reservePrice || 0)}
                       </p>
                     </div>
                     <div className="p-2.5 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
@@ -896,6 +896,13 @@ function CreateSlotModal({
   const [selectedTemplateIds, setSelectedTemplateIds] = useState<string[]>([]);
   const [error, setError] = useState('');
 
+  // 모든 이벤트의 슬롯을 가져와서 중복 체크 (페이지 필터와 무관하게)
+  const { data: allSlotsData } = useQuery({
+    queryKey: ['all-athlete-slots'],
+    queryFn: () => api.getMyAthleteSlots(), // eventId 없이 전체 조회
+  });
+  const allExistingSlots = allSlotsData?.data || existingSlots;
+
   const createSlotsMutation = useMutation({
     mutationFn: () => api.bulkCreateSlotInstances(selectedEventId, athleteId, selectedTemplateIds),
     onSuccess: (response: any) => {
@@ -914,9 +921,10 @@ function CreateSlotModal({
   });
 
   // Filter out templates that already have slots for this event
+  // allExistingSlots를 사용하여 모든 이벤트의 슬롯을 확인
   const availableTemplates = templates.filter((template: any) => {
     if (!selectedEventId) return true;
-    return !existingSlots.some(
+    return !allExistingSlots.some(
       (slot: any) =>
         slot.eventId === selectedEventId && slot.slotTemplateId === template.id
     );
