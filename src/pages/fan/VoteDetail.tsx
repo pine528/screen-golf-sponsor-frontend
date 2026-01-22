@@ -412,14 +412,14 @@ export default function VoteDetail() {
         </div>
 
         {/* Stats Card (for ended votes) */}
-        {isEnded && stats && (
+        {isEnded && stats?.optionStats && Array.isArray(stats.optionStats) && (
           <div className="card p-6">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="w-5 h-5 text-slate-600" />
               <h2 className="font-semibold text-slate-900">투표 결과</h2>
             </div>
             <div className="space-y-3">
-              {stats.optionStats
+              {[...stats.optionStats]
                 .sort((a, b) => b.count - a.count)
                 .map((stat, index) => (
                   <div key={stat.optionId} className="flex items-center gap-3">
