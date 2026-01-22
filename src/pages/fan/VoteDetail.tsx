@@ -87,10 +87,14 @@ export default function VoteDetail() {
   const { data: stats } = useQuery({
     queryKey: ['voteEventStats', id],
     queryFn: async () => {
-      const res = await api.getVoteEventStats(id!);
-      return res.data as VoteStats;
+      try {
+        const res = await api.getVoteEventStats(id!);
+        return res.data as VoteStats;
+      } catch {
+        return null;
+      }
     },
-    enabled: !!id && voteEvent?.status !== 'ACTIVE',
+    enabled: !!id && !!voteEvent,
   });
 
   const { data: myVotes } = useQuery({
