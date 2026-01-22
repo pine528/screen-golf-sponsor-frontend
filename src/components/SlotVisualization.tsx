@@ -22,7 +22,7 @@ export function SlotVisualization({
   brandLogo,
   brandName = 'LOGO',
   className,
-  use3D = true,
+  use3D = false,  // 기본값을 2D로 변경
 }: SlotVisualizationProps) {
   const [show3D, setShow3D] = useState(use3D);
   const isCap = bodyPart?.startsWith('CAP_');
@@ -228,11 +228,19 @@ function CapVisualization({
   brandName,
   className,
 }: SlotVisualizationProps) {
-  const isBack = bodyPart === 'CAP_BACK';
-
-  if (isBack) {
+  if (bodyPart === 'CAP_BACK') {
     return (
       <CapBackView
+        brandLogo={brandLogo}
+        brandName={brandName}
+        className={className}
+      />
+    );
+  }
+
+  if (bodyPart === 'CAP_FRONT') {
+    return (
+      <CapFrontView
         brandLogo={brandLogo}
         brandName={brandName}
         className={className}
@@ -251,7 +259,7 @@ function CapVisualization({
 }
 
 /**
- * 모자 측면 뷰
+ * 모자 측면 뷰 - 실제 야구모자 형태
  */
 function CapSideView({
   bodyPart,
@@ -264,72 +272,108 @@ function CapSideView({
   return (
     <div className={cn('relative', className)}>
       <svg
-        viewBox="0 0 250 180"
+        viewBox="0 0 512 512"
         className="w-full h-auto"
         style={{ maxWidth: '300px' }}
       >
+        <defs>
+          <linearGradient id="capSideGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#f8fafc" />
+            <stop offset="1" stopColor="#e2e8f0" />
+          </linearGradient>
+          <linearGradient id="brimGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#cbd5e1" />
+            <stop offset="1" stopColor="#94a3b8" />
+          </linearGradient>
+        </defs>
+
         {/* 배경 */}
-        <rect width="250" height="180" fill="#f8fafc" rx="12" />
+        <rect width="512" height="512" fill="#f1f5f9" rx="24" />
 
         {/* 모자 본체 - 측면 뷰 */}
-        <g transform={isLeft ? '' : 'translate(250, 0) scale(-1, 1)'}>
-          {/* 챙 */}
-          <ellipse
-            cx="85"
-            cy="130"
-            rx="70"
-            ry="15"
-            fill="#e2e8f0"
-            stroke="#94a3b8"
-            strokeWidth="2"
-          />
-
-          {/* 모자 크라운 */}
+        <g transform={isLeft ? '' : 'translate(512, 0) scale(-1, 1)'}>
+          {/* 챙 - 앞으로 뻗어나가는 형태 */}
           <path
-            d="M40 130 Q40 60 125 50 Q180 55 180 90 Q180 130 180 130 L40 130"
-            fill="#ffffff"
+            d="M90 290
+               C90 300 80 310 70 315
+               L70 325
+               C90 330 150 335 200 325
+               C220 320 250 305 260 290
+               C260 285 250 278 200 280
+               C150 282 100 285 90 290 Z"
+            fill="url(#brimGrad)"
             stroke="#94a3b8"
             strokeWidth="2"
           />
 
-          {/* 모자 패널 구분선 */}
-          <path d="M80 55 Q90 90 85 130" fill="none" stroke="#cbd5e1" strokeWidth="1" />
-          <path d="M130 52 Q135 90 130 130" fill="none" stroke="#cbd5e1" strokeWidth="1" />
+          {/* 챙 하단 그림자 */}
+          <path
+            d="M75 318 C110 328 170 332 220 322 C240 318 255 308 258 295"
+            fill="none"
+            stroke="#64748b"
+            strokeWidth="1"
+            strokeOpacity="0.3"
+          />
+
+          {/* 크라운 (측면) */}
+          <path
+            d="M90 290
+               C90 230 130 170 200 150
+               C280 130 360 150 400 200
+               C430 240 440 280 430 300
+               C420 330 390 350 350 360
+               C310 370 260 372 220 368
+               C180 364 140 350 110 330
+               C95 318 90 305 90 290 Z"
+            fill="url(#capSideGrad)"
+            stroke="#94a3b8"
+            strokeWidth="2"
+          />
+
+          {/* 패널 구분선 */}
+          <path d="M180 155 C195 210 200 270 195 365" fill="none" stroke="#94a3b8" strokeOpacity="0.2" strokeWidth="3" strokeLinecap="round" />
+          <path d="M280 145 C290 200 290 260 280 360" fill="none" stroke="#94a3b8" strokeOpacity="0.15" strokeWidth="3" strokeLinecap="round" />
+          <path d="M370 170 C380 220 380 280 365 355" fill="none" stroke="#94a3b8" strokeOpacity="0.15" strokeWidth="3" strokeLinecap="round" />
 
           {/* 버튼 */}
-          <circle cx="125" cy="50" r="5" fill="#94a3b8" />
+          <circle cx="280" cy="138" r="10" fill="#cbd5e1" />
+          <circle cx="280" cy="138" r="10" fill="none" stroke="#94a3b8" strokeOpacity="0.3" strokeWidth="2" />
+
+          {/* 아일릿 */}
+          <circle cx="250" cy="200" r="6" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
+          <circle cx="340" cy="210" r="6" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
 
           {/* 부착 위치 표시 (측면) */}
           <rect
-            x="55"
-            y="70"
-            width="50"
-            height="25"
-            fill="rgba(16, 185, 129, 0.1)"
+            x="130"
+            y="200"
+            width="100"
+            height="60"
+            fill="rgba(16, 185, 129, 0.15)"
             stroke="#10b981"
-            strokeWidth="2"
-            strokeDasharray="4,2"
-            rx="4"
+            strokeWidth="3"
+            strokeDasharray="8,4"
+            rx="8"
           />
 
           {/* 로고 또는 브랜드명 */}
           {brandLogo ? (
             <image
               href={brandLogo}
-              x="60"
-              y="73"
-              width="40"
-              height="19"
+              x="140"
+              y="212"
+              width="80"
+              height="36"
               preserveAspectRatio="xMidYMid meet"
             />
           ) : (
             <text
-              x="80"
-              y="83"
+              x="180"
+              y="230"
               textAnchor="middle"
               dominantBaseline="middle"
               fill="#10b981"
-              fontSize="10"
+              fontSize="20"
               fontWeight="bold"
             >
               {brandName}
@@ -339,20 +383,20 @@ function CapSideView({
 
         {/* 위치 설명 라벨 */}
         <rect
-          x="95"
-          y="150"
-          width="60"
-          height="18"
+          x="180"
+          y="420"
+          width="150"
+          height="36"
           fill="#10b981"
-          rx="9"
+          rx="18"
         />
         <text
-          x="125"
-          y="159"
+          x="255"
+          y="438"
           textAnchor="middle"
           dominantBaseline="middle"
           fill="white"
-          fontSize="9"
+          fontSize="18"
           fontWeight="500"
         >
           {isLeft ? '모자 측면(좌)' : '모자 측면(우)'}
@@ -371,7 +415,151 @@ function CapSideView({
 }
 
 /**
- * 모자 후면 뷰
+ * 모자 정면 뷰 - 실제 야구모자 형태
+ */
+function CapFrontView({
+  brandLogo,
+  brandName,
+  className,
+}: Omit<SlotVisualizationProps, 'bodyPart'>) {
+  return (
+    <div className={cn('relative', className)}>
+      <svg
+        viewBox="0 0 512 512"
+        className="w-full h-auto"
+        style={{ maxWidth: '300px' }}
+      >
+        <defs>
+          <linearGradient id="capFrontGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#f8fafc" />
+            <stop offset="1" stopColor="#e2e8f0" />
+          </linearGradient>
+          <linearGradient id="brimFrontGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#e2e8f0" />
+            <stop offset="1" stopColor="#94a3b8" />
+          </linearGradient>
+        </defs>
+
+        {/* 배경 */}
+        <rect width="512" height="512" fill="#f1f5f9" rx="24" />
+
+        {/* 크라운 (정면) */}
+        <path
+          d="M100 300
+             C100 220 140 150 180 120
+             C220 90 260 80 260 80
+             C260 80 300 90 340 120
+             C380 150 420 220 420 300
+             C420 340 400 360 360 375
+             C320 390 290 395 260 395
+             C230 395 200 390 160 375
+             C120 360 100 340 100 300 Z"
+          fill="url(#capFrontGrad)"
+          stroke="#94a3b8"
+          strokeWidth="2"
+        />
+
+        {/* 패널 구분선 */}
+        <path d="M260 85 C260 150 260 250 260 390" fill="none" stroke="#94a3b8" strokeOpacity="0.2" strokeWidth="3" strokeLinecap="round" />
+        <path d="M180 115 C190 180 195 280 175 385" fill="none" stroke="#94a3b8" strokeOpacity="0.15" strokeWidth="3" strokeLinecap="round" />
+        <path d="M340 115 C330 180 325 280 345 385" fill="none" stroke="#94a3b8" strokeOpacity="0.15" strokeWidth="3" strokeLinecap="round" />
+
+        {/* 버튼 */}
+        <circle cx="260" cy="85" r="12" fill="#cbd5e1" />
+        <circle cx="260" cy="85" r="12" fill="none" stroke="#94a3b8" strokeOpacity="0.3" strokeWidth="2" />
+
+        {/* 챙 (정면에서 보이는 부분) */}
+        <ellipse
+          cx="260"
+          cy="380"
+          rx="160"
+          ry="30"
+          fill="url(#brimFrontGrad)"
+          stroke="#94a3b8"
+          strokeWidth="2"
+        />
+
+        {/* 챙 상단 라인 */}
+        <path
+          d="M100 375 Q260 350 420 375"
+          fill="none"
+          stroke="#64748b"
+          strokeWidth="1"
+          strokeOpacity="0.3"
+        />
+
+        {/* 부착 위치 표시 (정면 중앙) */}
+        <rect
+          x="180"
+          y="180"
+          width="160"
+          height="80"
+          fill="rgba(16, 185, 129, 0.15)"
+          stroke="#10b981"
+          strokeWidth="3"
+          strokeDasharray="8,4"
+          rx="8"
+        />
+
+        {/* 로고 또는 브랜드명 */}
+        {brandLogo ? (
+          <image
+            href={brandLogo}
+            x="200"
+            y="195"
+            width="120"
+            height="50"
+            preserveAspectRatio="xMidYMid meet"
+          />
+        ) : (
+          <text
+            x="260"
+            y="220"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="#10b981"
+            fontSize="28"
+            fontWeight="bold"
+          >
+            {brandName}
+          </text>
+        )}
+
+        {/* 위치 설명 라벨 */}
+        <rect
+          x="200"
+          y="440"
+          width="120"
+          height="36"
+          fill="#10b981"
+          rx="18"
+        />
+        <text
+          x="260"
+          y="458"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill="white"
+          fontSize="18"
+          fontWeight="500"
+        >
+          모자 정면
+        </text>
+      </svg>
+
+      {/* 범례 */}
+      <div className="mt-3 flex items-center justify-center gap-4 text-xs text-slate-500">
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 border-2 border-emerald-500 border-dashed rounded" />
+          <span>부착 위치</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 모자 후면 뷰 - 실제 야구모자 형태
  */
 function CapBackView({
   brandLogo,
@@ -381,74 +569,104 @@ function CapBackView({
   return (
     <div className={cn('relative', className)}>
       <svg
-        viewBox="0 0 250 180"
+        viewBox="0 0 512 512"
         className="w-full h-auto"
         style={{ maxWidth: '300px' }}
       >
+        <defs>
+          <linearGradient id="capBackGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#f8fafc" />
+            <stop offset="1" stopColor="#e2e8f0" />
+          </linearGradient>
+        </defs>
+
         {/* 배경 */}
-        <rect width="250" height="180" fill="#f8fafc" rx="12" />
+        <rect width="512" height="512" fill="#f1f5f9" rx="24" />
 
-        {/* 모자 본체 - 후면 뷰 */}
-        {/* 크라운 */}
-        <ellipse
-          cx="125"
-          cy="70"
-          rx="80"
-          ry="50"
-          fill="#ffffff"
+        {/* 크라운 (후면) */}
+        <path
+          d="M130 270
+             C130 190 196 135 260 135
+             C332 135 396 188 410 262
+             C416 296 394 322 360 336
+             C326 350 292 358 260 358
+             C220 358 184 348 156 334
+             C140 326 125 304 130 270 Z"
+          fill="url(#capBackGrad)"
           stroke="#94a3b8"
           strokeWidth="2"
         />
-
-        {/* 모자 밴드 */}
-        <ellipse
-          cx="125"
-          cy="115"
-          rx="75"
-          ry="20"
-          fill="#e2e8f0"
-          stroke="#94a3b8"
-          strokeWidth="2"
-        />
-
-        {/* 조절 스트랩 */}
-        <rect x="100" y="108" width="50" height="14" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" rx="2" />
 
         {/* 패널 구분선 */}
-        <path d="M75 30 Q75 70 75 115" fill="none" stroke="#cbd5e1" strokeWidth="1" />
-        <path d="M175 30 Q175 70 175 115" fill="none" stroke="#cbd5e1" strokeWidth="1" />
+        <path d="M260 140 C250 190 250 240 260 356" fill="none" stroke="#94a3b8" strokeOpacity="0.2" strokeWidth="3" strokeLinecap="round" />
+        <path d="M212 156 C230 206 238 254 236 350" fill="none" stroke="#94a3b8" strokeOpacity="0.15" strokeWidth="3" strokeLinecap="round" />
+        <path d="M308 156 C290 206 282 254 284 350" fill="none" stroke="#94a3b8" strokeOpacity="0.15" strokeWidth="3" strokeLinecap="round" />
 
-        {/* 부착 위치 표시 (후면) */}
+        {/* 버튼 */}
+        <circle cx="260" cy="138" r="10" fill="#cbd5e1" />
+        <circle cx="260" cy="138" r="10" fill="none" stroke="#94a3b8" strokeOpacity="0.3" strokeWidth="2" />
+
+        {/* 후면 개구부 */}
+        <path
+          d="M192 320
+             C210 346 238 360 260 360
+             C282 360 310 346 328 320
+             C314 312 292 306 260 306
+             C228 306 206 312 192 320 Z"
+          fill="#e2e8f0"
+          opacity="0.9"
+        />
+
+        {/* 스트랩 */}
+        <path
+          d="M206 324
+             C228 312 244 308 260 308
+             C276 308 292 312 314 324
+             C304 340 284 350 260 350
+             C236 350 216 340 206 324 Z"
+          fill="#cbd5e1"
+          opacity="0.95"
+        />
+
+        {/* 버클 */}
+        <rect x="304" y="324" width="30" height="18" rx="6" fill="#94a3b8" opacity="0.9" />
+        <rect x="309" y="328" width="20" height="10" rx="4" fill="#64748b" opacity="0.9" />
+
+        {/* 아일릿 */}
+        <circle cx="205" cy="210" r="6" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
+        <circle cx="315" cy="210" r="6" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
+
+        {/* 부착 위치 표시 (후면 상단) */}
         <rect
-          x="100"
-          y="50"
-          width="50"
-          height="25"
-          fill="rgba(16, 185, 129, 0.1)"
+          x="210"
+          y="180"
+          width="100"
+          height="50"
+          fill="rgba(16, 185, 129, 0.15)"
           stroke="#10b981"
-          strokeWidth="2"
-          strokeDasharray="4,2"
-          rx="4"
+          strokeWidth="3"
+          strokeDasharray="8,4"
+          rx="8"
         />
 
         {/* 로고 또는 브랜드명 */}
         {brandLogo ? (
           <image
             href={brandLogo}
-            x="105"
-            y="53"
-            width="40"
-            height="19"
+            x="220"
+            y="188"
+            width="80"
+            height="34"
             preserveAspectRatio="xMidYMid meet"
           />
         ) : (
           <text
-            x="125"
-            y="63"
+            x="260"
+            y="205"
             textAnchor="middle"
             dominantBaseline="middle"
             fill="#10b981"
-            fontSize="10"
+            fontSize="20"
             fontWeight="bold"
           >
             {brandName}
@@ -457,20 +675,20 @@ function CapBackView({
 
         {/* 위치 설명 라벨 */}
         <rect
-          x="95"
-          y="145"
-          width="60"
-          height="18"
+          x="200"
+          y="400"
+          width="120"
+          height="36"
           fill="#10b981"
-          rx="9"
+          rx="18"
         />
         <text
-          x="125"
-          y="154"
+          x="260"
+          y="418"
           textAnchor="middle"
           dominantBaseline="middle"
           fill="white"
-          fontSize="9"
+          fontSize="18"
           fontWeight="500"
         >
           모자 후면
