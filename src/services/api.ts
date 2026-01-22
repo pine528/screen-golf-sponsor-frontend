@@ -250,6 +250,16 @@ class ApiService {
     return response.data;
   }
 
+  async startAuction(id: string) {
+    const response = await this.client.post<ApiResponse<any>>(`/auctions/${id}/start`);
+    return response.data;
+  }
+
+  async cancelAuction(id: string, reason?: string) {
+    const response = await this.client.post<ApiResponse<any>>(`/auctions/${id}/cancel`, { reason });
+    return response.data;
+  }
+
   // Contracts
   async getContracts(params?: any) {
     const response = await this.client.get<ApiResponse<any[]>>('/contracts', { params });
