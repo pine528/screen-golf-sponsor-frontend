@@ -132,18 +132,6 @@ export default function VoteDetail() {
     submitVoteMutation.mutate(selectedOption);
   };
 
-  const getOptionPercentage = (optionId: string) => {
-    if (!stats?.optionStats) return 0;
-    const optionStat = stats.optionStats.find(s => s.optionId === optionId);
-    return optionStat?.percentage || 0;
-  };
-
-  const getOptionVoteCount = (optionId: string) => {
-    if (!stats?.optionStats) return 0;
-    const optionStat = stats.optionStats.find(s => s.optionId === optionId);
-    return optionStat?.count || 0;
-  };
-
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('ko-KR', {
       year: 'numeric',
@@ -288,9 +276,6 @@ export default function VoteDetail() {
               const isSelected = selectedOption === option.id;
               const isMyVote = myVote?.selectedOptionId === option.id;
               const isCorrect = isSettled && voteEvent.correctOptionId === option.id;
-              const percentage = getOptionPercentage(option.id);
-              const voteCount = getOptionVoteCount(option.id);
-              const showStats = hasVoted || isEnded;
 
               return (
                 <button
@@ -308,17 +293,6 @@ export default function VoteDetail() {
                     !isSelected && !isMyVote && !isCorrect && 'border-slate-200'
                   )}
                 >
-                  {/* Progress Bar Background */}
-                  {showStats && (
-                    <div
-                      className={cn(
-                        'absolute inset-0 transition-all',
-                        isCorrect ? 'bg-emerald-100' : 'bg-slate-100'
-                      )}
-                      style={{ width: `${percentage}%` }}
-                    />
-                  )}
-
                   <div className="relative flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div
@@ -349,12 +323,6 @@ export default function VoteDetail() {
                         </span>
                       )}
                     </div>
-                    {showStats && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-slate-500">{voteCount}표</span>
-                        <span className="font-semibold text-slate-900">{percentage.toFixed(1)}%</span>
-                      </div>
-                    )}
                   </div>
                 </button>
               );
