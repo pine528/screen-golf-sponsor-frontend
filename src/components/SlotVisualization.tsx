@@ -51,40 +51,44 @@ function getPosition(bodyPart: string): {
 } {
   const part = bodyPart.toUpperCase();
 
-  // 소매 (SLEEVE) - 가장 먼저 체크 (UPPER_SLEEVE도 포함)
+  // 소매 (SLEEVE) - 입은 사람 기준 (화면상 반대)
   if (part.includes('SLEEVE')) {
     if (part.includes('LEFT') || part.includes('L')) {
-      return { key: 'SLEEVE_L', x: 60, y: 95, label: '왼쪽 소매', labelX: 60, labelY: 135 };
+      // 입은 사람 기준 왼쪽 소매 = 화면상 오른쪽
+      return { key: 'SLEEVE_L', x: 240, y: 85, label: '왼쪽 소매', labelX: 240, labelY: 125 };
     }
     if (part.includes('RIGHT') || part.includes('R')) {
-      return { key: 'SLEEVE_R', x: 240, y: 95, label: '오른쪽 소매', labelX: 240, labelY: 135 };
+      // 입은 사람 기준 오른쪽 소매 = 화면상 왼쪽
+      return { key: 'SLEEVE_R', x: 60, y: 85, label: '오른쪽 소매', labelX: 60, labelY: 125 };
     }
   }
 
-  // 가슴 (CHEST)
+  // 가슴 (CHEST) - 입은 사람 기준 (화면상 반대)
   if (part.includes('CHEST')) {
     if (part.includes('LEFT') || part.includes('L')) {
-      return { key: 'CHEST_L', x: 110, y: 155, label: '왼쪽 가슴', labelX: 110, labelY: 200 };
+      // 입은 사람 기준 왼쪽 가슴 = 화면상 오른쪽
+      return { key: 'CHEST_L', x: 190, y: 140, label: '왼쪽 가슴', labelX: 190, labelY: 185 };
     }
     if (part.includes('RIGHT') || part.includes('R')) {
-      return { key: 'CHEST_R', x: 190, y: 155, label: '오른쪽 가슴', labelX: 190, labelY: 200 };
+      // 입은 사람 기준 오른쪽 가슴 = 화면상 왼쪽
+      return { key: 'CHEST_R', x: 110, y: 140, label: '오른쪽 가슴', labelX: 110, labelY: 185 };
     }
     // 중앙 가슴
-    return { key: 'CHEST_C', x: 150, y: 155, label: '가슴 중앙', labelX: 150, labelY: 200 };
+    return { key: 'CHEST_C', x: 150, y: 140, label: '가슴 중앙', labelX: 150, labelY: 185 };
   }
 
   // 등판 (BACK)
   if (part.includes('BACK')) {
-    return { key: 'BACK', x: 150, y: 180, label: '등판', labelX: 150, labelY: 230 };
+    return { key: 'BACK', x: 150, y: 170, label: '등판', labelX: 150, labelY: 215 };
   }
 
   // 벨트/허리 (BELT, WAIST)
   if (part.includes('BELT') || part.includes('WAIST')) {
-    return { key: 'BELT', x: 150, y: 250, label: '벨트', labelX: 150, labelY: 285 };
+    return { key: 'BELT', x: 150, y: 240, label: '벨트', labelX: 150, labelY: 275 };
   }
 
-  // 기본값: 오른쪽 가슴 (골프 셔츠의 일반적인 로고 위치)
-  return { key: 'CHEST_R', x: 190, y: 155, label: '오른쪽 가슴', labelX: 190, labelY: 200 };
+  // 기본값: 왼쪽 가슴 (골프 셔츠의 일반적인 로고 위치 - 입은 사람 기준)
+  return { key: 'CHEST_L', x: 190, y: 140, label: '왼쪽 가슴', labelX: 190, labelY: 185 };
 }
 
 /**
