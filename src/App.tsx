@@ -17,6 +17,7 @@ import { AdminKyc } from './pages/admin/AdminKyc';
 import { AdminReviews } from './pages/admin/AdminReviews';
 import { AdminSettings } from './pages/admin/AdminSettings';
 import AdminVoteEvents from './pages/admin/AdminVoteEvents';
+import AdminPoints from './pages/admin/AdminPoints';
 import AdminPayments from './pages/admin/AdminPayments';
 import AdminReports from './pages/admin/AdminReports';
 import AdminEntities from './pages/admin/AdminEntities';
@@ -476,6 +477,14 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminVoteEvents />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/points"
+        element={
+          <ProtectedRoute>
+            <AdminPoints />
           </ProtectedRoute>
         }
       />

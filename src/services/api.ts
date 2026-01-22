@@ -1059,6 +1059,11 @@ class ApiService {
     return response.data;
   }
 
+  async getAdminFans(params?: { email?: string; page?: number; pageSize?: number }) {
+    const response = await this.client.get<ApiResponse<any>>('/admin/entities/fans', { params });
+    return response.data;
+  }
+
   async deleteAdminBrand(brandId: string) {
     const response = await this.client.delete<ApiResponse<any>>(`/admin/entities/brands/${brandId}`);
     return response.data;
