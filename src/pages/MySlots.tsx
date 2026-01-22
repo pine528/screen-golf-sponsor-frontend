@@ -898,8 +898,10 @@ function CreateSlotModal({
 
   // 모든 이벤트의 슬롯을 가져와서 중복 체크 (페이지 필터와 무관하게)
   const { data: allSlotsData } = useQuery({
-    queryKey: ['all-athlete-slots'],
+    queryKey: ['all-athlete-slots-for-create'],
     queryFn: () => api.getMyAthleteSlots(), // eventId 없이 전체 조회
+    staleTime: 0, // 항상 최신 데이터 사용
+    refetchOnMount: 'always',
   });
   const allExistingSlots = allSlotsData?.data || existingSlots;
 
@@ -921,12 +923,13 @@ function CreateSlotModal({
   });
 
   // Filter out templates that already have slots for this event
-  // allExistingSlots를 사용하여 모든 이벤트의 슬롯을 확인
+  // slotTemplate.id 또는 slotTemplateId 둘 다 체크 (API 응답 형식에 따라)
   const availableTemplates = templates.filter((template: any) => {
     if (!selectedEventId) return true;
     return !allExistingSlots.some(
       (slot: any) =>
-        slot.eventId === selectedEventId && slot.slotTemplateId === template.id
+        (slot.eventId === selectedEventId || slot.event?.id === selectedEventId) &&
+        (slot.slotTemplateId === template.id || slot.slotTemplate?.id === template.id)
     );
   });
 
