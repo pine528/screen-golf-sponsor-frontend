@@ -194,19 +194,13 @@ export default function Votes() {
   const [activeTab, setActiveTab] = useState<TabType>('active');
 
   // 관리자 투표 (진행중)
-  const { data: activeAdminVotes, isLoading: loadingActiveAdmin, error: adminError } = useQuery({
+  const { data: activeAdminVotes, isLoading: loadingActiveAdmin } = useQuery({
     queryKey: ['voteEvents', 'active'],
     queryFn: async () => {
       const res = await api.getActiveVoteEvents();
-      console.log('[Votes] Active admin votes response:', res);
       return (res.data || []) as VoteEvent[];
     },
   });
-
-  // Debug: 에러 로깅
-  if (adminError) {
-    console.error('[Votes] Admin votes error:', adminError);
-  }
 
   // 팬 투표 (진행중)
   const { data: activeFanVotes, isLoading: loadingActiveFan } = useQuery({
