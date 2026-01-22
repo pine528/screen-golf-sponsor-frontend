@@ -209,223 +209,175 @@ function CapSideView({
   return (
     <div className={cn('relative flex justify-center', className)}>
       <svg
-        viewBox="0 0 550 420"
+        viewBox="0 0 400 300"
         className="w-full h-auto"
         style={{ maxWidth: '320px' }}
       >
         <defs>
           {/* 크라운 그라데이션 */}
-          <linearGradient id="capSideGrad" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="capCrownGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#ffffff" />
-            <stop offset="0.3" stopColor="#f8fafc" />
+            <stop offset="0.5" stopColor="#f8fafc" />
             <stop offset="1" stopColor="#e2e8f0" />
           </linearGradient>
-          {/* 챙 상면 그라데이션 */}
-          <linearGradient id="brimTopGrad" x1="0" y1="0" x2="1" y2="0.3">
-            <stop offset="0" stopColor="#94a3b8" />
-            <stop offset="0.3" stopColor="#cbd5e1" />
-            <stop offset="0.7" stopColor="#e2e8f0" />
-            <stop offset="1" stopColor="#cbd5e1" />
+          {/* 챙 그라데이션 */}
+          <linearGradient id="capBrimGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#e2e8f0" />
+            <stop offset="1" stopColor="#94a3b8" />
           </linearGradient>
-          {/* 챙 하면(그림자) 그라데이션 */}
-          <linearGradient id="brimBottomGrad" x1="0" y1="0" x2="1" y2="0">
+          {/* 챙 밑면 그라데이션 */}
+          <linearGradient id="capBrimUnder" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#64748b" />
-            <stop offset="0.5" stopColor="#475569" />
-            <stop offset="1" stopColor="#64748b" />
-          </linearGradient>
-          {/* 챙 두께 그라데이션 */}
-          <linearGradient id="brimEdgeGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#94a3b8" />
-            <stop offset="1" stopColor="#64748b" />
+            <stop offset="1" stopColor="#475569" />
           </linearGradient>
         </defs>
 
         {/* 배경 */}
-        <rect width="550" height="420" fill="#f1f5f9" rx="24" />
+        <rect width="400" height="300" fill="#f1f5f9" rx="16" />
 
         {/* 모자 본체 - 측면 뷰 */}
-        <g transform={isLeft ? 'translate(80, 20)' : 'translate(470, 20) scale(-1, 1)'}>
+        <g transform={isLeft ? 'translate(60, 30)' : 'translate(340, 30) scale(-1, 1)'}>
 
-          {/* 크라운 (측면) - 실제 야구모자 형태: 앞이 낮고 뒤가 높음 */}
+          {/* 크라운 - 둥근 돔 형태 */}
           <path
-            d="M140 220
-               C135 170 155 115 210 85
-               C265 55 330 50 380 70
-               C420 85 445 115 455 160
-               C465 205 460 255 445 290
-               C430 320 395 340 345 348
-               C295 356 235 355 185 345
-               C150 337 138 290 140 220 Z"
-            fill="url(#capSideGrad)"
+            d="M80 150
+               C80 150 75 120 85 90
+               C95 60 120 35 160 25
+               C200 15 240 20 270 35
+               C300 50 315 80 318 110
+               C321 140 318 165 310 180
+               C300 195 280 205 250 210
+               C220 215 180 215 140 210
+               C110 206 90 195 82 175
+               C78 165 80 155 80 150 Z"
+            fill="url(#capCrownGrad)"
             stroke="#94a3b8"
-            strokeWidth="2"
-          />
-
-          {/* 크라운 내부 입체감 */}
-          <path
-            d="M155 230
-               C155 185 175 135 220 105
-               C270 75 330 72 375 90
-               C410 105 430 135 438 175"
-            fill="none"
-            stroke="#cbd5e1"
             strokeWidth="1.5"
-            strokeOpacity="0.4"
           />
 
-          {/* 패널 구분선 (6패널 모자) */}
-          <path d="M225 88 C235 140 240 200 235 345" fill="none" stroke="#94a3b8" strokeOpacity="0.25" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M310 68 C315 120 318 190 315 350" fill="none" stroke="#94a3b8" strokeOpacity="0.2" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M395 85 C405 140 410 210 400 340" fill="none" stroke="#94a3b8" strokeOpacity="0.15" strokeWidth="2.5" strokeLinecap="round" />
+          {/* 패널 구분선 */}
+          <path d="M160 28 Q165 80 162 208" fill="none" stroke="#94a3b8" strokeOpacity="0.2" strokeWidth="2" />
+          <path d="M220 22 Q225 75 222 212" fill="none" stroke="#94a3b8" strokeOpacity="0.15" strokeWidth="2" />
+          <path d="M275 38 Q282 90 278 205" fill="none" stroke="#94a3b8" strokeOpacity="0.1" strokeWidth="2" />
 
-          {/* 버튼 (탑 버튼) */}
-          <ellipse cx="315" cy="58" rx="12" ry="8" fill="#e2e8f0" />
-          <ellipse cx="315" cy="58" rx="12" ry="8" fill="none" stroke="#94a3b8" strokeWidth="1.5" />
-          <ellipse cx="315" cy="56" rx="8" ry="5" fill="#f1f5f9" />
+          {/* 버튼 */}
+          <ellipse cx="220" cy="22" rx="8" ry="5" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1" />
 
-          {/* 아일릿 (환기구멍) - 각 패널에 */}
-          <g fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1">
-            <circle cx="270" cy="135" r="5" />
-            <circle cx="355" cy="125" r="5" />
-            <circle cx="420" cy="150" r="5" />
-          </g>
-          {/* 아일릿 내부 구멍 */}
-          <g fill="#94a3b8">
-            <circle cx="270" cy="135" r="2.5" />
-            <circle cx="355" cy="125" r="2.5" />
-            <circle cx="420" cy="150" r="2.5" />
-          </g>
+          {/* 아일릿 */}
+          <circle cx="190" cy="75" r="4" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1" />
+          <circle cx="250" cy="70" r="4" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1" />
+          <circle cx="295" cy="95" r="4" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1" />
+          {/* 아일릿 구멍 */}
+          <circle cx="190" cy="75" r="2" fill="#94a3b8" />
+          <circle cx="250" cy="70" r="2" fill="#94a3b8" />
+          <circle cx="295" cy="95" r="2" fill="#94a3b8" />
 
-          {/* === 챙 (Brim) - 길고 곡선 형태로 앞으로 뻗어나감 === */}
-
-          {/* 챙 하면 (그림자/어두운 부분) */}
+          {/* 챙 - 앞으로 길게 뻗어나가며 살짝 아래로 휨 */}
+          {/* 챙 밑면 (그림자) */}
           <path
-            d="M140 225
-               C120 232 80 245 40 262
-               C5 278 -25 298 -35 318
-               C-40 330 -35 342 -20 350
-               C5 362 55 368 100 365
-               C130 363 155 355 165 345
-               L165 335
-               C155 340 130 348 100 350
-               C60 352 20 348 -5 340
-               C-20 335 -25 328 -22 320
-               C-15 305 10 290 40 278
-               C75 264 115 252 140 245 Z"
-            fill="url(#brimBottomGrad)"
-            opacity="0.9"
+            d="M80 155
+               Q60 158 30 165
+               Q0 172 -25 182
+               Q-45 190 -55 200
+               Q-60 206 -55 210
+               Q-45 216 -20 218
+               Q10 220 45 218
+               Q70 216 85 212
+               L85 205
+               Q70 208 45 210
+               Q15 212 -15 210
+               Q-40 208 -50 204
+               Q-55 200 -50 196
+               Q-40 190 -20 184
+               Q5 176 35 170
+               Q60 165 80 162 Z"
+            fill="url(#capBrimUnder)"
           />
 
           {/* 챙 상면 (메인) */}
           <path
-            d="M140 220
-               C115 228 70 242 25 260
-               C-15 278 -45 300 -50 322
-               C-52 335 -42 348 -20 355
-               C15 368 70 372 125 365
-               C160 360 180 348 185 332
-               C188 320 178 300 155 280
-               C140 265 140 245 140 220 Z"
-            fill="url(#brimTopGrad)"
-            stroke="#94a3b8"
-            strokeWidth="2"
-          />
-
-          {/* 챙 앞쪽 두께 (곡선 엣지) */}
-          <path
-            d="M-50 322
-               C-52 335 -42 348 -20 355
-               C-20 360 -30 350 -35 340
-               C-40 330 -40 325 -35 318
-               C-30 312 -45 318 -50 322 Z"
-            fill="url(#brimEdgeGrad)"
-            stroke="#64748b"
-            strokeWidth="1"
-          />
-
-          {/* 챙 스티칭 라인 */}
-          <path
-            d="M135 230
-               C110 240 65 255 20 275
-               C-20 293 -42 312 -45 330"
-            fill="none"
+            d="M80 150
+               Q55 152 25 158
+               Q-5 165 -30 175
+               Q-50 183 -58 192
+               Q-62 198 -58 203
+               Q-50 210 -25 214
+               Q5 218 40 216
+               Q70 214 88 208
+               Q95 204 92 195
+               Q88 180 85 165
+               Q82 155 80 150 Z"
+            fill="url(#capBrimGrad)"
             stroke="#94a3b8"
             strokeWidth="1.5"
-            strokeDasharray="6,4"
-            strokeOpacity="0.5"
           />
+
+          {/* 챙 끝부분 두께 */}
           <path
-            d="M145 245
-               C120 255 80 268 40 285
-               C0 302 -25 318 -30 335"
+            d="M-58 192 Q-62 198 -58 203 Q-55 206 -55 200 Q-58 196 -58 192 Z"
+            fill="#64748b"
+          />
+
+          {/* 챙 스티칭 */}
+          <path
+            d="M78 158 Q50 162 20 170 Q-10 180 -35 190 Q-50 198 -52 204"
             fill="none"
             stroke="#94a3b8"
             strokeWidth="1"
             strokeDasharray="4,3"
-            strokeOpacity="0.3"
-          />
-
-          {/* 챙과 크라운 연결부 디테일 */}
-          <path
-            d="M140 220 C138 235 145 250 160 265"
-            fill="none"
-            stroke="#94a3b8"
-            strokeWidth="1.5"
             strokeOpacity="0.4"
           />
 
-          {/* 땀받이 밴드 (스웻밴드) */}
+          {/* 땀받이 밴드 */}
           <path
-            d="M140 220
-               C145 250 155 290 170 330
-               C180 345 200 350 220 350"
+            d="M82 160 Q90 180 95 200 Q98 210 110 215"
             fill="none"
             stroke="#cbd5e1"
-            strokeWidth="4"
-            strokeOpacity="0.5"
+            strokeWidth="3"
+            strokeOpacity="0.4"
             strokeLinecap="round"
           />
 
-          {/* 부착 위치 표시 (측면) */}
+          {/* 부착 위치 표시 */}
           <rect
-            x="195"
-            y="150"
-            width="100"
-            height="70"
+            x="130"
+            y="80"
+            width="85"
+            height="55"
             fill="rgba(16, 185, 129, 0.15)"
             stroke="#10b981"
-            strokeWidth="3"
-            strokeDasharray="8,4"
-            rx="8"
+            strokeWidth="2"
+            strokeDasharray="6,3"
+            rx="6"
           />
 
           {/* 로고 */}
           <image
             href={brandLogo}
-            x="205"
-            y="162"
-            width="80"
-            height="46"
+            x="138"
+            y="88"
+            width="70"
+            height="40"
             preserveAspectRatio="xMidYMid meet"
           />
         </g>
 
         {/* 위치 설명 라벨 */}
         <rect
-          x="200"
-          y="375"
+          x="125"
+          y="255"
           width="150"
-          height="32"
+          height="28"
           fill="#10b981"
-          rx="16"
+          rx="14"
         />
         <text
-          x="275"
-          y="391"
+          x="200"
+          y="269"
           textAnchor="middle"
           dominantBaseline="middle"
           fill="white"
-          fontSize="16"
+          fontSize="14"
           fontWeight="500"
         >
           {isLeft ? '모자 측면(좌)' : '모자 측면(우)'}
