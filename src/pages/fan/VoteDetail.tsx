@@ -74,13 +74,14 @@ export default function VoteDetail() {
   const queryClient = useQueryClient();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
-  const { data: voteEvent, isLoading: loadingEvent } = useQuery({
+  const { data: voteEvent, isLoading: loadingEvent, isError } = useQuery({
     queryKey: ['voteEvent', id],
     queryFn: async () => {
       const res = await api.getVoteEvent(id!);
       return res.data as VoteEvent;
     },
     enabled: !!id,
+    retry: 1,
   });
 
   const { data: stats } = useQuery({
@@ -95,8 +96,12 @@ export default function VoteDetail() {
   const { data: myVotes } = useQuery({
     queryKey: ['myVotes'],
     queryFn: async () => {
-      const res = await api.getMyVotes();
-      return res.data || [];
+      try {
+        const res = await api.getMyVotes();
+        return res.data || [];
+      } catch {
+        return [];
+      }
     },
   });
 
@@ -190,14 +195,14 @@ export default function VoteDetail() {
     );
   }
 
-  if (!voteEvent) {
+  if (isError || !voteEvent) {
     return (
       <Layout>
         <div className="max-w-2xl mx-auto">
           <div className="card p-8 text-center">
             <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-lg font-semibold text-slate-900 mb-2">투표를 찾을 수 없습니다</h2>
-            <p className="text-slate-500 mb-4">요청하신 투표 이벤트가 존재하지 않습니다.</p>
+            <p className="text-slate-500 mb-4">요청하신 투표 이벤트가 존재하지 않거나 로드에 실패했습니다.</p>
             <Link to="/votes" className="btn btn-primary">
               투표 목록으로
             </Link>
@@ -275,7 +280,7 @@ export default function VoteDetail() {
 
           {/* Options */}
           <div className="space-y-3">
-            {voteEvent.options.map((option) => {
+            {(Array.isArray(voteEvent.options) ? voteEvent.options : []).map((option) => {
               const isSelected = selectedOption === option.id;
               const isMyVote = myVote?.selectedOptionId === option.id;
               const isCorrect = isSettled && voteEvent.correctOptionId === option.id;
