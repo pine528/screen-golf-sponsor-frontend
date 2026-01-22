@@ -55,11 +55,11 @@ function getPosition(bodyPart: string): {
   if (part.includes('SLEEVE')) {
     if (part.includes('LEFT') || part.includes('L')) {
       // 입은 사람 기준 왼쪽 소매 = 화면상 오른쪽
-      return { key: 'SLEEVE_L', x: 240, y: 85, label: '왼쪽 소매', labelX: 240, labelY: 125 };
+      return { key: 'SLEEVE_L', x: 250, y: 95, label: '왼쪽 소매', labelX: 250, labelY: 140 };
     }
     if (part.includes('RIGHT') || part.includes('R')) {
       // 입은 사람 기준 오른쪽 소매 = 화면상 왼쪽
-      return { key: 'SLEEVE_R', x: 60, y: 85, label: '오른쪽 소매', labelX: 60, labelY: 125 };
+      return { key: 'SLEEVE_R', x: 50, y: 95, label: '오른쪽 소매', labelX: 50, labelY: 140 };
     }
   }
 
@@ -144,7 +144,7 @@ function ShirtVisualization({
 
             {/* 왼쪽 소매 */}
             <path
-              d="M85 65 L50 95 L70 115 L85 85 Z"
+              d="M85 65 L35 105 L58 130 L85 90 Z"
               fill="url(#shirtGradient)"
               stroke="#cbd5e1"
               strokeWidth="2"
@@ -152,7 +152,7 @@ function ShirtVisualization({
 
             {/* 오른쪽 소매 */}
             <path
-              d="M215 65 L250 95 L230 115 L215 85 Z"
+              d="M215 65 L265 105 L242 130 L215 90 Z"
               fill="url(#shirtGradient)"
               stroke="#cbd5e1"
               strokeWidth="2"
@@ -160,7 +160,7 @@ function ShirtVisualization({
 
             {/* 소매 밴드 (왼쪽) */}
             <path
-              d="M50 92 Q60 105, 70 112 L70 117 Q58 108, 48 97 Z"
+              d="M35 102 Q48 118, 58 127 L58 133 Q45 122, 32 108 Z"
               fill="#e2e8f0"
               stroke="#cbd5e1"
               strokeWidth="1"
@@ -168,7 +168,7 @@ function ShirtVisualization({
 
             {/* 소매 밴드 (오른쪽) */}
             <path
-              d="M250 92 Q240 105, 230 112 L230 117 Q242 108, 252 97 Z"
+              d="M265 102 Q252 118, 242 127 L242 133 Q255 122, 268 108 Z"
               fill="#e2e8f0"
               stroke="#cbd5e1"
               strokeWidth="1"
