@@ -312,11 +312,15 @@ function SlotCard({ slot, onSelect, formatCurrency, formatDate }: SlotCardProps)
         <div className="absolute inset-0 flex items-center justify-center">
           <Calendar className="w-12 h-12 sm:w-16 sm:h-16 text-emerald-300" />
         </div>
-        {slot.auction?.status === 'LIVE' && (
-          <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-            <span className="badge bg-red-500 text-white border-red-500 animate-pulse text-xs">LIVE</span>
-          </div>
-        )}
+        {/* 판매 모드 배지 (좌측 상단) */}
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col gap-1">
+          {slot.auction?.status === 'LIVE' && (
+            <span className="badge bg-red-500 text-white border-red-500 animate-pulse text-xs">경매중</span>
+          )}
+          {slot.enableDirectBuy && slot.directBuyPrice && (
+            <span className="badge bg-violet-500 text-white border-violet-500 text-xs">즉시구매</span>
+          )}
+        </div>
         {slot.athlete?.rank && slot.athlete.rank <= 10 && (
           <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
             <span className="badge bg-amber-100 text-amber-700 border-amber-200 text-xs">
@@ -367,8 +371,24 @@ function SlotCard({ slot, onSelect, formatCurrency, formatDate }: SlotCardProps)
 
         {/* Price & Action */}
         <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-slate-100">
-          <div>
-            {slot.enableDirectBuy && slot.directBuyPrice ? (
+          <div className="space-y-1">
+            {/* 경매+즉시구매 둘 다 설정된 경우 */}
+            {slot.auction?.status === 'LIVE' && slot.enableDirectBuy && slot.directBuyPrice ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <p className="text-[10px] sm:text-xs text-amber-600 font-medium">시작가:</p>
+                  <p className="text-sm font-bold text-amber-700">
+                    {formatCurrency(slot.reservePrice || slot.auction?.currentPrice || 0)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-[10px] sm:text-xs text-violet-600 font-medium">즉시구매:</p>
+                  <p className="text-sm font-bold text-violet-700">
+                    {formatCurrency(Number(slot.directBuyPrice))}
+                  </p>
+                </div>
+              </>
+            ) : slot.enableDirectBuy && slot.directBuyPrice ? (
               <>
                 <p className="text-[10px] sm:text-xs text-violet-600 font-medium">즉시구매가</p>
                 <p className="text-base sm:text-lg font-bold text-violet-700">

@@ -207,21 +207,29 @@ export function Auctions() {
                         >
                           {auction.isFeatured ? '공개' : '비공개'}
                         </span>
-                        <span
-                          className={cn(
-                            'badge text-xs',
-                            auction.status === 'LIVE'
-                              ? 'badge-success'
-                              : auction.status === 'SCHEDULED'
-                              ? 'badge-info'
-                              : 'badge-warning'
+                        <div className="flex items-center gap-1">
+                          <span
+                            className={cn(
+                              'badge text-xs',
+                              auction.status === 'LIVE'
+                                ? 'badge-success'
+                                : auction.status === 'SCHEDULED'
+                                ? 'badge-info'
+                                : 'badge-warning'
+                            )}
+                          >
+                            {auction.status === 'LIVE' && '경매중'}
+                            {auction.status === 'SCHEDULED' && '예정'}
+                            {auction.status === 'ENDED' && '종료'}
+                            {auction.status === 'UNSOLD' && '유찰'}
+                          </span>
+                          {/* 즉시구매 가능 표시 */}
+                          {auction.slotInstance?.enableDirectBuy && auction.slotInstance?.directBuyPrice && (
+                            <span className="badge bg-violet-100 text-violet-700 border-violet-200 text-xs">
+                              즉시구매
+                            </span>
                           )}
-                        >
-                          {auction.status === 'LIVE' && '진행 중'}
-                          {auction.status === 'SCHEDULED' && '예정'}
-                          {auction.status === 'ENDED' && '종료'}
-                          {auction.status === 'UNSOLD' && '유찰'}
-                        </span>
+                        </div>
                       </div>
                     </div>
 
@@ -243,7 +251,7 @@ export function Auctions() {
 
                     {/* Price & Time */}
                     <div className="flex items-center justify-between mb-3 sm:mb-4">
-                      <div>
+                      <div className="space-y-1">
                         {auction.isFeatured ? (
                           <>
                             <p className="text-xs sm:text-sm text-slate-600">현재가</p>
@@ -258,6 +266,13 @@ export function Auctions() {
                               {formatCurrency(auction.slotInstance?.auctionMinBid || auction.slotInstance?.reservePrice || 0)}
                             </p>
                           </>
+                        )}
+                        {/* 즉시구매 가격 표시 */}
+                        {auction.slotInstance?.enableDirectBuy && auction.slotInstance?.directBuyPrice && (
+                          <div className="flex items-center gap-1 text-xs text-violet-600">
+                            <Tag className="w-3 h-3" />
+                            즉시구매: {formatCurrency(Number(auction.slotInstance.directBuyPrice))}
+                          </div>
                         )}
                       </div>
                       {auction.status === 'LIVE' && (
