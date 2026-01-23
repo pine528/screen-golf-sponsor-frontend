@@ -102,7 +102,10 @@ export function Auctions() {
       }
     },
     onError: (error: any) => {
-      setBuyNowError(error.response?.data?.error || '즉시구매에 실패했습니다');
+      const err = error.response?.data?.error;
+      // 에러가 객체인 경우 message 추출, 문자열이면 그대로 사용
+      const errorMessage = typeof err === 'object' ? err?.message : err;
+      setBuyNowError(errorMessage || '즉시구매에 실패했습니다');
     },
   });
 
