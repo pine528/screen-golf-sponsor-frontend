@@ -42,10 +42,15 @@ export function Auctions() {
   const [selectedSlotForBuyNow, setSelectedSlotForBuyNow] = useState<any>(null);
   const [buyNowError, setBuyNowError] = useState<string | null>(null);
 
+  // 유효한 경매 상태 필터 (MY_BIDS, MY_RESERVATIONS, DIRECT_BUY 제외)
+  const validAuctionStatuses = ['LIVE', 'SCHEDULED', 'ENDED', 'UNSOLD'];
+  const isValidAuctionStatus = validAuctionStatuses.includes(statusFilter);
+
   // LIVE: 모든 진행중 경매 (공개+비공개 통합)
   const { data: auctions, isLoading } = useQuery({
     queryKey: ['auctions', statusFilter],
     queryFn: () => api.getAuctions({ status: statusFilter }),
+    enabled: isValidAuctionStatus, // 유효한 경매 상태일 때만 조회
     refetchInterval: statusFilter === 'LIVE' ? 3000 : false, // 3초 간격 실시간 갱신
   });
 
