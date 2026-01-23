@@ -295,9 +295,23 @@ export function MySlots() {
                             <h3 className="font-semibold text-slate-900 text-sm sm:text-base">
                               {slot.slotTemplate?.name}
                             </h3>
-                            <span className={cn('badge text-xs', status.style)}>
-                              {status.label}
-                            </span>
+                            {/* 경매중 + 즉시구매 둘 다 설정된 경우 각각 배지 표시 */}
+                            {slot.auction?.status === 'LIVE' && (
+                              <span className="badge bg-amber-100 text-amber-700 border-amber-200 text-xs">
+                                경매중
+                              </span>
+                            )}
+                            {slot.enableDirectBuy && slot.directBuyPrice && (
+                              <span className="badge bg-violet-100 text-violet-700 border-violet-200 text-xs">
+                                즉시구매
+                              </span>
+                            )}
+                            {/* 경매도 즉시구매도 아닌 경우 기존 상태 배지 */}
+                            {!(slot.auction?.status === 'LIVE') && !(slot.enableDirectBuy && slot.directBuyPrice) && (
+                              <span className={cn('badge text-xs', status.style)}>
+                                {status.label}
+                              </span>
+                            )}
                             {slot.auction?.status === 'LIVE' && (
                               <span className="badge bg-red-500 text-white border-red-500 animate-pulse text-xs">
                                 LIVE
@@ -342,6 +356,13 @@ export function MySlots() {
                                   {formatCurrency(slot.auctionMinBid || slot.reservePrice || 0)}
                                 </strong>
                               </span>
+                              {slot.enableDirectBuy && slot.directBuyPrice && (
+                                <span className="text-xs sm:text-sm text-slate-500">
+                                  즉시구매: <strong className="text-violet-600">
+                                    {formatCurrency(Number(slot.directBuyPrice))}
+                                  </strong>
+                                </span>
+                              )}
                               <span className="text-xs sm:text-sm text-slate-500">
                                 입찰: {slot.auction._count?.bids || 0}건
                               </span>
