@@ -42,10 +42,13 @@ export function Auctions() {
   const [selectedSlotForBuyNow, setSelectedSlotForBuyNow] = useState<any>(null);
   const [buyNowError, setBuyNowError] = useState<string | null>(null);
 
+  // LIVE 탭에서는 추천경매만 표시 (어드민 등록 공개경매)
   const { data: auctions, isLoading } = useQuery({
     queryKey: ['auctions', statusFilter],
-    queryFn: () => api.getAuctions({ status: statusFilter }),
-    refetchInterval: statusFilter === 'LIVE' ? 5000 : false,
+    queryFn: () => statusFilter === 'LIVE'
+      ? api.getFeaturedAuctions()  // LIVE: 추천경매만 (isFeatured=true)
+      : api.getAuctions({ status: statusFilter }),
+    refetchInterval: statusFilter === 'LIVE' ? 3000 : false, // 3초 간격 실시간 갱신
   });
 
   // 즉시구매 가능 슬롯 조회 (enableDirectBuy: true, 경매중 슬롯도 포함)
@@ -71,11 +74,11 @@ export function Auctions() {
     refetchInterval: statusFilter === 'MY_RESERVATIONS' ? 30000 : false,
   });
 
-  // Featured auctions (어드민 설정 추천 경매)
+  // Featured auctions (어드민 설정 추천 경매) - 3초 간격 실시간 갱신
   const { data: featuredAuctions } = useQuery({
     queryKey: ['auctions', 'featured'],
     queryFn: () => api.getFeaturedAuctions(),
-    refetchInterval: 30000,
+    refetchInterval: 3000, // 입찰가 실시간 갱신
   });
 
   const placeBidMutation = useMutation({
@@ -130,66 +133,31 @@ export function Auctions() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900">경매</h1>
-            <p className="text-sm sm:text-base text-slate-600 mt-1">스폰서 슬롯 경매에 참여하세요</p>
+            <p className="text-sm sm:text-base text-slate-600 mt-1">
+              {statusFilter === 'LIVE'
+                ? '실시간 공개 경매에 참여하세요 (3초 간격 자동 갱신)'
+                : '스폰서 슬롯 경매에 참여하세요'}
+            </p>
           </div>
         </div>
 
-        {/* Featured Auctions */}
-        {featuredAuctions?.data && featuredAuctions.data.length > 0 && (
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 sm:p-6 border border-amber-200">
-            <div className="flex items-center gap-2 mb-4">
-              <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
-              <h2 className="font-bold text-slate-900">추천 경매</h2>
-              <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
-                {featuredAuctions.data.length}개 진행중
-              </span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {featuredAuctions.data.map((auction: any) => (
-                <div
-                  key={auction.id}
-                  className="bg-white rounded-lg p-4 shadow-sm border border-amber-100 hover:border-amber-300 transition-colors"
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <span className={cn(
-                          'text-xs px-2 py-0.5 rounded-full font-medium',
-                          auction.status === 'LIVE' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'
-                        )}>
-                          {auction.status === 'LIVE' ? '진행중' : '예정'}
-                        </span>
-                        <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                      </div>
-                      <h3 className="font-semibold text-slate-900 text-sm">
-                        {auction.slotInstance?.athlete?.name}
-                      </h3>
-                      <p className="text-xs text-slate-500">
-                        {auction.slotInstance?.slotTemplate?.name}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-slate-500 mb-3">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {auction.slotInstance?.event?.name}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs text-slate-500">현재 경매가</div>
-                      <div className="font-bold text-emerald-600">
-                        {formatCurrency(auction.currentPrice)}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setSelectedAuction(auction)}
-                      className="btn btn-primary text-xs px-3 py-1.5"
-                      disabled={auction.status !== 'LIVE' || user?.role !== 'BRAND'}
-                    >
-                      입찰하기
-                    </button>
-                  </div>
-                </div>
-              ))}
+        {/* Featured Auctions Quick Stats - LIVE 탭이 아닐 때만 표시 */}
+        {statusFilter !== 'LIVE' && featuredAuctions?.data && featuredAuctions.data.length > 0 && (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+                <span className="font-bold text-slate-900">공개 경매</span>
+                <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+                  {featuredAuctions.data.filter((a: any) => a.status === 'LIVE').length}개 진행중
+                </span>
+              </div>
+              <button
+                onClick={() => setStatusFilter('LIVE')}
+                className="btn btn-primary text-xs px-3 py-1.5"
+              >
+                공개 경매 보기
+              </button>
             </div>
           </div>
         )}
@@ -210,7 +178,7 @@ export function Auctions() {
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               )}
             >
-              {status === 'LIVE' && '진행 중'}
+              {status === 'LIVE' && '🔴 공개 경매'}
               {status === 'DIRECT_BUY' && '즉시구매'}
               {status === 'MY_BIDS' && '내 입찰'}
               {status === 'MY_RESERVATIONS' && '내 예약'}
