@@ -38,10 +38,19 @@ interface FanVoteEvent {
   endsAt: string;
   entryFee: number;
   prizePool: number;
+  creatorRole?: 'FAN' | 'ATHLETE' | 'BRAND' | 'ADMIN';  // 개설자 역할
   _count?: {
     entries: number;
   };
 }
+
+// 팬 투표 개설자 역할 라벨
+const CREATOR_ROLE_LABELS: Record<string, { label: string; color: string }> = {
+  FAN: { label: '팬 투표', color: 'bg-pink-100 text-pink-700' },
+  ATHLETE: { label: '선수 투표', color: 'bg-blue-100 text-blue-700' },
+  BRAND: { label: '브랜드 투표', color: 'bg-orange-100 text-orange-700' },
+  ADMIN: { label: '관리자 투표', color: 'bg-slate-100 text-slate-700' },
+};
 
 // 두 타입을 통합한 표시용 인터페이스
 interface DisplayVote {
@@ -50,6 +59,7 @@ interface DisplayVote {
   description?: string;
   type: 'admin' | 'fan';
   questionType?: 'PREDICTION' | 'QUIZ' | 'POLL';
+  creatorRole?: 'FAN' | 'ATHLETE' | 'BRAND' | 'ADMIN';  // 팬 투표 개설자 역할
   pointsPerCorrect?: number;
   entryFee?: number;
   prizePool?: number;
@@ -101,6 +111,7 @@ export default function FanHome() {
       title: v.title,
       description: v.description,
       type: 'fan' as const,
+      creatorRole: v.creatorRole || 'FAN',
       entryFee: v.entryFee,
       prizePool: v.prizePool,
       endAt: v.endsAt,
@@ -255,8 +266,8 @@ export default function FanHome() {
                           </>
                         ) : (
                           <>
-                            <span className="badge text-xs bg-pink-100 text-pink-700">
-                              팬 투표
+                            <span className={cn('badge text-xs', CREATOR_ROLE_LABELS[vote.creatorRole || 'FAN']?.color || 'bg-pink-100 text-pink-700')}>
+                              {CREATOR_ROLE_LABELS[vote.creatorRole || 'FAN']?.label || '팬 투표'}
                             </span>
                             {(vote.prizePool ?? 0) > 0 && (
                               <span className="text-xs font-medium text-pink-600">

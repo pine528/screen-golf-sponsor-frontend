@@ -55,10 +55,19 @@ interface FanVoteEvent {
   entryFeePoints: number | string;  // Decimal from backend
   sponsorContribution?: number | string;  // 스폰서 기여금
   options: string[];  // Backend returns string array
+  creatorRole?: 'FAN' | 'ATHLETE' | 'BRAND' | 'ADMIN';  // 개설자 역할
   _count?: {
     entries: number;
   };
 }
+
+// 팬 투표 개설자 역할 라벨
+const CREATOR_ROLE_LABELS: Record<string, { label: string; color: string }> = {
+  FAN: { label: '팬 투표', color: 'bg-pink-100 text-pink-700' },
+  ATHLETE: { label: '선수 투표', color: 'bg-blue-100 text-blue-700' },
+  BRAND: { label: '브랜드 투표', color: 'bg-orange-100 text-orange-700' },
+  ADMIN: { label: '관리자 투표', color: 'bg-slate-100 text-slate-700' },
+};
 
 // 통합 표시용 인터페이스
 interface DisplayVote {
@@ -68,6 +77,7 @@ interface DisplayVote {
   question: string;
   voteType: 'admin' | 'fan';
   questionType?: 'PREDICTION' | 'QUIZ' | 'POLL';
+  creatorRole?: 'FAN' | 'ATHLETE' | 'BRAND' | 'ADMIN';  // 팬 투표 개설자 역할
   pointsPerCorrect?: number;
   entryFee?: number;
   prizePool?: number;
@@ -122,8 +132,8 @@ function VoteCard({ vote }: { vote: DisplayVote }) {
               {getTypeLabel(vote.questionType)}
             </span>
           ) : (
-            <span className="badge text-xs bg-pink-100 text-pink-700">
-              팬 투표
+            <span className={cn('badge text-xs', CREATOR_ROLE_LABELS[vote.creatorRole || 'FAN']?.color || 'bg-pink-100 text-pink-700')}>
+              {CREATOR_ROLE_LABELS[vote.creatorRole || 'FAN']?.label || '팬 투표'}
             </span>
           )}
           {isEnded ? (
@@ -250,6 +260,7 @@ export default function Votes() {
       description: v.description,
       question: v.question,
       voteType: 'fan' as const,
+      creatorRole: v.creatorRole || 'FAN',
       entryFee: Number(v.entryFeePoints) || 0,
       prizePool: (Number(v.entryFeePoints) || 0) * (v._count?.entries ?? 0) + (Number(v.sponsorContribution) || 0),
       status: v.status,
@@ -279,6 +290,7 @@ export default function Votes() {
       description: v.description,
       question: v.question,
       voteType: 'fan' as const,
+      creatorRole: v.creatorRole || 'FAN',
       entryFee: Number(v.entryFeePoints) || 0,
       prizePool: (Number(v.entryFeePoints) || 0) * (v._count?.entries ?? 0) + (Number(v.sponsorContribution) || 0),
       status: v.status,

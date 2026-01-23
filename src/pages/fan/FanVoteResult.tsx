@@ -16,6 +16,14 @@ import {
 } from 'lucide-react';
 import { cn } from '../../utils';
 
+// 팬 투표 개설자 역할 라벨
+const CREATOR_ROLE_LABELS: Record<string, { label: string; color: string }> = {
+  FAN: { label: '팬 투표', color: 'bg-pink-100 text-pink-700' },
+  ATHLETE: { label: '선수 투표', color: 'bg-blue-100 text-blue-700' },
+  BRAND: { label: '브랜드 투표', color: 'bg-orange-100 text-orange-700' },
+  ADMIN: { label: '관리자 투표', color: 'bg-slate-100 text-slate-700' },
+};
+
 export default function FanVoteResult() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -79,6 +87,14 @@ export default function FanVoteResult() {
         {/* Main Card */}
         <div className="card p-6">
           {/* Header */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className={cn('badge text-xs', CREATOR_ROLE_LABELS[event.creatorRole || 'FAN']?.color || 'bg-pink-100 text-pink-700')}>
+              {CREATOR_ROLE_LABELS[event.creatorRole || 'FAN']?.label || '팬 투표'}
+            </span>
+            <span className="badge bg-purple-100 text-purple-700 text-xs">
+              정산 완료
+            </span>
+          </div>
           <h1 className="text-xl font-bold text-slate-900 mb-2">{event.title}</h1>
           <p className="text-slate-600 mb-6">{event.question}</p>
 

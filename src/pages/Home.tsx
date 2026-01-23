@@ -59,6 +59,14 @@ const liveAuctions = [
   { id: 4, slot: 'SG-03', player: '최유리', price: 280000, change: '+5%', hot: false },
 ];
 
+// 팬 투표 개설자 역할 라벨
+const CREATOR_ROLE_LABELS: Record<string, { label: string; color: string }> = {
+  FAN: { label: '팬 투표', color: 'bg-pink-100 text-pink-700' },
+  ATHLETE: { label: '선수 투표', color: 'bg-blue-100 text-blue-700' },
+  BRAND: { label: '브랜드 투표', color: 'bg-orange-100 text-orange-700' },
+  ADMIN: { label: '관리자 투표', color: 'bg-slate-100 text-slate-700' },
+};
+
 export function Home() {
   const { isAuthenticated } = useAuth();
   const [currentAuction, setCurrentAuction] = useState(0);
@@ -85,6 +93,7 @@ export function Home() {
         id: v.id,
         title: v.title,
         type: 'fan' as const,
+        creatorRole: v.creatorRole || 'FAN',
         participantCount: v._count?.entries ?? 0,
         endAt: v.endsAt,
         prizePool: v.prizePool,
@@ -453,9 +462,11 @@ export function Home() {
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                       vote.type === 'admin'
                         ? 'bg-sky-100 text-sky-700'
-                        : 'bg-violet-100 text-violet-700'
+                        : CREATOR_ROLE_LABELS[vote.creatorRole]?.color || 'bg-violet-100 text-violet-700'
                     }`}>
-                      {vote.type === 'admin' ? '관리자 투표' : '팬 투표'}
+                      {vote.type === 'admin'
+                        ? '관리자 투표'
+                        : CREATOR_ROLE_LABELS[vote.creatorRole]?.label || '팬 투표'}
                     </span>
                     <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
                   </div>

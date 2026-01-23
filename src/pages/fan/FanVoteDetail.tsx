@@ -29,6 +29,7 @@ interface FanVoteEvent {
   endsAt: string;
   entryFeePoints: number | string;  // Decimal from backend
   sponsorContribution?: number | string;  // 스폰서 기여금
+  creatorRole?: 'FAN' | 'ATHLETE' | 'BRAND' | 'ADMIN';  // 개설자 역할
   _count?: {
     entries: number;
   };
@@ -37,6 +38,14 @@ interface FanVoteEvent {
     email: string;
   };
 }
+
+// 팬 투표 개설자 역할 라벨
+const CREATOR_ROLE_LABELS: Record<string, { label: string; color: string }> = {
+  FAN: { label: '팬 투표', color: 'bg-pink-100 text-pink-700' },
+  ATHLETE: { label: '선수 투표', color: 'bg-blue-100 text-blue-700' },
+  BRAND: { label: '브랜드 투표', color: 'bg-orange-100 text-orange-700' },
+  ADMIN: { label: '관리자 투표', color: 'bg-slate-100 text-slate-700' },
+};
 
 // Helper to calculate prize pool
 function calculatePrizePool(event: FanVoteEvent): number {
@@ -182,8 +191,8 @@ export default function FanVoteDetail() {
           {/* Header */}
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="badge text-xs bg-pink-100 text-pink-700">
-                팬 투표
+              <span className={cn('badge text-xs', CREATOR_ROLE_LABELS[event.creatorRole || 'FAN']?.color || 'bg-pink-100 text-pink-700')}>
+                {CREATOR_ROLE_LABELS[event.creatorRole || 'FAN']?.label || '팬 투표'}
               </span>
               {isEnded ? (
                 <span className="badge bg-slate-100 text-slate-600 text-xs">
