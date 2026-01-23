@@ -1,4 +1,9 @@
-import { useState } from 'react';
+/**
+ * 포인트 충전 페이지
+ * Toss Payments SDK를 사용한 결제 통합
+ */
+
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -12,6 +17,30 @@ import {
 } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { api } from '../services/api';
+
+// TossPayments SDK 타입
+declare global {
+  interface Window {
+    TossPayments?: (clientKey: string) => TossPaymentsInstance;
+  }
+}
+
+interface TossPaymentsInstance {
+  requestPayment: (
+    method: string,
+    options: {
+      amount: number;
+      orderId: string;
+      orderName: string;
+      customerName?: string;
+      successUrl: string;
+      failUrl: string;
+    }
+  ) => Promise<void>;
+}
+
+// 환경 변수에서 클라이언트 키 가져오기
+const TOSS_CLIENT_KEY = import.meta.env.VITE_TOSS_CLIENT_KEY || 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';
 
 // 충전 금액 옵션
 const TOPUP_OPTIONS = [
@@ -31,6 +60,9 @@ export default function PointTopup() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState('');
   const [useCustom, setUseCustom] = useState(false);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
+  const paymentInitiated = useRef(false);
 
   // URL 파라미터로 결과 확인
   const topupResult = searchParams.get('topup');
@@ -65,6 +97,7 @@ export default function PointTopup() {
     },
     onError: (error: any) => {
       console.error('결제 확인 실패:', error);
+      setPaymentError(error?.response?.data?.error?.message || '결제 확인에 실패했습니다');
     },
   });
 
@@ -74,26 +107,96 @@ export default function PointTopup() {
       const response = await api.createPointTopup({ amount });
       return response;
     },
-    onSuccess: (data) => {
-      // 결제 페이지로 리다이렉트
-      if (data?.data?.checkoutUrl) {
-        window.location.href = data.data.checkoutUrl;
+    onSuccess: async (data) => {
+      // 충전 레코드가 생성되면 Toss 결제 시작
+      if (data?.data?.topup) {
+        await startTossPayment(data.data.topup);
       }
+    },
+    onError: (error: any) => {
+      setPaymentError(error?.response?.data?.error?.message || '충전 요청에 실패했습니다');
+      setIsPaymentLoading(false);
     },
   });
 
   // 결제 성공 시 자동 확인
-  useState(() => {
-    if (topupResult === 'success' && topupId && paymentKey && !confirmMutation.isPending) {
+  useEffect(() => {
+    if (topupResult === 'pending' && topupId && paymentKey && !confirmMutation.isPending && !paymentInitiated.current) {
+      paymentInitiated.current = true;
       confirmMutation.mutate();
     }
-  });
+  }, [topupResult, topupId, paymentKey]);
+
+  // Toss Payments SDK 로드 및 결제 시작
+  const startTossPayment = async (topup: { id: string; providerOrderId: string; amount: number }) => {
+    try {
+      setIsPaymentLoading(true);
+      setPaymentError('');
+
+      // SDK 스크립트가 이미 로드되어 있는지 확인
+      if (!window.TossPayments) {
+        // SDK 스크립트 로드
+        await new Promise<void>((resolve, reject) => {
+          const existingScript = document.querySelector('script[src*="tosspayments"]');
+          if (existingScript) {
+            resolve();
+            return;
+          }
+          const script = document.createElement('script');
+          script.src = 'https://js.tosspayments.com/v1/payment';
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error('TossPayments SDK 로드 실패'));
+          document.head.appendChild(script);
+        });
+      }
+
+      // SDK 로드 완료 대기
+      await new Promise<void>((resolve) => {
+        const checkSDK = () => {
+          if (window.TossPayments) {
+            resolve();
+          } else {
+            setTimeout(checkSDK, 100);
+          }
+        };
+        checkSDK();
+      });
+
+      const tossPayments = window.TossPayments!(TOSS_CLIENT_KEY);
+
+      // 현재 URL 기반으로 success/fail URL 생성
+      const baseUrl = window.location.origin;
+      const successUrl = `${baseUrl}/points/topup?topup=pending&topupId=${topup.id}`;
+      const failUrl = `${baseUrl}/points/topup?topup=fail`;
+
+      const numAmount = Number(topup.amount);
+
+      // 결제 요청
+      await tossPayments.requestPayment('카드', {
+        amount: numAmount,
+        orderId: topup.providerOrderId,
+        orderName: `포인트 충전 ${numAmount.toLocaleString()}P`,
+        successUrl,
+        failUrl,
+      });
+    } catch (err: any) {
+      // 사용자가 결제를 취소한 경우
+      if (err.code === 'USER_CANCEL') {
+        setPaymentError('결제가 취소되었습니다');
+      } else {
+        console.error('Payment error:', err);
+        setPaymentError(err.message || '결제 중 오류가 발생했습니다');
+      }
+      setIsPaymentLoading(false);
+    }
+  };
 
   const finalAmount = useCustom ? parseInt(customAmount) || 0 : selectedAmount || 0;
   const isValidAmount = finalAmount >= 1000 && finalAmount <= 10000000;
 
   const handleTopup = () => {
     if (!isValidAmount) return;
+    setPaymentError('');
     createMutation.mutate(finalAmount);
   };
 
@@ -181,7 +284,7 @@ export default function PointTopup() {
   }
 
   // 결제 확인 중
-  if (confirmMutation.isPending) {
+  if (confirmMutation.isPending || (topupResult === 'pending' && topupId)) {
     return (
       <Layout>
         <div className="max-w-lg mx-auto">
@@ -222,6 +325,19 @@ export default function PointTopup() {
             <div className="flex items-center gap-3 mb-6">
               <CreditCard className="w-6 h-6 text-emerald-600" />
               <h2 className="text-xl font-bold text-slate-900">포인트 충전</h2>
+            </div>
+
+            {/* 결제 수단 표시 */}
+            <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-200">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">T</span>
+                </div>
+                <div>
+                  <div className="font-semibold text-slate-900">토스페이먼츠</div>
+                  <div className="text-sm text-slate-600">신용카드, 체크카드</div>
+                </div>
+              </div>
             </div>
 
             {/* 정액 옵션 */}
@@ -274,12 +390,12 @@ export default function PointTopup() {
             </div>
 
             {/* 안내 */}
-            <div className="bg-blue-50 rounded-xl p-4 mb-6">
+            <div className="bg-slate-50 rounded-xl p-4 mb-6">
               <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-blue-500 mt-0.5" />
-                <div className="text-sm text-blue-700">
+                <Info className="w-5 h-5 text-slate-500 mt-0.5" />
+                <div className="text-sm text-slate-600">
                   <p className="font-medium mb-1">충전 안내</p>
-                  <ul className="list-disc list-inside space-y-1 text-blue-600">
+                  <ul className="list-disc list-inside space-y-1 text-slate-500">
                     <li>1원 = 1포인트로 충전됩니다</li>
                     <li>최소 1,000원부터 최대 1,000만원까지 가능합니다</li>
                     <li>결제 완료 후 즉시 포인트가 지급됩니다</li>
@@ -290,7 +406,7 @@ export default function PointTopup() {
 
             {/* 충전 요약 */}
             {finalAmount > 0 && (
-              <div className="bg-slate-50 rounded-xl p-4 mb-6">
+              <div className="bg-emerald-50 rounded-xl p-4 mb-6 border border-emerald-200">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-slate-600">충전 금액</span>
                   <span className="font-semibold">{formatNumber(finalAmount)}원</span>
@@ -303,15 +419,14 @@ export default function PointTopup() {
             )}
 
             {/* 에러 메시지 */}
-            {createMutation.isError && (
+            {(paymentError || createMutation.isError) && (
               <div className="bg-red-50 rounded-xl p-4 mb-6">
                 <div className="flex items-center gap-2 text-red-700">
                   <AlertCircle className="w-5 h-5" />
                   <span className="font-medium">충전 요청에 실패했습니다</span>
                 </div>
                 <p className="text-sm text-red-600 mt-1">
-                  {(createMutation.error as any)?.response?.data?.error?.message ||
-                    '다시 시도해주세요'}
+                  {paymentError || '다시 시도해주세요'}
                 </p>
               </div>
             )}
@@ -319,13 +434,13 @@ export default function PointTopup() {
             {/* 충전 버튼 */}
             <button
               onClick={handleTopup}
-              disabled={!isValidAmount || createMutation.isPending}
+              disabled={!isValidAmount || createMutation.isPending || isPaymentLoading}
               className="btn btn-primary w-full py-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {createMutation.isPending ? (
+              {createMutation.isPending || isPaymentLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                  처리 중...
+                  결제 준비 중...
                 </>
               ) : (
                 <>
