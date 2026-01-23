@@ -58,6 +58,7 @@ import { AdminBrandRegistrations } from './pages/admin/AdminBrandRegistrations';
 import AdminOps from './pages/admin/AdminOps';
 import AdminFanVotes from './pages/admin/AdminFanVotes';
 import AdminFanVoteSettle from './pages/admin/AdminFanVoteSettle';
+import AdminFeePolicies from './pages/admin/AdminFeePolicies';
 import AdminFaq from './pages/admin/AdminFaq';
 import AdminPenalties from './pages/admin/AdminPenalties';
 import AdminDisputes from './pages/admin/AdminDisputes';
@@ -538,6 +539,14 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminFanVoteSettle />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/fee-policies"
+        element={
+          <ProtectedRoute>
+            <AdminFeePolicies />
           </ProtectedRoute>
         }
       />

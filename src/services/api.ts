@@ -55,6 +55,17 @@ class ApiService {
     );
   }
 
+  // Generic HTTP methods
+  async get<T = any>(url: string, params?: any): Promise<ApiResponse<T>> {
+    const response = await this.client.get<ApiResponse<T>>(url, { params });
+    return response.data;
+  }
+
+  async post<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
+    const response = await this.client.post<ApiResponse<T>>(url, data);
+    return response.data;
+  }
+
   // Auth
   async login(email: string, password: string) {
     const response = await this.client.post<ApiResponse<any>>('/auth/login', { email, password });
@@ -1275,6 +1286,7 @@ class ApiService {
     winnersCount: number;
     startsAt: string;
     endsAt: string;
+    creatorPrizePool?: number;  // Seed (상금포인트)
   }) {
     const response = await this.client.post<ApiResponse<any>>('/fan-votes/create', data);
     return response.data;

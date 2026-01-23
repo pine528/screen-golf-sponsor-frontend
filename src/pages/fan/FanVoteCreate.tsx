@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Layout } from '../../components/Layout';
@@ -11,7 +11,26 @@ import {
   Loader2,
   AlertCircle,
   Info,
+  Calculator,
+  Gift,
 } from 'lucide-react';
+
+// 수수료 계산 헬퍼 (기본 정책 기준)
+const calculateOpenFee = (seedPoints: number): number => {
+  if (seedPoints <= 0) return 0;
+  const rawFee = Math.floor(seedPoints * 0.02); // 2%
+  return Math.min(Math.max(rawFee, 1000), 50000); // min 1000, max 50000
+};
+
+const calculateEntryDeduction = (entryFee: number): { deduction: number; platformFee: number; creatorReward: number; netToPool: number } => {
+  if (entryFee <= 0) return { deduction: 0, platformFee: 0, creatorReward: 0, netToPool: 0 };
+  const rawDeduction = Math.floor(entryFee * 0.10); // 10%
+  const deduction = Math.min(Math.max(rawDeduction, 10), 500); // min 10, max 500
+  const platformFee = Math.floor(deduction * 0.70); // 70%
+  const creatorReward = deduction - platformFee; // 30%
+  const netToPool = entryFee - deduction;
+  return { deduction, platformFee, creatorReward, netToPool };
+};
 
 export default function FanVoteCreate() {
   const navigate = useNavigate();
@@ -21,9 +40,25 @@ export default function FanVoteCreate() {
   const [question, setQuestion] = useState('');
   const [options, setOptions] = useState(['', '']);
   const [entryFeePoints, setEntryFeePoints] = useState(0);
+  const [seedPoints, setSeedPoints] = useState(0); // 상금포인트 (Seed)
   const [winnersCount, setWinnersCount] = useState(1);
   const [startsAt, setStartsAt] = useState('');
   const [endsAt, setEndsAt] = useState('');
+
+  // 수수료 계산 (실시간)
+  const feeBreakdown = useMemo(() => {
+    const openFee = calculateOpenFee(seedPoints);
+    const entryCalc = calculateEntryDeduction(entryFeePoints);
+    const totalRequired = seedPoints + openFee;
+
+    return {
+      seedPoints,
+      openFee,
+      totalRequired,
+      entryFee: entryFeePoints,
+      ...entryCalc,
+    };
+  }, [seedPoints, entryFeePoints]);
 
   const createMutation = useMutation({
     mutationFn: async () => {
@@ -36,6 +71,7 @@ export default function FanVoteCreate() {
         winnersCount,
         startsAt: new Date(startsAt).toISOString(),
         endsAt: new Date(endsAt).toISOString(),
+        creatorPrizePool: seedPoints, // Seed 포인트 전달
       });
     },
     onSuccess: () => {
@@ -179,6 +215,27 @@ export default function FanVoteCreate() {
               )}
             </div>
 
+            {/* Seed Points (상금포인트) */}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                <div className="flex items-center gap-2">
+                  <Gift className="w-4 h-4 text-amber-500" />
+                  상금포인트 (Seed)
+                </div>
+              </label>
+              <input
+                type="number"
+                value={seedPoints}
+                onChange={(e) => setSeedPoints(Math.max(0, parseInt(e.target.value) || 0))}
+                className="input w-full"
+                min={0}
+                step={1000}
+              />
+              <p className="text-xs text-slate-500 mt-1">
+                당첨자에게 지급할 상금입니다. 0 = 참여비만 상금풀에 적립
+              </p>
+            </div>
+
             {/* Entry Fee & Winners */}
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -208,6 +265,57 @@ export default function FanVoteCreate() {
                 <p className="text-xs text-slate-500 mt-1">정답자 중 랜덤 추첨</p>
               </div>
             </div>
+
+            {/* Fee Preview */}
+            {(seedPoints > 0 || entryFeePoints > 0) && (
+              <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calculator className="w-5 h-5 text-amber-600" />
+                  <span className="font-medium text-amber-800">수수료 미리보기</span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  {seedPoints > 0 && (
+                    <>
+                      <div className="flex justify-between">
+                        <span className="text-slate-600">상금포인트 (Seed)</span>
+                        <span className="font-medium">{feeBreakdown.seedPoints.toLocaleString()} P</span>
+                      </div>
+                      <div className="flex justify-between text-amber-700">
+                        <span>개설 수수료 (Seed의 2%)</span>
+                        <span className="font-medium">-{feeBreakdown.openFee.toLocaleString()} P</span>
+                      </div>
+                      <div className="border-t border-amber-200 pt-2 flex justify-between font-semibold">
+                        <span className="text-amber-800">승인 시 필요 포인트</span>
+                        <span className="text-amber-900">{feeBreakdown.totalRequired.toLocaleString()} P</span>
+                      </div>
+                    </>
+                  )}
+                  {entryFeePoints > 0 && (
+                    <>
+                      <div className="border-t border-amber-200 pt-2 mt-2">
+                        <div className="text-xs text-slate-500 mb-2">참여자 1인당 수수료 구조</div>
+                        <div className="flex justify-between text-slate-600">
+                          <span>참가비</span>
+                          <span>{feeBreakdown.entryFee.toLocaleString()} P</span>
+                        </div>
+                        <div className="flex justify-between text-slate-600">
+                          <span>└ 상금풀 적립 (90%)</span>
+                          <span>{feeBreakdown.netToPool.toLocaleString()} P</span>
+                        </div>
+                        <div className="flex justify-between text-emerald-600">
+                          <span>└ 개설자 리워드 (3%)</span>
+                          <span>+{feeBreakdown.creatorReward.toLocaleString()} P</span>
+                        </div>
+                        <div className="flex justify-between text-slate-500 text-xs">
+                          <span>└ 플랫폼 수수료 (7%)</span>
+                          <span>{feeBreakdown.platformFee.toLocaleString()} P</span>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Dates */}
             <div className="grid grid-cols-2 gap-4">
@@ -270,6 +378,11 @@ export default function FanVoteCreate() {
 
             <p className="text-center text-xs text-slate-500">
               생성 후 "제출"을 해야 관리자 승인을 받을 수 있습니다
+              {seedPoints > 0 && (
+                <span className="block mt-1 text-amber-600">
+                  * 승인 시 상금포인트 + 개설 수수료가 차감됩니다
+                </span>
+              )}
             </p>
           </div>
         </div>

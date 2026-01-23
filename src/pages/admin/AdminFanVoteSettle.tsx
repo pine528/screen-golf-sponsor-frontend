@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Layout } from '../../components/Layout';
@@ -12,8 +12,28 @@ import {
   CheckCircle2,
   Loader2,
   AlertCircle,
+  Calculator,
+  TrendingUp,
+  Gift,
 } from 'lucide-react';
 import { cn } from '../../utils';
+
+// 수수료 계산 헬퍼 (기본 정책 기준)
+const calculateSettlementFee = (grossPool: number): number => {
+  if (grossPool <= 0) return 0;
+  const rawFee = Math.floor(grossPool * 0.02); // 2%
+  return Math.min(rawFee, 100000); // max 100,000
+};
+
+const calculateEntryDeduction = (entryFee: number): { deduction: number; platformFee: number; creatorReward: number; netToPool: number } => {
+  if (entryFee <= 0) return { deduction: 0, platformFee: 0, creatorReward: 0, netToPool: 0 };
+  const rawDeduction = Math.floor(entryFee * 0.10); // 10%
+  const deduction = Math.min(Math.max(rawDeduction, 10), 500); // min 10, max 500
+  const platformFee = Math.floor(deduction * 0.70); // 70%
+  const creatorReward = deduction - platformFee; // 30%
+  const netToPool = entryFee - deduction;
+  return { deduction, platformFee, creatorReward, netToPool };
+};
 
 export default function AdminFanVoteSettle() {
   const { id } = useParams<{ id: string }>();
@@ -47,6 +67,71 @@ export default function AdminFanVoteSettle() {
   const formatNumber = (num: string | number) => {
     return Number(num).toLocaleString();
   };
+
+  // 정산 예측 계산
+  const settlementPreview = useMemo(() => {
+    if (!data?.event) return null;
+
+    const event = data.event;
+    const totalEntries = event._count?.entries || 0;
+    const entryFee = Number(event.entryFeePoints) || 0;
+    const seedPoints = Number(event.creatorPrizePool) || 0;
+    const openFeeCharged = Number(event.openFeeCharged) || 0;
+    const winnersCount = event.winnersCount || 1;
+
+    // 참여비 집계
+    const totalEntryFees = entryFee * totalEntries;
+    const entryCalc = calculateEntryDeduction(entryFee);
+    const totalEntryDeductions = entryCalc.deduction * totalEntries;
+    const totalPlatformFeesFromEntry = entryCalc.platformFee * totalEntries;
+    const totalCreatorRewardsFromEntry = entryCalc.creatorReward * totalEntries;
+    const netPoolFromEntries = entryCalc.netToPool * totalEntries;
+
+    // 상금풀
+    const grossPool = seedPoints + netPoolFromEntries;
+
+    // 정산 수수료
+    const settlementFee = calculateSettlementFee(grossPool);
+    const netPayoutPool = grossPool - settlementFee;
+
+    // 당첨자 지급
+    const correctCount = selectedOption !== null ? (data.voteCounts[selectedOption] ?? 0) : 0;
+    const actualWinners = Math.min(winnersCount, correctCount);
+    const payoutEach = actualWinners > 0 ? Math.floor(netPayoutPool / actualWinners) : 0;
+    const winnerPayout = payoutEach * actualWinners;
+    const remainder = netPayoutPool - winnerPayout;
+
+    // 플랫폼 수익
+    const totalPlatformRevenue = openFeeCharged + totalPlatformFeesFromEntry + settlementFee + remainder;
+
+    return {
+      // 입력
+      totalEntries,
+      entryFee,
+      seedPoints,
+      openFeeCharged,
+      winnersCount,
+      // 참여비
+      totalEntryFees,
+      totalEntryDeductions,
+      totalPlatformFeesFromEntry,
+      totalCreatorRewardsFromEntry,
+      netPoolFromEntries,
+      // 상금풀
+      grossPool,
+      // 정산
+      settlementFee,
+      netPayoutPool,
+      // 당첨자
+      correctCount,
+      actualWinners,
+      payoutEach,
+      winnerPayout,
+      remainder,
+      // 플랫폼
+      totalPlatformRevenue,
+    };
+  }, [data, selectedOption]);
 
   if (isLoading) {
     return (
@@ -158,9 +243,9 @@ export default function AdminFanVoteSettle() {
             <div className="bg-blue-50 rounded-lg p-3">
               <Coins className="w-5 h-5 text-blue-600 mx-auto mb-1" />
               <p className="text-lg font-bold text-blue-700">
-                {formatNumber(Number(event.entryFeePoints) * totalEntries)}P
+                {settlementPreview ? formatNumber(settlementPreview.grossPool) : '0'}P
               </p>
-              <p className="text-xs text-blue-600">총 포인트 풀</p>
+              <p className="text-xs text-blue-600">총 상금풀</p>
             </div>
             <div className="bg-purple-50 rounded-lg p-3">
               <Trophy className="w-5 h-5 text-purple-600 mx-auto mb-1" />
@@ -217,6 +302,132 @@ export default function AdminFanVoteSettle() {
           </div>
         </div>
 
+        {/* Settlement Preview */}
+        {settlementPreview && (
+          <div className="card p-6 mb-6 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+            <div className="flex items-center gap-2 mb-4">
+              <Calculator className="w-5 h-5 text-amber-600" />
+              <h3 className="font-semibold text-amber-800">정산 예측</h3>
+            </div>
+
+            <div className="space-y-4 text-sm">
+              {/* 입금 내역 */}
+              <div className="bg-white/70 rounded-lg p-3">
+                <p className="font-medium text-slate-700 mb-2">상금풀 구성</p>
+                <div className="space-y-1">
+                  {settlementPreview.seedPoints > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-600">Seed (개설자 상금)</span>
+                      <span className="font-medium">{formatNumber(settlementPreview.seedPoints)}P</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">참여비 총액</span>
+                    <span className="font-medium">{formatNumber(settlementPreview.totalEntryFees)}P</span>
+                  </div>
+                  <div className="flex justify-between text-slate-500 text-xs pl-3">
+                    <span>└ 상금풀 적립 (90%)</span>
+                    <span>{formatNumber(settlementPreview.netPoolFromEntries)}P</span>
+                  </div>
+                  <div className="flex justify-between text-slate-500 text-xs pl-3">
+                    <span>└ 수수료 공제 (10%)</span>
+                    <span>{formatNumber(settlementPreview.totalEntryDeductions)}P</span>
+                  </div>
+                  <div className="border-t pt-1 flex justify-between font-semibold text-amber-800">
+                    <span>총 상금풀</span>
+                    <span>{formatNumber(settlementPreview.grossPool)}P</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 지급 내역 */}
+              <div className="bg-white/70 rounded-lg p-3">
+                <p className="font-medium text-slate-700 mb-2">정산 내역</p>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-amber-700">
+                    <span>정산 수수료 (2%)</span>
+                    <span>-{formatNumber(settlementPreview.settlementFee)}P</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600">당첨자 지급 가능액</span>
+                    <span className="font-medium">{formatNumber(settlementPreview.netPayoutPool)}P</span>
+                  </div>
+                  {selectedOption !== null && (
+                    <>
+                      <div className="flex justify-between text-slate-500 text-xs pl-3">
+                        <span>└ 정답자 수</span>
+                        <span>{settlementPreview.correctCount}명</span>
+                      </div>
+                      <div className="flex justify-between text-slate-500 text-xs pl-3">
+                        <span>└ 실제 당첨자 수</span>
+                        <span>{settlementPreview.actualWinners}명</span>
+                      </div>
+                      <div className="flex justify-between text-emerald-600 pl-3">
+                        <span>└ 1인당 지급액</span>
+                        <span className="font-medium">{formatNumber(settlementPreview.payoutEach)}P</span>
+                      </div>
+                      {settlementPreview.remainder > 0 && (
+                        <div className="flex justify-between text-slate-500 text-xs pl-3">
+                          <span>└ 잔여금 (플랫폼)</span>
+                          <span>{formatNumber(settlementPreview.remainder)}P</span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* 플랫폼 수익 */}
+              <div className="bg-white/70 rounded-lg p-3">
+                <p className="font-medium text-slate-700 mb-2 flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-emerald-500" />
+                  플랫폼 수익 합계
+                </p>
+                <div className="space-y-1">
+                  {settlementPreview.openFeeCharged > 0 && (
+                    <div className="flex justify-between text-slate-500 text-xs">
+                      <span>개설 수수료</span>
+                      <span>{formatNumber(settlementPreview.openFeeCharged)}P</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-slate-500 text-xs">
+                    <span>참여 수수료 (플랫폼 몫)</span>
+                    <span>{formatNumber(settlementPreview.totalPlatformFeesFromEntry)}P</span>
+                  </div>
+                  <div className="flex justify-between text-slate-500 text-xs">
+                    <span>정산 수수료</span>
+                    <span>{formatNumber(settlementPreview.settlementFee)}P</span>
+                  </div>
+                  {settlementPreview.remainder > 0 && (
+                    <div className="flex justify-between text-slate-500 text-xs">
+                      <span>잔여금</span>
+                      <span>{formatNumber(settlementPreview.remainder)}P</span>
+                    </div>
+                  )}
+                  <div className="border-t pt-1 flex justify-between font-semibold text-emerald-700">
+                    <span>총 플랫폼 수익</span>
+                    <span>{formatNumber(settlementPreview.totalPlatformRevenue)}P</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 개설자 리워드 */}
+              {settlementPreview.totalCreatorRewardsFromEntry > 0 && (
+                <div className="bg-white/70 rounded-lg p-3">
+                  <p className="font-medium text-slate-700 mb-2 flex items-center gap-2">
+                    <Gift className="w-4 h-4 text-purple-500" />
+                    개설자 리워드
+                  </p>
+                  <div className="flex justify-between font-semibold text-purple-700">
+                    <span>참여 수수료 리워드 (30%)</span>
+                    <span>{formatNumber(settlementPreview.totalCreatorRewardsFromEntry)}P</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Danger Zone */}
         <div className="card p-6 border-red-200 bg-red-50">
           <div className="flex items-center gap-2 text-red-700 mb-4">
@@ -232,6 +443,7 @@ export default function AdminFanVoteSettle() {
               <li>선택한 옵션이 정답으로 확정됩니다</li>
               <li>정답자 중 랜덤으로 {event.winnersCount}명이 당첨됩니다</li>
               <li>당첨자에게 포인트가 자동 지급됩니다</li>
+              <li>정산 수수료 (2%, 최대 100,000P)가 플랫폼에 귀속됩니다</li>
               <li>이 작업은 되돌릴 수 없습니다</li>
             </ul>
           </div>
