@@ -337,7 +337,9 @@ function SlotCard({ slot, onSelect, formatCurrency, formatDate }: SlotCardProps)
             </h3>
             <p className="text-xs sm:text-sm text-slate-500">{slot.slotTemplate?.bodyPart}</p>
           </div>
-          <span className="badge badge-info text-xs">{slot.slotTemplate?.duration}초</span>
+          {slot.slotTemplate?.duration && (
+            <span className="badge badge-info text-xs">{slot.slotTemplate.duration}초</span>
+          )}
         </div>
 
         {/* Athlete Info */}
@@ -483,11 +485,15 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onBuySucce
             </div>
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
               <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">노출 시간</p>
-              <p className="font-medium text-slate-900 text-sm sm:text-base">{slot.slotTemplate?.duration}초</p>
+              <p className="font-medium text-slate-900 text-sm sm:text-base">
+                {slot.slotTemplate?.duration ? `${slot.slotTemplate.duration}초` : '-'}
+              </p>
             </div>
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
               <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">예상 노출</p>
-              <p className="font-medium text-slate-900 text-sm sm:text-base">{slot.slotTemplate?.estimatedImpressions?.toLocaleString()}회</p>
+              <p className="font-medium text-slate-900 text-sm sm:text-base">
+                {slot.slotTemplate?.estimatedImpressions ? `${slot.slotTemplate.estimatedImpressions.toLocaleString()}회` : '-'}
+              </p>
             </div>
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
               <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">이벤트 기간</p>

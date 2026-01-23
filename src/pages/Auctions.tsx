@@ -465,12 +465,12 @@ export function Auctions() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {!directBuySlots ? (
               <div className="col-span-full text-center py-12 text-slate-500">로딩 중...</div>
-            ) : ((directBuySlots as any).data?.instances || []).length === 0 ? (
+            ) : ((directBuySlots as any).data || []).length === 0 ? (
               <div className="col-span-full text-center py-12 text-slate-500">
                 즉시구매 가능한 슬롯이 없습니다
               </div>
             ) : (
-              ((directBuySlots as any).data?.instances || [])
+              ((directBuySlots as any).data || [])
                 // RESERVED/SOLD 상태 슬롯 제외 (계약 진행중/완료)
                 .filter((slot: any) => slot.status !== 'RESERVED' && slot.status !== 'SOLD')
                 .map((slot: any) => (
