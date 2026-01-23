@@ -121,9 +121,20 @@ export default function PointTopup() {
 
   // 결제 성공 시 자동 확인
   useEffect(() => {
-    if (topupResult === 'pending' && topupId && paymentKey && !confirmMutation.isPending && !paymentInitiated.current) {
-      paymentInitiated.current = true;
-      confirmMutation.mutate();
+    console.log('[PointTopup] URL params:', { topupResult, topupId, paymentKey });
+
+    if (topupResult === 'pending' && topupId) {
+      if (!paymentKey) {
+        console.error('[PointTopup] paymentKey missing in URL');
+        setPaymentError('결제 정보(paymentKey)가 누락되었습니다. 다시 시도해주세요.');
+        return;
+      }
+
+      if (!confirmMutation.isPending && !paymentInitiated.current) {
+        console.log('[PointTopup] Starting confirm...');
+        paymentInitiated.current = true;
+        confirmMutation.mutate();
+      }
     }
   }, [topupResult, topupId, paymentKey]);
 
@@ -283,8 +294,8 @@ export default function PointTopup() {
     );
   }
 
-  // 결제 확인 중
-  if (confirmMutation.isPending || (topupResult === 'pending' && topupId)) {
+  // 결제 확인 중 (에러가 없을 때만)
+  if (!paymentError && (confirmMutation.isPending || (topupResult === 'pending' && topupId && paymentKey))) {
     return (
       <Layout>
         <div className="max-w-lg mx-auto">
@@ -292,6 +303,29 @@ export default function PointTopup() {
             <Loader2 className="w-12 h-12 animate-spin text-emerald-500 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-slate-900 mb-2">결제 확인 중...</h2>
             <p className="text-slate-600">잠시만 기다려주세요.</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // 결제 확인 실패 (paymentKey 누락 또는 API 에러)
+  if (paymentError && topupResult === 'pending') {
+    return (
+      <Layout>
+        <div className="max-w-lg mx-auto">
+          <div className="card p-8 text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-8 h-8 text-red-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">결제 확인 실패</h2>
+            <p className="text-slate-600 mb-6">{paymentError}</p>
+            <button
+              onClick={() => navigate('/points/topup', { replace: true })}
+              className="btn btn-primary"
+            >
+              다시 시도
+            </button>
           </div>
         </div>
       </Layout>
