@@ -42,13 +42,19 @@ export function Auctions() {
   const [selectedSlotForBuyNow, setSelectedSlotForBuyNow] = useState<any>(null);
   const [buyNowError, setBuyNowError] = useState<string | null>(null);
 
-  // LIVE 탭에서는 추천경매만 표시 (어드민 등록 공개경매)
+  // LIVE(공개경매) = 추천경매만, PRIVATE(비공개경매) = 일반 LIVE 경매
   const { data: auctions, isLoading } = useQuery({
     queryKey: ['auctions', statusFilter],
-    queryFn: () => statusFilter === 'LIVE'
-      ? api.getFeaturedAuctions()  // LIVE: 추천경매만 (isFeatured=true)
-      : api.getAuctions({ status: statusFilter }),
-    refetchInterval: statusFilter === 'LIVE' ? 3000 : false, // 3초 간격 실시간 갱신
+    queryFn: () => {
+      if (statusFilter === 'LIVE') {
+        return api.getFeaturedAuctions();  // 공개경매: isFeatured=true
+      }
+      if (statusFilter === 'PRIVATE') {
+        return api.getAuctions({ status: 'LIVE' });  // 비공개경매: 일반 LIVE 경매
+      }
+      return api.getAuctions({ status: statusFilter });
+    },
+    refetchInterval: (statusFilter === 'LIVE' || statusFilter === 'PRIVATE') ? 3000 : false, // 3초 간격 실시간 갱신
   });
 
   // 즉시구매 가능 슬롯 조회 (enableDirectBuy: true, 경매중 슬롯도 포함)
@@ -136,6 +142,8 @@ export function Auctions() {
             <p className="text-sm sm:text-base text-slate-600 mt-1">
               {statusFilter === 'LIVE'
                 ? '실시간 공개 경매에 참여하세요 (3초 간격 자동 갱신)'
+                : statusFilter === 'PRIVATE'
+                ? '비공개 경매 목록입니다 (3초 간격 자동 갱신)'
                 : '스폰서 슬롯 경매에 참여하세요'}
             </p>
           </div>
@@ -164,7 +172,7 @@ export function Auctions() {
 
         {/* Filters */}
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible">
-          {['LIVE', 'DIRECT_BUY', ...(user?.role === 'BRAND' ? ['MY_BIDS', 'MY_RESERVATIONS'] : []), 'SCHEDULED', 'ENDED', 'UNSOLD'].map((status) => (
+          {['LIVE', 'PRIVATE', 'DIRECT_BUY', ...(user?.role === 'BRAND' ? ['MY_BIDS', 'MY_RESERVATIONS'] : []), 'SCHEDULED', 'ENDED', 'UNSOLD'].map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
@@ -174,11 +182,13 @@ export function Auctions() {
                   ? status === 'DIRECT_BUY' ? 'bg-blue-600 text-white'
                   : status === 'MY_BIDS' ? 'bg-purple-600 text-white'
                   : status === 'MY_RESERVATIONS' ? 'bg-orange-600 text-white'
+                  : status === 'PRIVATE' ? 'bg-slate-600 text-white'
                   : 'bg-emerald-600 text-white'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               )}
             >
               {status === 'LIVE' && '🔴 공개 경매'}
+              {status === 'PRIVATE' && '🔒 비공개 경매'}
               {status === 'DIRECT_BUY' && '즉시구매'}
               {status === 'MY_BIDS' && '내 입찰'}
               {status === 'MY_RESERVATIONS' && '내 예약'}
@@ -189,7 +199,7 @@ export function Auctions() {
           ))}
         </div>
 
-        {/* Auction List */}
+        {/* Auction List (공개/비공개/예정/종료/유찰) */}
         {!['DIRECT_BUY', 'MY_BIDS', 'MY_RESERVATIONS'].includes(statusFilter) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {isLoading ? (
