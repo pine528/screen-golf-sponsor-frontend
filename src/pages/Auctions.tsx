@@ -56,13 +56,18 @@ export function Auctions() {
     enabled: statusFilter === 'DIRECT_BUY',
   });
 
-  // ★ Phase 9-3: 내 입찰 목록 (Brand only)
+  // ★ Phase 9-3: 내 입찰 목록 (Brand only) - 항상 조회 (입찰 수정 지원)
   const { data: myBids } = useQuery({
     queryKey: ['brands', 'me', 'bids'],
     queryFn: () => api.getMyAuctionBids(),
-    enabled: statusFilter === 'MY_BIDS' && user?.role === 'BRAND',
-    refetchInterval: statusFilter === 'MY_BIDS' ? 10000 : false,
+    enabled: user?.role === 'BRAND',
+    refetchInterval: user?.role === 'BRAND' ? 10000 : false,
   });
+
+  // 선택된 경매에 대한 기존 입찰 찾기
+  const existingBid = selectedAuction
+    ? (myBids as any)?.data?.find((bid: any) => bid.auctionId === selectedAuction.id)
+    : null;
 
   // ★ Phase 9-3: 내 예약 목록 (Brand only)
   const { data: myReservations } = useQuery({
@@ -262,12 +267,17 @@ export function Auctions() {
                         <button
                           onClick={() => {
                             setSelectedAuction(auction);
-                            setBidAmount(String(auction.currentPrice + auction.minBidIncrement));
+                            // 기존 입찰이 있으면 기존 금액+증분, 없으면 현재가+증분
+                            const myBidForAuction = (myBids as any)?.data?.find((b: any) => b.auctionId === auction.id);
+                            const suggestedAmount = myBidForAuction
+                              ? Math.max(myBidForAuction.myBidAmount + auction.minBidIncrement, auction.currentPrice + auction.minBidIncrement)
+                              : auction.currentPrice + auction.minBidIncrement;
+                            setBidAmount(String(suggestedAmount));
                             setBidError(null);
                           }}
                           className="btn btn-primary flex-1 text-sm"
                         >
-                          입찰하기
+                          {(myBids as any)?.data?.find((b: any) => b.auctionId === auction.id) ? '입찰 수정' : '입찰하기'}
                         </button>
                       )}
                       <Link
@@ -544,7 +554,9 @@ export function Auctions() {
         {selectedAuction && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-slate-200">
-              <h2 className="text-xl font-bold text-slate-900 mb-4">입찰하기</h2>
+              <h2 className="text-xl font-bold text-slate-900 mb-4">
+                {existingBid ? '입찰 수정' : '입찰하기'}
+              </h2>
 
               <div className="mb-4">
                 <p className="font-medium text-slate-900">{selectedAuction.slotInstance?.slotTemplate?.name}</p>
@@ -553,6 +565,28 @@ export function Auctions() {
                   {selectedAuction.slotInstance?.event?.name}
                 </p>
               </div>
+
+              {/* 기존 입찰이 있는 경우 표시 */}
+              {existingBid && (
+                <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Trophy className="w-4 h-4 text-purple-600" />
+                    <span className="font-medium text-purple-800">내 기존 입찰</span>
+                    {existingBid.isHighest && (
+                      <span className="badge bg-amber-100 text-amber-800 text-xs ml-auto">최고가</span>
+                    )}
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-purple-600">최대 입찰가</span>
+                    <span className="font-bold text-purple-900">
+                      {formatCurrency(existingBid.myBidAmount)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-purple-600 mt-2">
+                    * 기존 입찰보다 높은 금액으로만 수정할 수 있습니다
+                  </p>
+                </div>
+              )}
 
               <div className="mb-4 p-3 bg-slate-100 rounded-lg">
                 <div className="flex justify-between text-sm">
@@ -577,7 +611,9 @@ export function Auctions() {
               )}
 
               <div className="mb-4">
-                <label className="label">최대 입찰가</label>
+                <label className="label">
+                  {existingBid ? '새 최대 입찰가' : '최대 입찰가'}
+                </label>
                 <input
                   type="number"
                   className="input"
@@ -605,7 +641,7 @@ export function Auctions() {
                   disabled={placeBidMutation.isPending}
                   className="btn btn-primary flex-1"
                 >
-                  {placeBidMutation.isPending ? '처리 중...' : '입찰하기'}
+                  {placeBidMutation.isPending ? '처리 중...' : existingBid ? '입찰 수정' : '입찰하기'}
                 </button>
               </div>
             </div>
