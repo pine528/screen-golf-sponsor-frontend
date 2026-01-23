@@ -482,7 +482,15 @@ class ApiService {
     endAt: string;
     reservePrice?: number;
   }) {
-    const response = await this.client.post<ApiResponse<any>>('/admin/featured-auctions', data);
+    // Backend expects auctionEndAt instead of endAt
+    const payload = {
+      athleteId: data.athleteId,
+      eventId: data.eventId,
+      slotTemplateId: data.slotTemplateId,
+      reservePrice: data.reservePrice,
+      auctionEndAt: data.endAt, // Map endAt to auctionEndAt
+    };
+    const response = await this.client.post<ApiResponse<any>>('/admin/featured-auctions', payload);
     return response.data;
   }
 

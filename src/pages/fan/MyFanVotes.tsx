@@ -54,6 +54,11 @@ export default function MyFanVotes() {
     mutationFn: (id: string) => api.submitFanVote(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myCreatedFanVotes'] });
+      alert('투표가 제출되었습니다. 관리자 승인을 기다려주세요.');
+    },
+    onError: (error: any) => {
+      const message = error?.response?.data?.error?.message || '제출에 실패했습니다.';
+      alert(`제출 실패: ${message}`);
     },
   });
 

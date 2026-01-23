@@ -90,10 +90,14 @@ export default function PointTopup() {
       throw new Error('결제 정보가 없습니다');
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pointBalance'] });
-      queryClient.invalidateQueries({ queryKey: ['myPointTopups'] });
-      // URL에서 파라미터 제거
+      // URL에서 파라미터 제거하고 완료 화면으로 이동
+      // (invalidateQueries는 완료 화면에서 자동으로 됨)
       navigate('/points/topup?topup=complete', { replace: true });
+      // 약간의 딜레이 후 쿼리 리프레시 (세션 복구 대기)
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ['pointBalance'] });
+        queryClient.invalidateQueries({ queryKey: ['myPointTopups'] });
+      }, 500);
     },
     onError: (error: any) => {
       console.error('결제 확인 실패:', error);
