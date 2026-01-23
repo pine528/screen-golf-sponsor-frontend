@@ -181,6 +181,7 @@ export function Layout({ children }: LayoutProps) {
     { path: '/brand/reports/roi', label: 'ROI 리포트', icon: TrendingUp },
     { path: '/votes', label: '투표 참여', icon: Vote },
     { path: '/points', label: '내 포인트', icon: Trophy },
+    { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
     { path: '/profile', label: '프로필', icon: User },
   ];
 
@@ -194,6 +195,7 @@ export function Layout({ children }: LayoutProps) {
     { path: '/votes', label: '투표 참여', icon: Vote },
     { path: '/fan-votes/my', label: '내 투표', icon: ListChecks },
     { path: '/points', label: '내 포인트', icon: Trophy },
+    { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
     { path: '/profile', label: '프로필', icon: User },
   ];
 
@@ -231,6 +233,7 @@ export function Layout({ children }: LayoutProps) {
     { path: '/fan-votes/my', label: '내 투표', icon: ListChecks },
     { path: '/fan/badges', label: '내 뱃지', icon: Award },
     { path: '/points', label: '내 포인트', icon: Trophy },
+    { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
     { path: '/shop', label: '포인트샵', icon: Gift },
     { path: '/orders', label: '교환내역', icon: ShoppingBag },
     { path: '/ranking', label: '랭킹', icon: Star },
