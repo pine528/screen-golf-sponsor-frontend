@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 import {
   ArrowLeft,
   Vote,
@@ -15,6 +16,7 @@ import {
   BarChart3,
   Calendar,
   Star,
+  LogIn,
 } from 'lucide-react';
 import { cn } from '../../utils';
 
@@ -72,7 +74,9 @@ export default function VoteDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { isAuthenticated } = useAuth();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [showLoginRequired, setShowLoginRequired] = useState(false);
 
   const { data: voteEvent, isLoading: loadingEvent, isError } = useQuery({
     queryKey: ['voteEvent', id],
@@ -129,6 +133,10 @@ export default function VoteDetail() {
 
   const handleVote = () => {
     if (!selectedOption) return;
+    if (!isAuthenticated) {
+      setShowLoginRequired(true);
+      return;
+    }
     submitVoteMutation.mutate(selectedOption);
   };
 
@@ -398,7 +406,27 @@ export default function VoteDetail() {
             </div>
           )}
 
-          {submitVoteMutation.isError && (
+          {showLoginRequired && (
+            <div className="mt-4 p-4 bg-amber-50 rounded-xl">
+              <div className="flex items-center gap-2 text-amber-700">
+                <LogIn className="w-5 h-5" />
+                <span className="font-medium">로그인이 필요합니다</span>
+              </div>
+              <p className="text-sm text-amber-600 mt-1">
+                투표에 참여하려면 먼저 로그인해주세요
+              </p>
+              <div className="flex gap-2 mt-3">
+                <Link to="/fan/login" className="btn btn-primary text-sm py-2 px-4">
+                  팬 로그인
+                </Link>
+                <Link to="/login" className="btn btn-secondary text-sm py-2 px-4">
+                  일반 로그인
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {submitVoteMutation.isError && !showLoginRequired && (
             <div className="mt-4 p-4 bg-red-50 rounded-xl">
               <div className="flex items-center gap-2 text-red-700">
                 <AlertCircle className="w-5 h-5" />
