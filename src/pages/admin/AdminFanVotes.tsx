@@ -110,8 +110,13 @@ export default function AdminFanVotes() {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => api.deleteFanVote(id),
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      // 모든 탭의 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ['pendingFanVotes'] });
+      queryClient.invalidateQueries({ queryKey: ['activeFanVotes'] });
       queryClient.invalidateQueries({ queryKey: ['endedFanVotes'] });
+      const message = response?.data?.message || '투표가 삭제되었습니다.';
+      alert(message);
     },
     onError: (error: any) => {
       const message = error.response?.data?.error?.message || '삭제에 실패했습니다.';
@@ -141,7 +146,14 @@ export default function AdminFanVotes() {
   };
 
   const handleDelete = (event: FanVoteEvent) => {
-    if (confirm(`"${event.title}" 투표를 삭제하시겠습니까?\n\n삭제하면 복구할 수 없습니다.`)) {
+    let confirmMessage = `"${event.title}" 투표를 삭제하시겠습니까?\n\n삭제하면 복구할 수 없습니다.`;
+
+    // ACTIVE/CLOSED 상태는 환불 안내 추가
+    if (event.status === 'ACTIVE' || event.status === 'CLOSED') {
+      confirmMessage += '\n\n⚠️ 개설자에게 상금포인트 + 개설수수료가 환불됩니다.';
+    }
+
+    if (confirm(confirmMessage)) {
       deleteMutation.mutate(event.id);
     }
   };
@@ -192,6 +204,7 @@ export default function AdminFanVotes() {
         </div>
 
         <div className="flex items-center gap-2 ml-4">
+          {/* 승인 버튼 - SUBMITTED 상태 */}
           {showActions && event.status === 'SUBMITTED' && (
             <button
               onClick={() => handleApprove(event.id)}
@@ -209,6 +222,7 @@ export default function AdminFanVotes() {
             </button>
           )}
 
+          {/* 종료 버튼 - ACTIVE 상태 */}
           {event.status === 'ACTIVE' && (
             <button
               onClick={() => handleClose(event.id)}
@@ -226,6 +240,7 @@ export default function AdminFanVotes() {
             </button>
           )}
 
+          {/* 정산하기 버튼 - CLOSED 상태 */}
           {event.status === 'CLOSED' && (
             <Link
               to={`/admin/fan-votes/${event.id}`}
@@ -236,31 +251,32 @@ export default function AdminFanVotes() {
             </Link>
           )}
 
+          {/* 결과 보기 버튼 - SETTLED 상태 */}
           {event.status === 'SETTLED' && (
-            <>
-              <Link
-                to={`/fan-votes/${event.id}/result`}
-                className="btn btn-secondary text-sm"
-              >
-                결과 보기
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </Link>
-              <button
-                onClick={() => handleDelete(event)}
-                disabled={deleteMutation.isPending}
-                className="btn text-sm bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
-              >
-                {deleteMutation.isPending ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <>
-                    <Trash2 className="w-4 h-4 mr-1" />
-                    삭제
-                  </>
-                )}
-              </button>
-            </>
+            <Link
+              to={`/fan-votes/${event.id}/result`}
+              className="btn btn-secondary text-sm"
+            >
+              결과 보기
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Link>
           )}
+
+          {/* 삭제 버튼 - 모든 상태에서 가능 */}
+          <button
+            onClick={() => handleDelete(event)}
+            disabled={deleteMutation.isPending}
+            className="btn text-sm bg-red-50 text-red-600 hover:bg-red-100 border-red-200"
+          >
+            {deleteMutation.isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <>
+                <Trash2 className="w-4 h-4 mr-1" />
+                삭제
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>
