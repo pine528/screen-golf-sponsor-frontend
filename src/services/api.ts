@@ -2421,6 +2421,40 @@ class ApiService {
     });
     return response.data;
   }
+
+  // ============================================
+  // Point Topup (포인트 충전)
+  // ============================================
+
+  // 충전 생성 (Checkout 세션)
+  async createPointTopup(data: { amount: number; provider?: 'TOSS' | 'STRIPE' }) {
+    const response = await this.client.post('/point-topups/create', data);
+    return response.data;
+  }
+
+  // 결제 확인
+  async confirmPointTopup(topupId: string, paymentKey: string) {
+    const response = await this.client.post(`/point-topups/${topupId}/confirm`, { paymentKey });
+    return response.data;
+  }
+
+  // 내 충전 내역
+  async getMyPointTopups(params: { status?: string; limit?: number; offset?: number } = {}) {
+    const response = await this.client.get('/point-topups/my', { params });
+    return response.data;
+  }
+
+  // 단일 충전 조회
+  async getPointTopupById(id: string) {
+    const response = await this.client.get(`/point-topups/${id}`);
+    return response.data;
+  }
+
+  // orderId로 조회
+  async getPointTopupByOrderId(orderId: string) {
+    const response = await this.client.get(`/point-topups/order/${orderId}`);
+    return response.data;
+  }
 }
 
 export const api = new ApiService();

@@ -51,6 +51,7 @@ import BrandVoteCreate from './pages/brand/BrandVoteCreate';
 import { FanHome, FanLogin, FanRegister, Votes, VoteDetail, FanVoteDetail, Points, Ranking, Favorites, BrandRegister, Shop, ShopDetail, Orders } from './pages/fan';
 import FanVoteCreate from './pages/fan/FanVoteCreate';
 import MyFanVotes from './pages/fan/MyFanVotes';
+import PointTopup from './pages/PointTopup';
 import FanVoteResult from './pages/fan/FanVoteResult';
 import SeasonLeaderboard from './pages/fan/SeasonLeaderboard';
 import MyBadges from './pages/fan/MyBadges';
@@ -322,6 +323,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Points />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/points/topup"
+        element={
+          <ProtectedRoute>
+            <PointTopup />
           </ProtectedRoute>
         }
       />
