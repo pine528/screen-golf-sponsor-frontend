@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import {
   Hexagon,
   Zap,
@@ -22,6 +23,8 @@ import {
   Users,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { api } from '../services/api';
+import { formatTimeRemaining } from '../utils';
 
 // Animated counter hook
 function useCounter(end: number, duration: number = 2000) {
@@ -61,6 +64,37 @@ export function Home() {
   const [currentAuction, setCurrentAuction] = useState(0);
   const [activeFeature, setActiveFeature] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // 활성 투표 조회
+  const { data: activeVotes } = useQuery({
+    queryKey: ['home-active-votes'],
+    queryFn: async () => {
+      const [adminRes, fanRes] = await Promise.all([
+        api.getActiveVoteEvents(),
+        api.getActiveFanVotes(),
+      ]);
+      const adminVotes = (adminRes.data || []).map((v: any) => ({
+        id: v.id,
+        title: v.title,
+        type: 'admin' as const,
+        participantCount: v._count?.votes ?? 0,
+        endAt: v.endAt,
+        questionType: v.questionType,
+      }));
+      const fanVotes = (fanRes.data || []).map((v: any) => ({
+        id: v.id,
+        title: v.title,
+        type: 'fan' as const,
+        participantCount: v._count?.entries ?? 0,
+        endAt: v.endsAt,
+        prizePool: v.prizePool,
+      }));
+      return [...adminVotes, ...fanVotes]
+        .sort((a, b) => new Date(a.endAt).getTime() - new Date(b.endAt).getTime())
+        .slice(0, 4);
+    },
+    staleTime: 60000,
+  });
 
   const stats = [
     { label: '등록 선수', value: useCounter(1250), suffix: '+' },
@@ -439,6 +473,76 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      {/* Active Votes Section */}
+      {activeVotes && activeVotes.length > 0 && (
+        <section className="py-16 sm:py-24">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-10 sm:mb-16">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-violet-100 text-violet-600 text-sm font-medium mb-4 sm:mb-6">
+                LIVE VOTES
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
+                <span className="gradient-text">진행 중인 투표</span>에 참여하세요
+              </h2>
+              <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+                예측에 성공하면 포인트를 획득할 수 있습니다
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {activeVotes.map((vote: any) => (
+                <Link
+                  key={vote.id}
+                  to={vote.type === 'admin' ? `/fan/votes/${vote.id}` : `/fan/fan-votes/${vote.id}`}
+                  className="card p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/30 group"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      vote.type === 'admin'
+                        ? 'bg-sky-100 text-sky-700'
+                        : 'bg-violet-100 text-violet-700'
+                    }`}>
+                      {vote.type === 'admin' ? '관리자 투표' : '팬 투표'}
+                    </span>
+                    <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
+                  </div>
+
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-violet-600 transition-colors line-clamp-2">
+                    {vote.title}
+                  </h3>
+
+                  <p className="text-sm text-slate-500 mb-4">
+                    {vote.questionType || (vote.prizePool ? `상금 ${Number(vote.prizePool).toLocaleString()}P` : '투표')}
+                  </p>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+                    <div className="flex items-center gap-1 text-slate-500 text-sm">
+                      <Users className="w-4 h-4" />
+                      <span>{vote.participantCount}명</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-red-600 text-sm font-medium">
+                      <Clock className="w-4 h-4" />
+                      <span>{formatTimeRemaining(vote.endAt)}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            <div className="text-center mt-8 sm:mt-10">
+              <Link
+                to="/fan/votes"
+                className="btn btn-secondary inline-flex items-center gap-2"
+              >
+                <Vote className="w-4 h-4" />
+                모든 투표 보기
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* How It Works */}
       <section id="how-it-works" className="py-16 sm:py-24">

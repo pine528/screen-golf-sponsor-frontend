@@ -39,7 +39,38 @@ function BrandDashboard() {
     retry: 1,
   });
 
-  const isLoading = statsLoading || auctionsLoading || eventsLoading;
+  // 활성 투표 조회
+  const { data: activeVotes, isLoading: votesLoading } = useQuery({
+    queryKey: ['active-votes'],
+    queryFn: async () => {
+      const [adminRes, fanRes] = await Promise.all([
+        api.getActiveVoteEvents(),
+        api.getActiveFanVotes(),
+      ]);
+      const adminVotes = (adminRes.data || []).map((v: any) => ({
+        id: v.id,
+        title: v.title,
+        type: 'admin' as const,
+        participantCount: v._count?.votes ?? 0,
+        endAt: v.endAt,
+        questionType: v.questionType,
+      }));
+      const fanVotes = (fanRes.data || []).map((v: any) => ({
+        id: v.id,
+        title: v.title,
+        type: 'fan' as const,
+        participantCount: v._count?.entries ?? 0,
+        endAt: v.endsAt,
+        prizePool: v.prizePool,
+      }));
+      return [...adminVotes, ...fanVotes].sort(
+        (a, b) => new Date(a.endAt).getTime() - new Date(b.endAt).getTime()
+      );
+    },
+    retry: 1,
+  });
+
+  const isLoading = statsLoading || auctionsLoading || eventsLoading || votesLoading;
   const hasAnyError = statsError || auctionsError || eventsError;
 
   if (isLoading) {
@@ -175,35 +206,85 @@ function BrandDashboard() {
             </div>
           </div>
 
-          {/* Upcoming Events */}
+          {/* Active Votes */}
           <div className="card overflow-hidden">
             <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">예정된 이벤트</h2>
-              <Link to="/inventory" className="text-sm text-emerald-600 hover:text-emerald-500 flex items-center gap-1">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
+                <h2 className="text-lg font-semibold text-slate-900">진행 중인 투표</h2>
+              </div>
+              <Link to="/brand/sponsored-votes" className="text-sm text-emerald-600 hover:text-emerald-500 flex items-center gap-1">
                 전체 보기 <ArrowUpRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="divide-y divide-slate-200">
-              {upcomingEvents?.data?.slice(0, 5).map((event: any) => (
+              {activeVotes?.slice(0, 5).map((vote: any) => (
                 <Link
-                  key={event.id}
-                  to={`/inventory?eventId=${event.id}`}
+                  key={vote.id}
+                  to={vote.type === 'admin' ? `/fan/votes/${vote.id}` : `/fan/fan-votes/${vote.id}`}
                   className="p-4 hover:bg-slate-50 flex items-center justify-between transition-colors"
                 >
                   <div>
-                    <p className="font-medium text-slate-900">{event.name}</p>
-                    <p className="text-sm text-slate-500">{event.tour}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-slate-900">{vote.title}</p>
+                      <span className={cn(
+                        'text-xs px-1.5 py-0.5 rounded',
+                        vote.type === 'admin' ? 'bg-sky-100 text-sky-700' : 'bg-violet-100 text-violet-700'
+                      )}>
+                        {vote.type === 'admin' ? '관리자' : '팬'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-500">
+                      {vote.questionType || (vote.prizePool ? `상금: ${Number(vote.prizePool).toLocaleString()}P` : '투표')}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-slate-600">{formatDate(event.dateStart)}</p>
-                    <p className="text-sm text-slate-500">슬롯 {event._count?.slotInstances || 0}개</p>
+                    <p className="text-sm text-slate-600">
+                      <Users className="w-3 h-3 inline mr-1" />
+                      {vote.participantCount}명 참여
+                    </p>
+                    <p className="text-sm text-red-600 flex items-center justify-end gap-1">
+                      <Clock className="w-3 h-3" />
+                      {formatTimeRemaining(vote.endAt)}
+                    </p>
                   </div>
                 </Link>
               ))}
-              {(!upcomingEvents?.data || upcomingEvents.data.length === 0) && (
-                <div className="p-8 text-center text-slate-500">예정된 이벤트가 없습니다</div>
+              {(!activeVotes || activeVotes.length === 0) && (
+                <div className="p-8 text-center text-slate-500">진행 중인 투표가 없습니다</div>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* Upcoming Events - Full width */}
+        <div className="card overflow-hidden">
+          <div className="p-6 border-b border-slate-200 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-slate-900">예정된 이벤트</h2>
+            <Link to="/inventory" className="text-sm text-emerald-600 hover:text-emerald-500 flex items-center gap-1">
+              전체 보기 <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="divide-y divide-slate-200">
+            {upcomingEvents?.data?.slice(0, 5).map((event: any) => (
+              <Link
+                key={event.id}
+                to={`/inventory?eventId=${event.id}`}
+                className="p-4 hover:bg-slate-50 flex items-center justify-between transition-colors"
+              >
+                <div>
+                  <p className="font-medium text-slate-900">{event.name}</p>
+                  <p className="text-sm text-slate-500">{event.tour}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-slate-600">{formatDate(event.dateStart)}</p>
+                  <p className="text-sm text-slate-500">슬롯 {event._count?.slotInstances || 0}개</p>
+                </div>
+              </Link>
+            ))}
+            {(!upcomingEvents?.data || upcomingEvents.data.length === 0) && (
+              <div className="p-8 text-center text-slate-500">예정된 이벤트가 없습니다</div>
+            )}
           </div>
         </div>
       </div>
@@ -339,6 +420,36 @@ function AdminDashboard() {
     queryFn: () => api.getAdminDashboard(),
   });
 
+  // 활성 투표 조회
+  const { data: activeVotes } = useQuery({
+    queryKey: ['admin-active-votes'],
+    queryFn: async () => {
+      const [adminRes, fanRes] = await Promise.all([
+        api.getActiveVoteEvents(),
+        api.getActiveFanVotes(),
+      ]);
+      const adminVotes = (adminRes.data || []).map((v: any) => ({
+        id: v.id,
+        title: v.title,
+        type: 'admin' as const,
+        participantCount: v._count?.votes ?? 0,
+        endAt: v.endAt,
+        questionType: v.questionType,
+      }));
+      const fanVotes = (fanRes.data || []).map((v: any) => ({
+        id: v.id,
+        title: v.title,
+        type: 'fan' as const,
+        participantCount: v._count?.entries ?? 0,
+        endAt: v.endsAt,
+        prizePool: v.prizePool,
+      }));
+      return [...adminVotes, ...fanVotes].sort(
+        (a, b) => new Date(a.endAt).getTime() - new Date(b.endAt).getTime()
+      );
+    },
+  });
+
   return (
     <Layout>
       <div className="space-y-8">
@@ -406,6 +517,57 @@ function AdminDashboard() {
             <h3 className="font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors">검수 관리</h3>
             <p className="text-sm text-slate-500 mt-1">소재 및 부착 인증을 검토하세요</p>
           </Link>
+        </div>
+
+        {/* Active Votes */}
+        <div className="card overflow-hidden">
+          <div className="p-6 border-b border-slate-200 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
+              <h2 className="text-lg font-semibold text-slate-900">진행 중인 투표</h2>
+              <span className="text-sm text-slate-500">({activeVotes?.length || 0}개)</span>
+            </div>
+            <Link to="/admin/fan-votes" className="text-sm text-emerald-600 hover:text-emerald-500 flex items-center gap-1">
+              전체 보기 <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="divide-y divide-slate-200">
+            {activeVotes?.slice(0, 5).map((vote: any) => (
+              <Link
+                key={vote.id}
+                to={vote.type === 'admin' ? `/admin/vote-events` : `/admin/fan-votes`}
+                className="p-4 hover:bg-slate-50 flex items-center justify-between transition-colors"
+              >
+                <div>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-slate-900">{vote.title}</p>
+                    <span className={cn(
+                      'text-xs px-1.5 py-0.5 rounded',
+                      vote.type === 'admin' ? 'bg-sky-100 text-sky-700' : 'bg-violet-100 text-violet-700'
+                    )}>
+                      {vote.type === 'admin' ? '관리자' : '팬'}
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-500">
+                    {vote.questionType || (vote.prizePool ? `상금: ${Number(vote.prizePool).toLocaleString()}P` : '투표')}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-slate-600">
+                    <Users className="w-3 h-3 inline mr-1" />
+                    {vote.participantCount}명 참여
+                  </p>
+                  <p className="text-sm text-red-600 flex items-center justify-end gap-1">
+                    <Clock className="w-3 h-3" />
+                    {formatTimeRemaining(vote.endAt)}
+                  </p>
+                </div>
+              </Link>
+            ))}
+            {(!activeVotes || activeVotes.length === 0) && (
+              <div className="p-8 text-center text-slate-500">진행 중인 투표가 없습니다</div>
+            )}
+          </div>
         </div>
 
         {/* Revenue */}
