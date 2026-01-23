@@ -36,8 +36,9 @@ interface FanVoteEvent {
   description?: string;
   status: string;
   endsAt: string;
-  entryFee: number;
-  prizePool: number;
+  entryFeePoints: number | string;  // Decimal from backend
+  sponsorContribution?: number | string;  // 스폰서 기여금
+  creatorPrizePool?: number | string;  // Seed 상금
   creatorRole?: 'FAN' | 'ATHLETE' | 'BRAND' | 'ADMIN';  // 개설자 역할
   _count?: {
     entries: number;
@@ -112,8 +113,8 @@ export default function FanHome() {
       description: v.description,
       type: 'fan' as const,
       creatorRole: v.creatorRole || 'FAN',
-      entryFee: v.entryFee,
-      prizePool: v.prizePool,
+      entryFee: Number(v.entryFeePoints) || 0,
+      prizePool: (Number(v.entryFeePoints) || 0) * (v._count?.entries ?? 0) + (Number(v.sponsorContribution) || 0) + (Number(v.creatorPrizePool) || 0),
       endAt: v.endsAt,
       participantCount: v._count?.entries ?? 0,
     })),

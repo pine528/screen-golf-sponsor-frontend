@@ -54,6 +54,7 @@ interface FanVoteEvent {
   endsAt: string;
   entryFeePoints: number | string;  // Decimal from backend
   sponsorContribution?: number | string;  // 스폰서 기여금
+  creatorPrizePool?: number | string;  // Seed 상금 (개설자가 거는 상금)
   options: string[];  // Backend returns string array
   creatorRole?: 'FAN' | 'ATHLETE' | 'BRAND' | 'ADMIN';  // 개설자 역할
   _count?: {
@@ -262,7 +263,7 @@ export default function Votes() {
       voteType: 'fan' as const,
       creatorRole: v.creatorRole || 'FAN',
       entryFee: Number(v.entryFeePoints) || 0,
-      prizePool: (Number(v.entryFeePoints) || 0) * (v._count?.entries ?? 0) + (Number(v.sponsorContribution) || 0),
+      prizePool: (Number(v.entryFeePoints) || 0) * (v._count?.entries ?? 0) + (Number(v.sponsorContribution) || 0) + (Number(v.creatorPrizePool) || 0),
       status: v.status,
       endAt: v.endsAt,
       participantCount: v._count?.entries ?? 0,
@@ -292,7 +293,7 @@ export default function Votes() {
       voteType: 'fan' as const,
       creatorRole: v.creatorRole || 'FAN',
       entryFee: Number(v.entryFeePoints) || 0,
-      prizePool: (Number(v.entryFeePoints) || 0) * (v._count?.entries ?? 0) + (Number(v.sponsorContribution) || 0),
+      prizePool: (Number(v.entryFeePoints) || 0) * (v._count?.entries ?? 0) + (Number(v.sponsorContribution) || 0) + (Number(v.creatorPrizePool) || 0),
       status: v.status,
       endAt: v.endsAt,
       participantCount: v._count?.entries ?? 0,

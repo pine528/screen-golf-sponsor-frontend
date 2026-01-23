@@ -29,6 +29,7 @@ interface FanVoteEvent {
   endsAt: string;
   entryFeePoints: number | string;  // Decimal from backend
   sponsorContribution?: number | string;  // 스폰서 기여금
+  creatorPrizePool?: number | string;  // Seed 상금 (개설자가 거는 상금)
   creatorRole?: 'FAN' | 'ATHLETE' | 'BRAND' | 'ADMIN';  // 개설자 역할
   _count?: {
     entries: number;
@@ -52,7 +53,8 @@ function calculatePrizePool(event: FanVoteEvent): number {
   const entryFee = Number(event.entryFeePoints) || 0;
   const entriesCount = event._count?.entries ?? 0;
   const sponsorContribution = Number(event.sponsorContribution) || 0;
-  return entryFee * entriesCount + sponsorContribution;
+  const creatorPrizePool = Number(event.creatorPrizePool) || 0;  // Seed 상금
+  return entryFee * entriesCount + sponsorContribution + creatorPrizePool;
 }
 
 // Helper to get entry fee as number
