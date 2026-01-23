@@ -18,6 +18,7 @@ import { cn } from '../../utils';
 interface FanVoteEvent {
   id: string;
   creatorUserId: string;
+  creatorRole: 'FAN' | 'ATHLETE' | 'BRAND' | 'ADMIN';
   title: string;
   question: string;
   options: string[];
@@ -31,6 +32,13 @@ interface FanVoteEvent {
     entries: number;
   };
 }
+
+const ROLE_LABELS: Record<string, { label: string; color: string }> = {
+  FAN: { label: '팬', color: 'bg-pink-100 text-pink-700' },
+  ATHLETE: { label: '선수', color: 'bg-blue-100 text-blue-700' },
+  BRAND: { label: '브랜드', color: 'bg-orange-100 text-orange-700' },
+  ADMIN: { label: '관리자', color: 'bg-slate-100 text-slate-700' },
+};
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   DRAFT: { label: '초안', color: 'bg-slate-100 text-slate-600' },
@@ -150,6 +158,11 @@ export default function AdminFanVotes() {
               className={cn('badge text-xs', STATUS_LABELS[event.status]?.color)}
             >
               {STATUS_LABELS[event.status]?.label}
+            </span>
+            <span
+              className={cn('badge text-xs', ROLE_LABELS[event.creatorRole]?.color)}
+            >
+              {ROLE_LABELS[event.creatorRole]?.label}
             </span>
             {Number(event.entryFeePoints) > 0 && (
               <span className="text-xs text-emerald-600 font-medium">
@@ -271,8 +284,8 @@ export default function AdminFanVotes() {
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-900">팬 투표 관리</h1>
-          <p className="text-slate-500">팬이 만든 투표를 승인하고 정산하세요</p>
+          <h1 className="text-2xl font-bold text-slate-900">투표 심사</h1>
+          <p className="text-slate-500">사용자가 만든 투표를 승인하고 정산하세요</p>
         </div>
 
         {/* Tabs */}
