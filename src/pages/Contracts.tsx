@@ -290,7 +290,10 @@ export function Contracts() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 sm:flex-shrink-0">
-                      {contract.status === 'PENDING_SIGNATURE' && (
+                      {/* 서명 버튼: 본인이 아직 서명 안 했을 때만 표시 */}
+                      {contract.status === 'PENDING_SIGNATURE' &&
+                       ((user?.role === 'BRAND' && !contract.brandSignedAt) ||
+                        (user?.role === 'ATHLETE' && !contract.athleteSignedAt)) && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -663,8 +666,10 @@ function ContractDetailModal({
                 </div>
               </div>
 
-              {/* Actions */}
-              {contract.status === 'PENDING_SIGNATURE' && (
+              {/* Actions - 서명 버튼: 본인이 아직 서명 안 했을 때만 표시 */}
+              {contract.status === 'PENDING_SIGNATURE' &&
+               ((userRole === 'BRAND' && !contract.brandSignedAt) ||
+                (userRole === 'ATHLETE' && !contract.athleteSignedAt)) && (
                 <div className="pt-4 border-t border-slate-200">
                   <button
                     onClick={onSign}
