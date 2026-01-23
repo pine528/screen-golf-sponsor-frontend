@@ -244,10 +244,21 @@ export function Auctions() {
                     {/* Price & Time */}
                     <div className="flex items-center justify-between mb-3 sm:mb-4">
                       <div>
-                        <p className="text-xs sm:text-sm text-slate-600">현재가</p>
-                        <p className="text-lg sm:text-xl font-bold text-slate-900">
-                          {formatCurrency(auction.currentPrice)}
-                        </p>
+                        {auction.isFeatured ? (
+                          <>
+                            <p className="text-xs sm:text-sm text-slate-600">현재가</p>
+                            <p className="text-lg sm:text-xl font-bold text-slate-900">
+                              {formatCurrency(auction.currentPrice)}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-xs sm:text-sm text-slate-600">시작가</p>
+                            <p className="text-lg sm:text-xl font-bold text-slate-900">
+                              {formatCurrency(auction.slotInstance?.auctionMinBid || auction.slotInstance?.reservePrice || 0)}
+                            </p>
+                          </>
+                        )}
                       </div>
                       {auction.status === 'LIVE' && (
                         <div className="text-right">
@@ -260,11 +271,18 @@ export function Auctions() {
                       )}
                     </div>
 
-                    {/* Bid Count */}
-                    <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 mb-3 sm:mb-4">
-                      <Gavel className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      입찰 {auction._count?.bids || 0}건
-                    </div>
+                    {/* Bid Count - 공개 경매만 표시 */}
+                    {auction.isFeatured ? (
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 mb-3 sm:mb-4">
+                        <Gavel className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        입찰 {auction._count?.bids || 0}건
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 mb-3 sm:mb-4">
+                        <Gavel className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        비공개 입찰
+                      </div>
+                    )}
 
                     {/* Action Buttons */}
                     <div className="flex gap-2">
@@ -272,11 +290,14 @@ export function Auctions() {
                         <button
                           onClick={() => {
                             setSelectedAuction(auction);
-                            // 기존 입찰이 있으면 기존 금액+증분, 없으면 현재가+증분
+                            // 비공개 경매: 시작가 기준, 공개 경매: 현재가 기준
                             const myBidForAuction = (myBids as any)?.data?.find((b: any) => b.auctionId === auction.id);
+                            const basePrice = auction.isFeatured
+                              ? auction.currentPrice
+                              : (auction.slotInstance?.auctionMinBid || auction.slotInstance?.reservePrice || 0);
                             const suggestedAmount = myBidForAuction
-                              ? Math.max(myBidForAuction.myBidAmount + auction.minBidIncrement, auction.currentPrice + auction.minBidIncrement)
-                              : auction.currentPrice + auction.minBidIncrement;
+                              ? myBidForAuction.myBidAmount + auction.minBidIncrement
+                              : Number(basePrice) + auction.minBidIncrement;
                             setBidAmount(String(suggestedAmount));
                             setBidError(null);
                           }}
@@ -594,18 +615,32 @@ export function Auctions() {
               )}
 
               <div className="mb-4 p-3 bg-slate-100 rounded-lg">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">현재가</span>
-                  <span className="font-medium text-slate-900">
-                    {formatCurrency(selectedAuction.currentPrice)}
-                  </span>
-                </div>
+                {selectedAuction.isFeatured ? (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-600">현재가</span>
+                    <span className="font-medium text-slate-900">
+                      {formatCurrency(selectedAuction.currentPrice)}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-600">시작가</span>
+                    <span className="font-medium text-slate-900">
+                      {formatCurrency(selectedAuction.slotInstance?.auctionMinBid || selectedAuction.slotInstance?.reservePrice || 0)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm mt-1">
                   <span className="text-slate-600">최소 증분</span>
                   <span className="font-medium text-slate-900">
                     {formatCurrency(selectedAuction.minBidIncrement)}
                   </span>
                 </div>
+                {!selectedAuction.isFeatured && (
+                  <p className="text-xs text-amber-600 mt-2">
+                    * 비공개 입찰: 다른 입찰자의 금액이 공개되지 않습니다
+                  </p>
+                )}
               </div>
 
               {bidError && (
