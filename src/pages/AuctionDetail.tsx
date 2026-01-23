@@ -49,7 +49,7 @@ export function AuctionDetail() {
   // Real-time socket connection
   const handleBidPlaced = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['auction', id] });
-    // 비공개 경매: 입찰자 정보와 금액 숨김
+    // 새 입찰 알림 표시
     setNewBidAlert('새로운 입찰이 접수되었습니다!');
     setTimeout(() => setNewBidAlert(null), 3000);
   }, [id, queryClient]);
@@ -136,6 +136,7 @@ export function AuctionDetail() {
   const athlete = slot?.athlete;
   const event = slot?.event;
   const bids = auctionData.bids || [];
+  const isPublicAuction = auctionData.isFeatured === true;
 
   const getStatusInfo = () => {
     switch (auctionData.status) {
@@ -193,6 +194,16 @@ export function AuctionDetail() {
                 <StatusIcon className="w-3 h-3" />
                 {statusInfo.label}
               </span>
+              <span
+                className={cn(
+                  'px-3 py-1 rounded-full text-xs font-medium',
+                  isPublicAuction
+                    ? 'bg-red-100 text-red-700'
+                    : 'bg-slate-100 text-slate-700'
+                )}
+              >
+                {isPublicAuction ? '공개 경매' : '비공개 경매'}
+              </span>
               {/* Real-time indicators */}
               <div className="flex items-center gap-2 ml-auto">
                 <span className={cn(
@@ -228,7 +239,7 @@ export function AuctionDetail() {
                     {formatCurrency(slot?.reservePrice || 0)}
                   </p>
                   <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    비공개 입찰
+                    {isPublicAuction ? '공개 입찰' : '비공개 입찰'}
                   </p>
                 </div>
                 <div className="text-right">
@@ -269,7 +280,7 @@ export function AuctionDetail() {
               {user?.role === 'BRAND' && auctionData.status === 'LIVE' && (
                 <button
                   onClick={() => {
-                    // 비공개 경매: 시작가를 초기값으로 설정
+                    // 시작가를 초기값으로 설정
                     setBidAmount(String(slot?.reservePrice || 0));
                     setBidError(null);
                     setShowBidModal(true);
@@ -367,19 +378,23 @@ export function AuctionDetail() {
               )}
             </div>
 
-            {/* 비공개 경매: 입찰 내역 숨김, 입찰 현황만 표시 */}
+            {/* 입찰 현황 표시 */}
             <div className="card p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-emerald-600" />
                 입찰 현황
               </h2>
               <div className="p-4 bg-slate-50 rounded-lg text-center">
-                <p className="text-sm text-slate-600 mb-2">비공개 경매</p>
+                <p className="text-sm text-slate-600 mb-2">
+                  {isPublicAuction ? '공개 경매' : '비공개 경매'}
+                </p>
                 <p className="text-3xl font-bold text-emerald-600">{bids.length}</p>
                 <p className="text-sm text-slate-500 mt-1">개의 입찰이 접수되었습니다</p>
               </div>
               <p className="text-xs text-slate-400 mt-4 text-center">
-                비공개 경매는 다른 입찰자의 입찰 금액을 확인할 수 없습니다
+                {isPublicAuction
+                  ? '공개 경매는 모든 입찰 내역이 공개됩니다'
+                  : '비공개 경매는 다른 입찰자의 입찰 금액을 확인할 수 없습니다'}
               </p>
             </div>
           </div>
@@ -520,7 +535,9 @@ export function AuctionDetail() {
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 pt-2 border-t border-emerald-200">
-                  비공개 경매: 다른 입찰자의 금액을 알 수 없습니다
+                  {isPublicAuction
+                    ? '공개 경매: 입찰 내역이 공개됩니다'
+                    : '비공개 경매: 다른 입찰자의 금액을 알 수 없습니다'}
                 </p>
               </div>
 
@@ -545,7 +562,9 @@ export function AuctionDetail() {
                 </div>
                 <p className="text-xs text-slate-500 mt-2">
                   <Info className="w-3 h-3 inline mr-1" />
-                  비공개 입찰: 경매 종료 시 최고 입찰자가 낙찰됩니다
+                  {isPublicAuction
+                    ? '공개 입찰: 경매 종료 시 최고 입찰자가 낙찰됩니다'
+                    : '비공개 입찰: 경매 종료 시 최고 입찰자가 낙찰됩니다'}
                 </p>
               </div>
 

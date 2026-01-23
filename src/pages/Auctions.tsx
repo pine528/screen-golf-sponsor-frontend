@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { Clock, User, Calendar, Gavel, AlertCircle, ShoppingCart, Tag, Trophy, Timer, Star } from 'lucide-react';
+import { Clock, User, Calendar, Gavel, AlertCircle, ShoppingCart, Tag, Trophy, Timer } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
@@ -42,19 +42,11 @@ export function Auctions() {
   const [selectedSlotForBuyNow, setSelectedSlotForBuyNow] = useState<any>(null);
   const [buyNowError, setBuyNowError] = useState<string | null>(null);
 
-  // LIVE(공개경매) = 추천경매만, PRIVATE(비공개경매) = 일반 LIVE 경매
+  // LIVE: 모든 진행중 경매 (공개+비공개 통합)
   const { data: auctions, isLoading } = useQuery({
     queryKey: ['auctions', statusFilter],
-    queryFn: () => {
-      if (statusFilter === 'LIVE') {
-        return api.getFeaturedAuctions();  // 공개경매: isFeatured=true
-      }
-      if (statusFilter === 'PRIVATE') {
-        return api.getAuctions({ status: 'LIVE' });  // 비공개경매: 일반 LIVE 경매
-      }
-      return api.getAuctions({ status: statusFilter });
-    },
-    refetchInterval: (statusFilter === 'LIVE' || statusFilter === 'PRIVATE') ? 3000 : false, // 3초 간격 실시간 갱신
+    queryFn: () => api.getAuctions({ status: statusFilter }),
+    refetchInterval: statusFilter === 'LIVE' ? 3000 : false, // 3초 간격 실시간 갱신
   });
 
   // 즉시구매 가능 슬롯 조회 (enableDirectBuy: true, 경매중 슬롯도 포함)
@@ -78,13 +70,6 @@ export function Auctions() {
     queryFn: () => api.getMyReservations(),
     enabled: statusFilter === 'MY_RESERVATIONS' && user?.role === 'BRAND',
     refetchInterval: statusFilter === 'MY_RESERVATIONS' ? 30000 : false,
-  });
-
-  // Featured auctions (어드민 설정 추천 경매) - 3초 간격 실시간 갱신
-  const { data: featuredAuctions } = useQuery({
-    queryKey: ['auctions', 'featured'],
-    queryFn: () => api.getFeaturedAuctions(),
-    refetchInterval: 3000, // 입찰가 실시간 갱신
   });
 
   const placeBidMutation = useMutation({
@@ -141,38 +126,15 @@ export function Auctions() {
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900">경매</h1>
             <p className="text-sm sm:text-base text-slate-600 mt-1">
               {statusFilter === 'LIVE'
-                ? '실시간 공개 경매에 참여하세요 (3초 간격 자동 갱신)'
-                : statusFilter === 'PRIVATE'
-                ? '비공개 경매 목록입니다 (3초 간격 자동 갱신)'
+                ? '실시간 경매에 참여하세요 (3초 간격 자동 갱신)'
                 : '스폰서 슬롯 경매에 참여하세요'}
             </p>
           </div>
         </div>
 
-        {/* Featured Auctions Quick Stats - LIVE 탭이 아닐 때만 표시 */}
-        {statusFilter !== 'LIVE' && featuredAuctions?.data && featuredAuctions.data.length > 0 && (
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
-                <span className="font-bold text-slate-900">공개 경매</span>
-                <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
-                  {featuredAuctions.data.filter((a: any) => a.status === 'LIVE').length}개 진행중
-                </span>
-              </div>
-              <button
-                onClick={() => setStatusFilter('LIVE')}
-                className="btn btn-primary text-xs px-3 py-1.5"
-              >
-                공개 경매 보기
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Filters */}
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible">
-          {['LIVE', 'PRIVATE', 'DIRECT_BUY', ...(user?.role === 'BRAND' ? ['MY_BIDS', 'MY_RESERVATIONS'] : []), 'SCHEDULED', 'ENDED', 'UNSOLD'].map((status) => (
+          {['LIVE', 'DIRECT_BUY', ...(user?.role === 'BRAND' ? ['MY_BIDS', 'MY_RESERVATIONS'] : []), 'SCHEDULED', 'ENDED', 'UNSOLD'].map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
@@ -182,13 +144,11 @@ export function Auctions() {
                   ? status === 'DIRECT_BUY' ? 'bg-blue-600 text-white'
                   : status === 'MY_BIDS' ? 'bg-purple-600 text-white'
                   : status === 'MY_RESERVATIONS' ? 'bg-orange-600 text-white'
-                  : status === 'PRIVATE' ? 'bg-slate-600 text-white'
                   : 'bg-emerald-600 text-white'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               )}
             >
-              {status === 'LIVE' && '🔴 공개 경매'}
-              {status === 'PRIVATE' && '🔒 비공개 경매'}
+              {status === 'LIVE' && '진행중'}
               {status === 'DIRECT_BUY' && '즉시구매'}
               {status === 'MY_BIDS' && '내 입찰'}
               {status === 'MY_RESERVATIONS' && '내 예약'}
@@ -222,21 +182,34 @@ export function Auctions() {
                           {getBodyPartLabel(auction.slotInstance?.slotTemplate?.bodyPart)}
                         </p>
                       </div>
-                      <span
-                        className={cn(
-                          'badge text-xs',
-                          auction.status === 'LIVE'
-                            ? 'badge-success'
-                            : auction.status === 'SCHEDULED'
-                            ? 'badge-info'
-                            : 'badge-warning'
-                        )}
-                      >
-                        {auction.status === 'LIVE' && '진행 중'}
-                        {auction.status === 'SCHEDULED' && '예정'}
-                        {auction.status === 'ENDED' && '종료'}
-                        {auction.status === 'UNSOLD' && '유찰'}
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        {/* 공개/비공개 경매 표시 */}
+                        <span
+                          className={cn(
+                            'text-xs px-2 py-0.5 rounded-full',
+                            auction.isFeatured
+                              ? 'bg-red-100 text-red-700'
+                              : 'bg-slate-100 text-slate-600'
+                          )}
+                        >
+                          {auction.isFeatured ? '공개' : '비공개'}
+                        </span>
+                        <span
+                          className={cn(
+                            'badge text-xs',
+                            auction.status === 'LIVE'
+                              ? 'badge-success'
+                              : auction.status === 'SCHEDULED'
+                              ? 'badge-info'
+                              : 'badge-warning'
+                          )}
+                        >
+                          {auction.status === 'LIVE' && '진행 중'}
+                          {auction.status === 'SCHEDULED' && '예정'}
+                          {auction.status === 'ENDED' && '종료'}
+                          {auction.status === 'UNSOLD' && '유찰'}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Athlete & Event */}
