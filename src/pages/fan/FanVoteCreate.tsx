@@ -16,10 +16,17 @@ import {
 } from 'lucide-react';
 
 // 수수료 계산 헬퍼 (기본 정책 기준)
-const calculateOpenFee = (seedPoints: number): number => {
-  if (seedPoints <= 0) return 0;
+const calculateOpenFee = (seedPoints: number): { fee: number; isMin: boolean; isMax: boolean } => {
+  if (seedPoints <= 0) return { fee: 0, isMin: false, isMax: false };
   const rawFee = Math.floor(seedPoints * 0.02); // 2%
-  return Math.min(Math.max(rawFee, 1000), 50000); // min 1000, max 50000
+  const MIN_FEE = 1000;
+  const MAX_FEE = 50000;
+  const fee = Math.min(Math.max(rawFee, MIN_FEE), MAX_FEE);
+  return {
+    fee,
+    isMin: rawFee < MIN_FEE,
+    isMax: rawFee > MAX_FEE,
+  };
 };
 
 const calculateEntryDeduction = (entryFee: number): { deduction: number; platformFee: number; creatorReward: number; netToPool: number } => {
@@ -47,13 +54,15 @@ export default function FanVoteCreate() {
 
   // 수수료 계산 (실시간)
   const feeBreakdown = useMemo(() => {
-    const openFee = calculateOpenFee(seedPoints);
+    const openFeeCalc = calculateOpenFee(seedPoints);
     const entryCalc = calculateEntryDeduction(entryFeePoints);
-    const totalRequired = seedPoints + openFee;
+    const totalRequired = seedPoints + openFeeCalc.fee;
 
     return {
       seedPoints,
-      openFee,
+      openFee: openFeeCalc.fee,
+      openFeeIsMin: openFeeCalc.isMin,
+      openFeeIsMax: openFeeCalc.isMax,
       totalRequired,
       entryFee: entryFeePoints,
       ...entryCalc,
@@ -281,7 +290,16 @@ export default function FanVoteCreate() {
                         <span className="font-medium">{feeBreakdown.seedPoints.toLocaleString()} P</span>
                       </div>
                       <div className="flex justify-between text-amber-700">
-                        <span>개설 수수료 (Seed의 2%)</span>
+                        <span>
+                          개설 수수료{' '}
+                          {feeBreakdown.openFeeIsMin ? (
+                            <span className="text-xs">(최소 1,000P 적용)</span>
+                          ) : feeBreakdown.openFeeIsMax ? (
+                            <span className="text-xs">(최대 50,000P 적용)</span>
+                          ) : (
+                            <span className="text-xs">(Seed의 2%)</span>
+                          )}
+                        </span>
                         <span className="font-medium">-{feeBreakdown.openFee.toLocaleString()} P</span>
                       </div>
                       <div className="border-t border-amber-200 pt-2 flex justify-between font-semibold">
