@@ -446,7 +446,7 @@ export function Home() {
               {activeVotes.map((vote: any) => (
                 <Link
                   key={vote.id}
-                  to={vote.type === 'admin' ? `/fan/votes/${vote.id}` : `/fan/fan-votes/${vote.id}`}
+                  to={vote.type === 'admin' ? `/votes/${vote.id}` : `/fan-votes/${vote.id}`}
                   className="card p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/30 group"
                 >
                   <div className="flex items-center justify-between mb-4">
@@ -493,7 +493,7 @@ export function Home() {
 
           <div className="text-center mt-8 sm:mt-10">
             <Link
-              to="/fan/votes"
+              to="/votes"
               className="btn btn-secondary inline-flex items-center gap-2"
             >
               <Vote className="w-4 h-4" />
