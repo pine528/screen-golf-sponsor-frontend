@@ -177,9 +177,10 @@ export function Layout({ children }: LayoutProps) {
     { path: '/brand/billing', label: '청구/명세서', icon: Receipt },
     { path: '/campaigns', label: '캠페인', icon: Megaphone },
     { path: '/brand/sponsored-votes', label: '후원 투표', icon: Heart },
-    { path: '/brand/votes', label: '내 투표', icon: Vote },
+    { path: '/fan-votes/my', label: '내 투표', icon: ListChecks },
     { path: '/brand/reports/roi', label: 'ROI 리포트', icon: TrendingUp },
     { path: '/votes', label: '투표 참여', icon: Vote },
+    { path: '/points', label: '내 포인트', icon: Trophy },
     { path: '/profile', label: '프로필', icon: User },
   ];
 
@@ -190,7 +191,9 @@ export function Layout({ children }: LayoutProps) {
     { path: '/athlete/pending-signatures', label: '서명 대기', icon: PenLine },
     { path: '/settlements', label: '정산', icon: Wallet },
     { path: '/athlete/withdrawals', label: '출금 관리', icon: Banknote },
-    { path: '/votes', label: '투표', icon: Vote },
+    { path: '/votes', label: '투표 참여', icon: Vote },
+    { path: '/fan-votes/my', label: '내 투표', icon: ListChecks },
+    { path: '/points', label: '내 포인트', icon: Trophy },
     { path: '/profile', label: '프로필', icon: User },
   ];
 
