@@ -838,6 +838,20 @@ class ApiService {
   }
 
   // ============================================
+  // Admin Point Topup API (포인트 충전 관리)
+  // ============================================
+
+  async getAdminPointTopups(params?: { status?: string; limit?: number; offset?: number }) {
+    const response = await this.client.get<ApiResponse<any>>('/point-topups/admin/all', { params });
+    return response.data;
+  }
+
+  async getAdminPointTopupStats() {
+    const response = await this.client.get<ApiResponse<any>>('/point-topups/admin/stats');
+    return response.data;
+  }
+
+  // ============================================
   // Review API (Admin - Asset/Verification Review)
   // ============================================
 

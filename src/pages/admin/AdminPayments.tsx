@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { CreditCard, DollarSign, Receipt } from 'lucide-react';
+import { CreditCard, DollarSign, Receipt, Coins, Wallet } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
 import { formatCurrency, cn } from '../../utils';
@@ -20,29 +20,64 @@ const providerLabels: Record<string, string> = {
   MOCK: '테스트',
 };
 
+type TopupType = 'WALLET' | 'POINT';
+
 export default function AdminPayments() {
+  const [topupType, setTopupType] = useState<TopupType>('WALLET');
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
   const limit = 20;
 
-  const { data: topupsData, isLoading } = useQuery({
+  // 브랜드 지갑 충전 내역
+  const { data: walletTopupsData, isLoading: isLoadingWallet } = useQuery({
     queryKey: ['adminTopups', { status: statusFilter, page }],
     queryFn: () => api.getAdminTopups({
       status: statusFilter || undefined,
       limit,
       offset: (page - 1) * limit
     }),
+    enabled: topupType === 'WALLET',
   });
 
-  const { data: statsData } = useQuery({
+  const { data: walletStatsData } = useQuery({
     queryKey: ['adminTopupStats'],
     queryFn: () => api.getAdminTopupStats(),
+    enabled: topupType === 'WALLET',
   });
 
-  const topups = topupsData?.data?.items || [];
-  const total = topupsData?.data?.total || 0;
+  // 포인트 충전 내역
+  const { data: pointTopupsData, isLoading: isLoadingPoint } = useQuery({
+    queryKey: ['adminPointTopups', { status: statusFilter, page }],
+    queryFn: () => api.getAdminPointTopups({
+      status: statusFilter || undefined,
+      limit,
+      offset: (page - 1) * limit
+    }),
+    enabled: topupType === 'POINT',
+  });
+
+  const { data: pointStatsData } = useQuery({
+    queryKey: ['adminPointTopupStats'],
+    queryFn: () => api.getAdminPointTopupStats(),
+    enabled: topupType === 'POINT',
+  });
+
+  const isLoading = topupType === 'WALLET' ? isLoadingWallet : isLoadingPoint;
+  const topups = topupType === 'WALLET'
+    ? (walletTopupsData?.data?.items || [])
+    : (pointTopupsData?.data?.items || pointTopupsData?.data || []);
+  const total = topupType === 'WALLET'
+    ? (walletTopupsData?.data?.total || 0)
+    : (pointTopupsData?.data?.total || topups.length);
   const totalPages = Math.ceil(total / limit);
-  const stats = statsData?.data;
+  const stats = topupType === 'WALLET' ? walletStatsData?.data : pointStatsData?.data;
+
+  // 타입 변경 시 페이지 리셋
+  const handleTypeChange = (type: TopupType) => {
+    setTopupType(type);
+    setPage(1);
+    setStatusFilter('');
+  };
 
   if (isLoading) {
     return (
@@ -59,7 +94,35 @@ export default function AdminPayments() {
       <div className="space-y-8">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">결제 관리</h1>
-          <p className="text-slate-600 mt-1">브랜드 지갑 충전 내역을 조회하세요</p>
+          <p className="text-slate-600 mt-1">브랜드 지갑 충전 및 포인트 충전 내역을 조회하세요</p>
+        </div>
+
+        {/* Type Tabs */}
+        <div className="flex gap-2 border-b border-slate-200 pb-4">
+          <button
+            onClick={() => handleTypeChange('WALLET')}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors',
+              topupType === 'WALLET'
+                ? 'bg-emerald-100 text-emerald-700'
+                : 'text-slate-600 hover:bg-slate-100'
+            )}
+          >
+            <Wallet className="w-5 h-5" />
+            브랜드 지갑 충전
+          </button>
+          <button
+            onClick={() => handleTypeChange('POINT')}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors',
+              topupType === 'POINT'
+                ? 'bg-violet-100 text-violet-700'
+                : 'text-slate-600 hover:bg-slate-100'
+            )}
+          >
+            <Coins className="w-5 h-5" />
+            포인트 충전
+          </button>
         </div>
 
         {/* Stats Cards */}
@@ -67,13 +130,24 @@ export default function AdminPayments() {
           <div className="card p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-slate-600">총 결제금액</p>
+                <p className="text-sm text-slate-600">
+                  총 {topupType === 'WALLET' ? '충전' : '포인트 충전'}금액
+                </p>
                 <p className="text-2xl font-bold text-slate-900 mt-1">
-                  {formatCurrency(stats?.totalAmount || 0)}
+                  {topupType === 'WALLET'
+                    ? formatCurrency(stats?.totalAmount || 0)
+                    : `${(stats?.totalAmount || 0).toLocaleString()}P`
+                  }
                 </p>
               </div>
-              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-emerald-600" />
+              <div className={cn(
+                'w-12 h-12 rounded-xl flex items-center justify-center',
+                topupType === 'WALLET' ? 'bg-emerald-100' : 'bg-violet-100'
+              )}>
+                <DollarSign className={cn(
+                  'w-6 h-6',
+                  topupType === 'WALLET' ? 'text-emerald-600' : 'text-violet-600'
+                )} />
               </div>
             </div>
           </div>
@@ -94,7 +168,10 @@ export default function AdminPayments() {
                 <div>
                   <p className="text-sm text-slate-600">{providerLabels[p.provider] || p.provider}</p>
                   <p className="text-2xl font-bold text-slate-900 mt-1">
-                    {formatCurrency(p.amount || 0)}
+                    {topupType === 'WALLET'
+                      ? formatCurrency(p.amount || 0)
+                      : `${(p.amount || 0).toLocaleString()}P`
+                    }
                   </p>
                   <p className="text-xs text-slate-500">{p.count}건</p>
                 </div>
@@ -138,7 +215,7 @@ export default function AdminPayments() {
                   충전 ID
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                  브랜드
+                  {topupType === 'WALLET' ? '브랜드' : '사용자'}
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   금액
@@ -160,9 +237,15 @@ export default function AdminPayments() {
                   <td colSpan={6} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center">
                       <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
-                        <CreditCard className="w-8 h-8 text-slate-400" />
+                        {topupType === 'WALLET' ? (
+                          <Wallet className="w-8 h-8 text-slate-400" />
+                        ) : (
+                          <Coins className="w-8 h-8 text-slate-400" />
+                        )}
                       </div>
-                      <p className="text-slate-500">결제 내역이 없습니다</p>
+                      <p className="text-slate-500">
+                        {topupType === 'WALLET' ? '지갑 충전' : '포인트 충전'} 내역이 없습니다
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -174,12 +257,18 @@ export default function AdminPayments() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <p className="text-sm font-medium text-slate-900">
-                        {topup.brandId ? topup.brandId.slice(0, 8) + '...' : '-'}
+                        {topupType === 'WALLET'
+                          ? (topup.brand?.name || topup.brandId?.slice(0, 8) + '...' || '-')
+                          : (topup.user?.email || topup.userId?.slice(0, 8) + '...' || '-')
+                        }
                       </p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <p className="text-sm font-semibold text-slate-900">
-                        {formatCurrency(Number(topup.amount))}
+                        {topupType === 'WALLET'
+                          ? formatCurrency(Number(topup.amount))
+                          : `${Number(topup.amount).toLocaleString()}P`
+                        }
                       </p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
