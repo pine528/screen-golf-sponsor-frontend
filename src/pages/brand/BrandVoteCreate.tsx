@@ -139,7 +139,7 @@ export default function BrandVoteCreate() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="input w-full"
-                placeholder="예: 이번 시즌 MVP 예측"
+                placeholder="예: OOO 제품은 어디서 판매되고 있을까요?"
                 maxLength={200}
               />
             </div>
