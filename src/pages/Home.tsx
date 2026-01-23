@@ -426,6 +426,84 @@ export function Home() {
         </div>
       </section>
 
+      {/* Active Votes Section */}
+      <section className="py-16 sm:py-24 bg-gradient-to-b from-white to-violet-50/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-10 sm:mb-16">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-violet-100 text-violet-600 text-sm font-medium mb-4 sm:mb-6">
+              LIVE VOTES
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
+              <span className="gradient-text">진행 중인 투표</span>에 참여하세요
+            </h2>
+            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+              예측에 성공하면 포인트를 획득할 수 있습니다
+            </p>
+          </div>
+
+          {activeVotes && activeVotes.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {activeVotes.map((vote: any) => (
+                <Link
+                  key={vote.id}
+                  to={vote.type === 'admin' ? `/fan/votes/${vote.id}` : `/fan/fan-votes/${vote.id}`}
+                  className="card p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/30 group"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      vote.type === 'admin'
+                        ? 'bg-sky-100 text-sky-700'
+                        : 'bg-violet-100 text-violet-700'
+                    }`}>
+                      {vote.type === 'admin' ? '관리자 투표' : '팬 투표'}
+                    </span>
+                    <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
+                  </div>
+
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-violet-600 transition-colors line-clamp-2">
+                    {vote.title}
+                  </h3>
+
+                  <p className="text-sm text-slate-500 mb-4">
+                    {vote.questionType || (vote.prizePool ? `상금 ${Number(vote.prizePool).toLocaleString()}P` : '투표')}
+                  </p>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-200">
+                    <div className="flex items-center gap-1 text-slate-500 text-sm">
+                      <Users className="w-4 h-4" />
+                      <span>{vote.participantCount}명</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-red-600 text-sm font-medium">
+                      <Clock className="w-4 h-4" />
+                      <span>{formatTimeRemaining(vote.endAt)}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 sm:py-16">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 sm:mb-6 bg-violet-100 rounded-2xl flex items-center justify-center">
+                <Vote className="w-8 h-8 sm:w-10 sm:h-10 text-violet-400" />
+              </div>
+              <p className="text-slate-500 text-sm sm:text-base mb-2">현재 진행 중인 투표가 없습니다</p>
+              <p className="text-slate-400 text-xs sm:text-sm">곧 새로운 투표가 시작됩니다!</p>
+            </div>
+          )}
+
+          <div className="text-center mt-8 sm:mt-10">
+            <Link
+              to="/fan/votes"
+              className="btn btn-secondary inline-flex items-center gap-2"
+            >
+              <Vote className="w-4 h-4" />
+              모든 투표 보기
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section id="features" className="py-16 sm:py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -473,76 +551,6 @@ export function Home() {
           </div>
         </div>
       </section>
-
-      {/* Active Votes Section */}
-      {activeVotes && activeVotes.length > 0 && (
-        <section className="py-16 sm:py-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="text-center mb-10 sm:mb-16">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-violet-100 text-violet-600 text-sm font-medium mb-4 sm:mb-6">
-                LIVE VOTES
-              </span>
-              <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
-                <span className="gradient-text">진행 중인 투표</span>에 참여하세요
-              </h2>
-              <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-                예측에 성공하면 포인트를 획득할 수 있습니다
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {activeVotes.map((vote: any) => (
-                <Link
-                  key={vote.id}
-                  to={vote.type === 'admin' ? `/fan/votes/${vote.id}` : `/fan/fan-votes/${vote.id}`}
-                  className="card p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/30 group"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      vote.type === 'admin'
-                        ? 'bg-sky-100 text-sky-700'
-                        : 'bg-violet-100 text-violet-700'
-                    }`}>
-                      {vote.type === 'admin' ? '관리자 투표' : '팬 투표'}
-                    </span>
-                    <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse" />
-                  </div>
-
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-violet-600 transition-colors line-clamp-2">
-                    {vote.title}
-                  </h3>
-
-                  <p className="text-sm text-slate-500 mb-4">
-                    {vote.questionType || (vote.prizePool ? `상금 ${Number(vote.prizePool).toLocaleString()}P` : '투표')}
-                  </p>
-
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-200">
-                    <div className="flex items-center gap-1 text-slate-500 text-sm">
-                      <Users className="w-4 h-4" />
-                      <span>{vote.participantCount}명</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-red-600 text-sm font-medium">
-                      <Clock className="w-4 h-4" />
-                      <span>{formatTimeRemaining(vote.endAt)}</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            <div className="text-center mt-8 sm:mt-10">
-              <Link
-                to="/fan/votes"
-                className="btn btn-secondary inline-flex items-center gap-2"
-              >
-                <Vote className="w-4 h-4" />
-                모든 투표 보기
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* How It Works */}
       <section id="how-it-works" className="py-16 sm:py-24">
