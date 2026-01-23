@@ -1335,6 +1335,41 @@ class ApiService {
   }
 
   // ============================================
+  // Brand Vote Creation
+  // ============================================
+
+  // Brand: 투표 생성
+  async createBrandVote(data: {
+    title: string;
+    question: string;
+    options: string[];
+    entryFeePoints: number;
+    winnersCount: number;
+    startsAt: string;
+    endsAt: string;
+    sponsorContribution?: number;
+    sponsorBannerUrl?: string;
+    sponsorLogoUrl?: string;
+    sponsorMessage?: string;
+    sponsorLinkUrl?: string;
+  }) {
+    const response = await this.client.post<ApiResponse<any>>('/fan-votes/brand/create', data);
+    return response.data;
+  }
+
+  // Brand: 내가 만든 투표 목록
+  async getBrandCreatedVotes(params?: { page?: number; pageSize?: number }) {
+    const response = await this.client.get<ApiResponse<any>>('/fan-votes/brand/my/events', { params });
+    return response.data;
+  }
+
+  // Brand: 투표 제출 (DRAFT -> SUBMITTED)
+  async submitBrandVote(id: string) {
+    const response = await this.client.post<ApiResponse<any>>(`/fan-votes/brand/${id}/submit`);
+    return response.data;
+  }
+
+  // ============================================
   // Vote Sponsorship (투표 스폰서십) - Phase G
   // ============================================
 

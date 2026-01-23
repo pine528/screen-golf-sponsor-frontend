@@ -46,6 +46,8 @@ import BrandCheckout from './pages/brand/BrandCheckout';
 import BrandSponsoredVotes from './pages/brand/BrandSponsoredVotes';
 import BrandROIDashboard from './pages/brand/BrandROIDashboard';
 import BrandBilling from './pages/brand/BrandBilling';
+import BrandVotes from './pages/brand/BrandVotes';
+import BrandVoteCreate from './pages/brand/BrandVoteCreate';
 import { FanHome, FanLogin, FanRegister, Votes, VoteDetail, FanVoteDetail, Points, Ranking, Favorites, BrandRegister, Shop, ShopDetail, Orders } from './pages/fan';
 import FanVoteCreate from './pages/fan/FanVoteCreate';
 import MyFanVotes from './pages/fan/MyFanVotes';
@@ -289,6 +291,22 @@ function App() {
         element={
           <ProtectedRoute>
             <BrandBilling />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/brand/votes"
+        element={
+          <ProtectedRoute>
+            <BrandVotes />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/brand/votes/create"
+        element={
+          <ProtectedRoute>
+            <BrandVoteCreate />
           </ProtectedRoute>
         }
       />

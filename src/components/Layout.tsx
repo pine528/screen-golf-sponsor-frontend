@@ -177,8 +177,9 @@ export function Layout({ children }: LayoutProps) {
     { path: '/brand/billing', label: '청구/명세서', icon: Receipt },
     { path: '/campaigns', label: '캠페인', icon: Megaphone },
     { path: '/brand/sponsored-votes', label: '후원 투표', icon: Heart },
+    { path: '/brand/votes', label: '내 투표', icon: Vote },
     { path: '/brand/reports/roi', label: 'ROI 리포트', icon: TrendingUp },
-    { path: '/votes', label: '투표', icon: Vote },
+    { path: '/votes', label: '투표 참여', icon: Vote },
     { path: '/profile', label: '프로필', icon: User },
   ];
 
