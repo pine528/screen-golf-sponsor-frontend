@@ -51,6 +51,7 @@ function BrandDashboard() {
         id: v.id,
         title: v.title,
         type: 'admin' as const,
+        creatorRole: 'ADMIN' as const,
         participantCount: v._count?.votes ?? 0,
         endAt: v.endAt,
         questionType: v.questionType,
@@ -59,6 +60,7 @@ function BrandDashboard() {
         id: v.id,
         title: v.title,
         type: 'fan' as const,
+        creatorRole: (v.creatorRole || 'FAN') as 'ADMIN' | 'FAN' | 'BRAND' | 'ATHLETE',
         participantCount: v._count?.entries ?? 0,
         endAt: v.endsAt,
         prizePool: v.prizePool,
@@ -229,9 +231,15 @@ function BrandDashboard() {
                       <p className="font-medium text-slate-900">{vote.title}</p>
                       <span className={cn(
                         'text-xs px-1.5 py-0.5 rounded',
-                        vote.type === 'admin' ? 'bg-sky-100 text-sky-700' : 'bg-violet-100 text-violet-700'
+                        vote.creatorRole === 'ADMIN' && 'bg-sky-100 text-sky-700',
+                        vote.creatorRole === 'FAN' && 'bg-violet-100 text-violet-700',
+                        vote.creatorRole === 'BRAND' && 'bg-emerald-100 text-emerald-700',
+                        vote.creatorRole === 'ATHLETE' && 'bg-amber-100 text-amber-700'
                       )}>
-                        {vote.type === 'admin' ? '관리자' : '팬'}
+                        {vote.creatorRole === 'ADMIN' && '관리자'}
+                        {vote.creatorRole === 'FAN' && '팬'}
+                        {vote.creatorRole === 'BRAND' && '브랜드'}
+                        {vote.creatorRole === 'ATHLETE' && '선수'}
                       </span>
                     </div>
                     <p className="text-sm text-slate-500">
@@ -432,6 +440,7 @@ function AdminDashboard() {
         id: v.id,
         title: v.title,
         type: 'admin' as const,
+        creatorRole: 'ADMIN' as const,
         participantCount: v._count?.votes ?? 0,
         endAt: v.endAt,
         questionType: v.questionType,
@@ -440,6 +449,7 @@ function AdminDashboard() {
         id: v.id,
         title: v.title,
         type: 'fan' as const,
+        creatorRole: (v.creatorRole || 'FAN') as 'ADMIN' | 'FAN' | 'BRAND' | 'ATHLETE',
         participantCount: v._count?.entries ?? 0,
         endAt: v.endsAt,
         prizePool: v.prizePool,
@@ -543,9 +553,15 @@ function AdminDashboard() {
                     <p className="font-medium text-slate-900">{vote.title}</p>
                     <span className={cn(
                       'text-xs px-1.5 py-0.5 rounded',
-                      vote.type === 'admin' ? 'bg-sky-100 text-sky-700' : 'bg-violet-100 text-violet-700'
+                      vote.creatorRole === 'ADMIN' && 'bg-sky-100 text-sky-700',
+                      vote.creatorRole === 'FAN' && 'bg-violet-100 text-violet-700',
+                      vote.creatorRole === 'BRAND' && 'bg-emerald-100 text-emerald-700',
+                      vote.creatorRole === 'ATHLETE' && 'bg-amber-100 text-amber-700'
                     )}>
-                      {vote.type === 'admin' ? '관리자' : '팬'}
+                      {vote.creatorRole === 'ADMIN' && '관리자'}
+                      {vote.creatorRole === 'FAN' && '팬'}
+                      {vote.creatorRole === 'BRAND' && '브랜드'}
+                      {vote.creatorRole === 'ATHLETE' && '선수'}
                     </span>
                   </div>
                   <p className="text-sm text-slate-500">
