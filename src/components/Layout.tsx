@@ -42,6 +42,7 @@ import {
   Receipt,
   FileCheck,
   Coins,
+  Briefcase,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { cn } from '../utils';
@@ -241,29 +242,41 @@ export function Layout({ children }: LayoutProps) {
     { path: '/brand-register', label: '브랜드 등록', icon: Building2 },
   ];
 
+  const agencyNavItems = [
+    { path: '/agency', label: '대시보드', icon: Home },
+    { path: '/agency/athletes', label: '소속 선수', icon: Users },
+    { path: '/agency/athletes/register', label: '선수 등록', icon: User },
+    { path: '/profile', label: '프로필', icon: Briefcase },
+  ];
+
+  const role = user?.role as string;
   const navItems =
-    user?.role === 'ADMIN'
+    role === 'ADMIN'
       ? adminNavItems
-      : user?.role === 'ATHLETE'
+      : role === 'ATHLETE'
       ? athleteNavItems
-      : user?.role === 'FAN'
+      : role === 'FAN'
       ? fanNavItems
+      : role === 'AGENCY'
+      ? agencyNavItems
       : brandNavItems;
 
   const getRoleLabel = () => {
-    switch (user?.role) {
+    switch (role) {
       case 'ADMIN': return '관리자';
       case 'ATHLETE': return '선수';
       case 'FAN': return '팬';
+      case 'AGENCY': return '에이전시';
       default: return '브랜드';
     }
   };
 
   const getRoleColor = () => {
-    switch (user?.role) {
+    switch (role) {
       case 'ADMIN': return 'text-violet-600';
       case 'ATHLETE': return 'text-emerald-600';
       case 'FAN': return 'text-amber-600';
+      case 'AGENCY': return 'text-indigo-600';
       default: return 'text-sky-600';
     }
   };
@@ -282,7 +295,7 @@ export function Layout({ children }: LayoutProps) {
           <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/25">
             <Hexagon className="w-4 h-4 text-white" strokeWidth={2.5} />
           </div>
-          <span className="font-bold text-slate-900 tracking-tight">SPONSOR</span>
+          <span className="font-bold text-slate-900 tracking-tight">SPONPIK</span>
         </Link>
         <div className="flex items-center gap-2">
           {/* Mobile Notification Bell */}
@@ -338,7 +351,7 @@ export function Layout({ children }: LayoutProps) {
                   <Hexagon className="w-4 h-4 text-white" strokeWidth={2.5} />
                 </div>
               </div>
-              <span className="font-bold text-slate-900 tracking-tight">SPONSOR</span>
+              <span className="font-bold text-slate-900 tracking-tight">SPONPIK</span>
             </Link>
             <button
               onClick={closeMobileMenu}
@@ -485,7 +498,7 @@ export function Layout({ children }: LayoutProps) {
                 <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/25">
                   <Hexagon className="w-4 h-4 text-white" strokeWidth={2.5} />
                 </div>
-                <span className="font-bold text-slate-900 tracking-tight text-lg">SPONSOR</span>
+                <span className="font-bold text-slate-900 tracking-tight text-lg">SPONPIK</span>
               </Link>
               <div className="flex items-center gap-3">
                 <Link

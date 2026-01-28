@@ -1,5 +1,5 @@
 // User Types
-export type UserRole = 'BRAND' | 'ATHLETE' | 'ADMIN' | 'FAN';
+export type UserRole = 'BRAND' | 'ATHLETE' | 'ADMIN' | 'FAN' | 'AGENCY';
 export type KycStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface User {
@@ -25,6 +25,9 @@ export interface RegisterData {
   nickname?: string;
   tour?: string;
   category?: string;
+  bizNo?: string;
+  contactName?: string;
+  contactPhone?: string;
 }
 
 // Brand Types
