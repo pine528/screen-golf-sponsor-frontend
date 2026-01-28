@@ -233,13 +233,14 @@ export function Layout({ children }: LayoutProps) {
     { path: '/fan', label: '홈', icon: Home },
     { path: '/votes', label: '투표', icon: Vote },
     { path: '/fan-votes/my', label: '내 투표', icon: ListChecks },
+    { path: '/my-donations', label: '선수 후원', icon: Heart },
     { path: '/fan/badges', label: '내 뱃지', icon: Award },
     { path: '/points', label: '내 포인트', icon: Trophy },
     { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
     { path: '/shop', label: '포인트샵', icon: Gift },
     { path: '/orders', label: '교환내역', icon: ShoppingBag },
     { path: '/ranking', label: '랭킹', icon: Star },
-    { path: '/favorites', label: '즐겨찾기', icon: Heart },
+    { path: '/favorites', label: '즐겨찾기', icon: Star },
     { path: '/brand-register', label: '브랜드 등록', icon: Building2 },
   ];
 
