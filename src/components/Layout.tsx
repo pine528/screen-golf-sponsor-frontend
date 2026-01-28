@@ -191,6 +191,7 @@ export function Layout({ children }: LayoutProps) {
     { path: '/my-slots', label: '슬롯 관리', icon: Calendar },
     { path: '/contracts', label: '계약/오퍼', icon: FileText },
     { path: '/athlete/pending-signatures', label: '서명 대기', icon: PenLine },
+    { path: '/athlete/agency-requests', label: '에이전시 요청', icon: Building2 },
     { path: '/settlements', label: '정산', icon: Wallet },
     { path: '/athlete/withdrawals', label: '출금 관리', icon: Banknote },
     { path: '/votes', label: '투표 참여', icon: Vote },
@@ -245,7 +246,9 @@ export function Layout({ children }: LayoutProps) {
   const agencyNavItems = [
     { path: '/agency', label: '대시보드', icon: Home },
     { path: '/agency/athletes', label: '소속 선수', icon: Users },
-    { path: '/agency/athletes/register', label: '선수 등록', icon: User },
+    { path: '/agency/athletes/search', label: '선수 검색/연결', icon: User },
+    { path: '/agency/requests', label: '보낸 요청', icon: FileText },
+    { path: '/agency/athletes/register', label: '새 선수 등록', icon: User },
     { path: '/profile', label: '프로필', icon: Briefcase },
   ];
 

@@ -2579,6 +2579,52 @@ class ApiService {
     const response = await this.client.post(`/admin/point-withdrawals/${id}/complete`, { payoutReference });
     return response.data;
   }
+
+  // ============================================
+  // Agency-Athlete Connection Requests (에이전시-선수 연결 요청)
+  // ============================================
+
+  // 에이전시: 연결 가능한 선수 검색
+  async searchAvailableAthletes(params?: { q?: string; tour?: string; page?: number; limit?: number }) {
+    const response = await this.client.get('/agencies/athletes/search', { params });
+    return response.data;
+  }
+
+  // 에이전시: 연결 요청 발송
+  async sendConnectionRequest(athleteId: string, message?: string) {
+    const response = await this.client.post('/agencies/athletes/request', { athleteId, message });
+    return response.data;
+  }
+
+  // 에이전시: 보낸 요청 목록
+  async getSentConnectionRequests(params?: { status?: string; page?: number; limit?: number }) {
+    const response = await this.client.get('/agencies/requests/sent', { params });
+    return response.data;
+  }
+
+  // 에이전시: 요청 취소
+  async cancelConnectionRequest(requestId: string) {
+    const response = await this.client.delete(`/agencies/requests/${requestId}`);
+    return response.data;
+  }
+
+  // 선수: 받은 연결 요청 목록
+  async getAgencyRequests(params?: { status?: string; page?: number; limit?: number }) {
+    const response = await this.client.get('/athletes/agency-requests', { params });
+    return response.data;
+  }
+
+  // 선수: 연결 요청 승인
+  async approveAgencyRequest(requestId: string) {
+    const response = await this.client.post(`/athletes/agency-requests/${requestId}/approve`);
+    return response.data;
+  }
+
+  // 선수: 연결 요청 거부
+  async rejectAgencyRequest(requestId: string, reason?: string) {
+    const response = await this.client.post(`/athletes/agency-requests/${requestId}/reject`, { reason });
+    return response.data;
+  }
 }
 
 export const api = new ApiService();

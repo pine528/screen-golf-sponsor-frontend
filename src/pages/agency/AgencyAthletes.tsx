@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Users, UserPlus, ChevronRight, Search, AlertCircle } from 'lucide-react';
+import { Users, UserPlus, ChevronRight, Search, AlertCircle, Link2 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
 
@@ -78,10 +78,16 @@ export function AgencyAthletes() {
           <h1 className="text-2xl font-bold text-slate-900">소속 선수</h1>
           <p className="text-slate-600 mt-1">에이전시에서 관리하는 선수 목록입니다</p>
         </div>
-        <Link to="/agency/athletes/register" className="btn btn-primary inline-flex items-center gap-2">
-          <UserPlus className="w-4 h-4" />
-          선수 등록
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link to="/agency/athletes/search" className="btn btn-secondary inline-flex items-center gap-2">
+            <Link2 className="w-4 h-4" />
+            기존 선수 연결
+          </Link>
+          <Link to="/agency/athletes/register" className="btn btn-primary inline-flex items-center gap-2">
+            <UserPlus className="w-4 h-4" />
+            새 선수 등록
+          </Link>
+        </div>
       </div>
 
       {/* Search */}

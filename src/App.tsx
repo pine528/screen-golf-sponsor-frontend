@@ -51,7 +51,8 @@ import BrandBilling from './pages/brand/BrandBilling';
 import BrandVotes from './pages/brand/BrandVotes';
 import BrandVoteCreate from './pages/brand/BrandVoteCreate';
 import { FanHome, FanLogin, FanRegister, Votes, VoteDetail, FanVoteDetail, Points, Ranking, Favorites, BrandRegister, Shop, ShopDetail, Orders } from './pages/fan';
-import { AgencyDashboard, AgencyAthleteRegister, AgencyAthletes } from './pages/agency';
+import { AgencyDashboard, AgencyAthleteRegister, AgencyAthletes, AgencyAthleteSearch, AgencySentRequests } from './pages/agency';
+import { AthleteAgencyRequests } from './pages/athlete/AthleteAgencyRequests';
 import FanVoteCreate from './pages/fan/FanVoteCreate';
 import MyFanVotes from './pages/fan/MyFanVotes';
 import PointTopup from './pages/PointTopup';
@@ -261,6 +262,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/athlete/agency-requests"
+        element={
+          <ProtectedRoute>
+            <AthleteAgencyRequests />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Agency Routes */}
       <Route
@@ -284,6 +293,22 @@ function App() {
         element={
           <ProtectedRoute>
             <AgencyAthleteRegister />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/agency/athletes/search"
+        element={
+          <ProtectedRoute>
+            <AgencyAthleteSearch />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/agency/requests"
+        element={
+          <ProtectedRoute>
+            <AgencySentRequests />
           </ProtectedRoute>
         }
       />
