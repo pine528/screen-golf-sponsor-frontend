@@ -248,7 +248,6 @@ export function Layout({ children }: LayoutProps) {
     { path: '/agency/athletes', label: '소속 선수', icon: Users },
     { path: '/agency/athletes/search', label: '선수 검색/연결', icon: User },
     { path: '/agency/requests', label: '보낸 요청', icon: FileText },
-    { path: '/agency/athletes/register', label: '새 선수 등록', icon: User },
     { path: '/profile', label: '프로필', icon: Briefcase },
   ];
 
