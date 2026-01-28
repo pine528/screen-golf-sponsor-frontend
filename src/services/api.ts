@@ -2630,6 +2630,105 @@ class ApiService {
     const response = await this.client.post(`/athletes/agency-requests/${requestId}/reject`, { reason });
     return response.data;
   }
+
+  // ============================================
+  // 에이전시 - 선수 대리 관리 API
+  // ============================================
+
+  // 에이전시: 선수 상세 정보 조회
+  async getAgencyAthleteDetail(athleteId: string) {
+    const response = await this.client.get(`/agencies/athletes/${athleteId}/detail`);
+    return response.data;
+  }
+
+  // 에이전시: 선수 프로필 수정
+  async updateAgencyAthleteProfile(athleteId: string, data: {
+    name?: string;
+    realName?: string;
+    bio?: string;
+    profileImageUrl?: string;
+    socialLinks?: any;
+    blockedCategories?: string[];
+  }) {
+    const response = await this.client.patch(`/agencies/athletes/${athleteId}/profile`, data);
+    return response.data;
+  }
+
+  // 에이전시: 선수 KYC 대신 제출
+  async submitAgencyAthleteKyc(athleteId: string, documents: { type: string; url: string }[]) {
+    const response = await this.client.post(`/agencies/athletes/${athleteId}/kyc`, { documents });
+    return response.data;
+  }
+
+  // 에이전시: 선수 은행 계좌 업데이트
+  async updateAgencyAthleteBankAccount(athleteId: string, data: {
+    bankName: string;
+    accountNumber: string;
+    accountHolder: string;
+  }) {
+    const response = await this.client.patch(`/agencies/athletes/${athleteId}/bank-account`, data);
+    return response.data;
+  }
+
+  // 에이전시: 선수 슬롯 조회
+  async getAgencyAthleteSlots(athleteId: string) {
+    const response = await this.client.get(`/agencies/athletes/${athleteId}/slots`);
+    return response.data;
+  }
+
+  // 에이전시: 선수 슬롯 판매모드 설정
+  async updateAgencyAthleteSlotSaleMode(athleteId: string, slotId: string, data: {
+    enableAuction?: boolean;
+    enableDirectBuy?: boolean;
+    directBuyPrice?: number;
+    auctionMinBid?: number;
+    auctionEndAt?: string;
+  }) {
+    const response = await this.client.patch(`/agencies/athletes/${athleteId}/slots/${slotId}/sale-mode`, data);
+    return response.data;
+  }
+
+  // 에이전시: 선수 계약 목록 조회
+  async getAgencyAthleteContracts(athleteId: string, params?: { status?: string; page?: number; limit?: number }) {
+    const response = await this.client.get(`/agencies/athletes/${athleteId}/contracts`, { params });
+    return response.data;
+  }
+
+  // 에이전시: 선수 대신 계약 서명
+  async signAgencyAthleteContract(athleteId: string, contractId: string) {
+    const response = await this.client.post(`/agencies/athletes/${athleteId}/contracts/${contractId}/sign`);
+    return response.data;
+  }
+
+  // 에이전시: 선수 정산 내역 조회
+  async getAgencyAthleteSettlements(athleteId: string, params?: { page?: number; limit?: number }) {
+    const response = await this.client.get(`/agencies/athletes/${athleteId}/settlements`, { params });
+    return response.data;
+  }
+
+  // 에이전시: 선수 출금 내역 조회
+  async getAgencyAthleteWithdrawals(athleteId: string, params?: { page?: number; limit?: number }) {
+    const response = await this.client.get(`/agencies/athletes/${athleteId}/withdrawals`, { params });
+    return response.data;
+  }
+
+  // 에이전시: 선수 성과 통계 조회
+  async getAgencyAthletePerformance(athleteId: string) {
+    const response = await this.client.get(`/agencies/athletes/${athleteId}/performance`);
+    return response.data;
+  }
+
+  // 에이전시: 모든 관리 선수 성과 조회
+  async getAgencyAllAthletesPerformance() {
+    const response = await this.client.get('/agencies/athletes/performance');
+    return response.data;
+  }
+
+  // 에이전시: 서명 대기 계약 목록
+  async getAgencyPendingSignatures() {
+    const response = await this.client.get('/agencies/pending-signatures');
+    return response.data;
+  }
 }
 
 export const api = new ApiService();
