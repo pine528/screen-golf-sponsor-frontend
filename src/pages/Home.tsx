@@ -180,7 +180,7 @@ export function Home() {
                   <Hexagon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.5} />
                 </div>
               </div>
-              <span className="text-lg sm:text-xl font-bold text-slate-900">SponsorGolf</span>
+              <span className="text-lg sm:text-xl font-bold text-slate-900">SPONPIK</span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -523,7 +523,7 @@ export function Home() {
               FEATURES
             </span>
             <h2 className="text-2xl sm:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
-              왜 <span className="gradient-text">SponsorGolf</span>인가요?
+              왜 <span className="gradient-text">SPONPIK</span>인가요?
             </h2>
             <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
               스크린골프 스폰서십 시장을 혁신하는 핵심 기능들
@@ -803,7 +803,7 @@ export function Home() {
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
                   <Hexagon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.5} />
                 </div>
-                <span className="text-base sm:text-lg font-bold text-slate-900">SponsorGolf</span>
+                <span className="text-base sm:text-lg font-bold text-slate-900">SPONPIK</span>
               </div>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                 스크린골프 프로선수 마이크로 스폰서 마켓플레이스
@@ -834,7 +834,7 @@ export function Home() {
             </div>
           </div>
           <div className="pt-6 sm:pt-8 border-t border-slate-200 text-center text-slate-500 text-xs sm:text-sm">
-            <p>&copy; 2026 SponsorGolf. All rights reserved.</p>
+            <p>&copy; 2026 SPONPIK. All rights reserved.</p>
           </div>
         </div>
       </footer>

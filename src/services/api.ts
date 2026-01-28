@@ -93,6 +93,19 @@ class ApiService {
     return response.data;
   }
 
+  // Agency Auth
+  async agencyRegister(data: {
+    email: string;
+    password: string;
+    name: string;
+    bizNo?: string;
+    contactName?: string;
+    contactPhone?: string;
+  }) {
+    const response = await this.client.post<ApiResponse<any>>('/auth/agency/register', data);
+    return response.data;
+  }
+
   // Events
   async getEvents(params?: any) {
     const response = await this.client.get<ApiResponse<any[]>>('/events', { params });
@@ -2475,6 +2488,95 @@ class ApiService {
   // orderId로 조회
   async getPointTopupByOrderId(orderId: string) {
     const response = await this.client.get(`/point-topups/order/${orderId}`);
+    return response.data;
+  }
+
+  // ============================================
+  // Donations (팬→선수 후원)
+  // ============================================
+
+  // 후원 가능한 선수 목록 조회
+  async getDonationAthletes(params?: { page?: number; limit?: number; search?: string }) {
+    const response = await this.client.get('/donations/athletes', { params });
+    return response.data;
+  }
+
+  // 후원 생성
+  async createDonation(data: {
+    athleteId: string;
+    amount: number;
+    message?: string;
+    isAnonymous?: boolean;
+  }) {
+    const response = await this.client.post('/donations', data);
+    return response.data;
+  }
+
+  // 내 후원 내역 조회 (팬용)
+  async getMyDonations(params?: { page?: number; limit?: number }) {
+    const response = await this.client.get('/donations/my', { params });
+    return response.data;
+  }
+
+  // 내가 받은 후원 목록 조회 (선수용)
+  async getReceivedDonations(params?: { page?: number; limit?: number }) {
+    const response = await this.client.get('/donations/received', { params });
+    return response.data;
+  }
+
+  // ============================================
+  // Point Withdrawals (포인트 출금 - 선수용)
+  // ============================================
+
+  // 출금 가능 잔액 조회
+  async getPointWithdrawalBalance() {
+    const response = await this.client.get('/point-withdrawals/balance');
+    return response.data;
+  }
+
+  // 포인트 출금 요청 생성
+  async createPointWithdrawal(data: {
+    amount: number;
+    bankName: string;
+    bankAccountNumber: string;
+    accountHolder: string;
+    reason?: string;
+  }) {
+    const response = await this.client.post('/point-withdrawals', data);
+    return response.data;
+  }
+
+  // 내 출금 요청 목록 조회
+  async getMyPointWithdrawals(params?: { status?: string; page?: number; limit?: number }) {
+    const response = await this.client.get('/point-withdrawals/my', { params });
+    return response.data;
+  }
+
+  // ============================================
+  // Admin Point Withdrawals (관리자 포인트 출금 관리)
+  // ============================================
+
+  // 모든 포인트 출금 요청 목록
+  async getAdminPointWithdrawals(params?: { status?: string; page?: number; limit?: number }) {
+    const response = await this.client.get('/admin/point-withdrawals', { params });
+    return response.data;
+  }
+
+  // 포인트 출금 승인
+  async approvePointWithdrawal(id: string) {
+    const response = await this.client.post(`/admin/point-withdrawals/${id}/approve`);
+    return response.data;
+  }
+
+  // 포인트 출금 거부
+  async rejectPointWithdrawal(id: string, reason?: string) {
+    const response = await this.client.post(`/admin/point-withdrawals/${id}/reject`, { reason });
+    return response.data;
+  }
+
+  // 포인트 출금 지급 완료
+  async completePointWithdrawal(id: string, payoutReference?: string) {
+    const response = await this.client.post(`/admin/point-withdrawals/${id}/complete`, { payoutReference });
     return response.data;
   }
 }

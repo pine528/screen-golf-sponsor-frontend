@@ -85,7 +85,7 @@ export function ForWho() {
       role: 'brand',
       name: '김태윤',
       company: '골프웨어 브랜드 마케팅팀장',
-      content: '기존에는 스폰서십 계약이 복잡하고 시간이 많이 걸렸는데, SponsorGolf 덕분에 원하는 선수에게 빠르게 접근할 수 있게 되었습니다.',
+      content: '기존에는 스폰서십 계약이 복잡하고 시간이 많이 걸렸는데, SPONPIK 덕분에 원하는 선수에게 빠르게 접근할 수 있게 되었습니다.',
     },
     {
       role: 'athlete',
@@ -105,7 +105,7 @@ export function ForWho() {
               <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/25">
                 <Hexagon className="w-5 h-5 text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-xl font-bold text-slate-900">SponsorGolf</span>
+              <span className="text-xl font-bold text-slate-900">SPONPIK</span>
             </Link>
 
             <div className="hidden md:flex items-center gap-8">
@@ -372,9 +372,9 @@ export function ForWho() {
               <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center">
                 <Hexagon className="w-4 h-4 text-white" strokeWidth={2.5} />
               </div>
-              <span className="font-semibold text-slate-900">SponsorGolf</span>
+              <span className="font-semibold text-slate-900">SPONPIK</span>
             </div>
-            <p className="text-sm text-slate-500">&copy; 2026 SponsorGolf. All rights reserved.</p>
+            <p className="text-sm text-slate-500">&copy; 2026 SPONPIK. All rights reserved.</p>
           </div>
         </div>
       </footer>

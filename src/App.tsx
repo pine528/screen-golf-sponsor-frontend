@@ -38,6 +38,8 @@ import {
 } from './pages/admin/finance';
 import AthleteWithdrawals from './pages/athlete/Withdrawals';
 import AthletePendingSignatures from './pages/athlete/PendingSignatures';
+import AthleteDonations from './pages/athlete/Donations';
+import AthletePointWithdrawals from './pages/athlete/PointWithdrawals';
 import FinanceReports from './pages/admin/reports/ReportsDashboard';
 import BrandCampaigns from './pages/brand/Campaigns';
 import CampaignDetail from './pages/brand/CampaignDetail';
@@ -54,6 +56,7 @@ import FanVoteCreate from './pages/fan/FanVoteCreate';
 import MyFanVotes from './pages/fan/MyFanVotes';
 import PointTopup from './pages/PointTopup';
 import FanVoteResult from './pages/fan/FanVoteResult';
+import MyDonations from './pages/fan/MyDonations';
 import SeasonLeaderboard from './pages/fan/SeasonLeaderboard';
 import MyBadges from './pages/fan/MyBadges';
 import { AdminBrandRegistrations } from './pages/admin/AdminBrandRegistrations';
@@ -70,6 +73,7 @@ import AdminExposure from './pages/admin/AdminExposure';
 import AdminReconciliation from './pages/admin/AdminReconciliation';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminTaxInvoices from './pages/admin/AdminTaxInvoices';
+import AdminPointWithdrawals from './pages/admin/AdminPointWithdrawals';
 import Faq from './pages/Faq';
 import Guide from './pages/Guide';
 import Contact from './pages/Contact';
@@ -238,6 +242,22 @@ function App() {
         element={
           <ProtectedRoute>
             <AthletePendingSignatures />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/athlete/donations"
+        element={
+          <ProtectedRoute>
+            <AthleteDonations />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/athlete/point-withdrawals"
+        element={
+          <ProtectedRoute>
+            <AthletePointWithdrawals />
           </ProtectedRoute>
         }
       />
@@ -412,6 +432,14 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/my-donations"
+        element={
+          <ProtectedRoute>
+            <MyDonations />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Fan Votes Routes */}
       <Route
@@ -520,6 +548,14 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminPoints />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/point-withdrawals"
+        element={
+          <ProtectedRoute>
+            <AdminPointWithdrawals />
           </ProtectedRoute>
         }
       />
