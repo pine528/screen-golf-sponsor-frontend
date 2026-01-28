@@ -236,7 +236,7 @@ export function AuctionDetail() {
                 <div>
                   <p className="text-xs sm:text-sm text-slate-600 mb-1">시작가</p>
                   <p className="text-2xl sm:text-3xl font-bold text-emerald-600">
-                    {formatCurrency(slot?.reservePrice || 0)}
+                    {formatCurrency(auctionData.currentPrice || slot?.reservePrice || 0)}
                   </p>
                   <p className="text-xs sm:text-sm text-slate-500 mt-1">
                     {isPublicAuction ? '공개 입찰' : '비공개 입찰'}
@@ -281,7 +281,7 @@ export function AuctionDetail() {
                 <button
                   onClick={() => {
                     // 시작가를 초기값으로 설정
-                    setBidAmount(String(slot?.reservePrice || 0));
+                    setBidAmount(String(auctionData.currentPrice || slot?.reservePrice || 0));
                     setBidError(null);
                     setShowBidModal(true);
                   }}
@@ -525,13 +525,13 @@ export function AuctionDetail() {
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-600">시작가</span>
                   <span className="font-semibold text-emerald-700">
-                    {formatCurrency(slot?.reservePrice || 0)}
+                    {formatCurrency(auctionData.currentPrice || slot?.reservePrice || 0)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-600">최소 입찰가</span>
                   <span className="font-semibold text-emerald-700">
-                    {formatCurrency(slot?.reservePrice || 0)}
+                    {formatCurrency(auctionData.currentPrice || slot?.reservePrice || 0)}
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 pt-2 border-t border-emerald-200">

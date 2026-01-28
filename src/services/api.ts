@@ -2676,6 +2676,25 @@ class ApiService {
     return response.data;
   }
 
+  // 에이전시: 선수 슬롯 생성
+  async createAgencyAthleteSlot(athleteId: string, data: {
+    eventId: string;
+    templateId: string;
+    reservePrice?: number;
+  }) {
+    const response = await this.client.post(`/agencies/athletes/${athleteId}/slots`, data);
+    return response.data;
+  }
+
+  // 에이전시: 선수 슬롯 일괄 생성
+  async bulkCreateAgencyAthleteSlots(athleteId: string, data: {
+    eventId: string;
+    templateIds: string[];
+  }) {
+    const response = await this.client.post(`/agencies/athletes/${athleteId}/slots/bulk`, data);
+    return response.data;
+  }
+
   // 에이전시: 선수 슬롯 판매모드 설정
   async updateAgencyAthleteSlotSaleMode(athleteId: string, slotId: string, data: {
     enableAuction?: boolean;

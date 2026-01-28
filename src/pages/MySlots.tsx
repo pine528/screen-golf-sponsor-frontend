@@ -546,6 +546,18 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
     if (slot.auction?.status === 'SCHEDULED') {
       return { label: '경매 예정', style: 'bg-sky-100 text-sky-700 border-sky-200' };
     }
+    // 즉시구매 활성화 + 가격 설정됨 = 판매중
+    if (slot.enableDirectBuy && slot.directBuyPrice) {
+      return { label: '판매중', style: 'bg-violet-100 text-violet-700 border-violet-200' };
+    }
+    // 경매 활성화 + 최소입찰가 + 마감일 설정됨 = 판매중
+    if (slot.enableAuction && slot.auctionMinBid && slot.auctionEndAt) {
+      return { label: '판매중', style: 'bg-violet-100 text-violet-700 border-violet-200' };
+    }
+    // 플래그만 설정됨 = 설정중
+    if (slot.enableDirectBuy || slot.enableAuction) {
+      return { label: '설정중', style: 'bg-blue-100 text-blue-700 border-blue-200' };
+    }
     return { label: '미등록', style: 'bg-slate-100 text-slate-700 border-slate-200' };
   })();
 

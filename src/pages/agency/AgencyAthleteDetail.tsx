@@ -15,6 +15,8 @@ import {
   Loader2,
   Upload,
   DollarSign,
+  Plus,
+  X,
 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
@@ -61,6 +63,7 @@ interface Slot {
   enableDirectBuy: boolean;
   directBuyPrice?: number;
   auctionMinBid?: number;
+  auctionEndAt?: string;
   event?: { id: string; name: string; dateStart: string };
   slotTemplate?: { id: string; code: string; name: string; bodyPart: string };
 }
@@ -77,6 +80,20 @@ interface Contract {
       slotTemplate?: { name: string };
     };
   };
+}
+
+interface EventOption {
+  id: string;
+  name: string;
+  dateStart: string;
+  status: string;
+}
+
+interface TemplateOption {
+  id: string;
+  code: string;
+  name: string;
+  bodyPart: string;
 }
 
 const TABS = [
@@ -129,6 +146,25 @@ export function AgencyAthleteDetail() {
   const [kycIdCardFile, setKycIdCardFile] = useState<File | null>(null);
   const [kycAthleteRegFile, setKycAthleteRegFile] = useState<File | null>(null);
   const [uploadingKyc, setUploadingKyc] = useState(false);
+
+  // Slot creation state
+  const [showSlotModal, setShowSlotModal] = useState(false);
+  const [events, setEvents] = useState<EventOption[]>([]);
+  const [templates, setTemplates] = useState<TemplateOption[]>([]);
+  const [selectedEventId, setSelectedEventId] = useState('');
+  const [selectedTemplateIds, setSelectedTemplateIds] = useState<string[]>([]);
+  const [creatingSlots, setCreatingSlots] = useState(false);
+
+  // Slot settings edit state
+  const [editingSlot, setEditingSlot] = useState<Slot | null>(null);
+  const [slotSettingsForm, setSlotSettingsForm] = useState({
+    enableAuction: true,
+    enableDirectBuy: false,
+    directBuyPrice: '',
+    auctionMinBid: '',
+    auctionEndAt: '',
+  });
+  const [savingSlotSettings, setSavingSlotSettings] = useState(false);
 
   useEffect(() => {
     if (athleteId) {
@@ -195,6 +231,113 @@ export function AgencyAthleteDetail() {
       setContracts(res.data?.contracts || []);
     } catch (err: any) {
       console.error('Contracts fetch error:', err);
+    }
+  };
+
+  const fetchEventsAndTemplates = async () => {
+    try {
+      const [eventsRes, templatesRes] = await Promise.all([
+        api.get('/events', { status: 'UPCOMING' }),
+        api.get('/slots/templates'),
+      ]);
+      setEvents(eventsRes.data || []);
+      setTemplates(templatesRes.data || []);
+    } catch (err: any) {
+      console.error('Events/Templates fetch error:', err);
+    }
+  };
+
+  const handleOpenSlotModal = () => {
+    fetchEventsAndTemplates();
+    setSelectedEventId('');
+    setSelectedTemplateIds([]);
+    setShowSlotModal(true);
+  };
+
+  const handleToggleTemplate = (templateId: string) => {
+    setSelectedTemplateIds((prev) =>
+      prev.includes(templateId)
+        ? prev.filter((id) => id !== templateId)
+        : [...prev, templateId]
+    );
+  };
+
+  const handleCreateSlots = async () => {
+    if (!selectedEventId || selectedTemplateIds.length === 0) {
+      setError('이벤트와 슬롯 템플릿을 선택해주세요');
+      return;
+    }
+
+    try {
+      setCreatingSlots(true);
+      await api.bulkCreateAgencyAthleteSlots(athleteId!, {
+        eventId: selectedEventId,
+        templateIds: selectedTemplateIds,
+      });
+      setSuccessMessage(`${selectedTemplateIds.length}개의 슬롯이 생성되었습니다`);
+      setShowSlotModal(false);
+      fetchSlots();
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err: any) {
+      setError(err.response?.data?.error?.message || '슬롯 생성에 실패했습니다');
+    } finally {
+      setCreatingSlots(false);
+    }
+  };
+
+  const handleOpenSlotSettings = (slot: Slot) => {
+    setEditingSlot(slot);
+    setSlotSettingsForm({
+      enableAuction: slot.enableAuction,
+      enableDirectBuy: slot.enableDirectBuy,
+      directBuyPrice: slot.directBuyPrice?.toString() || '',
+      auctionMinBid: slot.auctionMinBid?.toString() || '',
+      auctionEndAt: slot.auctionEndAt ? new Date(slot.auctionEndAt).toISOString().slice(0, 16) : '',
+    });
+  };
+
+  const handleSaveSlotSettings = async () => {
+    if (!editingSlot) return;
+
+    // 최소 하나는 활성화되어야 함
+    if (!slotSettingsForm.enableAuction && !slotSettingsForm.enableDirectBuy) {
+      setError('경매 또는 즉시구매 중 하나는 활성화해야 합니다');
+      return;
+    }
+
+    // 경매 활성화 시 마감일 필수
+    if (slotSettingsForm.enableAuction) {
+      if (!slotSettingsForm.auctionMinBid || Number(slotSettingsForm.auctionMinBid) <= 0) {
+        setError('최소 입찰가를 입력해주세요');
+        return;
+      }
+      if (!slotSettingsForm.auctionEndAt) {
+        setError('경매 마감일을 설정해주세요');
+        return;
+      }
+      if (new Date(slotSettingsForm.auctionEndAt) <= new Date()) {
+        setError('경매 마감일은 현재 시간 이후여야 합니다');
+        return;
+      }
+    }
+
+    try {
+      setSavingSlotSettings(true);
+      await api.updateAgencyAthleteSlotSaleMode(athleteId!, editingSlot.id, {
+        enableAuction: slotSettingsForm.enableAuction,
+        enableDirectBuy: slotSettingsForm.enableDirectBuy,
+        directBuyPrice: slotSettingsForm.directBuyPrice ? Number(slotSettingsForm.directBuyPrice) : undefined,
+        auctionMinBid: slotSettingsForm.auctionMinBid ? Number(slotSettingsForm.auctionMinBid) : undefined,
+        auctionEndAt: slotSettingsForm.auctionEndAt || undefined,
+      });
+      setSuccessMessage('슬롯 설정이 저장되었습니다');
+      setEditingSlot(null);
+      fetchSlots();
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (err: any) {
+      setError(err.response?.data?.error?.message || '슬롯 설정 저장에 실패했습니다');
+    } finally {
+      setSavingSlotSettings(false);
     }
   };
 
@@ -621,9 +764,18 @@ export function AgencyAthleteDetail() {
           {/* Slots Tab */}
           {activeTab === 'slots' && (
             <div className="space-y-6">
-              <h2 className="text-lg font-semibold text-slate-900">
-                슬롯 관리 ({slots.length}개)
-              </h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-slate-900">
+                  슬롯 관리 ({slots.length}개)
+                </h2>
+                <button
+                  onClick={handleOpenSlotModal}
+                  className="btn btn-primary text-sm inline-flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  슬롯 추가
+                </button>
+              </div>
 
               {slots.length > 0 ? (
                 <div className="divide-y divide-slate-100">
@@ -637,23 +789,51 @@ export function AgencyAthleteDetail() {
                           <p className="text-sm text-slate-500">
                             {slot.event?.name} · {slot.slotTemplate?.bodyPart}
                           </p>
+                          <div className="flex items-center gap-2 mt-1 text-xs">
+                            {slot.enableAuction && (
+                              <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded">
+                                경매 {slot.auctionMinBid ? `(최소 ${formatCurrency(slot.auctionMinBid)})` : ''}
+                              </span>
+                            )}
+                            {slot.enableDirectBuy && (
+                              <span className="px-2 py-0.5 bg-green-50 text-green-600 rounded">
+                                즉시구매 {slot.directBuyPrice ? formatCurrency(slot.directBuyPrice) : ''}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                           <span
                             className={`px-2 py-1 text-xs font-medium rounded-full ${
                               slot.status === 'SOLD'
                                 ? 'bg-purple-100 text-purple-700'
                                 : slot.status === 'IN_AUCTION'
                                 ? 'bg-amber-100 text-amber-700'
-                                : 'bg-emerald-100 text-emerald-700'
+                                : (slot.enableDirectBuy && slot.directBuyPrice) || (slot.enableAuction && slot.auctionMinBid)
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : slot.enableDirectBuy || slot.enableAuction
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-slate-100 text-slate-700'
                             }`}
                           >
-                            {slot.status === 'SOLD' ? '판매됨' : slot.status === 'IN_AUCTION' ? '경매중' : '판매중'}
+                            {slot.status === 'SOLD'
+                              ? '판매됨'
+                              : slot.status === 'IN_AUCTION'
+                              ? '경매중'
+                              : (slot.enableDirectBuy && slot.directBuyPrice) || (slot.enableAuction && slot.auctionMinBid)
+                              ? '판매중'
+                              : slot.enableDirectBuy || slot.enableAuction
+                              ? '설정중'
+                              : '미등록'}
                           </span>
-                          {slot.directBuyPrice && (
-                            <span className="text-sm text-slate-600">
-                              즉시구매: {formatCurrency(slot.directBuyPrice)}
-                            </span>
+                          {(slot.status === 'OPEN' || slot.status === 'IN_AUCTION') && (
+                            <button
+                              onClick={() => handleOpenSlotSettings(slot)}
+                              className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-700"
+                              title="판매 설정"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
                           )}
                         </div>
                       </div>
@@ -805,6 +985,215 @@ export function AgencyAthleteDetail() {
           )}
         </div>
       </div>
+
+      {/* Slot Creation Modal */}
+      {showSlotModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-slate-900">슬롯 추가</h3>
+              <button
+                onClick={() => setShowSlotModal(false)}
+                className="p-1 hover:bg-slate-100 rounded-lg"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Event Selection */}
+              <div>
+                <label className="label">이벤트 선택</label>
+                <select
+                  className="input"
+                  value={selectedEventId}
+                  onChange={(e) => setSelectedEventId(e.target.value)}
+                >
+                  <option value="">이벤트를 선택하세요</option>
+                  {events.map((event) => (
+                    <option key={event.id} value={event.id}>
+                      {event.name} ({new Date(event.dateStart).toLocaleDateString('ko-KR')})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Template Selection */}
+              <div>
+                <label className="label">슬롯 템플릿 선택 (복수 선택 가능)</label>
+                <div className="border border-slate-200 rounded-xl max-h-60 overflow-y-auto">
+                  {templates.length > 0 ? (
+                    templates.map((template) => (
+                      <label
+                        key={template.id}
+                        className="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-b-0"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedTemplateIds.includes(template.id)}
+                          onChange={() => handleToggleTemplate(template.id)}
+                          className="w-4 h-4 text-purple-600 rounded"
+                        />
+                        <div>
+                          <p className="font-medium text-slate-900">{template.name}</p>
+                          <p className="text-xs text-slate-500">
+                            {template.code} · {template.bodyPart}
+                          </p>
+                        </div>
+                      </label>
+                    ))
+                  ) : (
+                    <p className="p-4 text-sm text-slate-500 text-center">
+                      슬롯 템플릿이 없습니다
+                    </p>
+                  )}
+                </div>
+                {selectedTemplateIds.length > 0 && (
+                  <p className="mt-2 text-sm text-purple-600">
+                    {selectedTemplateIds.length}개 선택됨
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowSlotModal(false)}
+                className="btn btn-secondary flex-1"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleCreateSlots}
+                disabled={creatingSlots || !selectedEventId || selectedTemplateIds.length === 0}
+                className="btn btn-primary flex-1 inline-flex items-center justify-center gap-2"
+              >
+                {creatingSlots ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4" />
+                    슬롯 생성
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Slot Settings Modal */}
+      {editingSlot && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-slate-900">슬롯 판매 설정</h3>
+              <button
+                onClick={() => setEditingSlot(null)}
+                className="p-1 hover:bg-slate-100 rounded-lg"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">
+                <p className="font-medium">{editingSlot.slotTemplate?.name}</p>
+                <p className="text-xs text-slate-500">{editingSlot.event?.name}</p>
+              </div>
+
+              {/* Auction Toggle */}
+              <label className="flex items-center justify-between p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
+                <div>
+                  <p className="font-medium text-slate-900">경매 허용</p>
+                  <p className="text-xs text-slate-500">입찰을 통해 판매</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={slotSettingsForm.enableAuction}
+                  onChange={(e) => setSlotSettingsForm({ ...slotSettingsForm, enableAuction: e.target.checked })}
+                  className="w-5 h-5 text-purple-600 rounded"
+                />
+              </label>
+
+              {slotSettingsForm.enableAuction && (
+                <div className="space-y-3">
+                  <div>
+                    <label className="label">최소 입찰가 (원)</label>
+                    <input
+                      type="number"
+                      className="input"
+                      placeholder="최소 입찰가"
+                      value={slotSettingsForm.auctionMinBid}
+                      onChange={(e) => setSlotSettingsForm({ ...slotSettingsForm, auctionMinBid: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <label className="label">경매 마감일</label>
+                    <input
+                      type="datetime-local"
+                      className="input"
+                      value={slotSettingsForm.auctionEndAt}
+                      onChange={(e) => setSlotSettingsForm({ ...slotSettingsForm, auctionEndAt: e.target.value })}
+                    />
+                    <p className="text-xs text-slate-500 mt-1">경매 마감일을 설정해야 경매가 시작됩니다</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Direct Buy Toggle */}
+              <label className="flex items-center justify-between p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
+                <div>
+                  <p className="font-medium text-slate-900">즉시구매 허용</p>
+                  <p className="text-xs text-slate-500">정해진 가격으로 바로 구매</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={slotSettingsForm.enableDirectBuy}
+                  onChange={(e) => setSlotSettingsForm({ ...slotSettingsForm, enableDirectBuy: e.target.checked })}
+                  className="w-5 h-5 text-purple-600 rounded"
+                />
+              </label>
+
+              {slotSettingsForm.enableDirectBuy && (
+                <div>
+                  <label className="label">즉시구매 가격 (원)</label>
+                  <input
+                    type="number"
+                    className="input"
+                    placeholder="즉시구매 가격"
+                    value={slotSettingsForm.directBuyPrice}
+                    onChange={(e) => setSlotSettingsForm({ ...slotSettingsForm, directBuyPrice: e.target.value })}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setEditingSlot(null)}
+                className="btn btn-secondary flex-1"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleSaveSlotSettings}
+                disabled={savingSlotSettings}
+                className="btn btn-primary flex-1 inline-flex items-center justify-center gap-2"
+              >
+                {savingSlotSettings ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    저장
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
