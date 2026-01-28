@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
+import { DonateModal } from '../../components/DonateModal';
 import {
   Heart,
   EyeOff,
@@ -12,6 +13,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Gift,
+  Search,
+  Users,
 } from 'lucide-react';
 
 interface Athlete {
@@ -46,14 +49,32 @@ interface DonationsResponse {
   };
 }
 
+interface DonationAthlete {
+  id: string;
+  name: string;
+  tour?: string;
+  profileImageUrl?: string;
+}
+
 export default function MyDonations() {
   const [page, setPage] = useState(1);
+  const [athleteSearch, setAthleteSearch] = useState('');
+  const [selectedAthlete, setSelectedAthlete] = useState<DonationAthlete | null>(null);
+  const [showDonateModal, setShowDonateModal] = useState(false);
   const limit = 20;
 
   const { data, isLoading, isError } = useQuery<{ success: boolean; data: DonationsResponse }>({
     queryKey: ['myDonations', page],
     queryFn: () => api.getMyDonations({ page, limit }),
   });
+
+  // 후원 가능한 선수 목록
+  const { data: athletesData, isLoading: athletesLoading } = useQuery({
+    queryKey: ['donationAthletes', athleteSearch],
+    queryFn: () => api.getDonationAthletes({ search: athleteSearch, limit: 12 }),
+  });
+
+  const athletes = athletesData?.data?.athletes || [];
 
   const donationsData = data?.data;
   const donations = donationsData?.donations || [];
@@ -108,6 +129,74 @@ export default function MyDonations() {
             </div>
           </div>
         )}
+
+        {/* 선수 후원하기 섹션 */}
+        <div className="bg-white border rounded-xl p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Users className="w-5 h-5 text-pink-500" />
+            <h2 className="text-lg font-bold">선수에게 후원하기</h2>
+          </div>
+
+          {/* 선수 검색 */}
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="선수 이름으로 검색..."
+              value={athleteSearch}
+              onChange={(e) => setAthleteSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+            />
+          </div>
+
+          {/* 선수 목록 */}
+          {athletesLoading ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+            </div>
+          ) : athletes.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
+              후원 가능한 선수가 없습니다
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {athletes.map((athlete: DonationAthlete) => (
+                <button
+                  key={athlete.id}
+                  onClick={() => {
+                    setSelectedAthlete(athlete);
+                    setShowDonateModal(true);
+                  }}
+                  className="flex flex-col items-center p-4 border rounded-lg hover:bg-green-50 hover:border-green-300 transition-colors group"
+                >
+                  {athlete.profileImageUrl ? (
+                    <img
+                      src={athlete.profileImageUrl}
+                      alt={athlete.name}
+                      className="w-14 h-14 rounded-full object-cover mb-2"
+                    />
+                  ) : (
+                    <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                      <Trophy className="w-7 h-7 text-blue-600" />
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-gray-900 text-center line-clamp-1">
+                    {athlete.name}
+                  </span>
+                  {athlete.tour && (
+                    <span className="text-xs text-gray-500">{athlete.tour}</span>
+                  )}
+                  <span className="mt-2 text-xs px-3 py-1 bg-green-100 text-green-700 rounded-full group-hover:bg-green-200">
+                    후원하기
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* 내 후원 내역 제목 */}
+        <h2 className="text-lg font-bold mb-4">내 후원 내역</h2>
 
         {/* Content */}
         {isLoading ? (
@@ -222,6 +311,18 @@ export default function MyDonations() {
           </>
         )}
       </div>
+
+      {/* 후원 모달 */}
+      {selectedAthlete && (
+        <DonateModal
+          isOpen={showDonateModal}
+          onClose={() => {
+            setShowDonateModal(false);
+            setSelectedAthlete(null);
+          }}
+          athlete={selectedAthlete}
+        />
+      )}
     </Layout>
   );
 }
