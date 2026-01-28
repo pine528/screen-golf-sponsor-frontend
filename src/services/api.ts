@@ -569,6 +569,11 @@ class ApiService {
     return response.data;
   }
 
+  async submitAgencyKyc(data: { documents: { type: string; url: string }[] }) {
+    const response = await this.client.post<ApiResponse<any>>('/agencies/me/kyc', data);
+    return response.data;
+  }
+
   // Password change
   async changePassword(currentPassword: string, newPassword: string) {
     const response = await this.client.post<ApiResponse<any>>('/auth/change-password', {

@@ -27,6 +27,7 @@ export function Profile() {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   const isBrand = user?.role === 'BRAND';
+  const isAgency = user?.role === 'AGENCY';
 
   const { data: profileData, isLoading } = useQuery({
     queryKey: [isBrand ? 'my-brand' : 'my-athlete'],
@@ -217,7 +218,14 @@ export function Profile() {
         setKycError('유효하지 않은 사업자등록번호입니다. 10자리 숫자를 확인해주세요.');
         return;
       }
+    } else if (isAgency) {
+      // 에이전시는 신분증만 필요
+      if (!kycBusinessLicenseFile) {
+        setKycError('신분증을 업로드해주세요.');
+        return;
+      }
     } else {
+      // 선수는 신분증 + 선수등록증 필요
       if (!kycBusinessLicenseFile || !kycIdCardFile) {
         setKycError('모든 서류를 업로드해주세요.');
         return;
@@ -230,17 +238,28 @@ export function Profile() {
 
     try {
       // Upload files separately
-      const filesToUpload = [kycBusinessLicenseFile!, kycIdCardFile!];
-      const uploadResult = await api.uploadFiles(filesToUpload, 'kyc');
-      const documents = [
-        { type: 'business_license', url: uploadResult.data.files[0].fileUrl },
-        { type: 'id_card', url: uploadResult.data.files[1].fileUrl },
-      ];
+      let documents;
+      if (isAgency) {
+        // 에이전시는 신분증만 업로드
+        const uploadResult = await api.uploadFiles([kycBusinessLicenseFile!], 'kyc');
+        documents = [
+          { type: 'id_card', url: uploadResult.data.files[0].fileUrl },
+        ];
+      } else {
+        const filesToUpload = [kycBusinessLicenseFile!, kycIdCardFile!];
+        const uploadResult = await api.uploadFiles(filesToUpload, 'kyc');
+        documents = [
+          { type: 'business_license', url: uploadResult.data.files[0].fileUrl },
+          { type: 'id_card', url: uploadResult.data.files[1].fileUrl },
+        ];
+      }
 
       // Submit KYC
       let result;
       if (isBrand) {
         result = await api.submitKyc({ documents, businessNumber: kycBusinessNumber });
+      } else if (isAgency) {
+        result = await api.submitAgencyKyc({ documents });
       } else {
         result = await api.submitAthleteKyc({ documents });
       }
@@ -408,10 +427,11 @@ export function Profile() {
                       </p>
                     </div>
                   )}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {isAgency ? (
+                    /* 에이전시는 신분증만 필요 */
                     <div>
                       <label className="block text-xs text-slate-600 mb-2">
-                        {isBrand ? '사업자등록증' : '신분증'} <span className="text-red-500">*</span>
+                        신분증 <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="file"
@@ -424,27 +444,50 @@ export function Profile() {
                           ✓ {kycBusinessLicenseFile.name}
                         </div>
                       )}
+                      <p className="mt-2 text-xs text-slate-500">
+                        에이전시 담당자 신분증만 제출해주세요.
+                      </p>
                     </div>
-                    <div>
-                      <label className="block text-xs text-slate-600 mb-2">
-                        {isBrand ? '대표자 신분증' : '선수등록증'} <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="file"
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        onChange={(e) => setKycIdCardFile(e.target.files?.[0] || null)}
-                        className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
-                      />
-                      {kycIdCardFile && (
-                        <div className="mt-2 text-xs text-emerald-600">
-                          ✓ {kycIdCardFile.name}
-                        </div>
-                      )}
+                  ) : (
+                    /* 브랜드/선수는 2개 서류 필요 */
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs text-slate-600 mb-2">
+                          {isBrand ? '사업자등록증' : '신분증'} <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => setKycBusinessLicenseFile(e.target.files?.[0] || null)}
+                          className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                        />
+                        {kycBusinessLicenseFile && (
+                          <div className="mt-2 text-xs text-emerald-600">
+                            ✓ {kycBusinessLicenseFile.name}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-xs text-slate-600 mb-2">
+                          {isBrand ? '대표자 신분증' : '선수등록증'} <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => setKycIdCardFile(e.target.files?.[0] || null)}
+                          className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                        />
+                        {kycIdCardFile && (
+                          <div className="mt-2 text-xs text-emerald-600">
+                            ✓ {kycIdCardFile.name}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
                   <button
                     onClick={handleKycSubmit}
-                    disabled={kycUploading || !kycBusinessLicenseFile || !kycIdCardFile || (isBrand && !kycBusinessNumber)}
+                    disabled={kycUploading || !kycBusinessLicenseFile || (!isAgency && !kycIdCardFile) || (isBrand && !kycBusinessNumber)}
                     className="btn btn-primary text-sm w-full sm:w-auto"
                   >
                     {kycUploading ? '제출 중...' : '서류 제출하기'}
