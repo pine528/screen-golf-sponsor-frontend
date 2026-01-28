@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ArrowLeft, AlertCircle, UserPlus } from 'lucide-react';
+import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
 
 const athleteSchema = z.object({
@@ -54,24 +55,27 @@ export function AgencyAthleteRegister() {
 
   if (success) {
     return (
-      <div className="max-w-lg mx-auto">
-        <div className="card p-8 text-center">
-          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <UserPlus className="w-8 h-8 text-emerald-600" />
+      <Layout>
+        <div className="max-w-lg mx-auto">
+          <div className="card p-8 text-center">
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <UserPlus className="w-8 h-8 text-emerald-600" />
+            </div>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">선수 등록 완료</h2>
+            <p className="text-slate-600">
+              선수 계정이 성공적으로 생성되었습니다.
+            </p>
+            <p className="text-sm text-slate-500 mt-4">
+              잠시 후 선수 목록으로 이동합니다...
+            </p>
           </div>
-          <h2 className="text-xl font-bold text-slate-900 mb-2">선수 등록 완료</h2>
-          <p className="text-slate-600">
-            선수 계정이 성공적으로 생성되었습니다.
-          </p>
-          <p className="text-sm text-slate-500 mt-4">
-            잠시 후 선수 목록으로 이동합니다...
-          </p>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
+    <Layout>
     <div className="max-w-lg mx-auto">
       {/* Header */}
       <div className="mb-6">
@@ -209,5 +213,6 @@ export function AgencyAthleteRegister() {
         </form>
       </div>
     </div>
+    </Layout>
   );
 }

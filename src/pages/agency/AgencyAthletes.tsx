@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Users, UserPlus, ChevronRight, Search, AlertCircle } from 'lucide-react';
+import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
 
 interface Athlete {
@@ -49,22 +50,27 @@ export function AgencyAthletes() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
-      </div>
+      <Layout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      </Layout>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6 bg-red-50 rounded-xl text-red-600 flex items-center gap-3">
-        <AlertCircle className="w-5 h-5" />
-        {error}
-      </div>
+      <Layout>
+        <div className="p-6 bg-red-50 rounded-xl text-red-600 flex items-center gap-3">
+          <AlertCircle className="w-5 h-5" />
+          {error}
+        </div>
+      </Layout>
     );
   }
 
   return (
+    <Layout>
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -160,5 +166,6 @@ export function AgencyAthletes() {
         </div>
       )}
     </div>
+    </Layout>
   );
 }
