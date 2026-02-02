@@ -369,12 +369,12 @@ export function Home() {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 sm:gap-4">
-                          <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center ${
+                          <div className={`w-12 h-10 sm:w-14 sm:h-12 px-1 rounded-xl flex items-center justify-center overflow-hidden ${
                             i === currentAuction
                               ? 'bg-gradient-to-br from-emerald-500 to-teal-500'
                               : 'bg-slate-200'
                           }`}>
-                            <span className={`text-[10px] sm:text-xs font-bold ${i === currentAuction ? 'text-white' : 'text-slate-600'}`}>{auction.slot}</span>
+                            <span className={`text-[8px] sm:text-[10px] font-bold truncate ${i === currentAuction ? 'text-white' : 'text-slate-600'}`}>{auction.slot}</span>
                           </div>
                           <div>
                             <p className="font-semibold text-slate-900 text-sm sm:text-base">{auction.player} 프로</p>
