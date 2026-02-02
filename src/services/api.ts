@@ -158,9 +158,79 @@ class ApiService {
     return response.data;
   }
 
+  // Tournament Rules (v2)
+  async getTournamentRules(eventId: string) {
+    const response = await this.client.get<ApiResponse<any>>(`/events/${eventId}/tournament-rules`);
+    return response.data;
+  }
+
+  async updateTournamentRules(eventId: string, rules: any) {
+    const response = await this.client.put<ApiResponse<any>>(`/admin/events/${eventId}/tournament-rules`, rules);
+    return response.data;
+  }
+
+  async getSlotAvailability(eventId: string, athleteId: string) {
+    const response = await this.client.get<ApiResponse<any>>(`/events/${eventId}/athletes/${athleteId}/slot-availability`);
+    return response.data;
+  }
+
+  async approvePhase2Slots(eventId: string, athleteId: string) {
+    const response = await this.client.post<ApiResponse<any>>(`/admin/events/${eventId}/athletes/${athleteId}/approve-phase2`);
+    return response.data;
+  }
+
+  async getEventSlotSummary(eventId: string) {
+    const response = await this.client.get<ApiResponse<any>>(`/admin/events/${eventId}/slot-summary`);
+    return response.data;
+  }
+
   // Slots
   async getSlotTemplates() {
     const response = await this.client.get<ApiResponse<any[]>>('/slots/templates');
+    return response.data;
+  }
+
+  async getSlotTemplate(id: string) {
+    const response = await this.client.get<ApiResponse<any>>(`/slots/templates/${id}`);
+    return response.data;
+  }
+
+  async createSlotTemplate(data: {
+    code: string;
+    name: string;
+    bodyPart: string;
+    sizeMaxWMm: number;
+    sizeMaxHMm: number;
+    perimeterMaxMm: number;
+    phase?: number;
+    category?: string;
+    grade?: string;
+    defaultReservePrice?: number;
+    nameKr?: string;
+    nameEn?: string;
+    uiHeadline?: string;
+    uiCopy?: string;
+  }) {
+    const response = await this.client.post<ApiResponse<any>>('/slots/templates', data);
+    return response.data;
+  }
+
+  async updateSlotTemplate(id: string, data: Partial<{
+    name: string;
+    sizeMaxWMm: number;
+    sizeMaxHMm: number;
+    perimeterMaxMm: number;
+    phase: number;
+    category: string;
+    grade: string;
+    defaultReservePrice: number;
+    nameKr: string;
+    nameEn: string;
+    uiHeadline: string;
+    uiCopy: string;
+    isActive: boolean;
+  }>) {
+    const response = await this.client.patch<ApiResponse<any>>(`/slots/templates/${id}`, data);
     return response.data;
   }
 
@@ -206,6 +276,7 @@ class ApiService {
     directBuyPrice?: number | null;
     auctionMinBid?: number | null;
     auctionEndAt?: string | null;
+    isPublic?: boolean;
   }) {
     const response = await this.client.patch<ApiResponse<any>>(`/slots/instances/${slotId}/sale-mode`, data);
     return response.data;
@@ -670,114 +741,6 @@ class ApiService {
   }
 
   // ============================================
-  // Vote/Point API
-  // ============================================
-
-  async getActiveVoteEvents(params?: any) {
-    const response = await this.client.get<ApiResponse<any[]>>('/votes/active', { params });
-    return response.data;
-  }
-
-  async getEndedVoteEvents(params?: any) {
-    const response = await this.client.get<ApiResponse<any[]>>('/votes/ended', { params });
-    return response.data;
-  }
-
-  async getVoteEvents(params?: any) {
-    const response = await this.client.get<ApiResponse<any[]>>('/votes/events', { params });
-    return response.data;
-  }
-
-  async getVoteEvent(id: string) {
-    const response = await this.client.get<ApiResponse<any>>(`/votes/events/${id}`);
-    return response.data;
-  }
-
-  async createVoteEvent(data: {
-    eventId?: string;
-    title: string;
-    description?: string;
-    questionType: 'PREDICTION' | 'QUIZ' | 'POLL';
-    question: string;
-    options: { id: string; label: string; athleteId?: string }[];
-    pointsPerCorrect?: number;
-    sponsorBrandId?: string;
-    startAt: string;
-    endAt: string;
-  }) {
-    const response = await this.client.post<ApiResponse<any>>('/votes/events', data);
-    return response.data;
-  }
-
-  async updateVoteEvent(id: string, data: any) {
-    const response = await this.client.patch<ApiResponse<any>>(`/votes/events/${id}`, data);
-    return response.data;
-  }
-
-  async activateVoteEvent(id: string) {
-    const response = await this.client.post<ApiResponse<any>>(`/votes/events/${id}/activate`);
-    return response.data;
-  }
-
-  async closeVoteEvent(id: string) {
-    const response = await this.client.post<ApiResponse<any>>(`/votes/events/${id}/close`);
-    return response.data;
-  }
-
-  async settleVoteEvent(id: string, correctOptionId: string) {
-    const response = await this.client.post<ApiResponse<any>>(`/votes/events/${id}/settle`, {
-      correctOptionId,
-    });
-    return response.data;
-  }
-
-  async deleteVoteEvent(id: string) {
-    const response = await this.client.delete<ApiResponse<any>>(`/votes/events/${id}`);
-    return response.data;
-  }
-
-  async getVoteEventStats(id: string) {
-    const response = await this.client.get<ApiResponse<any>>(`/votes/events/${id}/stats`);
-    return response.data;
-  }
-
-  async submitVote(voteEventId: string, selectedOptionId: string) {
-    const response = await this.client.post<ApiResponse<any>>(`/votes/events/${voteEventId}/vote`, {
-      selectedOptionId,
-    });
-    return response.data;
-  }
-
-  async getMyVotes(params?: any) {
-    const response = await this.client.get<ApiResponse<any[]>>('/votes/my/votes', { params });
-    return response.data;
-  }
-
-  // Legacy vote points (deprecated - use new point system)
-  async getMyVotePoints() {
-    const response = await this.client.get<ApiResponse<any>>('/votes/my/points');
-    return response.data;
-  }
-
-  async getMyVotePointHistory(params?: any) {
-    const response = await this.client.get<ApiResponse<any[]>>('/votes/my/points/history', { params });
-    return response.data;
-  }
-
-  async redeemVotePoints(amount: number, description?: string) {
-    const response = await this.client.post<ApiResponse<any>>('/votes/my/points/redeem', {
-      amount,
-      description,
-    });
-    return response.data;
-  }
-
-  async getAthleteRanking(params?: { eventId?: string; limit?: number }) {
-    const response = await this.client.get<ApiResponse<any[]>>('/votes/ranking/athletes', { params });
-    return response.data;
-  }
-
-  // ============================================
   // Payment API
   // ============================================
 
@@ -852,20 +815,6 @@ class ApiService {
 
   async getAdminTopupDetail(id: string) {
     const response = await this.client.get<ApiResponse<any>>(`/admin/finance/topups/${id}`);
-    return response.data;
-  }
-
-  // ============================================
-  // Admin Point Topup API (포인트 충전 관리)
-  // ============================================
-
-  async getAdminPointTopups(params?: { status?: string; limit?: number; offset?: number }) {
-    const response = await this.client.get<ApiResponse<any>>('/point-topups/admin/all', { params });
-    return response.data;
-  }
-
-  async getAdminPointTopupStats() {
-    const response = await this.client.get<ApiResponse<any>>('/point-topups/admin/stats');
     return response.data;
   }
 
@@ -1268,121 +1217,6 @@ class ApiService {
   // Admin: 사용자 포인트 내역 조회
   async adminGetUserPointHistory(userId: string, params?: { page?: number; pageSize?: number; reason?: string }) {
     const response = await this.client.get<ApiResponse<any>>(`/points/admin/user/${userId}/history`, { params });
-    return response.data;
-  }
-
-  // ============================================
-  // Fan Votes API
-  // ============================================
-
-  // Public: 활성화된 팬 투표 목록
-  async getActiveFanVotes() {
-    const response = await this.client.get<ApiResponse<any[]>>('/fan-votes/active');
-    return response.data;
-  }
-
-  // Public: 종료된 팬 투표 목록
-  async getEndedFanVotes(limit?: number) {
-    const response = await this.client.get<ApiResponse<any[]>>('/fan-votes/ended', {
-      params: { limit },
-    });
-    return response.data;
-  }
-
-  // Public: 팬 투표 상세
-  async getFanVoteEvent(id: string) {
-    const response = await this.client.get<ApiResponse<any>>(`/fan-votes/${id}`);
-    return response.data;
-  }
-
-  // Fan: 팬 투표 참여
-  async enterFanVote(id: string, optionIndex: number, idempotencyKey?: string) {
-    const response = await this.client.post<ApiResponse<any>>(
-      `/fan-votes/${id}/enter`,
-      { optionIndex },
-      {
-        headers: idempotencyKey ? { 'X-Idempotency-Key': idempotencyKey } : {},
-      }
-    );
-    return response.data;
-  }
-
-  // Fan: 내 참여 내역
-  async getMyFanVoteEntries(params?: { page?: number; pageSize?: number }) {
-    const response = await this.client.get<ApiResponse<any>>('/fan-votes/my/entries', { params });
-    return response.data;
-  }
-
-  // ============================================
-  // Phase F4: Fan-created Votes
-  // ============================================
-
-  // Fan: 투표 생성
-  async createFanVote(data: {
-    title: string;
-    question: string;
-    options: string[];
-    entryFeePoints: number;
-    winnersCount: number;
-    startsAt: string;
-    endsAt: string;
-    creatorPrizePool?: number;  // Seed (상금포인트)
-  }) {
-    const response = await this.client.post<ApiResponse<any>>('/fan-votes/create', data);
-    return response.data;
-  }
-
-  // Fan: 내가 만든 투표 목록
-  async getMyCreatedFanVotes(params?: { page?: number; pageSize?: number }) {
-    const response = await this.client.get<ApiResponse<any>>('/fan-votes/my/events', { params });
-    return response.data;
-  }
-
-  // Fan: 투표 제출 (DRAFT -> SUBMITTED)
-  async submitFanVote(id: string) {
-    const response = await this.client.post<ApiResponse<any>>(`/fan-votes/${id}/submit`);
-    return response.data;
-  }
-
-  // Public: 투표 결과 조회
-  async getFanVoteResult(id: string) {
-    const response = await this.client.get<ApiResponse<any>>(`/fan-votes/${id}/result`);
-    return response.data;
-  }
-
-  // ============================================
-  // Admin: Fan Vote Management
-  // ============================================
-
-  // Admin: 승인 대기 투표 목록
-  async getPendingFanVotes(params?: { page?: number; pageSize?: number }) {
-    const response = await this.client.get<ApiResponse<any>>('/fan-votes/admin/pending', { params });
-    return response.data;
-  }
-
-  // Admin: 승인 및 활성화
-  async approveFanVote(id: string) {
-    const response = await this.client.post<ApiResponse<any>>(`/fan-votes/admin/${id}/approve-and-activate`);
-    return response.data;
-  }
-
-  // Admin: 투표 종료
-  async closeFanVote(id: string) {
-    const response = await this.client.post<ApiResponse<any>>(`/fan-votes/admin/${id}/close`);
-    return response.data;
-  }
-
-  // Admin: 정산 실행
-  async settleFanVote(id: string, resultOptionIndex: number) {
-    const response = await this.client.post<ApiResponse<any>>(`/fan-votes/admin/${id}/settle`, {
-      resultOptionIndex,
-    });
-    return response.data;
-  }
-
-  // Admin: 정산 완료된 투표 삭제
-  async deleteFanVote(id: string) {
-    const response = await this.client.delete<ApiResponse<any>>(`/fan-votes/admin/${id}`);
     return response.data;
   }
 
@@ -2497,6 +2331,37 @@ class ApiService {
   }
 
   // ============================================
+  // Admin Point Topups (관리자 포인트 충전 관리)
+  // ============================================
+
+  // 전체 충전 내역 조회 (Admin)
+  async getAdminPointTopups(params?: {
+    status?: string;
+    userId?: string;
+    startDate?: string;
+    endDate?: string;
+    skip?: number;
+    take?: number;
+    limit?: number;
+    offset?: number;
+  }) {
+    const response = await this.client.get('/point-topups/admin/all', { params });
+    return response.data;
+  }
+
+  // 충전 통계 조회 (Admin)
+  async getAdminPointTopupStats() {
+    const response = await this.client.get('/point-topups/admin/stats');
+    return response.data;
+  }
+
+  // 충전 환불 처리 (Admin)
+  async adminRefundPointTopup(id: string, reason?: string) {
+    const response = await this.client.post(`/point-topups/admin/${id}/refund`, { reason });
+    return response.data;
+  }
+
+  // ============================================
   // Donations (팬→선수 후원)
   // ============================================
 
@@ -2702,6 +2567,7 @@ class ApiService {
     directBuyPrice?: number;
     auctionMinBid?: number;
     auctionEndAt?: string;
+    isPublic?: boolean;
   }) {
     const response = await this.client.patch(`/agencies/athletes/${athleteId}/slots/${slotId}/sale-mode`, data);
     return response.data;
@@ -2746,6 +2612,265 @@ class ApiService {
   // 에이전시: 서명 대기 계약 목록
   async getAgencyPendingSignatures() {
     const response = await this.client.get('/agencies/pending-signatures');
+    return response.data;
+  }
+
+  // ============================================
+  // Creative Approval (크리에이티브 사전 승인)
+  // ============================================
+
+  // Brand: 크리에이티브 승인 요청 제출
+  async submitCreativeApproval(data: {
+    eventId: string;
+    fileUrl: string;
+    fileName?: string;
+    fileType?: string;
+    fileSizeBytes?: number;
+  }) {
+    const response = await this.client.post('/brand/creative-approvals', data);
+    return response.data;
+  }
+
+  // Brand: 내 크리에이티브 승인 요청 목록
+  async getMyCreativeApprovals() {
+    const response = await this.client.get('/brand/creative-approvals');
+    return response.data;
+  }
+
+  // Brand: 특정 대회의 내 크리에이티브 승인 상태 조회
+  async getMyCreativeApprovalForEvent(eventId: string) {
+    const response = await this.client.get(`/brand/creative-approvals/events/${eventId}`);
+    return response.data;
+  }
+
+  // Admin: 전체 크리에이티브 승인 요청 목록
+  async getAdminCreativeApprovals(params?: {
+    status?: string;
+    eventId?: string;
+    brandId?: string;
+    skip?: number;
+    take?: number;
+  }) {
+    const response = await this.client.get('/admin/creative-approvals', { params });
+    return response.data;
+  }
+
+  // Admin: 크리에이티브 승인 통계
+  async getAdminCreativeApprovalStats(eventId?: string) {
+    const response = await this.client.get('/admin/creative-approvals/stats', {
+      params: eventId ? { eventId } : {},
+    });
+    return response.data;
+  }
+
+  // Admin: 검토 시작
+  async startCreativeApprovalReview(id: string) {
+    const response = await this.client.post(`/admin/creative-approvals/${id}/start-review`);
+    return response.data;
+  }
+
+  // Admin: 크리에이티브 승인
+  async approveCreativeApproval(id: string, reviewNotes?: string) {
+    const response = await this.client.post(`/admin/creative-approvals/${id}/approve`, { reviewNotes });
+    return response.data;
+  }
+
+  // Admin: 크리에이티브 거부
+  async rejectCreativeApproval(id: string, reviewNotes: string) {
+    const response = await this.client.post(`/admin/creative-approvals/${id}/reject`, { reviewNotes });
+    return response.data;
+  }
+
+  // ============================================
+  // 투표 시스템 (리워드풀 기반 무료 투표)
+  // ============================================
+
+  // 리워드풀 상태 조회
+  async getRewardPoolStatus() {
+    const response = await this.client.get<ApiResponse<{
+      id: string;
+      balanceEp: string;
+      reservedEp: string;
+      availableTodayEp: string;
+      multiplierM: number;
+      availableEp: string;
+      effectiveMicroReward: number;
+      updatedAt: string;
+    }>>('/votes/reward-pool/status');
+    return response.data;
+  }
+
+  // 리워드풀 충전 (Admin)
+  async depositToRewardPool(amount: number, reason?: string) {
+    const response = await this.client.post<ApiResponse<any>>('/votes/reward-pool/deposit', {
+      amount,
+      reason,
+    });
+    return response.data;
+  }
+
+  // 일일 가용액 리셋 (Admin)
+  async resetRewardPoolDaily(percentage?: number) {
+    const response = await this.client.post<ApiResponse<any>>('/votes/reward-pool/reset-daily', {
+      percentage,
+    });
+    return response.data;
+  }
+
+  // 배수 재계산 (Admin)
+  async recalculateRewardPoolMultiplier() {
+    const response = await this.client.post<ApiResponse<any>>('/votes/reward-pool/recalculate-multiplier');
+    return response.data;
+  }
+
+  // 투표 템플릿 목록
+  async getVoteTemplates() {
+    const response = await this.client.get<ApiResponse<Array<{
+      code: string;
+      name: string;
+      baseBudget: number;
+      difficulty: number;
+    }>>>('/votes/templates');
+    return response.data;
+  }
+
+  // 투표 목록 조회
+  async getVotes(params?: { status?: string; page?: number; pageSize?: number }) {
+    const response = await this.client.get<ApiResponse<any[]>>('/votes', { params });
+    return response.data;
+  }
+
+  // 투표 상세 조회
+  async getVote(id: string) {
+    const response = await this.client.get<ApiResponse<any>>(`/votes/${id}`);
+    return response.data;
+  }
+
+  // 투표 생성 (Admin)
+  async createVote(data: {
+    templateCode: string;
+    title: string;
+    description?: string;
+    options: any[];
+    closeAt: string;
+    target?: { tournamentId?: string; matchId?: string; playerId?: string };
+    outcomeSource?: string;
+    maxPerWinnerEp?: number;
+  }) {
+    const response = await this.client.post<ApiResponse<any>>('/votes', data);
+    return response.data;
+  }
+
+  // 투표 참여 (무료)
+  async participateVote(id: string, answer: any) {
+    const response = await this.client.post<ApiResponse<{
+      participation: {
+        voteId: string;
+        userId: string;
+        answer: any;
+        microRewardPaidEp: string;
+        finalRewardPaidEp: string;
+        createdAt: string;
+      };
+      microRewardPaid: number;
+    }>>(`/votes/${id}/participate`, { answer });
+    return response.data;
+  }
+
+  // 투표 정산 (Admin)
+  async settleVote(id: string, correctAnswer: any) {
+    const response = await this.client.post<ApiResponse<{
+      winnersCount: number;
+      perWinnerEp: string;
+      totalPaidEp: string;
+      remainderEp: string;
+      alreadySettled: boolean;
+    }>>(`/votes/${id}/settle`, { correctAnswer });
+    return response.data;
+  }
+
+  // 투표 취소 (Admin)
+  async cancelVote(id: string) {
+    const response = await this.client.post<ApiResponse<any>>(`/votes/${id}/cancel`);
+    return response.data;
+  }
+
+  // 만료된 투표 마감 (Admin/Cron)
+  async closeExpiredVotes() {
+    const response = await this.client.post<ApiResponse<{ closedCount: number }>>('/votes/cron/close-expired');
+    return response.data;
+  }
+
+  // 내 참여 목록
+  async getMyVoteParticipations(params?: { page?: number; pageSize?: number }) {
+    const response = await this.client.get<ApiResponse<any[]>>('/votes/my-participations', { params });
+    return response.data;
+  }
+
+  // 투표 통계 (Admin)
+  async getVoteStats() {
+    const response = await this.client.get<ApiResponse<{
+      votes: {
+        open: number;
+        closed: number;
+        settled: number;
+        canceled: number;
+        total: number;
+      };
+      totalParticipations: number;
+    }>>('/votes/stats');
+    return response.data;
+  }
+
+  // ============================================
+  // 사용자 투표 생성 (본인 포인트 사용)
+  // ============================================
+
+  // 사용자 투표 생성 제한 정보 조회
+  async getUserVoteLimits() {
+    const response = await this.client.get<ApiResponse<{
+      minSeedEp: number;
+      maxSeedEp: number;
+      maxDailyCreates: number;
+    }>>('/votes/user/limits');
+    return response.data;
+  }
+
+  // 내가 생성한 투표 목록 조회
+  async getMyCreatedVotes(params?: { status?: string; page?: number; pageSize?: number }) {
+    const response = await this.client.get<ApiResponse<any[]>>('/votes/user/my-votes', { params });
+    return response.data;
+  }
+
+  // 사용자 투표 생성 (본인 포인트 사용)
+  async createUserVote(data: {
+    templateCode: string;
+    title: string;
+    description?: string;
+    options: { id: string; label: string }[];
+    closeAt: string;
+    seedAmountEp: number;
+    target?: { tournamentId?: string; matchId?: string; playerId?: string };
+  }) {
+    const response = await this.client.post<ApiResponse<any>>('/votes/user/create', data);
+    return response.data;
+  }
+
+  // 사용자 투표 취소 (생성자만, 참여자 없을 때)
+  async cancelUserVote(id: string) {
+    const response = await this.client.post<ApiResponse<any>>(`/votes/user/${id}/cancel`);
+    return response.data;
+  }
+
+  // 사용자 투표 정산 (생성자)
+  async settleUserVote(id: string, correctAnswer: any) {
+    const response = await this.client.post<ApiResponse<{
+      winnersCount: number;
+      perWinnerEp: string;
+      totalPaidEp: string;
+      remainderEp: string;
+      alreadySettled: boolean;
+    }>>(`/votes/user/${id}/settle`, { correctAnswer });
     return response.data;
   }
 }

@@ -290,7 +290,7 @@ export function AdminFeaturedAuctions() {
                     <option value="">슬롯 템플릿을 선택하세요</option>
                     {templates.map((template: any) => (
                       <option key={template.id} value={template.id}>
-                        {template.name} ({template.bodyPart})
+                        {template.nameKr || template.name} ({template.code})
                       </option>
                     ))}
                   </select>

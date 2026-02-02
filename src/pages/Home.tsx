@@ -53,10 +53,10 @@ function useCounter(end: number, duration: number = 2000) {
 
 // Live auction data
 const liveAuctions = [
-  { id: 1, slot: 'SG-01', player: '김태훈', price: 450000, change: '+12%', hot: true },
-  { id: 2, slot: 'SG-05', player: '이수진', price: 320000, change: '+8%', hot: false },
-  { id: 3, slot: 'SG-02', player: '박민석', price: 380000, change: '+15%', hot: true },
-  { id: 4, slot: 'SG-03', player: '최유리', price: 280000, change: '+5%', hot: false },
+  { id: 1, slot: 'CHEST_L', player: '김태훈', price: 450000, change: '+12%', hot: true },
+  { id: 2, slot: 'CAP_SIDE_L', player: '이수진', price: 320000, change: '+8%', hot: false },
+  { id: 3, slot: 'CHEST_R', player: '박민석', price: 380000, change: '+15%', hot: true },
+  { id: 4, slot: 'SLEEVE_R', player: '최유리', price: 280000, change: '+5%', hot: false },
 ];
 
 // 팬 투표 개설자 역할 라벨
@@ -73,34 +73,21 @@ export function Home() {
   const [activeFeature, setActiveFeature] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // 활성 투표 조회
+  // 활성 투표 조회 (리워드풀 기반)
   const { data: activeVotes } = useQuery({
     queryKey: ['home-active-votes'],
     queryFn: async () => {
-      const [adminRes, fanRes] = await Promise.all([
-        api.getActiveVoteEvents(),
-        api.getActiveFanVotes(),
-      ]);
-      const adminVotes = (adminRes.data || []).map((v: any) => ({
+      const res = await api.getVotes({ status: 'OPEN', pageSize: 4 });
+      return (res.data || []).map((v: any) => ({
         id: v.id,
         title: v.title,
-        type: 'admin' as const,
-        participantCount: v._count?.votes ?? 0,
-        endAt: v.endAt,
-        questionType: v.questionType,
-      }));
-      const fanVotes = (fanRes.data || []).map((v: any) => ({
-        id: v.id,
-        title: v.title,
-        type: 'fan' as const,
-        creatorRole: v.creatorRole || 'FAN',
-        participantCount: v._count?.entries ?? 0,
-        endAt: v.endsAt,
-        prizePool: v.prizePool,
-      }));
-      return [...adminVotes, ...fanVotes]
-        .sort((a, b) => new Date(a.endAt).getTime() - new Date(b.endAt).getTime())
-        .slice(0, 4);
+        type: 'vote' as const,
+        participantCount: v._count?.participations ?? 0,
+        endAt: v.closeAt,
+        rewardBudgetEp: v.rewardBudgetEp,
+      })).sort(
+        (a: any, b: any) => new Date(a.endAt).getTime() - new Date(b.endAt).getTime()
+      );
     },
     staleTime: 60000,
   });
@@ -455,7 +442,7 @@ export function Home() {
               {activeVotes.map((vote: any) => (
                 <Link
                   key={vote.id}
-                  to={vote.type === 'admin' ? `/votes/${vote.id}` : `/fan-votes/${vote.id}`}
+                  to={`/votes/${vote.id}`}
                   className="card p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/30 group"
                 >
                   <div className="flex items-center justify-between mb-4">
@@ -616,12 +603,12 @@ export function Home() {
 
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {[
-              { code: 'SG-01', name: '가슴 좌측', part: 'Chest Left', price: '300K~', hot: true },
-              { code: 'SG-02', name: '가슴 우측', part: 'Chest Right', price: '300K~', hot: true },
-              { code: 'SG-03', name: '소매 우측', part: 'Sleeve Right', price: '200K~', hot: false },
-              { code: 'SG-04', name: '소매 좌측', part: 'Sleeve Left', price: '200K~', hot: false },
-              { code: 'SG-05', name: '모자 측면', part: 'Cap Side', price: '250K~', hot: true },
-              { code: 'SG-06', name: '모자 후면', part: 'Cap Back', price: '150K~', hot: false },
+              { code: 'CHEST_L', name: '가슴 좌측', part: 'Chest Left', price: '200만~', hot: true },
+              { code: 'CHEST_R', name: '가슴 우측', part: 'Chest Right', price: '200만~', hot: true },
+              { code: 'SLEEVE_R', name: '소매 우측', part: 'Sleeve Right', price: '80만~', hot: false },
+              { code: 'SLEEVE_L', name: '소매 좌측', part: 'Sleeve Left', price: '80만~', hot: false },
+              { code: 'CAP_FRONT', name: '모자 정면', part: 'Cap Front', price: '250만~', hot: true },
+              { code: 'CAP_BACK', name: '모자 후면', part: 'Cap Back', price: '35만~', hot: false },
             ].map((slot) => (
               <div
                 key={slot.code}

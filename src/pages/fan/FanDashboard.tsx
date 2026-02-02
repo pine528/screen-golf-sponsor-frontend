@@ -77,16 +77,16 @@ export default function FanDashboard() {
     enabled: isAuthenticated,
   });
 
-  // B) 진행중 투표
+  // B) 진행중 투표 (리워드풀 기반)
   const { data: activeVotesData, isLoading: loadingActiveVotes } = useQuery({
-    queryKey: ['activeFanVotes'],
-    queryFn: () => api.getActiveFanVotes(),
+    queryKey: ['activeVotes'],
+    queryFn: () => api.getVotes({ status: 'OPEN' }),
   });
 
-  // C) 최근 종료 투표
+  // C) 최근 종료 투표 (리워드풀 기반)
   const { data: endedVotesData, isLoading: loadingEndedVotes } = useQuery({
-    queryKey: ['endedFanVotes', 10],
-    queryFn: () => api.getEndedFanVotes(10),
+    queryKey: ['endedVotes', 10],
+    queryFn: () => api.getVotes({ status: 'CLOSED', pageSize: 10 }),
   });
 
   // D) 포인트 TOP 10

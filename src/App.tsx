@@ -13,10 +13,10 @@ import { ForWho } from './pages/ForWho';
 import { AdminEvents } from './pages/admin/AdminEvents';
 import { AdminAuctions } from './pages/admin/AdminAuctions';
 import { AdminFeaturedAuctions } from './pages/admin/AdminFeaturedAuctions';
+import { AdminSlotTemplates } from './pages/admin/AdminSlotTemplates';
 import { AdminKyc } from './pages/admin/AdminKyc';
 import { AdminReviews } from './pages/admin/AdminReviews';
 import { AdminSettings } from './pages/admin/AdminSettings';
-import AdminVoteEvents from './pages/admin/AdminVoteEvents';
 import AdminPoints from './pages/admin/AdminPoints';
 import AdminPayments from './pages/admin/AdminPayments';
 import AdminReports from './pages/admin/AdminReports';
@@ -35,6 +35,7 @@ import {
   FinanceWithdrawalBatches,
   FinanceWithdrawalBatchDetail,
   FinanceTopups,
+  FinancePointTopups,
 } from './pages/admin/finance';
 import AthleteWithdrawals from './pages/athlete/Withdrawals';
 import AthletePendingSignatures from './pages/athlete/PendingSignatures';
@@ -50,20 +51,16 @@ import BrandROIDashboard from './pages/brand/BrandROIDashboard';
 import BrandBilling from './pages/brand/BrandBilling';
 import BrandVotes from './pages/brand/BrandVotes';
 import BrandVoteCreate from './pages/brand/BrandVoteCreate';
-import { FanHome, FanLogin, FanRegister, Votes, VoteDetail, FanVoteDetail, Points, Ranking, Favorites, BrandRegister, Shop, ShopDetail, Orders } from './pages/fan';
+import { BrandCreativeApprovals } from './pages/brand/BrandCreativeApprovals';
+import { FanHome, FanLogin, FanRegister, Points, Ranking, Favorites, BrandRegister, Shop, ShopDetail, Orders } from './pages/fan';
 import { AgencyDashboard, AgencyAthleteRegister, AgencyAthletes, AgencyAthleteSearch, AgencySentRequests, AgencyAthleteDetail } from './pages/agency';
 import { AthleteAgencyRequests } from './pages/athlete/AthleteAgencyRequests';
-import FanVoteCreate from './pages/fan/FanVoteCreate';
-import MyFanVotes from './pages/fan/MyFanVotes';
 import PointTopup from './pages/PointTopup';
-import FanVoteResult from './pages/fan/FanVoteResult';
 import MyDonations from './pages/fan/MyDonations';
 import SeasonLeaderboard from './pages/fan/SeasonLeaderboard';
 import MyBadges from './pages/fan/MyBadges';
 import { AdminBrandRegistrations } from './pages/admin/AdminBrandRegistrations';
 import AdminOps from './pages/admin/AdminOps';
-import AdminFanVotes from './pages/admin/AdminFanVotes';
-import AdminFanVoteSettle from './pages/admin/AdminFanVoteSettle';
 import AdminFeePolicies from './pages/admin/AdminFeePolicies';
 import AdminFaq from './pages/admin/AdminFaq';
 import AdminPenalties from './pages/admin/AdminPenalties';
@@ -75,6 +72,12 @@ import AdminReconciliation from './pages/admin/AdminReconciliation';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminTaxInvoices from './pages/admin/AdminTaxInvoices';
 import AdminPointWithdrawals from './pages/admin/AdminPointWithdrawals';
+import { AdminCreativeApprovals } from './pages/admin/AdminCreativeApprovals';
+import AdminVotes from './pages/admin/AdminVoteV2';
+import VotesList from './pages/fan/VoteV2List';
+import VotesDetail from './pages/fan/VoteV2Detail';
+import VoteCreate from './pages/fan/VoteCreate';
+import MyCreatedVotes from './pages/fan/MyCreatedVotes';
 import Faq from './pages/Faq';
 import Guide from './pages/Guide';
 import Contact from './pages/Contact';
@@ -393,12 +396,18 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/brand/creative-approvals"
+        element={
+          <ProtectedRoute>
+            <BrandCreativeApprovals />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Fan Routes */}
       {/* /fan, /votes, /votes/:id 비로그인도 접근 가능 (투표 행위는 컴포넌트에서 로그인 체크) */}
       <Route path="/fan" element={<FanHome />} />
-      <Route path="/votes" element={<Votes />} />
-      <Route path="/votes/:id" element={<VoteDetail />} />
       <Route
         path="/points"
         element={
@@ -474,26 +483,11 @@ function App() {
         }
       />
 
-      {/* Fan Votes Routes */}
-      <Route
-        path="/fan-votes/create"
-        element={
-          <ProtectedRoute>
-            <FanVoteCreate />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/fan-votes/my"
-        element={
-          <ProtectedRoute>
-            <MyFanVotes />
-          </ProtectedRoute>
-        }
-      />
-      {/* /fan-votes/:id, /fan-votes/:id/result 비로그인도 접근 가능 (투표 행위는 컴포넌트에서 로그인 체크) */}
-      <Route path="/fan-votes/:id" element={<FanVoteDetail />} />
-      <Route path="/fan-votes/:id/result" element={<FanVoteResult />} />
+      {/* 투표 (리워드풀 기반 무료 투표) - 비로그인도 목록/상세 접근 가능 */}
+      <Route path="/votes" element={<VotesList />} />
+      <Route path="/votes/create" element={<ProtectedRoute><VoteCreate /></ProtectedRoute>} />
+      <Route path="/votes/my-created" element={<ProtectedRoute><MyCreatedVotes /></ProtectedRoute>} />
+      <Route path="/votes/:id" element={<VotesDetail />} />
       <Route
         path="/seasons/:id/leaderboard"
         element={
@@ -545,6 +539,14 @@ function App() {
         }
       />
       <Route
+        path="/admin/slot-templates"
+        element={
+          <ProtectedRoute>
+            <AdminSlotTemplates />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/admin/kyc"
         element={
           <ProtectedRoute>
@@ -569,14 +571,6 @@ function App() {
         }
       />
       <Route
-        path="/admin/votes"
-        element={
-          <ProtectedRoute>
-            <AdminVoteEvents />
-          </ProtectedRoute>
-        }
-      />
-      <Route
         path="/admin/points"
         element={
           <ProtectedRoute>
@@ -589,6 +583,14 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminPointWithdrawals />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/creative-approvals"
+        element={
+          <ProtectedRoute>
+            <AdminCreativeApprovals />
           </ProtectedRoute>
         }
       />
@@ -633,18 +635,10 @@ function App() {
         }
       />
       <Route
-        path="/admin/fan-votes"
+        path="/admin/votes"
         element={
           <ProtectedRoute>
-            <AdminFanVotes />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/fan-votes/:id"
-        element={
-          <ProtectedRoute>
-            <AdminFanVoteSettle />
+            <AdminVotes />
           </ProtectedRoute>
         }
       />
@@ -831,6 +825,14 @@ function App() {
         element={
           <ProtectedRoute>
             <FinanceTopups />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/finance/point-topups"
+        element={
+          <ProtectedRoute>
+            <FinancePointTopups />
           </ProtectedRoute>
         }
       />

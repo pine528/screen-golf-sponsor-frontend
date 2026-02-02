@@ -317,6 +317,17 @@ export function MySlots() {
                                 LIVE
                               </span>
                             )}
+                            {/* 공개/비공개 뱃지 */}
+                            {slot.auction && (
+                              <span className={cn(
+                                'badge text-xs',
+                                slot.auction.isFeatured
+                                  ? 'bg-blue-100 text-blue-700 border-blue-200'
+                                  : 'bg-slate-100 text-slate-500 border-slate-200'
+                              )}>
+                                {slot.auction.isFeatured ? '공개' : '비공개'}
+                              </span>
+                            )}
                           </div>
                           <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-slate-600">
                             <div className="flex items-center gap-1">
@@ -480,6 +491,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
   const [auctionEndAt, setAuctionEndAt] = useState(
     slot.auctionEndAt ? new Date(slot.auctionEndAt).toISOString().slice(0, 16) : ''
   );
+  const [isPublic, setIsPublic] = useState(slot.auction?.isFeatured ?? false);
   const [saleModeError, setSaleModeError] = useState('');
   const [saleModeSuccess, setSaleModeSuccess] = useState(false);
 
@@ -490,6 +502,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
       directBuyPrice: enableDirectBuy && directBuyPrice ? Number(directBuyPrice) : null,
       auctionMinBid: enableAuction && auctionMinBid ? Number(auctionMinBid) : null,
       auctionEndAt: enableAuction && auctionEndAt ? auctionEndAt : null,
+      isPublic: enableAuction ? isPublic : undefined,
     }),
     onSuccess: () => {
       setSaleModeSuccess(true);
@@ -729,6 +742,30 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                             className="input w-full text-sm"
                           />
                         </div>
+                        {/* 공개/비공개 토글 */}
+                        <div className="flex items-center justify-between pt-2">
+                          <div className="flex items-center gap-2">
+                            <Eye className="w-4 h-4 text-blue-600" />
+                            <span className="text-sm text-slate-700">공개 경매</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setIsPublic(!isPublic)}
+                            className={cn(
+                              'flex items-center gap-1 text-sm font-medium transition-colors',
+                              isPublic ? 'text-blue-600' : 'text-slate-400'
+                            )}
+                          >
+                            {isPublic ? (
+                              <><ToggleRight className="w-7 h-7" /> 공개</>
+                            ) : (
+                              <><ToggleLeft className="w-7 h-7" /> 비공개</>
+                            )}
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-500">
+                          공개: 모든 브랜드에게 노출 | 비공개: 직접 공유 시에만 노출
+                        </p>
                       </div>
                     )}
                   </div>
@@ -1109,7 +1146,8 @@ function CreateSlotModal({
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-slate-900 text-sm">{template.name}</p>
                         <p className="text-xs text-slate-500">
-                          {template.bodyPart} · {template.code}
+                          {template.code}
+                          {(template as any).category && ` · ${(template as any).category}`}
                         </p>
                       </div>
                       <div className="text-right">

@@ -17,6 +17,7 @@ import {
   DollarSign,
   Plus,
   X,
+  Eye,
 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
@@ -66,6 +67,7 @@ interface Slot {
   auctionEndAt?: string;
   event?: { id: string; name: string; dateStart: string };
   slotTemplate?: { id: string; code: string; name: string; bodyPart: string };
+  auction?: { isFeatured?: boolean };
 }
 
 interface Contract {
@@ -163,6 +165,7 @@ export function AgencyAthleteDetail() {
     directBuyPrice: '',
     auctionMinBid: '',
     auctionEndAt: '',
+    isPublic: false,
   });
   const [savingSlotSettings, setSavingSlotSettings] = useState(false);
 
@@ -293,6 +296,7 @@ export function AgencyAthleteDetail() {
       directBuyPrice: slot.directBuyPrice?.toString() || '',
       auctionMinBid: slot.auctionMinBid?.toString() || '',
       auctionEndAt: slot.auctionEndAt ? new Date(slot.auctionEndAt).toISOString().slice(0, 16) : '',
+      isPublic: slot.auction?.isFeatured ?? false,
     });
   };
 
@@ -329,6 +333,7 @@ export function AgencyAthleteDetail() {
         directBuyPrice: slotSettingsForm.directBuyPrice ? Number(slotSettingsForm.directBuyPrice) : undefined,
         auctionMinBid: slotSettingsForm.auctionMinBid ? Number(slotSettingsForm.auctionMinBid) : undefined,
         auctionEndAt: slotSettingsForm.auctionEndAt || undefined,
+        isPublic: slotSettingsForm.enableAuction ? slotSettingsForm.isPublic : undefined,
       });
       setSuccessMessage('슬롯 설정이 저장되었습니다');
       setEditingSlot(null);
@@ -784,10 +789,10 @@ export function AgencyAthleteDetail() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium text-slate-900">
-                            {slot.slotTemplate?.name || slot.slotTemplate?.code}
+                            {(slot.slotTemplate as any)?.nameKr || slot.slotTemplate?.name || slot.slotTemplate?.code}
                           </p>
                           <p className="text-sm text-slate-500">
-                            {slot.event?.name} · {slot.slotTemplate?.bodyPart}
+                            {slot.event?.name} · {slot.slotTemplate?.code}
                           </p>
                           <div className="flex items-center gap-2 mt-1 text-xs">
                             {slot.enableAuction && (
@@ -1037,7 +1042,8 @@ export function AgencyAthleteDetail() {
                         <div>
                           <p className="font-medium text-slate-900">{template.name}</p>
                           <p className="text-xs text-slate-500">
-                            {template.code} · {template.bodyPart}
+                            {template.code}
+                            {(template as any).category && ` · ${(template as any).category}`}
                           </p>
                         </div>
                       </label>
@@ -1138,6 +1144,22 @@ export function AgencyAthleteDetail() {
                     />
                     <p className="text-xs text-slate-500 mt-1">경매 마감일을 설정해야 경매가 시작됩니다</p>
                   </div>
+                  {/* 공개/비공개 토글 */}
+                  <label className="flex items-center justify-between p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4 text-blue-600" />
+                      <div>
+                        <p className="font-medium text-slate-900">공개 경매</p>
+                        <p className="text-xs text-slate-500">모든 브랜드에게 노출</p>
+                      </div>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={slotSettingsForm.isPublic}
+                      onChange={(e) => setSlotSettingsForm({ ...slotSettingsForm, isPublic: e.target.checked })}
+                      className="w-5 h-5 text-blue-600 rounded"
+                    />
+                  </label>
                 </div>
               )}
 

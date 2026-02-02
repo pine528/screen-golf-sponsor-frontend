@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { Clock, User, Calendar, Gavel, AlertCircle, ShoppingCart, Tag, Trophy, Timer } from 'lucide-react';
+import { Clock, User, Calendar, Gavel, AlertCircle, ShoppingCart, Tag, Trophy, Timer, Filter } from 'lucide-react';
 import { Layout } from '../components/Layout';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
@@ -36,11 +36,18 @@ export function Auctions() {
   const [selectedAuction, setSelectedAuction] = useState<any>(null);
   const [bidAmount, setBidAmount] = useState('');
   const [bidError, setBidError] = useState<string | null>(null);
+  const [eventFilter, setEventFilter] = useState<string>('ALL'); // 대회 필터
 
   // 즉시구매 모달 상태
   const [showBuyNowModal, setShowBuyNowModal] = useState(false);
   const [selectedSlotForBuyNow, setSelectedSlotForBuyNow] = useState<any>(null);
   const [buyNowError, setBuyNowError] = useState<string | null>(null);
+
+  // 대회 목록 조회
+  const { data: events } = useQuery({
+    queryKey: ['events'],
+    queryFn: () => api.getEvents(),
+  });
 
   // 유효한 경매 상태 필터 (MY_BIDS, MY_RESERVATIONS, DIRECT_BUY 제외)
   const validAuctionStatuses = ['LIVE', 'SCHEDULED', 'ENDED', 'UNSOLD'];
@@ -54,12 +61,27 @@ export function Auctions() {
     refetchInterval: statusFilter === 'LIVE' ? 3000 : false, // 3초 간격 실시간 갱신
   });
 
+  // 대회 필터 적용된 경매 목록
+  const filteredAuctions = useMemo(() => {
+    if (!auctions?.data) return [];
+    if (eventFilter === 'ALL') return auctions.data;
+    return auctions.data.filter((auction: any) => auction.slotInstance?.event?.id === eventFilter);
+  }, [auctions?.data, eventFilter]);
+
   // 즉시구매 가능 슬롯 조회 (enableDirectBuy: true, 경매중 슬롯도 포함)
   const { data: directBuySlots } = useQuery({
     queryKey: ['slots', 'directBuy'],
     queryFn: () => api.getSlotInstances({ enableDirectBuy: true }),
     enabled: statusFilter === 'DIRECT_BUY',
   });
+
+  // 대회 필터 적용된 즉시구매 슬롯 목록
+  const filteredDirectBuySlots = useMemo(() => {
+    if (!directBuySlots?.data) return [];
+    const filtered = directBuySlots.data.filter((slot: any) => slot.status !== 'RESERVED' && slot.status !== 'SOLD');
+    if (eventFilter === 'ALL') return filtered;
+    return filtered.filter((slot: any) => slot.event?.id === eventFilter);
+  }, [directBuySlots?.data, eventFilter]);
 
   // ★ Phase 9-3: 내 입찰 목록 (Brand only) - 항상 조회 (입찰 수정 지원)
   const { data: myBids } = useQuery({
@@ -146,30 +168,60 @@ export function Auctions() {
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible">
-          {['LIVE', 'DIRECT_BUY', ...(user?.role === 'BRAND' ? ['MY_BIDS', 'MY_RESERVATIONS'] : []), 'SCHEDULED', 'ENDED', 'UNSOLD'].map((status) => (
-            <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className={cn(
-                'px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0',
-                statusFilter === status
-                  ? status === 'DIRECT_BUY' ? 'bg-blue-600 text-white'
-                  : status === 'MY_BIDS' ? 'bg-purple-600 text-white'
-                  : status === 'MY_RESERVATIONS' ? 'bg-orange-600 text-white'
-                  : 'bg-emerald-600 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+        <div className="space-y-3">
+          {/* 상태 필터 */}
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible">
+            {['LIVE', 'DIRECT_BUY', ...(user?.role === 'BRAND' ? ['MY_BIDS', 'MY_RESERVATIONS'] : []), 'SCHEDULED', 'ENDED', 'UNSOLD'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                className={cn(
+                  'px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0',
+                  statusFilter === status
+                    ? status === 'DIRECT_BUY' ? 'bg-blue-600 text-white'
+                    : status === 'MY_BIDS' ? 'bg-purple-600 text-white'
+                    : status === 'MY_RESERVATIONS' ? 'bg-orange-600 text-white'
+                    : 'bg-emerald-600 text-white'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                )}
+              >
+                {status === 'LIVE' && '진행중'}
+                {status === 'DIRECT_BUY' && '즉시구매'}
+                {status === 'MY_BIDS' && '내 입찰'}
+                {status === 'MY_RESERVATIONS' && '내 예약'}
+                {status === 'SCHEDULED' && '예정'}
+                {status === 'ENDED' && '종료'}
+                {status === 'UNSOLD' && '유찰'}
+              </button>
+            ))}
+          </div>
+
+          {/* 대회 필터 */}
+          {!['MY_BIDS', 'MY_RESERVATIONS'].includes(statusFilter) && (
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-slate-500" />
+              <select
+                value={eventFilter}
+                onChange={(e) => setEventFilter(e.target.value)}
+                className="input py-1.5 text-sm w-auto min-w-[200px]"
+              >
+                <option value="ALL">전체 대회</option>
+                {events?.data?.map((event: any) => (
+                  <option key={event.id} value={event.id}>
+                    {event.name}
+                  </option>
+                ))}
+              </select>
+              {eventFilter !== 'ALL' && (
+                <button
+                  onClick={() => setEventFilter('ALL')}
+                  className="text-xs text-slate-500 hover:text-slate-700"
+                >
+                  초기화
+                </button>
               )}
-            >
-              {status === 'LIVE' && '진행중'}
-              {status === 'DIRECT_BUY' && '즉시구매'}
-              {status === 'MY_BIDS' && '내 입찰'}
-              {status === 'MY_RESERVATIONS' && '내 예약'}
-              {status === 'SCHEDULED' && '예정'}
-              {status === 'ENDED' && '종료'}
-              {status === 'UNSOLD' && '유찰'}
-            </button>
-          ))}
+            </div>
+          )}
         </div>
 
         {/* Auction List (공개/비공개/예정/종료/유찰) */}
@@ -177,12 +229,12 @@ export function Auctions() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {isLoading ? (
               <div className="col-span-full text-center py-12 text-slate-500">로딩 중...</div>
-            ) : auctions?.data?.length === 0 ? (
+            ) : filteredAuctions.length === 0 ? (
               <div className="col-span-full text-center py-12 text-slate-500">
-                해당하는 경매가 없습니다
+                {eventFilter !== 'ALL' ? '선택한 대회의 경매가 없습니다' : '해당하는 경매가 없습니다'}
               </div>
             ) : (
-              auctions?.data?.map((auction: any) => (
+              filteredAuctions.map((auction: any) => (
                 <div key={auction.id} className="card overflow-hidden">
                   <div className="p-4 sm:p-6">
                     {/* Slot Info */}
@@ -519,15 +571,12 @@ export function Auctions() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {!directBuySlots ? (
               <div className="col-span-full text-center py-12 text-slate-500">로딩 중...</div>
-            ) : ((directBuySlots as any).data || []).length === 0 ? (
+            ) : filteredDirectBuySlots.length === 0 ? (
               <div className="col-span-full text-center py-12 text-slate-500">
-                즉시구매 가능한 슬롯이 없습니다
+                {eventFilter !== 'ALL' ? '선택한 대회의 즉시구매 슬롯이 없습니다' : '즉시구매 가능한 슬롯이 없습니다'}
               </div>
             ) : (
-              ((directBuySlots as any).data || [])
-                // RESERVED/SOLD 상태 슬롯 제외 (계약 진행중/완료)
-                .filter((slot: any) => slot.status !== 'RESERVED' && slot.status !== 'SOLD')
-                .map((slot: any) => (
+              filteredDirectBuySlots.map((slot: any) => (
                   <div key={slot.id} className="card overflow-hidden border-l-4 border-l-blue-500">
                     <div className="p-4 sm:p-6">
                       {/* Slot Info */}

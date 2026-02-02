@@ -39,34 +39,20 @@ function BrandDashboard() {
     retry: 1,
   });
 
-  // 활성 투표 조회
+  // 활성 투표 조회 (리워드풀 기반)
   const { data: activeVotes, isLoading: votesLoading } = useQuery({
     queryKey: ['active-votes'],
     queryFn: async () => {
-      const [adminRes, fanRes] = await Promise.all([
-        api.getActiveVoteEvents(),
-        api.getActiveFanVotes(),
-      ]);
-      const adminVotes = (adminRes.data || []).map((v: any) => ({
+      const res = await api.getVotes({ status: 'OPEN' });
+      return (res.data || []).map((v: any) => ({
         id: v.id,
         title: v.title,
-        type: 'admin' as const,
-        creatorRole: 'ADMIN' as const,
-        participantCount: v._count?.votes ?? 0,
-        endAt: v.endAt,
-        questionType: v.questionType,
-      }));
-      const fanVotes = (fanRes.data || []).map((v: any) => ({
-        id: v.id,
-        title: v.title,
-        type: 'fan' as const,
-        creatorRole: (v.creatorRole || 'FAN') as 'ADMIN' | 'FAN' | 'BRAND' | 'ATHLETE',
-        participantCount: v._count?.entries ?? 0,
-        endAt: v.endsAt,
-        prizePool: v.prizePool,
-      }));
-      return [...adminVotes, ...fanVotes].sort(
-        (a, b) => new Date(a.endAt).getTime() - new Date(b.endAt).getTime()
+        type: 'vote' as const,
+        participantCount: v._count?.participations ?? 0,
+        endAt: v.closeAt,
+        rewardBudgetEp: v.rewardBudgetEp,
+      })).sort(
+        (a: any, b: any) => new Date(a.endAt).getTime() - new Date(b.endAt).getTime()
       );
     },
     retry: 1,
@@ -428,34 +414,20 @@ function AdminDashboard() {
     queryFn: () => api.getAdminDashboard(),
   });
 
-  // 활성 투표 조회
+  // 활성 투표 조회 (리워드풀 기반)
   const { data: activeVotes } = useQuery({
     queryKey: ['admin-active-votes'],
     queryFn: async () => {
-      const [adminRes, fanRes] = await Promise.all([
-        api.getActiveVoteEvents(),
-        api.getActiveFanVotes(),
-      ]);
-      const adminVotes = (adminRes.data || []).map((v: any) => ({
+      const res = await api.getVotes({ status: 'OPEN' });
+      return (res.data || []).map((v: any) => ({
         id: v.id,
         title: v.title,
-        type: 'admin' as const,
-        creatorRole: 'ADMIN' as const,
-        participantCount: v._count?.votes ?? 0,
-        endAt: v.endAt,
-        questionType: v.questionType,
-      }));
-      const fanVotes = (fanRes.data || []).map((v: any) => ({
-        id: v.id,
-        title: v.title,
-        type: 'fan' as const,
-        creatorRole: (v.creatorRole || 'FAN') as 'ADMIN' | 'FAN' | 'BRAND' | 'ATHLETE',
-        participantCount: v._count?.entries ?? 0,
-        endAt: v.endsAt,
-        prizePool: v.prizePool,
-      }));
-      return [...adminVotes, ...fanVotes].sort(
-        (a, b) => new Date(a.endAt).getTime() - new Date(b.endAt).getTime()
+        type: 'vote' as const,
+        participantCount: v._count?.participations ?? 0,
+        endAt: v.closeAt,
+        rewardBudgetEp: v.rewardBudgetEp,
+      })).sort(
+        (a: any, b: any) => new Date(a.endAt).getTime() - new Date(b.endAt).getTime()
       );
     },
   });

@@ -221,8 +221,8 @@ export function Inventory() {
                           <Calendar className="w-5 h-5 text-emerald-600" />
                         </div>
                         <div>
-                          <p className="font-medium text-slate-900">{slot.slotTemplate?.name}</p>
-                          <p className="text-sm text-slate-500">{slot.slotTemplate?.bodyPart}</p>
+                          <p className="font-medium text-slate-900">{slot.slotTemplate?.nameKr || slot.slotTemplate?.name}</p>
+                          <p className="text-sm text-slate-500">{slot.slotTemplate?.code}</p>
                         </div>
                       </div>
                     </td>
@@ -337,9 +337,9 @@ function SlotCard({ slot, onSelect, formatCurrency, formatDate }: SlotCardProps)
         <div className="flex items-start justify-between mb-2 sm:mb-3">
           <div>
             <h3 className="font-semibold text-slate-900 group-hover:text-emerald-600 transition-colors text-sm sm:text-base">
-              {slot.slotTemplate?.name}
+              {slot.slotTemplate?.nameKr || slot.slotTemplate?.name}
             </h3>
-            <p className="text-xs sm:text-sm text-slate-500">{slot.slotTemplate?.bodyPart}</p>
+            <p className="text-xs sm:text-sm text-slate-500">{slot.slotTemplate?.code}</p>
           </div>
           {slot.slotTemplate?.duration && (
             <span className="badge badge-info text-xs">{slot.slotTemplate.duration}초</span>

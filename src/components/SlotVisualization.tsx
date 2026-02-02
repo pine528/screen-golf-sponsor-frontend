@@ -21,14 +21,29 @@ export function SlotVisualization({
 }: SlotVisualizationProps) {
   const normalizedPart = bodyPart?.toUpperCase().replace(/-/g, '_') || '';
   const isCap = normalizedPart.startsWith('CAP') || normalizedPart.includes('CAP');
+  const isPants = normalizedPart.startsWith('PANTS') || normalizedPart.includes('PANTS');
 
-  return isCap ? (
-    <CapVisualization
-      bodyPart={normalizedPart}
-      brandLogo={brandLogo}
-      className={className}
-    />
-  ) : (
+  if (isPants) {
+    return (
+      <PantsVisualization
+        bodyPart={normalizedPart}
+        brandLogo={brandLogo}
+        className={className}
+      />
+    );
+  }
+
+  if (isCap) {
+    return (
+      <CapVisualization
+        bodyPart={normalizedPart}
+        brandLogo={brandLogo}
+        className={className}
+      />
+    );
+  }
+
+  return (
     <ShirtVisualization
       bodyPart={normalizedPart}
       brandLogo={brandLogo}
@@ -50,6 +65,30 @@ function getPosition(bodyPart: string): {
   labelY: number;
 } {
   const part = bodyPart.toUpperCase();
+
+  // 칼라 (COLLAR) - 셔츠 상단 칼라 부분
+  if (part.includes('COLLAR')) {
+    if (part.includes('LEFT') || part.endsWith('_L')) {
+      // 입은 사람 기준 왼쪽 칼라 = 화면상 오른쪽
+      return { key: 'COLLAR_L', x: 175, y: 72, label: '칼라 좌', labelX: 175, labelY: 55 };
+    }
+    if (part.includes('RIGHT') || part.endsWith('_R')) {
+      // 입은 사람 기준 오른쪽 칼라 = 화면상 왼쪽
+      return { key: 'COLLAR_R', x: 125, y: 72, label: '칼라 우', labelX: 125, labelY: 55 };
+    }
+  }
+
+  // 등판 어깨 (BACK_SHOULDER) - 등쪽 어깨 부분
+  if (part.includes('BACK_SHOULDER') || part.includes('BACKSHOULDER')) {
+    if (part.includes('LEFT') || part.endsWith('_L')) {
+      // 입은 사람 기준 왼쪽 = 화면상 오른쪽
+      return { key: 'BACK_SHOULDER_L', x: 195, y: 100, label: '등판 어깨 좌', labelX: 195, labelY: 145 };
+    }
+    if (part.includes('RIGHT') || part.endsWith('_R')) {
+      // 입은 사람 기준 오른쪽 = 화면상 왼쪽
+      return { key: 'BACK_SHOULDER_R', x: 105, y: 100, label: '등판 어깨 우', labelX: 105, labelY: 145 };
+    }
+  }
 
   // 소매 (SLEEVE) - 입은 사람 기준 (화면상 반대)
   if (part.includes('SLEEVE')) {
@@ -280,9 +319,11 @@ function ShirtVisualization({
 /**
  * 모자 bodyPart에서 위치 판별
  */
-function getCapPosition(bodyPart: string): 'front' | 'back' | 'left' | 'right' {
+function getCapPosition(bodyPart: string): 'front' | 'back' | 'left' | 'right' | 'brim_top' {
   const part = bodyPart.toUpperCase();
 
+  // BRIM_TOP은 FRONT보다 먼저 체크해야 함 (CAP_BRIM_TOP 등)
+  if (part.includes('BRIM') && part.includes('TOP')) return 'brim_top';
   if (part.includes('FRONT')) return 'front';
   if (part.includes('BACK')) return 'back';
   if (part.includes('LEFT') || part.includes('SIDE_L')) return 'left';
@@ -308,6 +349,10 @@ function CapVisualization({
 
   if (position === 'front') {
     return <CapFrontView brandLogo={brandLogo} className={className} />;
+  }
+
+  if (position === 'brim_top') {
+    return <CapBrimTopView brandLogo={brandLogo} className={className} />;
   }
 
   return (
@@ -624,6 +669,307 @@ function CapBackView({
         모자 후면
       </div>
 
+      <div className="mt-3 flex items-center justify-center gap-4 text-xs text-slate-500">
+        <div className="flex items-center gap-1.5">
+          <div className="w-4 h-3 border-2 border-emerald-500 border-dashed rounded bg-emerald-500/10" />
+          <span>부착 위치</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 모자 챙 상단 뷰 (정면에서 살짝 위에서 본 시점 - 챙이 잘 보이게)
+ */
+function CapBrimTopView({
+  brandLogo,
+  className,
+}: Omit<SlotVisualizationProps, 'bodyPart' | 'brandName'>) {
+  return (
+    <div className={cn('relative flex flex-col items-center', className)}>
+      <div
+        className="relative bg-slate-50 rounded-2xl p-6"
+        style={{ maxWidth: '300px' }}
+      >
+        <svg viewBox="0 0 200 160" className="w-full h-auto">
+          <defs>
+            <linearGradient id="capBrimGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#f8fafc" />
+              <stop offset="100%" stopColor="#e2e8f0" />
+            </linearGradient>
+            <filter id="capBrimShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="3" stdDeviation="3" floodOpacity="0.15" />
+            </filter>
+          </defs>
+
+          <g filter="url(#capBrimShadow)">
+            {/* 모자 크라운 */}
+            <path
+              d="M30 70 Q30 20 100 15 Q170 20 170 70 L170 85 L30 85 Z"
+              fill="url(#capBrimGradient)"
+              stroke="#94a3b8"
+              strokeWidth="2"
+            />
+
+            {/* 모자 챙 - 정면에서 보이는 두꺼운 챙 (위에서 보이는 면 강조) */}
+            <path
+              d="M20 85 Q20 75 30 75 L170 75 Q180 75 180 85 L180 95 Q100 110 20 95 Z"
+              fill="#e2e8f0"
+              stroke="#94a3b8"
+              strokeWidth="2"
+            />
+
+            {/* 챙 상단면 (로고 부착 영역) */}
+            <path
+              d="M25 80 L175 80 Q180 85 175 90 Q100 102 25 90 Q20 85 25 80 Z"
+              fill="url(#capBrimGradient)"
+              stroke="#94a3b8"
+              strokeWidth="1"
+            />
+
+            {/* 챙 끝단 곡선 */}
+            <path
+              d="M20 95 Q100 115 180 95"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="1.5"
+            />
+
+            {/* 모자 꼭대기 버튼 */}
+            <circle cx="100" cy="18" r="6" fill="#cbd5e1" stroke="#94a3b8" strokeWidth="1" />
+
+            {/* 패널 분리선 */}
+            <path d="M100 25 L100 70" fill="none" stroke="#e2e8f0" strokeWidth="1" />
+            <path d="M65 30 L55 75" fill="none" stroke="#e2e8f0" strokeWidth="1" />
+            <path d="M135 30 L145 75" fill="none" stroke="#e2e8f0" strokeWidth="1" />
+
+            {/* 통풍구멍 */}
+            <circle cx="60" cy="45" r="3" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
+            <circle cx="140" cy="45" r="3" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
+          </g>
+
+          {/* 부착 위치 (챙 상단면) */}
+          <rect
+            x="50"
+            y="78"
+            width="100"
+            height="18"
+            fill="rgba(16, 185, 129, 0.15)"
+            stroke="#10b981"
+            strokeWidth="2"
+            strokeDasharray="5,3"
+            rx="3"
+          />
+
+          {/* 로고 */}
+          {brandLogo && (
+            <image
+              href={brandLogo}
+              x="60"
+              y="80"
+              width="80"
+              height="14"
+              preserveAspectRatio="xMidYMid meet"
+            />
+          )}
+        </svg>
+      </div>
+
+      <div className="mt-4 px-6 py-2 bg-emerald-500 text-white text-sm font-medium rounded-full">
+        모자 챙 상단
+      </div>
+
+      <div className="mt-3 flex items-center justify-center gap-4 text-xs text-slate-500">
+        <div className="flex items-center gap-1.5">
+          <div className="w-4 h-3 border-2 border-emerald-500 border-dashed rounded bg-emerald-500/10" />
+          <span>부착 위치</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 바지 bodyPart에서 위치 판별
+ */
+function getPantsPosition(bodyPart: string): {
+  key: string;
+  x: number;
+  y: number;
+  label: string;
+} {
+  const part = bodyPart.toUpperCase();
+
+  if (part.includes('HIP')) {
+    // 힙 사이드 포켓 위치 (오른쪽 엉덩이 옆면)
+    return { key: 'PANTS_HIP', x: 150, y: 85, label: '바지 힙 (측면)' };
+  }
+  if (part.includes('THIGH')) {
+    return { key: 'PANTS_THIGH', x: 155, y: 160, label: '바지 허벅지' };
+  }
+
+  // 기본값: 힙
+  return { key: 'PANTS_HIP', x: 150, y: 85, label: '바지 힙 (측면)' };
+}
+
+/**
+ * 골프 바지 시각화
+ */
+function PantsVisualization({
+  bodyPart,
+  brandLogo,
+  className,
+}: Omit<SlotVisualizationProps, 'brandName'>) {
+  const pos = getPantsPosition(bodyPart || '');
+  const isHip = pos.key === 'PANTS_HIP';
+
+  return (
+    <div className={cn('relative flex flex-col items-center', className)}>
+      <div
+        className="relative bg-slate-50 rounded-2xl p-4"
+        style={{ maxWidth: '320px' }}
+      >
+        <svg
+          viewBox="0 0 200 280"
+          className="w-full h-auto"
+        >
+          {/* 그림자 효과 */}
+          <defs>
+            <filter id="pantsShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="2" dy="4" stdDeviation="4" floodOpacity="0.1" />
+            </filter>
+            <linearGradient id="pantsGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#f1f5f9" />
+              <stop offset="100%" stopColor="#e2e8f0" />
+            </linearGradient>
+          </defs>
+
+          <g filter="url(#pantsShadow)">
+            {/* 허리 밴드 */}
+            <path
+              d="M40 25 L160 25 L160 45 L40 45 Z"
+              fill="#cbd5e1"
+              stroke="#94a3b8"
+              strokeWidth="2"
+            />
+
+            {/* 벨트 루프들 */}
+            <rect x="55" y="22" width="8" height="26" fill="#94a3b8" rx="1" />
+            <rect x="95" y="22" width="8" height="26" fill="#94a3b8" rx="1" />
+            <rect x="135" y="22" width="8" height="26" fill="#94a3b8" rx="1" />
+
+            {/* 왼쪽 다리 */}
+            <path
+              d="M40 45 L45 260 L95 260 L100 120 L100 45 Z"
+              fill="url(#pantsGradient)"
+              stroke="#94a3b8"
+              strokeWidth="2"
+            />
+
+            {/* 오른쪽 다리 */}
+            <path
+              d="M100 45 L100 120 L105 260 L155 260 L160 45 Z"
+              fill="url(#pantsGradient)"
+              stroke="#94a3b8"
+              strokeWidth="2"
+            />
+
+            {/* 지퍼 라인 */}
+            <line x1="100" y1="45" x2="100" y2="90" stroke="#cbd5e1" strokeWidth="2" />
+
+            {/* 앞주머니 (왼쪽) */}
+            <path
+              d="M45 55 Q55 65 60 90 L50 90 Q45 70 45 55"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="1.5"
+            />
+
+            {/* 앞주머니 (오른쪽) */}
+            <path
+              d="M155 55 Q145 65 140 90 L150 90 Q155 70 155 55"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="1.5"
+            />
+
+            {/* 사이드 포켓 라인 (오른쪽) */}
+            <path
+              d="M155 55 L155 110"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="1.5"
+            />
+
+            {/* 무릎 부분 라인 */}
+            <path
+              d="M50 180 Q70 185 90 180"
+              fill="none"
+              stroke="#e2e8f0"
+              strokeWidth="1"
+            />
+            <path
+              d="M110 180 Q130 185 150 180"
+              fill="none"
+              stroke="#e2e8f0"
+              strokeWidth="1"
+            />
+
+            {/* 하단 밑단 */}
+            <path d="M45 255 Q70 260 95 255" fill="none" stroke="#cbd5e1" strokeWidth="1.5" />
+            <path d="M105 255 Q130 260 155 255" fill="none" stroke="#cbd5e1" strokeWidth="1.5" />
+          </g>
+
+          {/* 부착 위치 표시 영역 */}
+          {isHip ? (
+            // 힙 측면 영역 (오른쪽 엉덩이 옆)
+            <rect
+              x={pos.x - 25}
+              y={pos.y - 20}
+              width="45"
+              height="40"
+              fill="rgba(16, 185, 129, 0.15)"
+              stroke="#10b981"
+              strokeWidth="2"
+              strokeDasharray="6,3"
+              rx="6"
+            />
+          ) : (
+            // 허벅지 측면 영역
+            <rect
+              x={pos.x - 20}
+              y={pos.y - 30}
+              width="40"
+              height="55"
+              fill="rgba(16, 185, 129, 0.15)"
+              stroke="#10b981"
+              strokeWidth="2"
+              strokeDasharray="6,3"
+              rx="6"
+            />
+          )}
+
+          {/* 로고 */}
+          {brandLogo && (
+            <image
+              href={brandLogo}
+              x={isHip ? pos.x - 20 : pos.x - 15}
+              y={isHip ? pos.y - 15 : pos.y - 25}
+              width={isHip ? 35 : 30}
+              height={isHip ? 30 : 45}
+              preserveAspectRatio="xMidYMid meet"
+            />
+          )}
+        </svg>
+      </div>
+
+      {/* 위치 라벨 */}
+      <div className="mt-4 px-6 py-2 bg-emerald-500 text-white text-sm font-medium rounded-full">
+        {pos.label}
+      </div>
+
+      {/* 범례 */}
       <div className="mt-3 flex items-center justify-center gap-4 text-xs text-slate-500">
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-3 border-2 border-emerald-500 border-dashed rounded bg-emerald-500/10" />
