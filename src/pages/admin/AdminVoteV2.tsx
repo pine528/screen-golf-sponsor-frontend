@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { Layout } from '../../components/Layout';
 import RewardPoolStatus from '../../components/RewardPoolStatus';
 
 interface VoteV2 {
@@ -239,6 +240,7 @@ export default function AdminVoteV2() {
   };
 
   return (
+    <Layout>
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Vote V2 관리</h1>
@@ -542,5 +544,6 @@ export default function AdminVoteV2() {
         </div>
       )}
     </div>
+    </Layout>
   );
 }
