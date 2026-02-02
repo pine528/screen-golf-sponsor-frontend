@@ -51,13 +51,15 @@ function useCounter(end: number, duration: number = 2000) {
   return count;
 }
 
-// Live auction data
-const liveAuctions = [
-  { id: 1, slot: 'CHEST_L', player: '김태훈', price: 450000, change: '+12%', hot: true },
-  { id: 2, slot: 'CAP_SIDE_L', player: '이수진', price: 320000, change: '+8%', hot: false },
-  { id: 3, slot: 'CHEST_R', player: '박민석', price: 380000, change: '+15%', hot: true },
-  { id: 4, slot: 'SLEEVE_R', player: '최유리', price: 280000, change: '+5%', hot: false },
-];
+// Live auction interface
+interface LiveAuction {
+  id: string;
+  slot: string;
+  player: string;
+  price: number;
+  endAt: string;
+  bidCount: number;
+}
 
 // 팬 투표 개설자 역할 라벨
 const CREATOR_ROLE_LABELS: Record<string, { label: string; color: string }> = {
@@ -90,6 +92,24 @@ export function Home() {
       );
     },
     staleTime: 60000,
+  });
+
+  // 실시간 경매 조회
+  const { data: liveAuctions } = useQuery({
+    queryKey: ['home-live-auctions'],
+    queryFn: async () => {
+      const res = await api.getAuctions({ status: 'LIVE', pageSize: 4 });
+      return (res.data || []).map((a: any) => ({
+        id: a.id,
+        slot: a.slotInstance?.slotTemplate?.code || 'SLOT',
+        player: a.slotInstance?.athlete?.name || '선수',
+        price: a.currentPrice || a.slotInstance?.reservePrice || 0,
+        endAt: a.endAt,
+        bidCount: a._count?.bids ?? 0,
+      })) as LiveAuction[];
+    },
+    staleTime: 30000,
+    refetchInterval: 30000, // 30초마다 갱신
   });
 
   const stats = [
@@ -135,7 +155,7 @@ export function Home() {
 
   useEffect(() => {
     const auctionInterval = setInterval(() => {
-      setCurrentAuction((prev) => (prev + 1) % liveAuctions.length);
+      setCurrentAuction((prev) => (liveAuctions && liveAuctions.length > 0) ? (prev + 1) % liveAuctions.length : 0);
     }, 3000);
 
     const featureInterval = setInterval(() => {
@@ -146,7 +166,7 @@ export function Home() {
       clearInterval(auctionInterval);
       clearInterval(featureInterval);
     };
-  }, []);
+  }, [liveAuctions]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -358,55 +378,72 @@ export function Home() {
                 </div>
 
                 <div className="space-y-2 sm:space-y-3">
-                  {liveAuctions.map((auction, i) => (
-                    <div
-                      key={auction.id}
-                      className={`relative p-3 sm:p-4 rounded-xl transition-all duration-500 ${
-                        i === currentAuction
-                          ? 'bg-gradient-to-r from-emerald-500/10 to-teal-500/5 border border-emerald-500/30'
-                          : 'bg-slate-50 border border-transparent hover:bg-slate-100'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 sm:gap-4">
-                          <div className={`w-12 h-10 sm:w-14 sm:h-12 px-1 rounded-xl flex items-center justify-center overflow-hidden ${
-                            i === currentAuction
-                              ? 'bg-gradient-to-br from-emerald-500 to-teal-500'
-                              : 'bg-slate-200'
-                          }`}>
-                            <span className={`text-[8px] sm:text-[10px] font-bold truncate ${i === currentAuction ? 'text-white' : 'text-slate-600'}`}>{auction.slot}</span>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-slate-900 text-sm sm:text-base">{auction.player} 프로</p>
-                            <p className="text-xs sm:text-sm text-slate-500">상의 슬롯</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-slate-900 text-sm sm:text-base">₩{auction.price.toLocaleString()}</p>
-                          <p className={`text-xs sm:text-sm font-medium ${auction.hot ? 'text-emerald-600' : 'text-slate-500'}`}>
-                            {auction.change}
-                          </p>
-                        </div>
-                      </div>
-                      {auction.hot && i === currentAuction && (
-                        <div className="absolute -top-1 -right-1">
-                          <span className="flex h-4 w-4 sm:h-5 sm:w-5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-4 w-4 sm:h-5 sm:w-5 bg-emerald-500 items-center justify-center">
-                              <Zap className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
-                            </span>
-                          </span>
-                        </div>
-                      )}
+                  {(!liveAuctions || liveAuctions.length === 0) ? (
+                    <div className="text-center py-8 text-slate-500">
+                      <Gavel className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">현재 진행 중인 경매가 없습니다</p>
+                      <Link to="/auctions" className="text-emerald-600 text-sm hover:underline mt-2 inline-block">
+                        경매 목록 보기 →
+                      </Link>
                     </div>
-                  ))}
+                  ) : (
+                    liveAuctions.map((auction, i) => (
+                      <Link
+                        to={`/auctions/${auction.id}`}
+                        key={auction.id}
+                        className={`relative block p-3 sm:p-4 rounded-xl transition-all duration-500 ${
+                          i === currentAuction
+                            ? 'bg-gradient-to-r from-emerald-500/10 to-teal-500/5 border border-emerald-500/30'
+                            : 'bg-slate-50 border border-transparent hover:bg-slate-100'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 sm:gap-4">
+                            <div className={`w-12 h-10 sm:w-14 sm:h-12 px-1 rounded-xl flex items-center justify-center overflow-hidden ${
+                              i === currentAuction
+                                ? 'bg-gradient-to-br from-emerald-500 to-teal-500'
+                                : 'bg-slate-200'
+                            }`}>
+                              <span className={`text-[8px] sm:text-[10px] font-bold truncate ${i === currentAuction ? 'text-white' : 'text-slate-600'}`}>{auction.slot}</span>
+                            </div>
+                            <div>
+                              <p className="font-semibold text-slate-900 text-sm sm:text-base">{auction.player} 프로</p>
+                              <p className="text-xs sm:text-sm text-slate-500">{auction.bidCount > 0 ? `${auction.bidCount}건 입찰` : '입찰 대기'}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-slate-900 text-sm sm:text-base">₩{auction.price.toLocaleString()}</p>
+                            <p className="text-xs sm:text-sm font-medium text-emerald-600">
+                              {formatTimeRemaining(auction.endAt)}
+                            </p>
+                          </div>
+                        </div>
+                        {auction.bidCount > 0 && i === currentAuction && (
+                          <div className="absolute -top-1 -right-1">
+                            <span className="flex h-4 w-4 sm:h-5 sm:w-5">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-4 w-4 sm:h-5 sm:w-5 bg-emerald-500 items-center justify-center">
+                                <Zap className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
+                              </span>
+                            </span>
+                          </div>
+                        )}
+                      </Link>
+                    ))
+                  )}
                 </div>
 
                 <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-slate-500 text-xs sm:text-sm">다음 마감까지</span>
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-lg sm:text-xl font-bold text-slate-900">02:34:15</span>
-                  </div>
+                  <Link to="/auctions" className="text-slate-500 text-xs sm:text-sm hover:text-emerald-600">
+                    전체 경매 보기 →
+                  </Link>
+                  {liveAuctions && liveAuctions.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-lg sm:text-xl font-bold text-slate-900">
+                        {formatTimeRemaining(liveAuctions[0].endAt)}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
