@@ -61,6 +61,7 @@ export function Register() {
   const onSubmit = async (data: RegisterForm) => {
     try {
       setError(null);
+
       await registerUser({
         email: data.email,
         password: data.password,

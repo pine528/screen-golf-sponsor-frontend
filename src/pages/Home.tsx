@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Hexagon,
   Zap,
   Shield,
   ArrowRight,
@@ -183,9 +182,7 @@ export function Home() {
           <div className="flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
               <div className="relative">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/25 group-hover:shadow-emerald-500/40 transition-all">
-                  <Hexagon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.5} />
-                </div>
+                <img src="/logo-48.png" alt="SPONPIK" className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl shadow-lg shadow-emerald-500/25 group-hover:shadow-emerald-500/40 transition-all" />
               </div>
               <span className="text-lg sm:text-xl font-bold text-slate-900">SPONPIK</span>
             </Link>
@@ -652,8 +649,8 @@ export function Home() {
                 className="group card p-4 sm:p-6 hover:border-emerald-500/30 transition-all duration-300"
               >
                 <div className="flex items-start justify-between mb-4 sm:mb-6">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center group-hover:border-emerald-500/50 transition-colors">
-                    <span className="text-xs sm:text-sm font-bold text-emerald-600">{slot.code}</span>
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center group-hover:border-emerald-500/50 transition-colors overflow-hidden p-1">
+                    <span className="text-[10px] sm:text-xs font-bold text-emerald-600 text-center leading-tight break-all">{slot.code}</span>
                   </div>
                   {slot.hot && (
                     <span className="badge badge-warning text-[10px] sm:text-xs">
@@ -824,9 +821,7 @@ export function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12 mb-8 sm:mb-12">
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
-                  <Hexagon className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.5} />
-                </div>
+                <img src="/logo-48.png" alt="SPONPIK" className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl" />
                 <span className="text-base sm:text-lg font-bold text-slate-900">SPONPIK</span>
               </div>
               <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">

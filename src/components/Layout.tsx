@@ -9,7 +9,6 @@ import {
   LogOut,
   Settings,
   LayoutDashboard,
-  Hexagon,
   Wallet,
   ChevronRight,
   Menu,
@@ -305,9 +304,7 @@ export function Layout({ children }: LayoutProps) {
       {user && (
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/25">
-            <Hexagon className="w-4 h-4 text-white" strokeWidth={2.5} />
-          </div>
+          <img src="/logo-48.png" alt="SPONPIK" className="w-8 h-8 rounded-lg" />
           <span className="font-bold text-slate-900 tracking-tight">SPONPIK</span>
         </Link>
         <div className="flex items-center gap-2">
@@ -359,11 +356,7 @@ export function Layout({ children }: LayoutProps) {
           {/* Logo */}
           <div className="flex items-center justify-between h-14 lg:h-16 px-4 lg:px-6 border-b border-slate-200">
             <Link to="/" className="flex items-center gap-3" onClick={closeMobileMenu}>
-              <div className="relative">
-                <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/25">
-                  <Hexagon className="w-4 h-4 text-white" strokeWidth={2.5} />
-                </div>
-              </div>
+              <img src="/logo-48.png" alt="SPONPIK" className="w-9 h-9 rounded-xl shadow-lg" />
               <span className="font-bold text-slate-900 tracking-tight">SPONPIK</span>
             </Link>
             <button
@@ -508,9 +501,7 @@ export function Layout({ children }: LayoutProps) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <Link to="/" className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/25">
-                  <Hexagon className="w-4 h-4 text-white" strokeWidth={2.5} />
-                </div>
+                <img src="/logo-48.png" alt="SPONPIK" className="w-9 h-9 rounded-xl shadow-lg" />
                 <span className="font-bold text-slate-900 tracking-tight text-lg">SPONPIK</span>
               </Link>
               <div className="flex items-center gap-3">

@@ -28,6 +28,7 @@ export interface RegisterData {
   bizNo?: string;
   contactName?: string;
   contactPhone?: string;
+  certificationToken?: string; // 본인인증 토큰 (BRAND, ATHLETE, AGENCY 필수)
 }
 
 // Brand Types
