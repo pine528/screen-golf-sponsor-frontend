@@ -155,9 +155,9 @@ export function AdminVodIngest() {
     setVodTitle('');
   };
 
-  const vods = vodsData?.data?.data || [];
-  const events = eventsData?.data?.data || [];
-  const campaigns = campaignsData?.data?.data || [];
+  const vods = vodsData?.data?.vods || vodsData?.data || [];
+  const events = eventsData?.data || [];
+  const campaigns = campaignsData?.data?.campaigns || campaignsData?.data || [];
 
   const filteredVods = vods.filter((vod: any) =>
     vod.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
