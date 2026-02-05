@@ -44,6 +44,8 @@ import {
   Layers,
   PlusCircle,
   ListChecks,
+  Video,
+  ScanLine,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { cn } from '../utils';
@@ -234,6 +236,8 @@ export function Layout({ children }: LayoutProps) {
     { path: '/admin/disputes', label: '분쟁 관리', icon: Flag },
     { path: '/admin/seasons', label: '시즌 관리', icon: Trophy },
     { path: '/admin/exposure', label: '노출 관리', icon: Eye },
+    { path: '/admin/roi/vod', label: 'VOD 관리', icon: Video },
+    { path: '/admin/roi/qa', label: '검출 검수', icon: ScanLine },
     { path: '/admin/ops', label: '운영 도구', icon: Wrench },
     { path: '/admin/reports', label: '통합 리포트', icon: BarChart3 },
     { path: '/admin/settings', label: '설정', icon: Settings },
