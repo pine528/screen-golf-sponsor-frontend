@@ -87,7 +87,7 @@ export function AdminVodIngest() {
   // YouTube 인제스트 mutation
   const youtubeMutation = useMutation({
     mutationFn: (data: { youtubeUrl: string; eventId?: string; campaignId?: string; title?: string }) =>
-      api.post('/roi/admin/vod/youtube', data),
+      api.post('/roi/admin/vod/ingest', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-vods'] });
       setShowYoutubeModal(false);
