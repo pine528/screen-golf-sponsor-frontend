@@ -209,7 +209,7 @@ function BrandDashboard() {
               {activeVotes?.slice(0, 5).map((vote: any) => (
                 <Link
                   key={vote.id}
-                  to={vote.type === 'admin' ? `/fan/votes/${vote.id}` : `/fan/fan-votes/${vote.id}`}
+                  to={`/votes/${vote.id}`}
                   className="p-4 hover:bg-slate-50 flex items-center justify-between transition-colors"
                 >
                   <div>
@@ -509,7 +509,7 @@ function AdminDashboard() {
               <h2 className="text-lg font-semibold text-slate-900">진행 중인 투표</h2>
               <span className="text-sm text-slate-500">({activeVotes?.length || 0}개)</span>
             </div>
-            <Link to="/admin/fan-votes" className="text-sm text-emerald-600 hover:text-emerald-500 flex items-center gap-1">
+            <Link to="/admin/votes" className="text-sm text-emerald-600 hover:text-emerald-500 flex items-center gap-1">
               전체 보기 <ArrowUpRight className="w-4 h-4" />
             </Link>
           </div>
@@ -517,7 +517,7 @@ function AdminDashboard() {
             {activeVotes?.slice(0, 5).map((vote: any) => (
               <Link
                 key={vote.id}
-                to={vote.type === 'admin' ? `/admin/vote-events` : `/admin/fan-votes`}
+                to={`/admin/votes`}
                 className="p-4 hover:bg-slate-50 flex items-center justify-between transition-colors"
               >
                 <div>

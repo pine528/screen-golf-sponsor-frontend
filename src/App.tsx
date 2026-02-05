@@ -49,8 +49,6 @@ import BrandCheckout from './pages/brand/BrandCheckout';
 import BrandSponsoredVotes from './pages/brand/BrandSponsoredVotes';
 import BrandROIDashboard from './pages/brand/BrandROIDashboard';
 import BrandBilling from './pages/brand/BrandBilling';
-import BrandVotes from './pages/brand/BrandVotes';
-import BrandVoteCreate from './pages/brand/BrandVoteCreate';
 import { BrandCreativeApprovals } from './pages/brand/BrandCreativeApprovals';
 import { FanHome, FanLogin, FanRegister, Points, Ranking, Favorites, BrandRegister, Shop, ShopDetail, Orders } from './pages/fan';
 import { AgencyDashboard, AgencyAthleteRegister, AgencyAthletes, AgencyAthleteSearch, AgencySentRequests, AgencyAthleteDetail } from './pages/agency';
@@ -74,6 +72,10 @@ import AdminTaxInvoices from './pages/admin/AdminTaxInvoices';
 import AdminPointWithdrawals from './pages/admin/AdminPointWithdrawals';
 import { AdminCreativeApprovals } from './pages/admin/AdminCreativeApprovals';
 import AdminVotes from './pages/admin/AdminVoteV2';
+import { AdminVodIngest } from './pages/admin/AdminVodIngest';
+import { AdminDetectionQA } from './pages/admin/AdminDetectionQA';
+import { BrandEvidence } from './pages/brand/BrandEvidence';
+import { BrandReports } from './pages/brand/BrandReports';
 import VotesList from './pages/fan/VoteV2List';
 import VotesDetail from './pages/fan/VoteV2Detail';
 import VoteCreate from './pages/fan/VoteCreate';
@@ -380,11 +382,12 @@ function App() {
           </ProtectedRoute>
         }
       />
+      {/* Legacy(구버전) Brand fan-votes 기능 제거: Vote V2(/votes)로 통일 */}
       <Route
         path="/brand/votes"
         element={
           <ProtectedRoute>
-            <BrandVotes />
+            <Navigate to="/votes" replace />
           </ProtectedRoute>
         }
       />
@@ -392,7 +395,7 @@ function App() {
         path="/brand/votes/create"
         element={
           <ProtectedRoute>
-            <BrandVoteCreate />
+            <Navigate to="/votes/create" replace />
           </ProtectedRoute>
         }
       />
@@ -401,6 +404,22 @@ function App() {
         element={
           <ProtectedRoute>
             <BrandCreativeApprovals />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/brand/campaigns/:campaignId/evidence"
+        element={
+          <ProtectedRoute>
+            <BrandEvidence />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/brand/campaigns/:campaignId/reports"
+        element={
+          <ProtectedRoute>
+            <BrandReports />
           </ProtectedRoute>
         }
       />
@@ -727,6 +746,24 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminUsers />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Admin ROI Routes */}
+      <Route
+        path="/admin/roi/vod"
+        element={
+          <ProtectedRoute>
+            <AdminVodIngest />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/roi/qa"
+        element={
+          <ProtectedRoute>
+            <AdminDetectionQA />
           </ProtectedRoute>
         }
       />

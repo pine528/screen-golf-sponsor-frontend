@@ -219,6 +219,8 @@ export function Layout({ children }: LayoutProps) {
     { path: '/admin/reviews', label: '검수 관리', icon: FileText },
     { path: '/admin/votes', label: '투표 관리', icon: Gift },
     { path: '/admin/points', label: '포인트 관리', icon: Coins },
+    { path: '/admin/fee-policies', label: '수수료 정책', icon: Receipt },
+    { path: '/admin/point-withdrawals', label: '포인트 출금', icon: Coins },
     { path: '/admin/creative-approvals', label: '크리에이티브 심사', icon: FileImage },
     { path: '/admin/payments', label: '결제 관리', icon: CreditCard },
     { path: '/admin/finance', label: '재무 콘솔', icon: Wallet },

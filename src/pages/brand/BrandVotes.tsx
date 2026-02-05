@@ -194,7 +194,7 @@ export default function BrandVotes() {
                     )}
                     {(event.status === 'ACTIVE' || event.status === 'CLOSED' || event.status === 'SETTLED') && (
                       <Link
-                        to={`/fan-votes/${event.id}`}
+                        to={`/votes`}
                         className="btn btn-secondary text-sm py-2 px-3"
                       >
                         <Eye className="w-4 h-4 mr-1" />
@@ -203,7 +203,7 @@ export default function BrandVotes() {
                     )}
                     {event.status === 'SETTLED' && (
                       <Link
-                        to={`/fan-votes/${event.id}/result`}
+                        to={`/votes`}
                         className="btn btn-primary text-sm py-2 px-3"
                       >
                         <Trophy className="w-4 h-4 mr-1" />

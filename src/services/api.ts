@@ -61,8 +61,18 @@ class ApiService {
     return response.data;
   }
 
-  async post<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
-    const response = await this.client.post<ApiResponse<T>>(url, data);
+  async post<T = any>(url: string, data?: any, config?: any): Promise<ApiResponse<T>> {
+    const response = await this.client.post<ApiResponse<T>>(url, data, config);
+    return response.data;
+  }
+
+  async put<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
+    const response = await this.client.put<ApiResponse<T>>(url, data);
+    return response.data;
+  }
+
+  async delete<T = any>(url: string): Promise<ApiResponse<T>> {
+    const response = await this.client.delete<ApiResponse<T>>(url);
     return response.data;
   }
 
