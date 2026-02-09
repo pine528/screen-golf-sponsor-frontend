@@ -47,6 +47,7 @@ import {
   Video,
   ScanLine,
   Image,
+  Target,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { cn } from '../utils';
@@ -184,7 +185,9 @@ export function Layout({ children }: LayoutProps) {
     { path: '/brand/sponsored-votes', label: '후원 투표', icon: Heart },
     { path: '/brand/creative-approvals', label: '크리에이티브 승인', icon: FileImage },
     { path: '/brand/reports/roi', label: 'ROI 리포트', icon: TrendingUp },
+    { path: '/brand/slot-analytics', label: '슬롯 분석', icon: BarChart3 },
     { path: '/brand/logo-templates', label: '로고 템플릿', icon: Image },
+    { path: '/brand/roi-settings', label: 'ROI 설정', icon: Settings },
     { path: '/votes', label: '무료 투표', icon: Gift },
     { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
     { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
@@ -238,8 +241,11 @@ export function Layout({ children }: LayoutProps) {
     { path: '/admin/disputes', label: '분쟁 관리', icon: Flag },
     { path: '/admin/seasons', label: '시즌 관리', icon: Trophy },
     { path: '/admin/exposure', label: '노출 관리', icon: Eye },
+    { path: '/admin/roi/campaign-builder', label: 'ROI 캠페인', icon: Target },
     { path: '/admin/roi/vod', label: 'VOD 관리', icon: Video },
     { path: '/admin/roi/qa', label: '검출 검수', icon: ScanLine },
+    { path: '/admin/roi/evidence', label: '증빙 관리', icon: FileImage },
+    { path: '/admin/roi/reports', label: '리포트 관리', icon: FileText },
     { path: '/admin/ops', label: '운영 도구', icon: Wrench },
     { path: '/admin/reports', label: '통합 리포트', icon: BarChart3 },
     { path: '/admin/settings', label: '설정', icon: Settings },

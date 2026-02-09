@@ -77,6 +77,11 @@ import { AdminVodIngest } from './pages/admin/AdminVodIngest';
 import { AdminDetectionQA } from './pages/admin/AdminDetectionQA';
 import { BrandEvidence } from './pages/brand/BrandEvidence';
 import { BrandReports } from './pages/brand/BrandReports';
+import { BrandSlotAnalytics } from './pages/brand/BrandSlotAnalytics';
+import { BrandROISettings } from './pages/brand/BrandROISettings';
+import { AdminEvidenceManager } from './pages/admin/AdminEvidenceManager';
+import { AdminReportTemplates } from './pages/admin/AdminReportTemplates';
+import { AdminCampaignBuilder } from './pages/admin/AdminCampaignBuilder';
 import VotesList from './pages/fan/VoteV2List';
 import VotesDetail from './pages/fan/VoteV2Detail';
 import VoteCreate from './pages/fan/VoteCreate';
@@ -432,6 +437,22 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/brand/slot-analytics"
+        element={
+          <ProtectedRoute>
+            <BrandSlotAnalytics />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/brand/roi-settings"
+        element={
+          <ProtectedRoute>
+            <BrandROISettings />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Fan Routes */}
       {/* /fan, /votes, /votes/:id 비로그인도 접근 가능 (투표 행위는 컴포넌트에서 로그인 체크) */}
@@ -773,6 +794,30 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminDetectionQA />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/roi/evidence"
+        element={
+          <ProtectedRoute>
+            <AdminEvidenceManager />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/roi/reports"
+        element={
+          <ProtectedRoute>
+            <AdminReportTemplates />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/roi/campaign-builder"
+        element={
+          <ProtectedRoute>
+            <AdminCampaignBuilder />
           </ProtectedRoute>
         }
       />
