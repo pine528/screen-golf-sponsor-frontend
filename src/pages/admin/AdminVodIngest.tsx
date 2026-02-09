@@ -417,13 +417,20 @@ export function AdminVodIngest() {
                         </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={cn(
-                          'badge inline-flex items-center gap-1',
-                          statusStyles[vod.status as VodStatus] || statusStyles.PENDING
-                        )}>
-                          {statusIcons[vod.status as VodStatus]}
-                          {statusLabels[vod.status as VodStatus] || '대기'}
-                        </span>
+                        <div>
+                          <span className={cn(
+                            'badge inline-flex items-center gap-1',
+                            statusStyles[vod.status as VodStatus] || statusStyles.PENDING
+                          )}>
+                            {statusIcons[vod.status as VodStatus]}
+                            {statusLabels[vod.status as VodStatus] || '대기'}
+                          </span>
+                          {vod.status === 'FAILED' && vod.errorMessage && (
+                            <p className="text-xs text-red-500 mt-1 max-w-[200px] truncate" title={vod.errorMessage}>
+                              {vod.errorMessage}
+                            </p>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-1">
