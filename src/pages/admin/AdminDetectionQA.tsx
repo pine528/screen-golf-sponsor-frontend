@@ -94,8 +94,35 @@ export function AdminDetectionQA() {
     },
   });
 
-  const exposures = exposuresData?.data?.data || [];
-  const campaigns = campaignsData?.data?.data || [];
+  // 일괄 승인 mutation
+  const bulkApproveMutation = useMutation({
+    mutationFn: (params: { minConfidence?: number; campaignId?: string }) =>
+      api.post('/roi/admin/exposures/bulk-approve', params),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-exposures-qa'] });
+      alert(data?.data?.message || '일괄 승인되었습니다.');
+    },
+    onError: (error: any) => {
+      alert(error.response?.data?.error?.message || '일괄 승인에 실패했습니다.');
+    },
+  });
+
+  const handleBulkApprove = () => {
+    const minConf = prompt('최소 신뢰도 (예: 0.7, 빈칸은 전체):', '0.7');
+    if (minConf === null) return;
+
+    const params: any = {};
+    if (minConf) params.minConfidence = parseFloat(minConf);
+    if (campaignFilter !== 'all') params.campaignId = campaignFilter;
+
+    if (confirm(`조건에 맞는 PENDING 상태 노출을 모두 승인하시겠습니까?`)) {
+      bulkApproveMutation.mutate(params);
+    }
+  };
+
+  const exposures = exposuresData?.data?.items || [];
+  const pagination = exposuresData?.data?.pagination;
+  const campaigns = campaignsData?.data || [];
 
   const statusStyles: Record<ReviewStatus, string> = {
     PENDING: 'bg-amber-100 text-amber-700 border-amber-200',
@@ -247,6 +274,19 @@ export function AdminDetectionQA() {
                 ))}
               </select>
             </div>
+            <div className="flex-1" />
+            <button
+              onClick={handleBulkApprove}
+              disabled={bulkApproveMutation.isPending}
+              className="btn btn-primary flex items-center gap-2"
+            >
+              {bulkApproveMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <CheckCircle className="w-4 h-4" />
+              )}
+              일괄 승인
+            </button>
           </div>
         </div>
 
@@ -431,7 +471,9 @@ export function AdminDetectionQA() {
 
               {/* Pagination */}
               <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200">
-                <p className="text-sm text-slate-600">총 {exposures.length}개 노출</p>
+                <p className="text-sm text-slate-600">
+                  총 {pagination?.total || exposures.length}개 노출
+                </p>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -440,10 +482,13 @@ export function AdminDetectionQA() {
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
-                  <span className="px-3 py-1 text-sm text-slate-600">페이지 {page}</span>
+                  <span className="px-3 py-1 text-sm text-slate-600">
+                    페이지 {page} / {pagination?.totalPages || 1}
+                  </span>
                   <button
                     onClick={() => setPage((p) => p + 1)}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                    disabled={pagination && page >= pagination.totalPages}
+                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>

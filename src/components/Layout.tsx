@@ -46,6 +46,7 @@ import {
   ListChecks,
   Video,
   ScanLine,
+  Image,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { cn } from '../utils';
@@ -183,6 +184,7 @@ export function Layout({ children }: LayoutProps) {
     { path: '/brand/sponsored-votes', label: '후원 투표', icon: Heart },
     { path: '/brand/creative-approvals', label: '크리에이티브 승인', icon: FileImage },
     { path: '/brand/reports/roi', label: 'ROI 리포트', icon: TrendingUp },
+    { path: '/brand/logo-templates', label: '로고 템플릿', icon: Image },
     { path: '/votes', label: '무료 투표', icon: Gift },
     { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
     { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },

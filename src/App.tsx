@@ -50,6 +50,7 @@ import BrandSponsoredVotes from './pages/brand/BrandSponsoredVotes';
 import BrandROIDashboard from './pages/brand/BrandROIDashboard';
 import BrandBilling from './pages/brand/BrandBilling';
 import { BrandCreativeApprovals } from './pages/brand/BrandCreativeApprovals';
+import { BrandLogoTemplates } from './pages/brand/BrandLogoTemplates';
 import { FanHome, FanLogin, FanRegister, Points, Ranking, Favorites, BrandRegister, Shop, ShopDetail, Orders } from './pages/fan';
 import { AgencyDashboard, AgencyAthleteRegister, AgencyAthletes, AgencyAthleteSearch, AgencySentRequests, AgencyAthleteDetail } from './pages/agency';
 import { AthleteAgencyRequests } from './pages/athlete/AthleteAgencyRequests';
@@ -371,6 +372,14 @@ function App() {
         element={
           <ProtectedRoute>
             <BrandROIDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/brand/logo-templates"
+        element={
+          <ProtectedRoute>
+            <BrandLogoTemplates />
           </ProtectedRoute>
         }
       />

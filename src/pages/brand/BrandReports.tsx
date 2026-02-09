@@ -23,15 +23,15 @@ import {
 } from 'lucide-react';
 import { cn } from '../../utils';
 
-type ReportStatus = 'DRAFT' | 'GENERATING' | 'COMPLETED' | 'FAILED';
-type ReportType = 'INTERIM' | 'FINAL';
+type ReportStatus = 'GENERATING' | 'COMPLETED' | 'FAILED';
+type ReportType = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'CAMPAIGN_FINAL'; // 백엔드 RoiReportType과 일치
 
 export function BrandReports() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [reportType, setReportType] = useState<ReportType>('INTERIM');
+  const [reportType, setReportType] = useState<ReportType>('CAMPAIGN_FINAL');
   const [selectedReport, setSelectedReport] = useState<any>(null);
 
   // 캠페인 정보 조회
@@ -58,45 +58,48 @@ export function BrandReports() {
   // 리포트 생성 mutation
   const createReportMutation = useMutation({
     mutationFn: (type: ReportType) =>
-      api.post(`/roi/campaigns/${campaignId}/reports`, { reportType: type }),
-    onSuccess: () => {
+      api.post(`/roi/campaigns/${campaignId}/reports`, { type }), // 백엔드는 'type' 필드 기대
+    onSuccess: (response: any) => {
       queryClient.invalidateQueries({ queryKey: ['campaign-reports'] });
       setShowCreateModal(false);
-      alert('리포트 생성이 시작되었습니다.');
+      if (response?.data?.fileUrl) {
+        alert('리포트가 생성되었습니다. PDF를 다운로드할 수 있습니다.');
+      } else {
+        alert('리포트 생성이 시작되었습니다.');
+      }
     },
     onError: (error: any) => {
       alert(error.response?.data?.error?.message || '리포트 생성에 실패했습니다.');
     },
   });
 
-  const campaign = campaignData?.data?.data;
-  const dashboard = dashboardData?.data?.data;
-  const reports = reportsData?.data?.data || [];
+  const campaign = campaignData?.data;
+  const dashboard = dashboardData?.data;
+  const reports = reportsData?.data?.items || []; // 백엔드는 { items, pagination } 형식 반환
 
   const statusStyles: Record<ReportStatus, string> = {
-    DRAFT: 'bg-slate-100 text-slate-700 border-slate-200',
     GENERATING: 'bg-amber-100 text-amber-700 border-amber-200',
     COMPLETED: 'bg-emerald-100 text-emerald-700 border-emerald-200',
     FAILED: 'bg-red-100 text-red-700 border-red-200',
   };
 
   const statusLabels: Record<ReportStatus, string> = {
-    DRAFT: '초안',
     GENERATING: '생성 중',
     COMPLETED: '완료',
     FAILED: '실패',
   };
 
   const statusIcons: Record<ReportStatus, React.ReactNode> = {
-    DRAFT: <FileText className="w-4 h-4" />,
     GENERATING: <Loader2 className="w-4 h-4 animate-spin" />,
     COMPLETED: <CheckCircle className="w-4 h-4" />,
     FAILED: <XCircle className="w-4 h-4" />,
   };
 
   const typeLabels: Record<ReportType, string> = {
-    INTERIM: '중간 리포트',
-    FINAL: '최종 리포트',
+    DAILY: '일간 리포트',
+    WEEKLY: '주간 리포트',
+    MONTHLY: '월간 리포트',
+    CAMPAIGN_FINAL: '캠페인 최종 리포트',
   };
 
   const formatDuration = (seconds: number) => {
@@ -144,7 +147,7 @@ export function BrandReports() {
                 <div>
                   <p className="text-sm text-slate-600">총 노출 횟수</p>
                   <p className="text-2xl font-bold text-slate-900">
-                    {dashboard.metrics?.totalExposures || 0}
+                    {dashboard.totalExposures || dashboard.metrics?.totalExposures || 0}
                   </p>
                 </div>
               </div>
@@ -157,7 +160,7 @@ export function BrandReports() {
                 <div>
                   <p className="text-sm text-slate-600">총 노출 시간</p>
                   <p className="text-2xl font-bold text-slate-900">
-                    {formatDuration(dashboard.metrics?.totalDurationSec || 0)}
+                    {formatDuration(dashboard.totalDuration || dashboard.metrics?.totalDuration || 0)}
                   </p>
                 </div>
               </div>
@@ -170,7 +173,7 @@ export function BrandReports() {
                 <div>
                   <p className="text-sm text-slate-600">슬롯 수</p>
                   <p className="text-2xl font-bold text-slate-900">
-                    {dashboard.metrics?.uniqueSlots || 0}
+                    {dashboard.metrics?.slotMetrics?.length || Object.keys(dashboard.slotStats || {}).length || 0}
                   </p>
                 </div>
               </div>
@@ -183,7 +186,7 @@ export function BrandReports() {
                 <div>
                   <p className="text-sm text-slate-600">평균 신뢰도</p>
                   <p className="text-2xl font-bold text-slate-900">
-                    {((dashboard.metrics?.avgConfidence || 0) * 100).toFixed(1)}%
+                    {((dashboard.avgConfidence || dashboard.metrics?.avgConfidence || 0) * 100).toFixed(1)}%
                   </p>
                 </div>
               </div>
@@ -192,7 +195,7 @@ export function BrandReports() {
         ) : null}
 
         {/* Slot Performance */}
-        {dashboard?.slotPerformance && dashboard.slotPerformance.length > 0 && (
+        {dashboard?.metrics?.slotMetrics && dashboard.metrics.slotMetrics.length > 0 && (
           <div className="card p-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">슬롯별 성과</h3>
             <div className="overflow-x-auto">
@@ -214,13 +217,13 @@ export function BrandReports() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {dashboard.slotPerformance.map((slot: any, index: number) => (
+                  {dashboard.metrics.slotMetrics.map((slot: any, index: number) => (
                     <tr key={index} className="hover:bg-slate-50">
                       <td className="px-4 py-3 font-medium text-slate-900">
                         {slot.slotType}
                       </td>
                       <td className="px-4 py-3 text-right text-slate-600">
-                        {slot.count}
+                        {slot.exposureCount}
                       </td>
                       <td className="px-4 py-3 text-right text-slate-600">
                         {formatDuration(slot.totalDuration)}
@@ -337,11 +340,11 @@ export function BrandReports() {
                       <td className="px-6 py-4">
                         <span className={cn(
                           'badge',
-                          report.reportType === 'FINAL'
+                          report.type === 'CAMPAIGN_FINAL'
                             ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
                             : 'bg-slate-100 text-slate-700 border-slate-200'
                         )}>
-                          {typeLabels[report.reportType as ReportType] || '리포트'}
+                          {typeLabels[report.type as ReportType] || '리포트'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -353,7 +356,7 @@ export function BrandReports() {
                       <td className="px-6 py-4">
                         <span className={cn(
                           'badge inline-flex items-center gap-1',
-                          statusStyles[report.status as ReportStatus] || statusStyles.DRAFT
+                          statusStyles[report.status as ReportStatus] || 'bg-slate-100 text-slate-700 border-slate-200'
                         )}>
                           {statusIcons[report.status as ReportStatus]}
                           {statusLabels[report.status as ReportStatus] || '초안'}
@@ -361,9 +364,9 @@ export function BrandReports() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          {report.status === 'COMPLETED' && report.pdfUrl && (
+                          {report.status === 'COMPLETED' && report.fileUrl && (
                             <a
-                              href={report.pdfUrl}
+                              href={report.fileUrl}
                               download
                               className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                               title="PDF 다운로드"
@@ -436,27 +439,41 @@ export function BrandReports() {
                     <input
                       type="radio"
                       name="reportType"
-                      value="INTERIM"
-                      checked={reportType === 'INTERIM'}
+                      value="WEEKLY"
+                      checked={reportType === 'WEEKLY'}
                       onChange={(e) => setReportType(e.target.value as ReportType)}
                       className="text-emerald-500 focus:ring-emerald-500"
                     />
                     <div>
-                      <p className="font-medium text-slate-900">중간 리포트</p>
-                      <p className="text-sm text-slate-500">캠페인 진행 중 현황 파악용</p>
+                      <p className="font-medium text-slate-900">주간 리포트</p>
+                      <p className="text-sm text-slate-500">캠페인 진행 중 주간 현황 파악용</p>
                     </div>
                   </label>
                   <label className="flex items-center gap-3 p-4 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
                     <input
                       type="radio"
                       name="reportType"
-                      value="FINAL"
-                      checked={reportType === 'FINAL'}
+                      value="MONTHLY"
+                      checked={reportType === 'MONTHLY'}
                       onChange={(e) => setReportType(e.target.value as ReportType)}
                       className="text-emerald-500 focus:ring-emerald-500"
                     />
                     <div>
-                      <p className="font-medium text-slate-900">최종 리포트</p>
+                      <p className="font-medium text-slate-900">월간 리포트</p>
+                      <p className="text-sm text-slate-500">캠페인 진행 중 월간 현황 파악용</p>
+                    </div>
+                  </label>
+                  <label className="flex items-center gap-3 p-4 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
+                    <input
+                      type="radio"
+                      name="reportType"
+                      value="CAMPAIGN_FINAL"
+                      checked={reportType === 'CAMPAIGN_FINAL'}
+                      onChange={(e) => setReportType(e.target.value as ReportType)}
+                      className="text-emerald-500 focus:ring-emerald-500"
+                    />
+                    <div>
+                      <p className="font-medium text-slate-900">캠페인 최종 리포트</p>
                       <p className="text-sm text-slate-500">캠페인 종료 후 최종 성과 분석</p>
                     </div>
                   </label>
@@ -511,7 +528,7 @@ export function BrandReports() {
                 <div className="p-4 bg-slate-50 rounded-xl">
                   <p className="text-sm text-slate-500 mb-1">유형</p>
                   <p className="font-medium text-slate-900">
-                    {typeLabels[selectedReport.reportType as ReportType]}
+                    {typeLabels[selectedReport.type as ReportType] || '리포트'}
                   </p>
                 </div>
                 <div className="p-4 bg-slate-50 rounded-xl">
@@ -541,20 +558,20 @@ export function BrandReports() {
               </div>
 
               {/* Metrics */}
-              {selectedReport.metrics && (
+              {selectedReport.metricsJson && (
                 <div className="space-y-4">
                   <h3 className="font-semibold text-slate-900">주요 지표</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 bg-emerald-50 rounded-xl">
                       <p className="text-sm text-emerald-600 mb-1">총 노출 횟수</p>
                       <p className="text-2xl font-bold text-emerald-700">
-                        {selectedReport.metrics.totalExposures || 0}
+                        {selectedReport.metricsJson.totalExposures || 0}
                       </p>
                     </div>
                     <div className="p-4 bg-blue-50 rounded-xl">
                       <p className="text-sm text-blue-600 mb-1">총 노출 시간</p>
                       <p className="text-2xl font-bold text-blue-700">
-                        {formatDuration(selectedReport.metrics.totalDurationSec || 0)}
+                        {formatDuration(selectedReport.metricsJson.totalDuration || 0)}
                       </p>
                     </div>
                   </div>
@@ -569,9 +586,9 @@ export function BrandReports() {
               >
                 닫기
               </button>
-              {selectedReport.status === 'COMPLETED' && selectedReport.pdfUrl && (
+              {selectedReport.status === 'COMPLETED' && selectedReport.fileUrl && (
                 <a
-                  href={selectedReport.pdfUrl}
+                  href={selectedReport.fileUrl}
                   download
                   className="btn btn-primary inline-flex items-center gap-2"
                 >

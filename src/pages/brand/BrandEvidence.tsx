@@ -18,7 +18,6 @@ import {
   Package,
   Eye,
   X,
-  MapPin,
 } from 'lucide-react';
 import { cn } from '../../utils';
 
@@ -50,27 +49,24 @@ export function BrandEvidence() {
 
   // Proof Pack 다운로드 mutation
   const downloadPackMutation = useMutation({
-    mutationFn: (evidenceIds?: string[]) =>
-      api.post(`/roi/campaigns/${campaignId}/evidence/proof-pack`, { evidenceIds }, {
-        responseType: 'blob',
-      }),
-    onSuccess: (response) => {
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `proof-pack-${campaignId}.zip`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+    mutationFn: () => api.get(`/roi/campaigns/${campaignId}/evidence/download`),
+    onSuccess: (response: any) => {
+      const fileUrl = response?.data?.fileUrl;
+      if (fileUrl) {
+        // Cloudinary URL로 새 탭에서 다운로드
+        window.open(fileUrl, '_blank');
+      } else {
+        alert('다운로드 URL을 가져오지 못했습니다.');
+      }
     },
     onError: (error: any) => {
       alert(error.response?.data?.error?.message || '다운로드에 실패했습니다.');
     },
   });
 
-  const campaign = campaignData?.data?.data;
-  const evidence = evidenceData?.data?.data || [];
+  const campaign = campaignData?.data;
+  const evidence = evidenceData?.data?.items || [];
+  const pagination = evidenceData?.data?.pagination;
 
   const typeStyles: Record<EvidenceType, string> = {
     SCREENSHOT: 'bg-blue-100 text-blue-700 border-blue-200',
@@ -87,7 +83,17 @@ export function BrandEvidence() {
     CLIP: <Video className="w-4 h-4" />,
   };
 
+  // 백엔드 응답 형식에 맞게 변환 (type → evidenceType 등)
+  const getEvidenceType = (item: any): EvidenceType => item.type || 'SCREENSHOT';
+  const getMediaType = (item: any) => item.type === 'CLIP' ? 'VIDEO' : 'IMAGE';
+  const getMediaUrl = (item: any) => item.fileUrl;
+  const getExposureDuration = (item: any) =>
+    item.exposure?.endTs && item.exposure?.startTs
+      ? item.exposure.endTs - item.exposure.startTs
+      : 0;
+
   const formatDuration = (seconds: number) => {
+    if (!seconds || isNaN(seconds)) return '0초';
     const m = Math.floor(seconds / 60);
     const s = (seconds % 60).toFixed(1);
     if (m > 0) return `${m}분 ${s}초`;
@@ -95,6 +101,7 @@ export function BrandEvidence() {
   };
 
   const formatTimestamp = (seconds: number) => {
+    if (!seconds || isNaN(seconds)) return '0:00';
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = Math.floor(seconds % 60);
@@ -117,16 +124,13 @@ export function BrandEvidence() {
   };
 
   const handleDownload = () => {
-    if (selectedItems.length > 0) {
-      downloadPackMutation.mutate(selectedItems);
-    } else {
-      downloadPackMutation.mutate(undefined);
-    }
+    downloadPackMutation.mutate();
   };
 
-  // Stats
-  const screenshotCount = evidence.filter((e: any) => e.evidenceType === 'SCREENSHOT').length;
-  const clipCount = evidence.filter((e: any) => e.evidenceType === 'CLIP').length;
+  // Stats (현재 페이지 기준)
+  const totalCount = pagination?.total || evidence.length;
+  const screenshotCount = evidence.filter((e: any) => e.type === 'SCREENSHOT').length;
+  const clipCount = evidence.filter((e: any) => e.type === 'CLIP').length;
 
   return (
     <Layout>
@@ -149,7 +153,7 @@ export function BrandEvidence() {
             ) : (
               <Package className="w-4 h-4" />
             )}
-            {selectedItems.length > 0 ? `${selectedItems.length}개 다운로드` : '전체 Proof Pack'}
+            전체 Proof Pack 다운로드
           </button>
         </div>
 
@@ -162,7 +166,7 @@ export function BrandEvidence() {
               </div>
               <div>
                 <p className="text-sm text-slate-600">전체 증빙</p>
-                <p className="text-2xl font-bold text-slate-900">{evidence.length}</p>
+                <p className="text-2xl font-bold text-slate-900">{totalCount}</p>
               </div>
             </div>
           </div>
@@ -246,15 +250,15 @@ export function BrandEvidence() {
                   className="aspect-video bg-slate-900 relative group"
                   onClick={() => setSelectedEvidence(item)}
                 >
-                  {item.thumbnailUrl ? (
+                  {getMediaType(item) === 'IMAGE' && getMediaUrl(item) ? (
                     <img
-                      src={item.thumbnailUrl}
+                      src={getMediaUrl(item)}
                       alt="Evidence thumbnail"
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      {item.mediaType === 'VIDEO' ? (
+                      {getMediaType(item) === 'VIDEO' ? (
                         <Video className="w-12 h-12 text-slate-600" />
                       ) : (
                         <Image className="w-12 h-12 text-slate-600" />
@@ -271,15 +275,15 @@ export function BrandEvidence() {
                   <div className="absolute top-2 left-2">
                     <span className={cn(
                       'badge inline-flex items-center gap-1 text-xs',
-                      typeStyles[item.evidenceType as EvidenceType]
+                      typeStyles[getEvidenceType(item)]
                     )}>
-                      {typeIcons[item.evidenceType as EvidenceType]}
-                      {typeLabels[item.evidenceType as EvidenceType]}
+                      {typeIcons[getEvidenceType(item)]}
+                      {typeLabels[getEvidenceType(item)]}
                     </span>
                   </div>
 
                   {/* Play Icon for Video */}
-                  {item.mediaType === 'VIDEO' && (
+                  {getMediaType(item) === 'VIDEO' && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center">
                         <Play className="w-6 h-6 text-slate-900 ml-1" />
@@ -296,7 +300,7 @@ export function BrandEvidence() {
                         {item.exposure?.slotType || 'Unknown Slot'}
                       </p>
                       <p className="text-sm text-slate-500 truncate">
-                        {item.exposure?.vod?.title || 'VOD'}
+                        {item.exposure?.vodAsset?.fileName || 'VOD'}
                       </p>
                     </div>
                     <button
@@ -320,12 +324,12 @@ export function BrandEvidence() {
                   <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      <span>{formatTimestamp(item.exposure?.startTime || 0)}</span>
+                      <span>{formatTimestamp(item.exposure?.startTs || 0)}</span>
                     </div>
-                    {item.exposure?.duration && (
+                    {getExposureDuration(item) > 0 && (
                       <div className="flex items-center gap-1">
                         <Play className="w-3 h-3" />
-                        <span>{formatDuration(item.exposure.duration)}</span>
+                        <span>{formatDuration(getExposureDuration(item))}</span>
                       </div>
                     )}
                   </div>
@@ -338,7 +342,9 @@ export function BrandEvidence() {
         {/* Pagination */}
         {evidence.length > 0 && (
           <div className="flex items-center justify-between">
-            <p className="text-sm text-slate-600">총 {evidence.length}개 증빙</p>
+            <p className="text-sm text-slate-600">
+              총 {pagination?.total || evidence.length}개 증빙
+            </p>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -347,10 +353,13 @@ export function BrandEvidence() {
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <span className="px-3 py-1 text-sm text-slate-600">페이지 {page}</span>
+              <span className="px-3 py-1 text-sm text-slate-600">
+                페이지 {page} / {pagination?.totalPages || 1}
+              </span>
               <button
                 onClick={() => setPage((p) => p + 1)}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                disabled={pagination && page >= pagination.totalPages}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -378,16 +387,16 @@ export function BrandEvidence() {
             <div className="p-6 space-y-6">
               {/* Media */}
               <div className="aspect-video bg-slate-900 rounded-xl overflow-hidden">
-                {selectedEvidence.mediaType === 'VIDEO' ? (
+                {getMediaType(selectedEvidence) === 'VIDEO' ? (
                   <video
-                    src={selectedEvidence.mediaUrl}
+                    src={getMediaUrl(selectedEvidence)}
                     controls
                     autoPlay
                     className="w-full h-full object-contain"
                   />
                 ) : (
                   <img
-                    src={selectedEvidence.mediaUrl}
+                    src={getMediaUrl(selectedEvidence)}
                     alt="Evidence"
                     className="w-full h-full object-contain"
                   />
@@ -399,9 +408,9 @@ export function BrandEvidence() {
                 <div className="p-4 bg-slate-50 rounded-xl">
                   <p className="text-sm text-slate-500 mb-1">유형</p>
                   <div className="flex items-center gap-2">
-                    {typeIcons[selectedEvidence.evidenceType as EvidenceType]}
+                    {typeIcons[getEvidenceType(selectedEvidence)]}
                     <span className="font-medium text-slate-900">
-                      {typeLabels[selectedEvidence.evidenceType as EvidenceType]}
+                      {typeLabels[getEvidenceType(selectedEvidence)]}
                     </span>
                   </div>
                 </div>
@@ -414,32 +423,16 @@ export function BrandEvidence() {
                 <div className="p-4 bg-slate-50 rounded-xl">
                   <p className="text-sm text-slate-500 mb-1">타임코드</p>
                   <p className="font-medium text-slate-900 font-mono">
-                    {formatTimestamp(selectedEvidence.exposure?.startTime || 0)} - {formatTimestamp(selectedEvidence.exposure?.endTime || 0)}
+                    {formatTimestamp(selectedEvidence.exposure?.startTs || 0)} - {formatTimestamp(selectedEvidence.exposure?.endTs || 0)}
                   </p>
                 </div>
                 <div className="p-4 bg-slate-50 rounded-xl">
                   <p className="text-sm text-slate-500 mb-1">노출 시간</p>
                   <p className="font-medium text-slate-900">
-                    {formatDuration(selectedEvidence.exposure?.duration || 0)}
+                    {formatDuration(getExposureDuration(selectedEvidence))}
                   </p>
                 </div>
               </div>
-
-              {/* VOD Info */}
-              {selectedEvidence.exposure?.vod && (
-                <div className="p-4 bg-slate-50 rounded-xl">
-                  <p className="text-sm text-slate-500 mb-2">VOD 정보</p>
-                  <p className="font-medium text-slate-900">
-                    {selectedEvidence.exposure.vod.title}
-                  </p>
-                  {selectedEvidence.exposure.vod.event && (
-                    <div className="flex items-center gap-1 mt-1 text-sm text-slate-600">
-                      <MapPin className="w-4 h-4" />
-                      <span>{selectedEvidence.exposure.vod.event.name}</span>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
 
             <div className="p-6 border-t border-slate-200 flex justify-between">
@@ -450,8 +443,10 @@ export function BrandEvidence() {
                 닫기
               </button>
               <a
-                href={selectedEvidence.mediaUrl}
+                href={getMediaUrl(selectedEvidence)}
                 download
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn btn-primary inline-flex items-center gap-2"
               >
                 <Download className="w-4 h-4" />

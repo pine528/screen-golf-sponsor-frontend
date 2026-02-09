@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../../utils';
 
-type VodStatus = 'PENDING' | 'DOWNLOADING' | 'PROCESSING' | 'READY' | 'FAILED';
+type VodStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
 
 export function AdminVodIngest() {
   const queryClient = useQueryClient();
@@ -116,7 +116,7 @@ export function AdminVodIngest() {
     mutationFn: (vodId: string) => api.post(`/roi/admin/vod/${vodId}/detect-logos`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-vods'] });
-      alert('로고 검출이 시작되었습니다.');
+      alert('로고 검출이 백그라운드에서 시작되었습니다.\n처리 완료까지 시간이 걸릴 수 있습니다.\n(페이지가 10초마다 자동 새로고침됩니다)');
     },
     onError: (error: any) => {
       alert(error.response?.data?.error?.message || '로고 검출에 실패했습니다.');
@@ -155,9 +155,16 @@ export function AdminVodIngest() {
     setVodTitle('');
   };
 
-  const vods = vodsData?.data?.vods || vodsData?.data || [];
-  const events = eventsData?.data || [];
-  const campaigns = campaignsData?.data?.campaigns || campaignsData?.data || [];
+  // VOD API returns { items: [...], pagination: {...} }
+  // Events API returns [...] directly with pagination at top level
+  // Campaigns API returns [...] directly with pagination at top level
+  const vods = Array.isArray(vodsData?.data?.items)
+    ? vodsData.data.items
+    : Array.isArray(vodsData?.data)
+      ? vodsData.data
+      : [];
+  const events = Array.isArray(eventsData?.data) ? eventsData.data : [];
+  const campaigns = Array.isArray(campaignsData?.data) ? campaignsData.data : [];
 
   const filteredVods = vods.filter((vod: any) =>
     vod.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -166,25 +173,22 @@ export function AdminVodIngest() {
 
   const statusStyles: Record<VodStatus, string> = {
     PENDING: 'bg-slate-100 text-slate-700 border-slate-200',
-    DOWNLOADING: 'bg-blue-100 text-blue-700 border-blue-200',
     PROCESSING: 'bg-amber-100 text-amber-700 border-amber-200',
-    READY: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    COMPLETED: 'bg-emerald-100 text-emerald-700 border-emerald-200',
     FAILED: 'bg-red-100 text-red-700 border-red-200',
   };
 
   const statusLabels: Record<VodStatus, string> = {
     PENDING: '대기',
-    DOWNLOADING: '다운로드 중',
     PROCESSING: '처리 중',
-    READY: '완료',
+    COMPLETED: '완료',
     FAILED: '실패',
   };
 
   const statusIcons: Record<VodStatus, React.ReactNode> = {
     PENDING: <Clock className="w-4 h-4" />,
-    DOWNLOADING: <Loader2 className="w-4 h-4 animate-spin" />,
     PROCESSING: <Loader2 className="w-4 h-4 animate-spin" />,
-    READY: <CheckCircle className="w-4 h-4" />,
+    COMPLETED: <CheckCircle className="w-4 h-4" />,
     FAILED: <XCircle className="w-4 h-4" />,
   };
 
@@ -251,7 +255,7 @@ export function AdminVodIngest() {
               <div>
                 <p className="text-sm text-slate-600">처리 중</p>
                 <p className="text-2xl font-bold text-slate-900">
-                  {vods.filter((v: any) => ['DOWNLOADING', 'PROCESSING'].includes(v.status)).length}
+                  {vods.filter((v: any) => v.status === 'PROCESSING').length}
                 </p>
               </div>
             </div>
@@ -264,7 +268,7 @@ export function AdminVodIngest() {
               <div>
                 <p className="text-sm text-slate-600">분석 완료</p>
                 <p className="text-2xl font-bold text-slate-900">
-                  {vods.filter((v: any) => v.status === 'READY').length}
+                  {vods.filter((v: any) => v.status === 'COMPLETED').length}
                 </p>
               </div>
             </div>
@@ -306,9 +310,8 @@ export function AdminVodIngest() {
               >
                 <option value="all">전체 상태</option>
                 <option value="PENDING">대기</option>
-                <option value="DOWNLOADING">다운로드 중</option>
                 <option value="PROCESSING">처리 중</option>
-                <option value="READY">완료</option>
+                <option value="COMPLETED">완료</option>
                 <option value="FAILED">실패</option>
               </select>
             </div>
@@ -360,9 +363,9 @@ export function AdminVodIngest() {
                         <div className="flex items-center gap-3">
                           <div className={cn(
                             'w-10 h-10 rounded-xl flex items-center justify-center',
-                            vod.sourceType === 'YOUTUBE' ? 'bg-red-100' : 'bg-slate-100'
+                            vod.source === 'YOUTUBE' ? 'bg-red-100' : 'bg-slate-100'
                           )}>
-                            {vod.sourceType === 'YOUTUBE' ? (
+                            {vod.source === 'YOUTUBE' ? (
                               <Youtube className="w-5 h-5 text-red-600" />
                             ) : (
                               <FileVideo className="w-5 h-5 text-slate-500" />
@@ -396,8 +399,8 @@ export function AdminVodIngest() {
                           {vod.duration && (
                             <p>{formatDuration(vod.duration)}</p>
                           )}
-                          {vod.fileSize && (
-                            <p className="text-xs text-slate-500">{formatFileSize(vod.fileSize)}</p>
+                          {vod.fileSizeBytes && (
+                            <p className="text-xs text-slate-500">{formatFileSize(Number(vod.fileSizeBytes))}</p>
                           )}
                         </div>
                       </td>
@@ -409,7 +412,7 @@ export function AdminVodIngest() {
                           </div>
                           <div className="flex items-center gap-1 text-slate-600">
                             <ScanLine className="w-4 h-4" />
-                            <span>{vod._count?.detections || 0}</span>
+                            <span>{vod._count?.roiExposures || 0}</span>
                           </div>
                         </div>
                       </td>
@@ -424,7 +427,7 @@ export function AdminVodIngest() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-1">
-                          {vod.status === 'READY' && (
+                          {vod.status === 'COMPLETED' && (
                             <>
                               <button
                                 onClick={() => extractFramesMutation.mutate(vod.id)}
