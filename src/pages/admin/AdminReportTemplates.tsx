@@ -35,12 +35,21 @@ export function AdminReportTemplates() {
 
   const { data: reportsData, isLoading } = useQuery({
     queryKey: ['admin-reports', campaignFilter, statusFilter, page],
-    queryFn: () => api.get(`/roi/campaigns/${campaignFilter || '_all'}/reports`, {
-      status: statusFilter || undefined,
-      page,
-      limit: 20,
-    }),
-    enabled: true,
+    queryFn: () => {
+      if (campaignFilter) {
+        return api.get(`/roi/campaigns/${campaignFilter}/reports`, {
+          status: statusFilter || undefined,
+          page,
+          limit: 20,
+        });
+      }
+      // 캠페인 필터 없을 때 admin 전체 리포트 조회
+      return api.get('/roi/admin/reports', {
+        status: statusFilter || undefined,
+        page,
+        limit: 20,
+      });
+    },
   });
 
   const generateMutation = useMutation({

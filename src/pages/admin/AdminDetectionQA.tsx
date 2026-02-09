@@ -55,9 +55,9 @@ export function AdminDetectionQA() {
   const reviewMutation = useMutation({
     mutationFn: (data: { exposureId: string; status: ReviewStatus; duration?: number; note?: string }) =>
       api.put(`/roi/admin/exposures/${data.exposureId}/review`, {
-        reviewStatus: data.status,
-        duration: data.duration,
-        reviewNote: data.note,
+        status: data.status,
+        isValid: data.status === 'APPROVED' || data.status === 'MODIFIED',
+        notes: data.note,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-exposures-qa'] });

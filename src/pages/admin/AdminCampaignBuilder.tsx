@@ -38,7 +38,7 @@ export function AdminCampaignBuilder() {
 
   const { data: brandsData } = useQuery({
     queryKey: ['brands-list'],
-    queryFn: () => api.get('/admin/entities?type=brand&limit=100'),
+    queryFn: () => api.get('/admin/entities/brands', { pageSize: 100 }),
   });
 
   const { data: eventsData } = useQuery({
@@ -53,15 +53,15 @@ export function AdminCampaignBuilder() {
       brandId: form.brandId,
       eventId: form.eventId || undefined,
       budget: form.budget,
-      startDate: form.startDate,
-      endDate: form.endDate,
+      dateStart: form.startDate,
+      dateEnd: form.endDate,
     }),
     onSuccess: () => {
       navigate('/admin/roi/vod');
     },
   });
 
-  const brands = brandsData?.data?.items || brandsData?.data || [];
+  const brands = brandsData?.data?.brands || brandsData?.data?.items || brandsData?.data || [];
   const events = eventsData?.data || [];
 
   const SLOT_OPTIONS = [

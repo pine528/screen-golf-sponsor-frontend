@@ -22,7 +22,7 @@ export default function BrandROIDashboard() {
   // 내 캠페인 목록 조회
   const { data: campaignsData, isLoading: campaignsLoading } = useQuery({
     queryKey: ['my-campaigns'],
-    queryFn: () => api.get('/campaigns'),
+    queryFn: () => api.get('/campaigns/my'),
   });
 
   // 선택된 캠페인의 ROI 대시보드 조회

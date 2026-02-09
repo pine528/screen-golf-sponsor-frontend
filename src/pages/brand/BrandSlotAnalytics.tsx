@@ -33,7 +33,7 @@ export function BrandSlotAnalytics() {
 
   const { data: campaignsData, isLoading: campaignsLoading } = useQuery({
     queryKey: ['my-campaigns'],
-    queryFn: () => api.get('/campaigns'),
+    queryFn: () => api.get('/campaigns/my'),
   });
 
   const { data: slotData, isLoading: slotLoading } = useQuery({
