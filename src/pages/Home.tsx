@@ -20,7 +20,6 @@ import {
   Upload,
   Diamond,
   CheckCircle2,
-  TrendingUp,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
