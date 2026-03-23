@@ -97,6 +97,7 @@ import { Profile } from './pages/Profile';
 import { MySlots } from './pages/MySlots';
 import { Settlements } from './pages/Settlements';
 import { AuctionDetail } from './pages/AuctionDetail';
+import MockAuctionDetail from './pages/MockAuctionDetail';
 
 function LoadingScreen() {
   return (
@@ -199,6 +200,7 @@ function App() {
         }
       />
       <Route path="/auctions" element={<Auctions />} />
+      <Route path="/auctions/mock/:id" element={<MockAuctionDetail />} />
       <Route path="/auctions/:id" element={<AuctionDetail />} />
       <Route path="/inventory" element={<Inventory />} />
       <Route

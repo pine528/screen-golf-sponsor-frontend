@@ -88,6 +88,15 @@
   }
 }
 
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Custom animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
@@ -124,6 +133,26 @@
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
+.animate-float-slow {
+  animation: float 7s ease-in-out infinite;
+}
+.animate-float-delayed {
+  animation: float-delayed 6s ease-in-out infinite;
+}
+.animate-float-gentle {
+  animation: float-gentle 8s ease-in-out infinite;
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-6px) rotate(0.5deg); }
+  66% { transform: translateY(-3px) rotate(-0.5deg); }
+}
 
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
@@ -140,6 +169,78 @@
 
 .animate-fade-in {
   animation: fade-in 0.4s ease-out forwards;
+}
+
+/* Hotspot ping animation */
+@keyframes hotspot-ping {
+  0% { transform: scale(1); opacity: 0.75; }
+  75%, 100% { transform: scale(2.5); opacity: 0; }
+}
+.animate-hotspot-ping {
+  animation: hotspot-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Spotlight breathing */
+@keyframes spotlight-breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+.animate-spotlight {
+  animation: spotlight-breathe 4s ease-in-out infinite;
+}
+
+/* Rim shimmer on silhouette */
+@keyframes rim-shimmer {
+  0%, 100% { filter: drop-shadow(-3px 0 10px rgba(16,185,129,0.15)); }
+  50% { filter: drop-shadow(-3px 0 20px rgba(16,185,129,0.35)); }
+}
+.animate-rim-shimmer {
+  animation: rim-shimmer 3s ease-in-out infinite;
+}
+
+/* Bottom sheet slide up */
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.animate-sheet-up {
+  animation: sheet-up 0.3s ease-out forwards;
+}
+
+/* Glow pulse for dark theme hotspots */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(52, 211, 153, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(52, 211, 153, 0.8); }
+}
+.animate-glow-pulse {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Connecting line draw animation */
+@keyframes line-draw {
+  from { width: 0; }
+  to { width: 2rem; }
+}
+.animate-line-draw {
+  animation: line-draw 0.5s ease-out forwards;
+}
+
+/* Price tick animation */
+@keyframes price-tick {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); color: #34d399; }
+  100% { transform: scale(1); }
+}
+.animate-price-tick {
+  animation: price-tick 0.3s ease-out;
+}
+
+/* Bar chart grow */
+@keyframes bar-grow {
+  from { height: 0; }
+}
+.animate-bar-grow {
+  animation: bar-grow 0.8s ease-out forwards;
 }
 
 /* Scrollbar styling */
