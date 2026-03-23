@@ -24,6 +24,7 @@ const MOCK_GOLFERS: Record<string, {
   height: string; birth: string; proSince: string; location: string;
   career: string[];
 }> = {
+  'an-yein': { player: '안예인 프로', bodyPart: '모자 우측', slot: 'KLPGA', price: 5000000, timeLeft: '2시간 남음', bids: 12, image: '/hero-model.png', instagram: '@an_yein', height: '167cm', birth: '1998.03.15', proSince: '2020 KLPGA 정회원', location: '서울 강남구', career: ['2024 SponPik 전속 모델', '2023 KLPGA 드림투어 활동', '2020 KLPGA 정회원 입회'] },
   m1: { player: '김주연 프로', bodyPart: '모자 정면', slot: 'KLPGA', price: 5000000, timeLeft: '2시간 남음', bids: 12, image: '/golfers/kim-juyeon.jpg', instagram: '@joo__yeon2__', height: '165cm', birth: '1996.12.03', proSince: '2016 KLPGA 정회원', location: '서울 광진구', career: ['2023-2026 팀테일러메이드 소속', '2022 SBSGOLF SG더매치 출연', '2018 한국골프대학교 CEO과정 강의'] },
   m2: { player: '채지은 프로', bodyPart: '가슴 중앙', slot: 'KLPGA', price: 3500000, timeLeft: '5시간 남음', bids: 8, image: '/golfers/chae-jieun.jpg', instagram: '@chaejji_pro', height: '165cm', birth: '1993.09.08', proSince: '2012 KLPGA 정회원', location: '경기도 용인시', career: ['2022 SBSGOLF SG골프 더매치 우승', '2014 KLPGA 드림투어 14차전 우승', '2015 KLPGA 정규투어 활동'] },
   m3: { player: '공미정 프로', bodyPart: '어깨 우측', slot: 'KLPGA', price: 4200000, timeLeft: '3시간 남음', bids: 15, image: '/golfers/gong-mijeong.jpg', instagram: '@mijeong_x3x', height: '170cm', birth: '1997.10.27', proSince: '2016 KLPGA 정회원', location: '서울 강남구', career: ['2024-2026 핑골프 소속', '2020 KLPGA BC카드 한경레이디스컵 9위', '2016 국가대표 상비군'] },

@@ -332,7 +332,7 @@ export function Home() {
 
                 {/* CTA */}
                 <div className="px-5 pb-4">
-                  <Link to="/auctions"
+                  <Link to="/auctions/mock/an-yein"
                     className="w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20">
                     입찰 참여하기 <ArrowRight className="w-4 h-4" />
                   </Link>
