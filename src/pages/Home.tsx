@@ -379,7 +379,7 @@ export function Home() {
           {(() => {
             const MOCK_GOLFERS = [
               { id: 'm1', player: '김주연 프로', bodyPart: 'CAP_FRONT', slot: 'KLPGA', price: 5000000, timeLeft: '2시간 남음', bids: 12, playerImage: '/golfers/kim-juyeon.jpg' },
-              { id: 'm2', player: '채지은 프로', bodyPart: 'CHEST_CENTER', slot: 'KLPGA', price: 3500000, timeLeft: '5시간 남음', bids: 8, playerImage: '/golfers/chae-jieun.jpg' },
+              { id: 'm2', player: '채지은 프로', bodyPart: 'CHEST_R', slot: 'KLPGA', price: 3500000, timeLeft: '5시간 남음', bids: 8, playerImage: '/golfers/chae-jieun.jpg' },
               { id: 'm3', player: '공미정 프로', bodyPart: 'SHOULDER_R', slot: 'KLPGA', price: 4200000, timeLeft: '3시간 남음', bids: 15, playerImage: '/golfers/gong-mijeong.jpg' },
               { id: 'm4', player: '전승민 프로', bodyPart: 'SLEEVE_L', slot: 'KLPGA', price: 2800000, timeLeft: '1일 남음', bids: 6, playerImage: '/golfers/jeon-seungmin.jpg' },
               { id: 'm5', player: '권민경 프로', bodyPart: 'CAP_SIDE_R', slot: 'KLPGA', price: 3000000, timeLeft: '8시간 남음', bids: 9, playerImage: '/golfers/kwon-minkyung.jpg' },
