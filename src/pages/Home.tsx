@@ -132,7 +132,7 @@ export function Home() {
   const bodyPartLabel = (bp: string) => {
     const map: Record<string, string> = {
       CAP_FRONT: '모자 정면', CAP_SIDE_R: '모자 우측', CAP_SIDE_L: '모자 좌측', CAP_BACK: '모자 뒷면',
-      CHEST_CENTER: '가슴 중앙', CHEST_L: '가슴 좌측', CHEST_R: '가슴 우측',
+      CHEST_CENTER: '상의 중앙', CHEST_L: '상의 좌측', CHEST_R: '상의 우측',
       COLLAR_L: '카라 좌측', COLLAR_R: '카라 우측',
       SLEEVE_L: '소매 좌측', SLEEVE_R: '소매 우측',
       SHOULDER_L: '어깨 좌측', SHOULDER_R: '어깨 우측',
@@ -223,7 +223,7 @@ export function Home() {
           <div className="mb-6">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-semibold">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              GTOUR · WGTOUR 공식 파트너사
+              KPGA · KLPGA 남녀 프로골프 선수
             </span>
           </div>
 
@@ -303,7 +303,7 @@ export function Home() {
                 {/* Title */}
                 <div className="px-5 pb-4">
                   <h3 className="text-lg font-black text-slate-900 leading-snug mb-1">
-                    [KLPGA] 안예인 프로 - 모자 우측 스폰서십 구좌
+                    [KLPGA] 안예인 프로 - 모자 중앙 메인 스폰서십 슬롯
                   </h3>
                 </div>
 
@@ -356,12 +356,12 @@ export function Home() {
         </div>
       </section>
 
-      {/* ════════════════════════ 진행 중인 경매 (캐러셀) ════════════════════════ */}
+      {/* ════════════════════════ 진행중인 스폰서십 슬롯 (캐러셀) ════════════════════════ */}
       <section className="py-12 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-5">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-              <span className="text-emerald-500">*</span> 진행 중인 경매
+              <span className="text-emerald-500">*</span> 진행중인 스폰서십 슬롯
             </h2>
             <div className="flex items-center gap-2">
               <button onClick={() => scrollCarousel('left')} className="hidden sm:flex w-9 h-9 items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50 transition-colors text-slate-400">
