@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Hexagon } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 import { useAuth } from './hooks/useAuth';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
@@ -159,6 +160,7 @@ function App() {
   }, []);
 
   return (
+    <>
     <Routes>
       {/* Public Routes */}
       <Route
@@ -942,6 +944,8 @@ function App() {
       <Route path="/" element={<HomeRoute />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    <Analytics />
+    </>
   );
 }
 
