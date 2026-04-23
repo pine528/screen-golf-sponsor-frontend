@@ -110,6 +110,44 @@ export default function MiniStoreProduct() {
               ⚡ {store.benefitBadge}
             </div>
           )}
+
+          {/* 리뷰 (mock) */}
+          <div className="mt-6 mb-6">
+            <h3 className="text-sm font-bold text-slate-900 mb-3">⭐ 고객 리뷰</h3>
+            <div className="space-y-3">
+              {[
+                { author: '김**', stars: 5, text: '품질이 정말 좋아요. 선수 추천 코드 적용까지 완벽!' },
+                { author: '박**', stars: 5, text: '배송도 빠르고 디자인도 만족스러워요.' },
+                { author: '이**', stars: 4, text: '가격 대비 우수합니다. 재구매 의사 있음.' },
+              ].map((r, i) => (
+                <div key={i} className="p-3 bg-slate-50 rounded-lg">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-semibold">{r.author}</span>
+                    <span className="text-xs text-amber-500">{'★'.repeat(r.stars)}{'☆'.repeat(5 - r.stars)}</span>
+                  </div>
+                  <p className="text-sm text-slate-600">{r.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 관련 상품 */}
+          {store.products && store.products.length > 1 && (
+            <div className="mt-6 mb-6">
+              <h3 className="text-sm font-bold text-slate-900 mb-3">🛍️ 함께 보면 좋은 상품</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {store.products.filter((p: any) => p.id !== productId).slice(0, 3).map((p: any) => (
+                  <Link key={p.id} to={`/store/${slug}/product/${p.id}`} className="block bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-emerald-300">
+                    {p.imageUrl ? <img src={p.imageUrl} alt="" className="w-full aspect-square object-cover" /> : <div className="w-full aspect-square bg-slate-100" />}
+                    <div className="p-2">
+                      <div className="text-xs font-semibold truncate">{p.name}</div>
+                      <div className="text-xs text-emerald-600 font-bold">₩{Number(p.discountPrice || p.price).toLocaleString()}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

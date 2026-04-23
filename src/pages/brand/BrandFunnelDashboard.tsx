@@ -57,6 +57,14 @@ export default function BrandFunnelDashboard() {
   });
   const predict = predictResp?.data;
 
+  // 최근 주문 (BRD-01 하단)
+  const { data: recentOrdersResp } = useQuery({
+    queryKey: ['brand-recent-orders', brandId, filter],
+    queryFn: () => api.listBrandFunnelOrders(brandId!, { from: filter.from, to: filter.to, limit: 5 }),
+    enabled: !!brandId && tab === 'overview',
+  });
+  const recentOrders = recentOrdersResp?.data || [];
+
   return (
     <Layout>
       <div className="p-6 max-w-7xl mx-auto">
@@ -148,6 +156,28 @@ export default function BrandFunnelDashboard() {
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* 최근 주문/특이사항 */}
+            <div className="bg-white border border-slate-200 rounded-xl p-5 mt-6">
+              <h3 className="text-sm font-bold text-slate-900 mb-3">최근 주문 / 특이사항</h3>
+              {recentOrders.length === 0 ? (
+                <div className="text-center py-6 text-xs text-slate-400">최근 주문이 없습니다</div>
+              ) : (
+                <div className="space-y-2">
+                  {recentOrders.slice(0, 5).map((o: any) => (
+                    <div key={o.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-b-0 text-sm">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-slate-400">{new Date(o.paidAt).toLocaleString().slice(5)}</span>
+                        <span className="font-semibold">{o.athlete?.name || o.athleteId.slice(0, 8)}</span>
+                        {o.promoCode && <code className="text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded">{o.promoCode}</code>}
+                        {o.status === 'REFUNDED' && <span className="text-[10px] text-rose-600 font-bold">환불</span>}
+                      </div>
+                      <span className="font-bold">₩{Math.round(Number(o.netAmount)).toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </>
         )}

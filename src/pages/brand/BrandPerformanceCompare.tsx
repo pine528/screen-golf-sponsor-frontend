@@ -15,7 +15,7 @@ import { GlobalFilter, GlobalFilterValue } from '../../components/funnel/GlobalF
 import { DetailTable, Column } from '../../components/funnel/DetailTable';
 import { api } from '../../services/api';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from 'recharts';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, Download } from 'lucide-react';
 
 type ViewMode = 'athletes' | 'codes' | 'contents';
 
@@ -126,6 +126,23 @@ export default function BrandPerformanceCompare() {
           </div>
         )}
 
+        <div className="flex justify-end mb-2">
+          <button
+            onClick={() => {
+              const params = new URLSearchParams();
+              if (filter.from) params.set('from', filter.from);
+              if (filter.to) params.set('to', filter.to);
+              params.set('by', view === 'codes' ? 'code' : view === 'athletes' ? 'athlete' : 'content');
+              const token = localStorage.getItem('accessToken');
+              fetch(`${import.meta.env.VITE_API_URL || '/api'}/reports/brand/${brandId}/compare.csv?${params}`, { headers: { Authorization: `Bearer ${token}` } })
+                .then(async (r) => { const blob = await r.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `compare-${view}.csv`; a.click(); });
+            }}
+            disabled={!brandId}
+            className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded"
+          >
+            <Download className="w-3 h-3" /> CSV
+          </button>
+        </div>
         {isLoading ? (
           <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
         ) : (

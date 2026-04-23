@@ -13,15 +13,20 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '../../services/api';
 import { useFunnelTracking } from '../../hooks/useFunnelTracking';
-import { CheckCircle2, Tag, ArrowLeft, Share2 } from 'lucide-react';
+import { CheckCircle2, Tag, ArrowLeft, Share2, AlertCircle, CreditCard } from 'lucide-react';
+import { loadTossPayments } from '@tosspayments/payment-sdk';
+
+const TOSS_TEST_KEY = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq';  // Toss 공식 테스트 키
 
 const CART_KEY = 'sponpik_cart';
 
 export default function MiniStoreCheckout() {
   const { slug } = useParams<{ slug: string }>();
   const { trackEvent, sessionId } = useFunnelTracking();
-  const [step, setStep] = useState<'form' | 'success'>('form');
+  const [step, setStep] = useState<'form' | 'success' | 'failed'>('form');
   const [orderResult, setOrderResult] = useState<any>(null);
+  const [paymentMode, setPaymentMode] = useState<'sim' | 'toss'>('sim');
+  const [paymentError, setPaymentError] = useState<string>('');
 
   const { data: resp } = useQuery({
     queryKey: ['public-mini-store', slug],
@@ -66,35 +71,93 @@ export default function MiniStoreCheckout() {
     },
   });
 
+  const finalizePurchase = async (orderId: string) => {
+    const items = cartItems.map((c: any) => ({ product_id: c.productId, qty: c.qty, unit_price: c.price }));
+    const resp = await api.createFunnelPurchase({
+      order_id: orderId,
+      campaign_id: store?.campaignId,
+      brand_id: store?.brandId,
+      promo_code: promoApplied?.code,
+      gross_amount: grossAmount,
+      discount_amount: discountAmount,
+      net_amount: grossAmount - discountAmount,
+      items,
+      is_new_customer: true,
+      session_id: sessionId,
+      customer_email: customerEmail,
+    });
+    setOrderResult(resp.data);
+    localStorage.removeItem(CART_KEY);
+    setStep('success');
+  };
+
   const purchaseMut = useMutation({
-    mutationFn: () => {
-      const items = cartItems.map((c: any) => ({ product_id: c.productId, qty: c.qty, unit_price: c.price }));
+    mutationFn: async () => {
       const orderId = `ord_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-      return api.createFunnelPurchase({
-        order_id: orderId,
-        campaign_id: store?.campaignId,
-        brand_id: store?.brandId,
-        promo_code: promoApplied?.code,
-        gross_amount: grossAmount,
-        discount_amount: discountAmount,
-        net_amount: grossAmount - discountAmount,
-        items,
-        is_new_customer: !customerEmail || true,  // 임시: 항상 신규
-        session_id: sessionId,
-        customer_email: customerEmail,
-      });
-    },
-    onSuccess: (resp) => {
-      setOrderResult(resp.data);
-      localStorage.removeItem(CART_KEY);
-      setStep('success');
+
+      if (paymentMode === 'toss') {
+        // 실제 TossPayments SDK 호출
+        try {
+          const tossPayments = await loadTossPayments(TOSS_TEST_KEY);
+          await tossPayments.requestPayment('카드', {
+            amount: grossAmount - discountAmount,
+            orderId,
+            orderName: cartItems[0]?.name + (cartItems.length > 1 ? ` 외 ${cartItems.length - 1}건` : ''),
+            customerName: customerName || '고객',
+            customerEmail: customerEmail || undefined,
+            successUrl: `${window.location.origin}/store/${slug}/checkout?status=success&orderId=${orderId}`,
+            failUrl: `${window.location.origin}/store/${slug}/checkout?status=fail&orderId=${orderId}`,
+          });
+        } catch (e: any) {
+          // 사용자 취소 또는 실패
+          setPaymentError(e?.message || '결제가 취소되었습니다');
+          setStep('failed');
+          throw e;
+        }
+      } else {
+        // 시뮬레이션 모드
+        await finalizePurchase(orderId);
+      }
     },
     onError: (e: any) => {
-      alert('결제 실패: ' + (e?.response?.data?.error?.message || e.message));
+      console.error('Purchase error:', e);
     },
   });
 
+  // Toss 결제 콜백 처리 (URL 파라미터)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('status');
+    const orderId = params.get('orderId');
+    if (status === 'success' && orderId) {
+      finalizePurchase(orderId).catch(console.error);
+      // URL 정리
+      window.history.replaceState({}, '', window.location.pathname);
+    } else if (status === 'fail' && orderId) {
+      setPaymentError('Toss 결제가 실패했습니다. 세션은 유지되었으니 다시 시도해주세요.');
+      setStep('failed');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (!store) return <div className="p-6">로딩 중...</div>;
+
+  if (step === 'failed') {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+          <AlertCircle className="w-16 h-16 text-rose-500 mx-auto mb-4" />
+          <h1 className="text-xl font-extrabold text-slate-900 mb-2">결제 실패</h1>
+          <p className="text-sm text-slate-500 mb-2">{paymentError || '결제 처리 중 문제가 발생했습니다'}</p>
+          <p className="text-xs text-emerald-600 mb-6">✓ 장바구니와 입력 정보가 보존되었습니다</p>
+          <button onClick={() => { setStep('form'); setPaymentError(''); }} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl">
+            다시 시도
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (step === 'success') {
     return (
@@ -182,11 +245,28 @@ export default function MiniStoreCheckout() {
 
         {/* 결제 정보 */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
-          <h2 className="text-sm font-bold mb-3">배송/결제 정보 (시뮬레이션)</h2>
-          <div className="space-y-2">
+          <h2 className="text-sm font-bold mb-3">배송/결제 정보</h2>
+          <div className="space-y-2 mb-4">
             <input type="text" placeholder="이름" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2" />
             <input type="tel" placeholder="전화번호" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2" />
             <input type="email" placeholder="이메일 (선택)" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2" />
+          </div>
+          <div className="border-t border-slate-100 pt-3">
+            <div className="text-xs font-semibold text-slate-600 mb-2">결제 방법</div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setPaymentMode('toss')}
+                className={`p-3 border-2 rounded-lg text-xs font-semibold inline-flex items-center justify-center gap-1 ${paymentMode === 'toss' ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-200 text-slate-600'}`}
+              >
+                <CreditCard className="w-4 h-4" /> Toss 카드결제
+              </button>
+              <button
+                onClick={() => setPaymentMode('sim')}
+                className={`p-3 border-2 rounded-lg text-xs font-semibold ${paymentMode === 'sim' ? 'border-amber-500 bg-amber-50 text-amber-700' : 'border-slate-200 text-slate-600'}`}
+              >
+                🧪 시뮬레이션 (테스트용)
+              </button>
+            </div>
           </div>
         </div>
 

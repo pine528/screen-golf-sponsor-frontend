@@ -7,6 +7,7 @@
  * - 하단: 자산 이력 / 발급 실패 로그
  */
 
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Layout } from '../../components/Layout';
@@ -25,9 +26,15 @@ export default function AdminFunnelCampaignDetail() {
     enabled: !!id,
   });
 
+  const [showReissueForm, setShowReissueForm] = useState(false);
+  const [reissueOpts, setReissueOpts] = useState({ keepLinks: true, discountType: 'PERCENT' as 'PERCENT' | 'AMOUNT', discountValue: 20 });
+
   const generateMut = useMutation({
-    mutationFn: () => api.generateCampaignAssets(id!),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-funnel-campaign', id] }),
+    mutationFn: (opts?: any) => api.generateCampaignAssets(id!, opts || {}),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-funnel-campaign', id] });
+      setShowReissueForm(false);
+    },
   });
 
   if (isLoading) return <Layout><div className="p-6">로딩 중...</div></Layout>;
@@ -56,14 +63,47 @@ export default function AdminFunnelCampaignDetail() {
               </div>
             </div>
             <button
-              onClick={() => generateMut.mutate()}
-              disabled={generateMut.isPending}
+              onClick={() => setShowReissueForm(!showReissueForm)}
               className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg shadow-sm"
             >
-              {generateMut.isPending ? '생성 중...' : '전체 자산 재발급'}
+              전체 자산 재발급
             </button>
           </div>
         </div>
+
+        {/* 재발급 옵션 폼 */}
+        {showReissueForm && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+            <h3 className="text-sm font-bold text-amber-800 mb-3">자산 재발급 옵션</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+              <label className="inline-flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={reissueOpts.keepLinks} onChange={(e) => setReissueOpts({ ...reissueOpts, keepLinks: e.target.checked })} />
+                기존 ACTIVE 링크 유지 (신규만 추가)
+              </label>
+              <div>
+                <label className="block text-xs text-amber-700 mb-1">할인 타입</label>
+                <select value={reissueOpts.discountType} onChange={(e) => setReissueOpts({ ...reissueOpts, discountType: e.target.value as any })} className="w-full text-sm border border-amber-300 rounded px-2 py-1.5 bg-white">
+                  <option value="PERCENT">퍼센트 (%)</option>
+                  <option value="AMOUNT">정액 (원)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-amber-700 mb-1">할인값</label>
+                <input type="number" value={reissueOpts.discountValue} onChange={(e) => setReissueOpts({ ...reissueOpts, discountValue: Number(e.target.value) })} className="w-full text-sm border border-amber-300 rounded px-2 py-1.5 bg-white" />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => generateMut.mutate({ discount_type: reissueOpts.discountType, discount_value: reissueOpts.discountValue, keep_links: reissueOpts.keepLinks })}
+                disabled={generateMut.isPending}
+                className="px-4 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded"
+              >
+                {generateMut.isPending ? '처리 중...' : '재발급 실행'}
+              </button>
+              <button onClick={() => setShowReissueForm(false)} className="px-4 py-1.5 bg-white border border-amber-300 text-amber-700 text-xs font-semibold rounded">취소</button>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* 좌: 캠페인 정보 */}
@@ -107,7 +147,7 @@ export default function AdminFunnelCampaignDetail() {
                   <ActionBar actions={[{ type: 'copy', value: promoCode.code }]} />
                 </>
               ) : (
-                <EmptyAsset onCreate={() => generateMut.mutate()} loading={generateMut.isPending} />
+                <EmptyAsset onCreate={() => generateMut.mutate(undefined)} loading={generateMut.isPending} />
               )}
             </AssetCard>
 
@@ -127,7 +167,7 @@ export default function AdminFunnelCampaignDetail() {
                   ]} />
                 </>
               ) : (
-                <EmptyAsset onCreate={() => generateMut.mutate()} loading={generateMut.isPending} />
+                <EmptyAsset onCreate={() => generateMut.mutate(undefined)} loading={generateMut.isPending} />
               )}
             </AssetCard>
 
@@ -146,7 +186,7 @@ export default function AdminFunnelCampaignDetail() {
                   ]} />
                 </div>
               ) : (
-                <EmptyAsset onCreate={() => generateMut.mutate()} loading={generateMut.isPending} />
+                <EmptyAsset onCreate={() => generateMut.mutate(undefined)} loading={generateMut.isPending} />
               )}
             </AssetCard>
 
@@ -167,7 +207,7 @@ export default function AdminFunnelCampaignDetail() {
                   ]} />
                 </>
               ) : (
-                <EmptyAsset onCreate={() => generateMut.mutate()} loading={generateMut.isPending} />
+                <EmptyAsset onCreate={() => generateMut.mutate(undefined)} loading={generateMut.isPending} />
               )}
             </AssetCard>
           </div>

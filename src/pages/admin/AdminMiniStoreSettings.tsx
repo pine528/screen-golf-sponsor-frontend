@@ -14,7 +14,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Layout } from '../../components/Layout';
 import { StatusBadge } from '../../components/funnel/StatusBadge';
 import { api } from '../../services/api';
-import { Eye, Save, Globe, EyeOff, Plus, Trash2 } from 'lucide-react';
+import { Eye, Save, Globe, EyeOff, Plus, Trash2, ArrowUp, ArrowDown, Smartphone, Monitor } from 'lucide-react';
 
 export default function AdminMiniStoreSettings() {
   const { campaignId } = useParams<{ campaignId: string }>();
@@ -64,6 +64,21 @@ export default function AdminMiniStoreSettings() {
   });
 
   const [newProd, setNewProd] = useState({ name: '', imageUrl: '', price: 0, discountPrice: 0, stock: 100 });
+  const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile');
+
+  const reorderMut = useMutation({
+    mutationFn: (args: { productId: string; sortOrder: number }) => api.updateStoreProduct(args.productId, { sortOrder: args.sortOrder }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['mini-store', campaignId] }),
+  });
+
+  const moveProduct = (products: any[], idx: number, direction: 'up' | 'down') => {
+    const target = direction === 'up' ? idx - 1 : idx + 1;
+    if (target < 0 || target >= products.length) return;
+    const cur = products[idx];
+    const swap = products[target];
+    reorderMut.mutate({ productId: cur.id, sortOrder: swap.sortOrder });
+    reorderMut.mutate({ productId: swap.id, sortOrder: cur.sortOrder });
+  };
 
   if (isLoading) return <Layout><div className="p-6">로딩 중...</div></Layout>;
   if (!store) return <Layout><div className="p-6">미니스토어가 없습니다. 먼저 캠페인 자산을 생성해주세요.</div></Layout>;
@@ -116,8 +131,12 @@ export default function AdminMiniStoreSettings() {
             <div className="bg-white border border-slate-200 rounded-xl p-5">
               <h3 className="text-sm font-bold text-slate-900 mb-3">상품 ({store.products?.length || 0})</h3>
               <div className="space-y-2 mb-4">
-                {(store.products || []).map((p: any) => (
-                  <div key={p.id} className="flex items-center gap-3 p-2 border border-slate-100 rounded-lg">
+                {(store.products || []).map((p: any, idx: number) => (
+                  <div key={p.id} className="flex items-center gap-2 p-2 border border-slate-100 rounded-lg">
+                    <div className="flex flex-col">
+                      <button onClick={() => moveProduct(store.products, idx, 'up')} disabled={idx === 0} className="p-0.5 text-slate-400 hover:text-slate-700 disabled:opacity-20"><ArrowUp className="w-3 h-3" /></button>
+                      <button onClick={() => moveProduct(store.products, idx, 'down')} disabled={idx === (store.products.length - 1)} className="p-0.5 text-slate-400 hover:text-slate-700 disabled:opacity-20"><ArrowDown className="w-3 h-3" /></button>
+                    </div>
                     {p.imageUrl ? <img src={p.imageUrl} alt="" className="w-12 h-12 rounded object-cover" /> : <div className="w-12 h-12 bg-slate-100 rounded" />}
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-semibold truncate">{p.name}</div>
@@ -154,8 +173,18 @@ export default function AdminMiniStoreSettings() {
 
           {/* 우: 미리보기 */}
           <div className="bg-slate-100 rounded-xl p-6">
-            <div className="text-xs font-semibold text-slate-500 mb-3">실시간 미리보기 (모바일)</div>
-            <div className="bg-white rounded-xl shadow-sm max-w-sm mx-auto overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-semibold text-slate-500">실시간 미리보기</span>
+              <div className="inline-flex bg-white rounded-lg p-0.5">
+                <button onClick={() => setPreviewMode('mobile')} className={`px-2 py-1 rounded inline-flex items-center gap-1 text-xs ${previewMode === 'mobile' ? 'bg-emerald-500 text-white' : 'text-slate-600'}`}>
+                  <Smartphone className="w-3 h-3" /> 모바일
+                </button>
+                <button onClick={() => setPreviewMode('desktop')} className={`px-2 py-1 rounded inline-flex items-center gap-1 text-xs ${previewMode === 'desktop' ? 'bg-emerald-500 text-white' : 'text-slate-600'}`}>
+                  <Monitor className="w-3 h-3" /> PC
+                </button>
+              </div>
+            </div>
+            <div className={`bg-white rounded-xl shadow-sm mx-auto overflow-hidden ${previewMode === 'mobile' ? 'max-w-sm' : 'max-w-2xl'}`}>
               <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5">
                 {form.athleteImageUrl && <img src={form.athleteImageUrl} alt="" className="w-20 h-20 rounded-full mx-auto mb-3 border-4 border-white" />}
                 <div className="text-center">

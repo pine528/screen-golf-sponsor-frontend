@@ -16,10 +16,11 @@ import { SummaryCard } from '../../components/funnel/SummaryCard';
 import { TimeSeriesChart } from '../../components/funnel/TimeSeriesChart';
 import { ActionBar } from '../../components/funnel/ActionBar';
 import { api } from '../../services/api';
-import { MousePointer, Users, ShoppingCart, DollarSign, BadgePercent, Tag, Link2 } from 'lucide-react';
+import { MousePointer, Users, ShoppingCart, DollarSign, BadgePercent, Tag, Link2, Megaphone, Sparkles, Copy } from 'lucide-react';
 
 export default function AthleteFunnelDashboard() {
   const [filter, setFilter] = useState<GlobalFilterValue>({});
+  const [selectedCampaign, setSelectedCampaign] = useState<string>('');
 
   const { data: meResp } = useQuery({
     queryKey: ['my-athlete'],
@@ -27,14 +28,29 @@ export default function AthleteFunnelDashboard() {
   });
   const athleteId = (meResp as any)?.id;
 
+  // 본인 참여 캠페인 목록
+  const { data: campaignsResp } = useQuery({
+    queryKey: ['athlete-campaigns', athleteId],
+    queryFn: async () => {
+      const r = await api.get(`/reports/athlete/${athleteId}/campaigns`);
+      return r;
+    },
+    enabled: !!athleteId,
+  });
+  const campaigns = (campaignsResp?.data || []) as any[];
+
+  const reportFilter = { ...filter, campaignId: selectedCampaign || undefined };
   const { data: reportResp, isLoading } = useQuery({
-    queryKey: ['athlete-funnel-report', athleteId, filter],
-    queryFn: () => api.getAthleteFunnelReport(athleteId!, filter),
+    queryKey: ['athlete-funnel-report', athleteId, reportFilter],
+    queryFn: () => api.getAthleteFunnelReport(athleteId!, reportFilter),
     enabled: !!athleteId,
   });
   const report = reportResp?.data;
   const summary = report?.summary || {};
   const assets = report?.assets || { links: [], codes: [] };
+
+  // 어필용 자동 요약
+  const pitch = generatePitch(report?.athlete?.name, summary);
 
   return (
     <Layout>
@@ -46,10 +62,41 @@ export default function AthleteFunnelDashboard() {
 
         <GlobalFilter value={filter} onChange={setFilter} hideAthlete hideCampaign />
 
+        {/* 캠페인 선택 */}
+        {campaigns.length > 0 && (
+          <div className="bg-white border border-slate-200 rounded-xl p-3 mb-4 flex items-center gap-2">
+            <Megaphone className="w-4 h-4 text-emerald-500" />
+            <span className="text-xs font-semibold text-slate-600">내 캠페인:</span>
+            <select
+              value={selectedCampaign}
+              onChange={(e) => setSelectedCampaign(e.target.value)}
+              className="flex-1 max-w-md text-sm border border-slate-200 rounded px-2 py-1"
+            >
+              <option value="">전체</option>
+              {campaigns.map((c) => (
+                <option key={c.id} value={c.id}>{c.name} ({c.brand?.name})</option>
+              ))}
+            </select>
+          </div>
+        )}
+
         {isLoading ? (
           <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
         ) : (
           <>
+            {/* 어필용 자동 요약 */}
+            {pitch && (
+              <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-xl p-5 mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold inline-flex items-center gap-2"><Sparkles className="w-4 h-4" /> 브랜드 설득용 자동 요약</h3>
+                  <button onClick={() => navigator.clipboard.writeText(pitch)} className="inline-flex items-center gap-1 px-2 py-1 bg-white/20 hover:bg-white/30 rounded text-xs">
+                    <Copy className="w-3 h-3" /> 복사
+                  </button>
+                </div>
+                <p className="text-sm leading-relaxed">{pitch}</p>
+              </div>
+            )}
+
             {/* KPI 카드 (본인 데이터만) */}
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
               <SummaryCard label="내 클릭수" value={summary.linkClicks || 0} icon={MousePointer} />
@@ -133,4 +180,14 @@ export default function AthleteFunnelDashboard() {
       </div>
     </Layout>
   );
+}
+
+function generatePitch(name: string | undefined, summary: any): string {
+  if (!name || !summary || !summary.purchases) return '';
+  const parts = [
+    `${name} 프로의 최근 활동으로 ${summary.linkClicks?.toLocaleString() || 0}회의 클릭과 ${summary.landingViews?.toLocaleString() || 0}회의 유입을 발생시켰습니다.`,
+    `이는 ${summary.purchases?.toLocaleString() || 0}건의 구매와 ₩${Math.round(summary.netRevenue || 0).toLocaleString()}의 순매출 기여로 이어졌습니다.`,
+  ];
+  if (summary.cvr > 0) parts.push(`전환율(CVR)은 ${(summary.cvr * 100).toFixed(2)}%로 시장 평균 대비 안정적입니다.`);
+  return parts.join(' ');
 }

@@ -118,6 +118,27 @@ export default function MiniStoreLanding() {
             <div className="text-xs font-semibold">교환·환불</div>
           </div>
         </div>
+
+        {/* FAQ */}
+        <div className="mt-8">
+          <h2 className="text-lg font-bold text-slate-900 mb-3">자주 묻는 질문</h2>
+          <div className="bg-white border border-slate-200 rounded-xl divide-y divide-slate-100">
+            {[
+              { q: '프로모션 코드는 어디에 입력하나요?', a: '결제 시 "프로모션 코드" 입력란이 자동으로 나타납니다. 코드를 입력하면 즉시 할인이 적용됩니다.' },
+              { q: '배송은 얼마나 걸리나요?', a: '결제 완료 후 영업일 기준 2~3일 이내 발송됩니다.' },
+              { q: '환불·교환은 가능한가요?', a: '수령 후 7일 이내 미사용 상품에 한해 무료 교환·환불이 가능합니다.' },
+              { q: '선수 후원 코드를 사용하면 어떤 혜택이 있나요?', a: '선수 추천 단독 할인이 자동 적용됩니다. 일부는 추가 굿즈도 함께 제공됩니다.' },
+            ].map((f, i) => (
+              <details key={i} className="p-4 group">
+                <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between">
+                  {f.q}
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                </summary>
+                <p className="text-sm text-slate-600 mt-2 leading-relaxed">{f.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Sticky CTA */}

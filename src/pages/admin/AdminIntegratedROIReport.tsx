@@ -17,7 +17,8 @@ import { FunnelChart, FunnelStep } from '../../components/funnel/FunnelChart';
 import { TimeSeriesChart } from '../../components/funnel/TimeSeriesChart';
 import { DataSourceBadge } from '../../components/funnel/DataSourceBadge';
 import { api } from '../../services/api';
-import { Eye, MousePointer, Users, ShoppingBag, CreditCard, ShoppingCart, BadgePercent, Printer } from 'lucide-react';
+import { Eye, MousePointer, Users, ShoppingBag, CreditCard, ShoppingCart, BadgePercent, Printer, Share2, TrendingUp, TrendingDown } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
 
 export default function AdminIntegratedROIReport() {
   const [filter, setFilter] = useState<GlobalFilterValue>({});
@@ -36,6 +37,30 @@ export default function AdminIntegratedROIReport() {
   });
   const report = reportResp?.data;
   const summary = report?.summary || {};
+
+  // 기간 비교
+  const { data: compareResp } = useQuery({
+    queryKey: ['period-compare', report?.campaign?.brandId, filter],
+    queryFn: async () => {
+      const r = await api.get(`/reports/brand/${report?.campaign?.brandId}/period-compare`, { from: filter.from, to: filter.to });
+      return r;
+    },
+    enabled: !!campaignId && !!report?.campaign?.brandId,
+  });
+  const compare = compareResp?.data;
+
+  // 공유 링크 생성
+  const shareMut = useMutation({
+    mutationFn: async () => {
+      const r = await api.post('/reports/share-link', { campaignId, from: filter.from, to: filter.to });
+      return r;
+    },
+    onSuccess: (resp) => {
+      const url = (resp as any)?.data?.shareUrl;
+      if (url) navigator.clipboard.writeText(url);
+      alert(`공유 링크 복사됨 (7일 유효):\n${url}`);
+    },
+  });
 
   const funnelSteps: FunnelStep[] = [
     { name: '노출', value: report?.campaign?.actualImpressions || 0 },
@@ -59,12 +84,21 @@ export default function AdminIntegratedROIReport() {
               <DataSourceBadge type="integrated" />
             </p>
           </div>
-          <button
-            onClick={() => window.print()}
-            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-lg inline-flex items-center gap-1.5"
-          >
-            <Printer className="w-4 h-4" /> PDF 다운로드
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => shareMut.mutate()}
+              disabled={!campaignId || shareMut.isPending}
+              className="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold rounded-lg inline-flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <Share2 className="w-4 h-4" /> 공유 링크
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold rounded-lg inline-flex items-center gap-1.5"
+            >
+              <Printer className="w-4 h-4" /> PDF 다운로드
+            </button>
+          </div>
         </div>
 
         {/* 캠페인 선택 */}
@@ -136,6 +170,19 @@ export default function AdminIntegratedROIReport() {
               </div>
             </div>
 
+            {/* 기간 비교 */}
+            {compare && compare.previous?.purchases > 0 && (
+              <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
+                <h3 className="text-sm font-bold mb-3">📊 지난 동일 기간 대비</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <DeltaCard label="유입" current={compare.current.landingViews} previous={compare.previous.landingViews} delta={compare.delta.landingViews} />
+                  <DeltaCard label="주문" current={compare.current.purchases} previous={compare.previous.purchases} delta={compare.delta.purchases} />
+                  <DeltaCard label="순매출" current={compare.current.netRevenue} previous={compare.previous.netRevenue} delta={compare.delta.netRevenue} format="currency" />
+                  <DeltaCard label="CVR" current={compare.current.cvr} previous={compare.previous.cvr} delta={compare.delta.cvr} format="percent" />
+                </div>
+              </div>
+            )}
+
             {/* 해석 코멘트 */}
             <div className="bg-slate-900 text-white rounded-xl p-6">
               <h3 className="text-sm font-bold text-emerald-400 mb-2">📊 결론 (자동 생성)</h3>
@@ -147,6 +194,25 @@ export default function AdminIntegratedROIReport() {
         )}
       </div>
     </Layout>
+  );
+}
+
+function DeltaCard({ label, current, previous, delta, format }: { label: string; current: number; previous: number; delta: number | null; format?: 'currency' | 'percent' }) {
+  const fmt = (v: number) => format === 'currency' ? `₩${Math.round(v).toLocaleString()}` : format === 'percent' ? `${(v * 100).toFixed(1)}%` : Math.round(v).toLocaleString();
+  const isUp = delta !== null && delta > 0;
+  const isDown = delta !== null && delta < 0;
+  return (
+    <div className="bg-slate-50 rounded-lg p-3">
+      <div className="text-[10px] font-semibold text-slate-500">{label}</div>
+      <div className="text-lg font-extrabold">{fmt(current)}</div>
+      <div className="text-[10px] text-slate-400">이전: {fmt(previous)}</div>
+      {delta !== null && (
+        <div className={`text-xs font-bold inline-flex items-center gap-0.5 mt-1 ${isUp ? 'text-emerald-600' : isDown ? 'text-rose-600' : 'text-slate-500'}`}>
+          {isUp ? <TrendingUp className="w-3 h-3" /> : isDown ? <TrendingDown className="w-3 h-3" /> : null}
+          {Math.abs(delta).toFixed(1)}%
+        </div>
+      )}
+    </div>
   );
 }
 

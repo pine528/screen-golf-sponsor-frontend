@@ -14,7 +14,7 @@ import { StatusBadge } from '../../components/funnel/StatusBadge';
 import { ActionBar } from '../../components/funnel/ActionBar';
 import { DetailTable, Column } from '../../components/funnel/DetailTable';
 import { api } from '../../services/api';
-import { Tag, Link2, QrCode, X } from 'lucide-react';
+import { Tag, Link2, QrCode, X, Plus, Download } from 'lucide-react';
 
 type Tab = 'codes' | 'links' | 'qr';
 
@@ -47,6 +47,37 @@ export default function AdminPromoCodesLinks() {
     mutationFn: (id: string) => api.disablePromoCode(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['promo-codes', campaignId] }),
   });
+
+  const [newLink, setNewLink] = useState({ contentId: '' });
+  const selectedCampaign = campaigns.find((c) => c.id === campaignId);
+
+  const createLink = useMutation({
+    mutationFn: () => api.createTrackingLink({
+      campaignId,
+      brandId: selectedCampaign?.brand?.id,
+      athleteId: selectedCampaign?.athletes?.[0]?.id,
+      contentId: newLink.contentId || null,
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tracking-links', campaignId] });
+      setNewLink({ contentId: '' });
+    },
+  });
+
+  const downloadCsv = (kind: 'codes' | 'links') => {
+    if (!campaignId) return;
+    const path = kind === 'codes' ? 'promo-codes.csv' : 'tracking-links.csv';
+    const token = localStorage.getItem('accessToken');
+    fetch(`${import.meta.env.VITE_API_URL || '/api'}/admin/${path}?campaignId=${campaignId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then(async (r) => {
+      const blob = await r.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${kind}-${campaignId}.csv`;
+      a.click();
+    });
+  };
 
   const codeColumns: Column<any>[] = [
     { key: 'code', label: '코드', render: (r) => <code className="font-mono font-bold">{r.code}</code> },
@@ -113,9 +144,35 @@ export default function AdminPromoCodesLinks() {
         {!campaignId ? (
           <div className="text-center py-16 text-sm text-slate-400 bg-slate-50 rounded-xl">캠페인을 선택해주세요</div>
         ) : tab === 'codes' ? (
-          <DetailTable data={codes} columns={codeColumns} pageSize={15} />
+          <>
+            <div className="flex justify-end mb-2">
+              <button onClick={() => downloadCsv('codes')} className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded"><Download className="w-3 h-3" /> CSV</button>
+            </div>
+            <DetailTable data={codes} columns={codeColumns} pageSize={15} />
+          </>
         ) : tab === 'links' ? (
-          <DetailTable data={links} columns={linkColumns} pageSize={15} />
+          <>
+            <div className="flex items-center justify-between mb-2 gap-3">
+              <div className="flex items-center gap-2 flex-1">
+                <input
+                  type="text"
+                  value={newLink.contentId}
+                  onChange={(e) => setNewLink({ contentId: e.target.value })}
+                  placeholder="콘텐츠 ID (예: instagram_reel_01) - 비워두면 캠페인 기본 링크"
+                  className="flex-1 max-w-md text-sm border border-slate-200 rounded px-2 py-1.5"
+                />
+                <button
+                  onClick={() => createLink.mutate()}
+                  disabled={createLink.isPending || !selectedCampaign?.athletes?.[0]}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded disabled:opacity-50"
+                >
+                  <Plus className="w-3 h-3" /> 링크 추가 발급
+                </button>
+              </div>
+              <button onClick={() => downloadCsv('links')} className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded"><Download className="w-3 h-3" /> CSV</button>
+            </div>
+            <DetailTable data={links} columns={linkColumns} pageSize={15} />
+          </>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {links.filter(l => l.qrUrl).map((l) => (

@@ -14,12 +14,13 @@ import { GlobalFilter, GlobalFilterValue } from '../../components/funnel/GlobalF
 import { DetailTable, Column } from '../../components/funnel/DetailTable';
 import { StatusBadge } from '../../components/funnel/StatusBadge';
 import { api } from '../../services/api';
-import { X, Receipt, Download } from 'lucide-react';
+import { X, Receipt, Download, Search } from 'lucide-react';
 
 export default function BrandOrders() {
   const [filter, setFilter] = useState<GlobalFilterValue>({});
   const [includeRefunded, setIncludeRefunded] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { data: meResp } = useQuery({
     queryKey: ['my-brand'],
@@ -51,7 +52,14 @@ export default function BrandOrders() {
     }).catch((e) => alert('다운로드 실패: ' + e.message));
   };
 
-  const filtered = includeRefunded ? orders : orders.filter((o) => o.status !== 'REFUNDED' && o.status !== 'CANCELLED');
+  const filtered = (includeRefunded ? orders : orders.filter((o) => o.status !== 'REFUNDED' && o.status !== 'CANCELLED'))
+    .filter((o) => {
+      if (!searchTerm) return true;
+      const q = searchTerm.toLowerCase();
+      return (o.athlete?.name || '').toLowerCase().includes(q)
+        || (o.promoCode || '').toLowerCase().includes(q)
+        || (o.id || '').toLowerCase().includes(q);
+    });
 
   const columns: Column<any>[] = [
     { key: 'paidAt', label: '주문일시', sortable: true, render: (r) => new Date(r.paidAt).toLocaleString() },
@@ -78,11 +86,23 @@ export default function BrandOrders() {
 
         <GlobalFilter value={filter} onChange={setFilter} hideAthlete hideCampaign />
 
-        <div className="flex items-center justify-between mb-4">
-          <label className="inline-flex items-center gap-2 text-sm text-slate-600">
-            <input type="checkbox" checked={includeRefunded} onChange={(e) => setIncludeRefunded(e.target.checked)} className="rounded" />
-            환불/취소 포함
-          </label>
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div className="flex items-center gap-3 flex-wrap">
+            <label className="inline-flex items-center gap-2 text-sm text-slate-600">
+              <input type="checkbox" checked={includeRefunded} onChange={(e) => setIncludeRefunded(e.target.checked)} className="rounded" />
+              환불/취소 포함
+            </label>
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 absolute left-2 top-2 text-slate-400" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="선수명/코드/주문번호 검색"
+                className="pl-7 pr-2 py-1.5 text-sm border border-slate-200 rounded-lg w-64"
+              />
+            </div>
+          </div>
           <div className="flex items-center gap-3">
             <span className="text-xs text-slate-500">※ 개인정보 보호 — 주문자 실명/전화/주소는 표시되지 않습니다</span>
             <button onClick={downloadCsv} className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg">
