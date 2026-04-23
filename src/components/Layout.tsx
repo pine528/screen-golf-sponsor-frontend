@@ -396,28 +396,11 @@ export function Layout({ children }: LayoutProps) {
 
           {/* Navigation */}
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.path;
-              const Icon = item.icon;
-
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={closeMobileMenu}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group',
-                    isActive
-                      ? 'bg-gradient-to-r from-emerald-500/10 to-teal-500/5 text-slate-900 border border-emerald-500/30'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
-                  )}
-                >
-                  <Icon className={cn('w-5 h-5', isActive ? 'text-emerald-600' : 'text-slate-400 group-hover:text-slate-600')} />
-                  {item.label}
-                  {isActive && <ChevronRight className="w-4 h-4 ml-auto text-emerald-600" />}
-                </Link>
-              );
-            })}
+            <NavSections
+              items={navItems}
+              isActive={(p) => location.pathname === p}
+              onClick={closeMobileMenu}
+            />
           </nav>
 
           {/* User Menu */}
@@ -558,5 +541,63 @@ export function Layout({ children }: LayoutProps) {
         <div className={user ? "p-4 lg:p-8" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"}>{children}</div>
       </main>
     </div>
+  );
+}
+
+/**
+ * NavSections — 네비게이션을 "기본" vs "🔥 풀 퍼널" 섹션으로 분리
+ * 풀 퍼널 섹션은 기본 접힘 상태로 시작
+ */
+function NavSections({ items, isActive, onClick }: {
+  items: { path: string; label: string; icon: any }[];
+  isActive: (p: string) => boolean;
+  onClick: () => void;
+}) {
+  const [funnelOpen, setFunnelOpen] = useState(() => {
+    // 현재 경로가 funnel 하위면 자동 열림
+    return typeof window !== 'undefined' && /\/funnel\//.test(window.location.pathname);
+  });
+
+  const funnelItems = items.filter((i) => i.label.startsWith('🔥'));
+  const regularItems = items.filter((i) => !i.label.startsWith('🔥'));
+
+  const renderItem = (item: any) => {
+    const active = isActive(item.path);
+    const Icon = item.icon;
+    return (
+      <Link
+        key={item.path}
+        to={item.path}
+        onClick={onClick}
+        className={cn(
+          'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group',
+          active
+            ? 'bg-gradient-to-r from-emerald-500/10 to-teal-500/5 text-slate-900 border border-emerald-500/30'
+            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
+        )}
+      >
+        <Icon className={cn('w-5 h-5', active ? 'text-emerald-600' : 'text-slate-400 group-hover:text-slate-600')} />
+        {item.label.replace(/^🔥\s*/, '')}
+        {active && <ChevronRight className="w-4 h-4 ml-auto text-emerald-600" />}
+      </Link>
+    );
+  };
+
+  return (
+    <>
+      {regularItems.map(renderItem)}
+      {funnelItems.length > 0 && (
+        <div className="pt-3 mt-3 border-t border-slate-200">
+          <button
+            onClick={() => setFunnelOpen(!funnelOpen)}
+            className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-emerald-600 uppercase tracking-wider hover:bg-slate-50 rounded-lg"
+          >
+            <span>🔥 풀 퍼널 ({funnelItems.length})</span>
+            <ChevronRight className={cn('w-4 h-4 transition-transform', funnelOpen && 'rotate-90')} />
+          </button>
+          {funnelOpen && <div className="mt-1 space-y-1">{funnelItems.map(renderItem)}</div>}
+        </div>
+      )}
+    </>
   );
 }

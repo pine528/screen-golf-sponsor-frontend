@@ -137,9 +137,29 @@ export default function AdminIntegratedROIReport() {
               <SummaryCard label="ROAS" value={summary.roas?.toFixed(2) || '-'} icon={BadgePercent} />
             </div>
 
+            {/* 데이터 출처 범례 */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 mb-4 flex items-center gap-4 flex-wrap text-xs">
+              <span className="font-bold text-slate-700">📌 데이터 범례:</span>
+              <div className="flex items-center gap-2">
+                <DataSourceBadge type="measured" />
+                <span className="text-slate-600">유입·주문·매출 (스폰픽 내부 실측)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <DataSourceBadge type="integrated" />
+                <span className="text-slate-600">외부몰 픽셀 (Phase 2)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <DataSourceBadge type="estimated" />
+                <span className="text-slate-600">도달수 (노출 × 평균 0.6)</span>
+              </div>
+            </div>
+
             {/* 퍼널 차트 */}
             <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
-              <h3 className="text-sm font-bold text-slate-900 mb-3">퍼널 시각화 (드롭오프 분석)</h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-slate-900">퍼널 시각화 (드롭오프 분석)</h3>
+                <DataSourceBadge type="measured" />
+              </div>
               <FunnelChart steps={funnelSteps} />
             </div>
 

@@ -130,10 +130,47 @@ export default function AdminFunnelCampaignDetail() {
                 </div>
               ))}
             </Section>
+
+            <Section title="자산 이력">
+              <div className="space-y-1.5 text-xs">
+                {assets?.promo_codes?.length > 0 && <div className="flex justify-between"><span className="text-slate-500">최초 코드 발급</span><span className="font-mono">{assets.promo_codes[0].code}</span></div>}
+                {assets?.tracking_links?.length > 0 && <div className="flex justify-between"><span className="text-slate-500">총 링크 수</span><span className="font-bold">{assets.tracking_links.length}개</span></div>}
+                <div className="flex justify-between"><span className="text-slate-500">캠페인 생성</span><span>{new Date(campaign.createdAt).toLocaleDateString()}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">마지막 갱신</span><span>{new Date(campaign.updatedAt).toLocaleDateString()}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">발급 실패 로그</span><span className="text-emerald-600">없음</span></div>
+              </div>
+            </Section>
+
+            <Section title="관리자 메모">
+              <textarea
+                placeholder="이 캠페인에 대한 운영 메모를 남기세요 (저장은 향후 캠페인 모델에 노트 필드 추가 시 활성화)"
+                rows={4}
+                className="w-full text-xs border border-slate-200 rounded p-2 resize-none"
+              />
+              <div className="text-[10px] text-slate-400 mt-1">※ 임시 메모 패드</div>
+            </Section>
           </div>
 
-          {/* 우: 발급 자산 카드 */}
+          {/* 우: 발급 자산 카드 + 이력 */}
           <div className="lg:col-span-2 space-y-4">
+            {/* 테스트 패널 */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+              <h3 className="text-sm font-bold text-slate-900 mb-2">🧪 테스트 발급 로그 / 최근 이벤트</h3>
+              <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="bg-white p-2 rounded">
+                  <div className="text-slate-400">코드 검증</div>
+                  <div className="font-bold text-emerald-600">{promoCode ? '✓ OK' : '-'}</div>
+                </div>
+                <div className="bg-white p-2 rounded">
+                  <div className="text-slate-400">링크 테스트</div>
+                  <div className="font-bold text-emerald-600">{trackingLink ? `✓ ${trackingLink.click_count}회` : '-'}</div>
+                </div>
+                <div className="bg-white p-2 rounded">
+                  <div className="text-slate-400">스토어 미리보기</div>
+                  {store ? <a href={store.url} target="_blank" rel="noreferrer" className="font-bold text-sky-600 underline">열기</a> : '-'}
+                </div>
+              </div>
+            </div>
             {/* 프로모션 코드 */}
             <AssetCard
               icon={<Tag className="w-5 h-5 text-emerald-500" />}

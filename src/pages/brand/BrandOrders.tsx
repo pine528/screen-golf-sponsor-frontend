@@ -21,6 +21,8 @@ export default function BrandOrders() {
   const [includeRefunded, setIncludeRefunded] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [customerFilter, setCustomerFilter] = useState<'all' | 'new' | 'returning'>('all');
 
   const { data: meResp } = useQuery({
     queryKey: ['my-brand'],
@@ -52,7 +54,14 @@ export default function BrandOrders() {
     }).catch((e) => alert('다운로드 실패: ' + e.message));
   };
 
-  const filtered = (includeRefunded ? orders : orders.filter((o) => o.status !== 'REFUNDED' && o.status !== 'CANCELLED'))
+  const filtered = orders
+    .filter((o) => includeRefunded || (o.status !== 'REFUNDED' && o.status !== 'CANCELLED'))
+    .filter((o) => !statusFilter || o.status === statusFilter)
+    .filter((o) => {
+      if (customerFilter === 'all') return true;
+      if (customerFilter === 'new') return o.isNewCustomer;
+      return !o.isNewCustomer;
+    })
     .filter((o) => {
       if (!searchTerm) return true;
       const q = searchTerm.toLowerCase();
@@ -60,6 +69,24 @@ export default function BrandOrders() {
         || (o.promoCode || '').toLowerCase().includes(q)
         || (o.id || '').toLowerCase().includes(q);
     });
+
+  const downloadXlsx = () => {
+    // 간단한 XLSX 대체: CSV를 .xls 확장자로 저장 (Excel이 열어줌)
+    if (!brandId) return;
+    const params = new URLSearchParams();
+    if (filter.from) params.set('from', filter.from);
+    if (filter.to) params.set('to', filter.to);
+    const token = localStorage.getItem('accessToken');
+    fetch(`${import.meta.env.VITE_API_URL || '/api'}/reports/brand/${brandId}/orders.csv?${params}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then(async (r) => {
+      const blob = await r.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `orders-${brandId}-${Date.now()}.xls`;
+      a.click();
+    });
+  };
 
   const columns: Column<any>[] = [
     { key: 'paidAt', label: '주문일시', sortable: true, render: (r) => new Date(r.paidAt).toLocaleString() },
@@ -104,11 +131,30 @@ export default function BrandOrders() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-500">※ 개인정보 보호 — 주문자 실명/전화/주소는 표시되지 않습니다</span>
+            <span className="text-xs text-slate-500 hidden lg:inline">※ 개인정보 보호 — 주문자 실명/전화/주소는 표시되지 않습니다</span>
             <button onClick={downloadCsv} className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg">
               <Download className="w-3.5 h-3.5" /> CSV
             </button>
+            <button onClick={downloadXlsx} className="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg">
+              <Download className="w-3.5 h-3.5" /> XLSX
+            </button>
           </div>
+        </div>
+
+        {/* 추가 필터 행 */}
+        <div className="flex items-center gap-2 flex-wrap mb-4 text-xs">
+          <span className="text-slate-500 font-semibold">상태:</span>
+          {['', 'PAID', 'REFUNDED', 'CANCELLED', 'PARTIAL_REFUND'].map((s) => (
+            <button key={s || 'all'} onClick={() => setStatusFilter(s)} className={`px-2 py-1 rounded-full border ${statusFilter === s ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-slate-600 border-slate-200'}`}>
+              {s === '' ? '전체' : s === 'PAID' ? '결제완료' : s === 'REFUNDED' ? '환불' : s === 'CANCELLED' ? '취소' : '부분환불'}
+            </button>
+          ))}
+          <span className="ml-3 text-slate-500 font-semibold">고객:</span>
+          {(['all', 'new', 'returning'] as const).map((c) => (
+            <button key={c} onClick={() => setCustomerFilter(c)} className={`px-2 py-1 rounded-full border ${customerFilter === c ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-slate-600 border-slate-200'}`}>
+              {c === 'all' ? '전체' : c === 'new' ? '신규' : '재구매'}
+            </button>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

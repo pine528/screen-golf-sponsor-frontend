@@ -21,6 +21,8 @@ type Tab = 'codes' | 'links' | 'qr';
 export default function AdminPromoCodesLinks() {
   const [tab, setTab] = useState<Tab>('codes');
   const [campaignId, setCampaignId] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [contentFilter, setContentFilter] = useState<string>('');
   const queryClient = useQueryClient();
 
   const { data: campaignsResp } = useQuery({
@@ -40,8 +42,10 @@ export default function AdminPromoCodesLinks() {
     enabled: !!campaignId && (tab === 'links' || tab === 'qr'),
   });
 
-  const codes = (codesResp?.data || []) as any[];
-  const links = (linksResp?.data || []) as any[];
+  const allCodes = (codesResp?.data || []) as any[];
+  const allLinks = (linksResp?.data || []) as any[];
+  const codes = allCodes.filter((c) => !statusFilter || c.status === statusFilter);
+  const links = allLinks.filter((l) => (!statusFilter || l.status === statusFilter) && (!contentFilter || (l.contentId || '').includes(contentFilter)));
 
   const disableCode = useMutation({
     mutationFn: (id: string) => api.disablePromoCode(id),
@@ -143,7 +147,35 @@ export default function AdminPromoCodesLinks() {
 
         {!campaignId ? (
           <div className="text-center py-16 text-sm text-slate-400 bg-slate-50 rounded-xl">캠페인을 선택해주세요</div>
-        ) : tab === 'codes' ? (
+        ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr_280px] gap-4">
+          {/* 좌측 필터 패널 */}
+          <div className="bg-white border border-slate-200 rounded-xl p-3 h-fit">
+            <h3 className="text-xs font-bold text-slate-500 mb-2">필터</h3>
+            <div className="mb-3">
+              <label className="text-[10px] font-semibold text-slate-500">상태</label>
+              <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1">
+                <option value="">전체</option>
+                <option value="ACTIVE">Active</option>
+                <option value="DISABLED">Disabled</option>
+                <option value="EXPIRED">Expired</option>
+                <option value="OVERUSED">Overused</option>
+              </select>
+            </div>
+            {tab === 'links' && (
+              <div className="mb-3">
+                <label className="text-[10px] font-semibold text-slate-500">콘텐츠 ID</label>
+                <input type="text" value={contentFilter} onChange={(e) => setContentFilter(e.target.value)} placeholder="instagram_..." className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1" />
+              </div>
+            )}
+            <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-100">
+              총 {tab === 'codes' ? codes.length : links.length}건
+            </div>
+          </div>
+
+          {/* 중앙 - 목록 (기존) */}
+          <div>
+        {tab === 'codes' ? (
           <>
             <div className="flex justify-end mb-2">
               <button onClick={() => downloadCsv('codes')} className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded"><Download className="w-3 h-3" /> CSV</button>
@@ -174,7 +206,7 @@ export default function AdminPromoCodesLinks() {
             <DetailTable data={links} columns={linkColumns} pageSize={15} />
           </>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {links.filter(l => l.qrUrl).map((l) => (
               <div key={l.id} className="bg-white border border-slate-200 rounded-xl p-4 text-center">
                 <img src={l.qrUrl} alt={l.shortCode} className="w-full aspect-square mb-2 rounded" />
@@ -184,6 +216,51 @@ export default function AdminPromoCodesLinks() {
             ))}
             {links.filter(l => l.qrUrl).length === 0 && <div className="col-span-full text-center py-12 text-sm text-slate-400">QR 자산이 없습니다</div>}
           </div>
+        )}
+          </div>
+
+          {/* 우측 상세 패널 */}
+          <div className="bg-white border border-slate-200 rounded-xl p-4 h-fit">
+            <h3 className="text-xs font-bold text-slate-500 mb-3">📊 빠른 분석</h3>
+            {tab === 'codes' ? (
+              <>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between"><span className="text-slate-500">전체 코드</span><span className="font-bold">{allCodes.length}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">활성</span><span className="font-bold text-emerald-600">{allCodes.filter(c => c.status === 'ACTIVE').length}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">총 사용</span><span className="font-bold">{allCodes.reduce((s, c) => s + c.usageCount, 0)}회</span></div>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100">
+                  <h4 className="text-xs font-bold text-slate-500 mb-2">최근 사용</h4>
+                  {allCodes.slice(0, 3).map((c) => (
+                    <div key={c.id} className="text-xs py-1">
+                      <code className="font-mono">{c.code}</code>
+                      <span className="text-slate-400 ml-2">{c.usageCount}회</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : tab === 'links' ? (
+              <>
+                <div className="space-y-2 text-xs">
+                  <div className="flex justify-between"><span className="text-slate-500">전체 링크</span><span className="font-bold">{allLinks.length}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">총 클릭</span><span className="font-bold text-emerald-600">{allLinks.reduce((s, l) => s + l.clickCount, 0)}회</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">콘텐츠별</span><span className="font-bold">{new Set(allLinks.map(l => l.contentId).filter(Boolean)).size}개</span></div>
+                </div>
+                <div className="mt-4 pt-3 border-t border-slate-100">
+                  <h4 className="text-xs font-bold text-slate-500 mb-2">TOP 링크</h4>
+                  {[...allLinks].sort((a, b) => b.clickCount - a.clickCount).slice(0, 3).map((l) => (
+                    <div key={l.id} className="text-xs py-1 flex justify-between">
+                      <code className="font-mono">{l.shortCode}</code>
+                      <span className="text-emerald-600 font-bold">{l.clickCount}회</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="text-xs text-slate-500">QR 자산은 트래킹 링크와 동일하게 집계됩니다.</div>
+            )}
+          </div>
+        </div>
         )}
       </div>
     </Layout>

@@ -131,6 +131,26 @@ export default function MiniStoreProduct() {
             </div>
           </div>
 
+          {/* FAQ */}
+          <div className="mt-6 mb-6">
+            <h3 className="text-sm font-bold text-slate-900 mb-3">❓ 상품 FAQ</h3>
+            <div className="bg-white border border-slate-200 rounded-lg divide-y divide-slate-100">
+              {[
+                { q: '배송은 언제 받아볼 수 있나요?', a: '결제 완료 후 영업일 기준 2~3일 이내 발송됩니다.' },
+                { q: '사이즈 교환이 가능한가요?', a: '수령 후 7일 이내 미사용 상품에 한해 교환 가능합니다.' },
+                { q: '프로모션 코드와 함께 사용할 수 있나요?', a: '선수 추천 코드는 자동 적용되며 결제 시 할인이 표시됩니다.' },
+              ].map((f, i) => (
+                <details key={i} className="p-3 group">
+                  <summary className="cursor-pointer text-xs font-semibold flex items-center justify-between">
+                    {f.q}
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  </summary>
+                  <p className="text-xs text-slate-600 mt-2">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+
           {/* 관련 상품 */}
           {store.products && store.products.length > 1 && (
             <div className="mt-6 mb-6">

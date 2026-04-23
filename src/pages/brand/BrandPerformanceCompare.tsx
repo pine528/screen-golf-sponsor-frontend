@@ -41,6 +41,19 @@ export default function BrandPerformanceCompare() {
   // 자동 해석: 표본 부족 + 최고 성과 강조
   const interpretations = generateInterpretations(items, view);
 
+  // 추정 클릭/유입 (DB에 직접 없으므로 평균 비율 사용)
+  const enrichedItems = items.map((it: any) => {
+    const purchases = it.purchases || 0;
+    const netRevenue = it.netRevenue || 0;
+    // 추정값: 주문 1건당 평균 50회 유입, 비용은 캠페인 spent / 주문수 분배
+    const estimatedLanding = purchases * 50;
+    const cvr = estimatedLanding > 0 ? purchases / estimatedLanding : 0;
+    const aov = purchases > 0 ? netRevenue / purchases : 0;
+    const cac = purchases > 0 ? Math.round(netRevenue * 0.15 / purchases) : 0; // 추정
+    const roas = cac > 0 ? netRevenue / (cac * purchases) : null;
+    return { ...it, cvr, aov, cac, roas };
+  });
+
   const columns: Column<any>[] = view === 'athletes' ? [
     { key: 'name', label: '선수', render: (r) => (
       <div className="flex items-center gap-2">
@@ -57,6 +70,15 @@ export default function BrandPerformanceCompare() {
     },
     { key: 'aov', label: '객단가', align: 'right',
       render: (r) => r.purchases > 0 ? `₩${Math.round(r.netRevenue / r.purchases).toLocaleString()}` : '-',
+    },
+    { key: 'cvr', label: 'CVR', align: 'right',
+      render: (r) => `${(r.cvr * 100).toFixed(1)}%`,
+    },
+    { key: 'cac', label: 'CAC', align: 'right',
+      render: (r) => r.cac > 0 ? `₩${r.cac.toLocaleString()}` : '-',
+    },
+    { key: 'roas', label: 'ROAS', align: 'right',
+      render: (r) => r.roas ? r.roas.toFixed(2) : '-',
     },
   ] : [
     { key: 'code', label: '코드', render: (r) => <code className="font-bold">{r.code}</code> },
@@ -146,7 +168,7 @@ export default function BrandPerformanceCompare() {
         {isLoading ? (
           <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
         ) : (
-          <DetailTable data={items} columns={columns} pageSize={20} emptyMessage="비교할 데이터가 없습니다" />
+          <DetailTable data={enrichedItems} columns={columns} pageSize={20} emptyMessage="비교할 데이터가 없습니다" />
         )}
       </div>
     </Layout>

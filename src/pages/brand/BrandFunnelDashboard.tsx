@@ -57,6 +57,17 @@ export default function BrandFunnelDashboard() {
   });
   const predict = predictResp?.data;
 
+  // 콘텐츠별 성과 (BRD-01 위젯)
+  const { data: contentsResp } = useQuery({
+    queryKey: ['brand-contents', brandId, filter],
+    queryFn: async () => {
+      const r = await api.get(`/reports/brand/${brandId}/segments`, { from: filter.from, to: filter.to });
+      return r;
+    },
+    enabled: !!brandId && tab === 'overview',
+  });
+  const contents = (contentsResp?.data?.byReferrer || []) as any[];
+
   // 최근 주문 (BRD-01 하단)
   const { data: recentOrdersResp } = useQuery({
     queryKey: ['brand-recent-orders', brandId, filter],
@@ -76,7 +87,13 @@ export default function BrandFunnelDashboard() {
           </p>
         </div>
 
-        <GlobalFilter value={filter} onChange={setFilter} hideAthlete hideCampaign campaigns={report?.campaigns || []} />
+        <GlobalFilter
+          value={filter}
+          onChange={setFilter}
+          campaigns={(report?.campaigns || []) as any[]}
+          athletes={[]}
+        />
+        <div className="text-[10px] text-slate-400 -mt-4 mb-4 ml-2">※ 채널 필터는 추후 픽셀 연동 캠페인에 적용됩니다</div>
 
         {/* Tabs */}
         <div className="flex border-b border-slate-200 mb-4">
@@ -156,6 +173,24 @@ export default function BrandFunnelDashboard() {
                   )}
                 </div>
               </div>
+            </div>
+
+            {/* 콘텐츠별 성과 (referrer 기반) */}
+            <div className="bg-white border border-slate-200 rounded-xl p-5 mt-6">
+              <h3 className="text-sm font-bold text-slate-900 mb-3">콘텐츠/유입 채널별 성과</h3>
+              {contents.length === 0 ? (
+                <div className="text-center py-6 text-xs text-slate-400">데이터가 없습니다</div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  {contents.map((c: any) => (
+                    <div key={c.referrer} className="text-center bg-slate-50 rounded p-2">
+                      <div className="text-[10px] text-slate-500 truncate">{c.referrer}</div>
+                      <div className="text-sm font-bold text-emerald-600">{c.visits}</div>
+                      <div className="text-[9px] text-slate-400">방문</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* 최근 주문/특이사항 */}

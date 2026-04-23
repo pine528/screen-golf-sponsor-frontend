@@ -17,7 +17,8 @@ import { SummaryCard } from '../../components/funnel/SummaryCard';
 import { StatusBadge } from '../../components/funnel/StatusBadge';
 import { DetailTable, Column } from '../../components/funnel/DetailTable';
 import { api } from '../../services/api';
-import { Megaphone, CheckCircle2, FileEdit, AlarmClock, RefreshCw } from 'lucide-react';
+import { Megaphone, CheckCircle2, FileEdit, AlarmClock, RefreshCw, Search, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface CampaignRow {
   id: string;
@@ -34,6 +35,8 @@ export default function AdminFunnelCampaigns() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState<GlobalFilterValue>({});
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
 
   const { data: resp, isLoading } = useQuery({
     queryKey: ['admin-funnel-campaigns'],
@@ -45,9 +48,25 @@ export default function AdminFunnelCampaigns() {
     return all.filter((c) => {
       if (filter.from && c.dateStart && new Date(c.dateStart) < new Date(filter.from)) return false;
       if (filter.to && c.dateEnd && new Date(c.dateEnd) > new Date(filter.to)) return false;
+      if (statusFilter && c.status !== statusFilter) return false;
+      if (search) {
+        const q = search.toLowerCase();
+        const inName = c.name.toLowerCase().includes(q);
+        const inBrand = c.brand.name.toLowerCase().includes(q);
+        const inAth = c.athletes.some((a) => a.name.toLowerCase().includes(q));
+        if (!inName && !inBrand && !inAth) return false;
+      }
       return true;
     });
-  }, [all, filter]);
+  }, [all, filter, search, statusFilter]);
+
+  const STATUS_CHIPS = [
+    { value: '', label: '전체' },
+    { value: 'ACTIVE', label: 'Active' },
+    { value: 'DRAFT', label: 'Draft' },
+    { value: 'COMPLETED', label: '완료' },
+    { value: 'CANCELLED', label: '취소' },
+  ];
 
   const counts = useMemo(() => ({
     total: all.length,
@@ -111,6 +130,34 @@ export default function AdminFunnelCampaigns() {
             캠페인 목록 / 자산 상태 관리
           </h1>
           <p className="text-sm text-slate-500 mt-1">활성/대기/종료 캠페인을 한 화면에서 조회하고 자산 발급 상태를 확인합니다 (ADM-01)</p>
+        </div>
+
+        {/* 헤더: 검색/상태칩/신규 */}
+        <div className="bg-white border border-slate-200 rounded-xl p-3 mb-4 flex flex-wrap items-center gap-2">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="w-3.5 h-3.5 absolute left-2 top-2.5 text-slate-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="캠페인명/브랜드/선수 검색"
+              className="w-full pl-7 pr-2 py-1.5 text-sm border border-slate-200 rounded-lg"
+            />
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {STATUS_CHIPS.map((c) => (
+              <button
+                key={c.value}
+                onClick={() => setStatusFilter(c.value)}
+                className={`px-2.5 py-1.5 text-xs font-semibold rounded-full border ${statusFilter === c.value ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-slate-600 border-slate-200'}`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+          <Link to="/campaigns" className="ml-auto px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-lg inline-flex items-center gap-1">
+            <Plus className="w-3 h-3" /> 신규 캠페인
+          </Link>
         </div>
 
         <GlobalFilter value={filter} onChange={setFilter} hideCampaign hideAthlete />
