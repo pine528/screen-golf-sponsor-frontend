@@ -188,6 +188,16 @@ export default function BrandOrders() {
                 <Field label="할인" value={`₩${Math.round(Number(selectedOrder.discountAmount)).toLocaleString()}`} />
                 <Field label="순매출" value={`₩${Math.round(Number(selectedOrder.netAmount)).toLocaleString()}`} />
                 <Field label="환불 금액" value={`₩${Math.round(Number(selectedOrder.refundedAmount)).toLocaleString()}`} />
+                {selectedOrder.refundedAt && (
+                  <>
+                    <Field label="환불 일시" value={new Date(selectedOrder.refundedAt).toLocaleString()} />
+                    <Field label="환불 사유" value={
+                      <span className="bg-rose-50 text-rose-700 px-2 py-0.5 rounded text-xs font-semibold">
+                        {selectedOrder.refundReason || '사유 미기재'}
+                      </span>
+                    } />
+                  </>
+                )}
                 <Field label="신규 고객" value={selectedOrder.isNewCustomer ? '예' : '아니오'} />
                 <Field label="귀속 근거" value={
                   <span className="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded text-xs font-semibold">{selectedOrder.attributionReason}</span>

@@ -4,6 +4,33 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ===== REP-01 PDF 인쇄용 스타일 ===== */
+@media print {
+  /* 사이드바, 헤더, 알림, 액션 버튼 숨김 */
+  aside, nav, header,
+  .no-print, button:not(.print-keep) {
+    display: none !important;
+  }
+  /* 본문 풀 너비 */
+  main, .layout-main {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  /* 카드 그림자/둥근모서리 단순화 */
+  .border, [class*="rounded"], [class*="shadow"] {
+    box-shadow: none !important;
+    border-radius: 4px !important;
+  }
+  /* 페이지 분리 */
+  .print-page-break { page-break-after: always; }
+  .print-no-break { page-break-inside: avoid; }
+  /* 배경색 인쇄 강제 */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  /* 차트 SVG 크기 보정 */
+  .recharts-wrapper { max-width: 100% !important; }
+}
+
 @layer base {
   * {
     font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;

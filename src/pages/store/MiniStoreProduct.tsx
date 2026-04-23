@@ -50,7 +50,16 @@ export default function MiniStoreProduct() {
     if (existing) {
       existing.qty += qty;
     } else {
-      cart.push({ productId: product.id, qty, name: product.name, price: finalPrice, slug });
+      // attribution snapshot: 결제 실패 시에도 동일 귀속 유지
+      cart.push({
+        productId: product.id, qty, name: product.name, price: finalPrice, slug,
+        attribution: {
+          campaignId: store.campaignId,
+          brandId: store.brandId,
+          athleteId: product.athleteId || store.products?.[0]?.athleteId,
+          addedAt: new Date().toISOString(),
+        },
+      });
     }
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
 

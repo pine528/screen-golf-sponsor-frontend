@@ -38,14 +38,36 @@ export default function AdminIntegratedROIReport() {
   const report = reportResp?.data;
   const summary = report?.summary || {};
 
-  // 기간 비교
+  // 기간 비교 — 사용자가 비교 기간 선택
+  const [compareMode, setCompareMode] = useState<'previous' | 'last_year' | 'none'>('previous');
+  const compareDateRange = (() => {
+    if (compareMode === 'none' || !filter.from || !filter.to) return null;
+    const f = new Date(filter.from);
+    const t = new Date(filter.to);
+    const span = t.getTime() - f.getTime();
+    if (compareMode === 'previous') {
+      return { from: new Date(f.getTime() - span).toISOString().slice(0, 10), to: new Date(t.getTime() - span).toISOString().slice(0, 10) };
+    }
+    // last_year: 같은 기간 1년 전
+    const yf = new Date(f); yf.setFullYear(yf.getFullYear() - 1);
+    const yt = new Date(t); yt.setFullYear(yt.getFullYear() - 1);
+    return { from: yf.toISOString().slice(0, 10), to: yt.toISOString().slice(0, 10) };
+  })();
+
   const { data: compareResp } = useQuery({
-    queryKey: ['period-compare', report?.campaign?.brandId, filter],
+    queryKey: ['period-compare', report?.campaign?.brandId, filter, compareMode],
     queryFn: async () => {
-      const r = await api.get(`/reports/brand/${report?.campaign?.brandId}/period-compare`, { from: filter.from, to: filter.to });
+      // 백엔드는 from/to만 받으면 자동으로 직전 동일 기간 계산
+      // last_year 모드는 prev_from/prev_to 별도 전달
+      const params: any = { from: filter.from, to: filter.to };
+      if (compareDateRange) {
+        params.prev_from = compareDateRange.from;
+        params.prev_to = compareDateRange.to;
+      }
+      const r = await api.get(`/reports/brand/${report?.campaign?.brandId}/period-compare`, params);
       return r;
     },
-    enabled: !!campaignId && !!report?.campaign?.brandId,
+    enabled: !!campaignId && !!report?.campaign?.brandId && compareMode !== 'none',
   });
   const compare = compareResp?.data;
 
@@ -190,18 +212,29 @@ export default function AdminIntegratedROIReport() {
               </div>
             </div>
 
-            {/* 기간 비교 */}
-            {compare && compare.previous?.purchases > 0 && (
-              <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
-                <h3 className="text-sm font-bold mb-3">📊 지난 동일 기간 대비</h3>
+            {/* 기간 비교 (사용자 선택 옵션) */}
+            <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
+              <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                <h3 className="text-sm font-bold">📊 기간 비교</h3>
+                <div className="inline-flex bg-slate-100 rounded-lg p-0.5 text-xs">
+                  <button onClick={() => setCompareMode('previous')} className={`px-2 py-1 rounded ${compareMode === 'previous' ? 'bg-white shadow-sm font-bold' : 'text-slate-500'}`}>직전 동일 기간</button>
+                  <button onClick={() => setCompareMode('last_year')} className={`px-2 py-1 rounded ${compareMode === 'last_year' ? 'bg-white shadow-sm font-bold' : 'text-slate-500'}`}>전년 동기</button>
+                  <button onClick={() => setCompareMode('none')} className={`px-2 py-1 rounded ${compareMode === 'none' ? 'bg-white shadow-sm font-bold' : 'text-slate-500'}`}>비교 안 함</button>
+                </div>
+              </div>
+              {compareMode === 'none' ? (
+                <div className="text-xs text-slate-400 text-center py-4">비교 기간을 선택하세요</div>
+              ) : !compare || !compare.previous?.purchases ? (
+                <div className="text-xs text-slate-400 text-center py-4">비교 기간 데이터가 부족합니다</div>
+              ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <DeltaCard label="유입" current={compare.current.landingViews} previous={compare.previous.landingViews} delta={compare.delta.landingViews} />
                   <DeltaCard label="주문" current={compare.current.purchases} previous={compare.previous.purchases} delta={compare.delta.purchases} />
                   <DeltaCard label="순매출" current={compare.current.netRevenue} previous={compare.previous.netRevenue} delta={compare.delta.netRevenue} format="currency" />
                   <DeltaCard label="CVR" current={compare.current.cvr} previous={compare.previous.cvr} delta={compare.delta.cvr} format="percent" />
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
             {/* 해석 코멘트 */}
             <div className="bg-slate-900 text-white rounded-xl p-6">

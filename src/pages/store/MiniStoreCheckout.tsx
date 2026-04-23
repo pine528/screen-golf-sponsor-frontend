@@ -38,6 +38,9 @@ export default function MiniStoreCheckout() {
   const cartItems = JSON.parse(localStorage.getItem(CART_KEY) || '[]').filter((c: any) => c.slug === slug);
   const grossAmount = cartItems.reduce((sum: number, c: any) => sum + c.price * c.qty, 0);
 
+  // 첫 cart item의 attribution snapshot 활용 (결제 실패 후에도 귀속 유지)
+  const cartAttribution = cartItems[0]?.attribution || null;
+
   const [promoCode, setPromoCode] = useState('');
   const [discountAmount, setDiscountAmount] = useState(0);
   const [promoApplied, setPromoApplied] = useState<any>(null);
@@ -75,8 +78,10 @@ export default function MiniStoreCheckout() {
     const items = cartItems.map((c: any) => ({ product_id: c.productId, qty: c.qty, unit_price: c.price }));
     const resp = await api.createFunnelPurchase({
       order_id: orderId,
-      campaign_id: store?.campaignId,
-      brand_id: store?.brandId,
+      // cart snapshot 우선, 없으면 store 기본값 (결제 실패 후 재시도 시 동일 귀속 보장)
+      campaign_id: cartAttribution?.campaignId || store?.campaignId,
+      brand_id: cartAttribution?.brandId || store?.brandId,
+      athlete_id: cartAttribution?.athleteId,
       promo_code: promoApplied?.code,
       gross_amount: grossAmount,
       discount_amount: discountAmount,
