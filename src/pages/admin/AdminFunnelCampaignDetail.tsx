@@ -1,0 +1,223 @@
+/**
+ * ADM-02: 캠페인 상세 / 자산 발급
+ *
+ * Refs: wireframe_spec.docx > ADM-02
+ * - 좌측: 캠페인 기본 정보, 예산, 할인 정책
+ * - 우측: 발급 자산 카드 (코드/링크/QR/스토어 URL) + 복사/다운로드/재발급
+ * - 하단: 자산 이력 / 발급 실패 로그
+ */
+
+import { useParams, Link } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Layout } from '../../components/Layout';
+import { ActionBar } from '../../components/funnel/ActionBar';
+import { StatusBadge } from '../../components/funnel/StatusBadge';
+import { api } from '../../services/api';
+import { ArrowLeft, Tag, Link2, QrCode, Store, Calendar } from 'lucide-react';
+
+export default function AdminFunnelCampaignDetail() {
+  const { id } = useParams<{ id: string }>();
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['admin-funnel-campaign', id],
+    queryFn: () => api.getFunnelCampaign(id!),
+    enabled: !!id,
+  });
+
+  const generateMut = useMutation({
+    mutationFn: () => api.generateCampaignAssets(id!),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-funnel-campaign', id] }),
+  });
+
+  if (isLoading) return <Layout><div className="p-6">로딩 중...</div></Layout>;
+
+  const { campaign, assets } = data?.data || {};
+  if (!campaign) return <Layout><div className="p-6">캠페인을 찾을 수 없습니다</div></Layout>;
+
+  const promoCode = assets?.promo_codes?.[0];
+  const trackingLink = assets?.tracking_links?.[0];
+  const store = assets?.mini_store;
+
+  return (
+    <Layout>
+      <div className="p-6 max-w-7xl mx-auto">
+        <div className="mb-6">
+          <Link to="/admin/funnel/campaigns" className="text-sm text-slate-500 hover:text-slate-700 inline-flex items-center gap-1 mb-2">
+            <ArrowLeft className="w-3 h-3" /> 캠페인 목록
+          </Link>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-2xl font-extrabold text-slate-900">{campaign.name}</h1>
+              <div className="flex items-center gap-3 mt-2 text-sm text-slate-500">
+                <span>{campaign.brand?.name}</span>
+                <StatusBadge status={campaign.status} />
+                <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" />{campaign.dateStart?.slice(0, 10)} ~ {campaign.dateEnd?.slice(0, 10)}</span>
+              </div>
+            </div>
+            <button
+              onClick={() => generateMut.mutate()}
+              disabled={generateMut.isPending}
+              className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-semibold rounded-lg shadow-sm"
+            >
+              {generateMut.isPending ? '생성 중...' : '전체 자산 재발급'}
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* 좌: 캠페인 정보 */}
+          <div className="space-y-4">
+            <Section title="캠페인 정보">
+              <Field label="브랜드" value={campaign.brand?.name} />
+              <Field label="예산" value={`₩${(campaign.budget || 0).toLocaleString()}`} />
+              <Field label="집행 금액" value={`₩${(campaign.spentAmount || 0).toLocaleString()}`} />
+              <Field label="가격 모델" value={campaign.pricingModel || 'FIXED'} />
+              <Field label="목표 노출" value={(campaign.goalImpressions || 0).toLocaleString()} />
+              <Field label="목표 전환" value={(campaign.goalConversions || 0).toLocaleString()} />
+            </Section>
+            <Section title="매칭된 선수">
+              {campaign.contracts?.length === 0 && <div className="text-xs text-slate-400">매칭된 선수가 없습니다</div>}
+              {campaign.contracts?.map((cc: any) => (
+                <div key={cc.id} className="flex items-center gap-2 py-1.5 border-b border-slate-100 last:border-b-0">
+                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold">
+                    {cc.contract.athlete.name.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold">{cc.contract.athlete.name}</div>
+                    <div className="text-[10px] text-slate-400">{cc.contract.athlete.tour}</div>
+                  </div>
+                </div>
+              ))}
+            </Section>
+          </div>
+
+          {/* 우: 발급 자산 카드 */}
+          <div className="lg:col-span-2 space-y-4">
+            {/* 프로모션 코드 */}
+            <AssetCard
+              icon={<Tag className="w-5 h-5 text-emerald-500" />}
+              title="프로모션 코드"
+              status={promoCode?.status || 'MISSING'}
+            >
+              {promoCode ? (
+                <>
+                  <div className="text-2xl font-mono font-extrabold text-slate-900 mb-2">{promoCode.code}</div>
+                  <div className="text-xs text-slate-500 mb-3">사용 횟수: {promoCode.usage_count}</div>
+                  <ActionBar actions={[{ type: 'copy', value: promoCode.code }]} />
+                </>
+              ) : (
+                <EmptyAsset onCreate={() => generateMut.mutate()} loading={generateMut.isPending} />
+              )}
+            </AssetCard>
+
+            {/* 트래킹 링크 */}
+            <AssetCard
+              icon={<Link2 className="w-5 h-5 text-emerald-500" />}
+              title="트래킹 단축 링크"
+              status={trackingLink ? 'ACTIVE' : 'MISSING'}
+            >
+              {trackingLink ? (
+                <>
+                  <div className="text-sm font-mono break-all bg-slate-50 px-3 py-2 rounded mb-2">{trackingLink.short_url}</div>
+                  <div className="text-xs text-slate-500 mb-3">클릭: {trackingLink.click_count}회</div>
+                  <ActionBar actions={[
+                    { type: 'copy', value: trackingLink.short_url },
+                    { type: 'preview', value: trackingLink.short_url },
+                  ]} />
+                </>
+              ) : (
+                <EmptyAsset onCreate={() => generateMut.mutate()} loading={generateMut.isPending} />
+              )}
+            </AssetCard>
+
+            {/* QR */}
+            <AssetCard
+              icon={<QrCode className="w-5 h-5 text-emerald-500" />}
+              title="QR 코드"
+              status={trackingLink?.qr_url ? 'ACTIVE' : 'MISSING'}
+            >
+              {trackingLink?.qr_url ? (
+                <div className="flex items-center gap-4">
+                  <img src={trackingLink.qr_url} alt="QR" className="w-32 h-32 border border-slate-200 rounded-lg" />
+                  <ActionBar actions={[
+                    { type: 'download', label: 'QR 다운로드', onClick: () => { const a = document.createElement('a'); a.href = trackingLink.qr_url; a.download = `qr-${campaign.id}.png`; a.click(); } },
+                    { type: 'copy', value: trackingLink.qr_url, label: 'URL 복사' },
+                  ]} />
+                </div>
+              ) : (
+                <EmptyAsset onCreate={() => generateMut.mutate()} loading={generateMut.isPending} />
+              )}
+            </AssetCard>
+
+            {/* 미니스토어 */}
+            <AssetCard
+              icon={<Store className="w-5 h-5 text-emerald-500" />}
+              title="브랜드 미니스토어"
+              status={store?.status || 'MISSING'}
+            >
+              {store ? (
+                <>
+                  <div className="text-sm font-mono break-all bg-slate-50 px-3 py-2 rounded mb-2">{store.url}</div>
+                  <div className="text-xs text-slate-500 mb-3">상품 수: {store.product_count}개 · 슬러그: <code>{store.slug}</code></div>
+                  <ActionBar actions={[
+                    { type: 'copy', value: store.url, label: 'URL 복사' },
+                    { type: 'preview', value: store.url, label: '스토어 미리보기' },
+                    { type: 'external', value: `/admin/funnel/mini-store/${campaign.id}`, label: '설정' },
+                  ]} />
+                </>
+              ) : (
+                <EmptyAsset onCreate={() => generateMut.mutate()} loading={generateMut.isPending} />
+              )}
+            </AssetCard>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl p-4">
+      <h3 className="text-sm font-bold text-slate-900 mb-3">{title}</h3>
+      <div>{children}</div>
+    </div>
+  );
+}
+
+function Field({ label, value }: { label: string; value: any }) {
+  return (
+    <div className="flex justify-between py-1.5 border-b border-slate-100 last:border-b-0 text-sm">
+      <span className="text-slate-500">{label}</span>
+      <span className="font-semibold text-slate-900">{value}</span>
+    </div>
+  );
+}
+
+function AssetCard({ icon, title, status, children }: any) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl p-5">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-bold text-slate-900 inline-flex items-center gap-2">{icon} {title}</h3>
+        <StatusBadge status={status} />
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function EmptyAsset({ onCreate, loading }: { onCreate: () => void; loading: boolean }) {
+  return (
+    <div className="text-center py-6 bg-slate-50 rounded-lg">
+      <div className="text-xs text-slate-500 mb-2">아직 발급되지 않았습니다</div>
+      <button
+        onClick={onCreate}
+        disabled={loading}
+        className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold rounded"
+      >
+        {loading ? '생성 중...' : '지금 생성'}
+      </button>
+    </div>
+  );
+}

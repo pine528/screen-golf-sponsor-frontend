@@ -83,6 +83,22 @@ import { BrandROISettings } from './pages/brand/BrandROISettings';
 import { AdminEvidenceManager } from './pages/admin/AdminEvidenceManager';
 import { AdminReportTemplates } from './pages/admin/AdminReportTemplates';
 import { AdminCampaignBuilder } from './pages/admin/AdminCampaignBuilder';
+// Full Funnel Data Reporting (스폰픽 풀 퍼널)
+import AdminFunnelCampaigns from './pages/admin/AdminFunnelCampaigns';
+import AdminFunnelCampaignDetail from './pages/admin/AdminFunnelCampaignDetail';
+import AdminPromoCodesLinks from './pages/admin/AdminPromoCodesLinks';
+import AdminMiniStoreSettings from './pages/admin/AdminMiniStoreSettings';
+import AdminIntegratedROIReport from './pages/admin/AdminIntegratedROIReport';
+import BrandFunnelDashboard from './pages/brand/BrandFunnelDashboard';
+import BrandPerformanceCompare from './pages/brand/BrandPerformanceCompare';
+import BrandOrders from './pages/brand/BrandOrders';
+import BrandPixelInstall from './pages/brand/BrandPixelInstall';
+import BrandAttribution from './pages/brand/BrandAttribution';
+import AthleteFunnelDashboard from './pages/athlete/AthleteFunnelDashboard';
+import MiniStoreLanding from './pages/store/MiniStoreLanding';
+import MiniStoreProduct from './pages/store/MiniStoreProduct';
+import MiniStoreCheckout from './pages/store/MiniStoreCheckout';
+import { ShortLinkRedirect } from './pages/ShortLinkRedirect';
 import VotesList from './pages/fan/VoteV2List';
 import VotesDetail from './pages/fan/VoteV2Detail';
 import VoteCreate from './pages/fan/VoteCreate';
@@ -939,6 +955,34 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* ============================================
+          Full Funnel Data Reporting (스폰픽 풀 퍼널)
+          ============================================ */}
+      {/* ADM-01~04 + REP-01 (Admin) */}
+      <Route path="/admin/funnel/campaigns" element={<ProtectedRoute><AdminFunnelCampaigns /></ProtectedRoute>} />
+      <Route path="/admin/funnel/campaigns/:id" element={<ProtectedRoute><AdminFunnelCampaignDetail /></ProtectedRoute>} />
+      <Route path="/admin/funnel/codes-links" element={<ProtectedRoute><AdminPromoCodesLinks /></ProtectedRoute>} />
+      <Route path="/admin/funnel/mini-store/:campaignId" element={<ProtectedRoute><AdminMiniStoreSettings /></ProtectedRoute>} />
+      <Route path="/admin/funnel/integrated-report" element={<ProtectedRoute><AdminIntegratedROIReport /></ProtectedRoute>} />
+
+      {/* BRD-01~03 + Phase 2/3 (Brand) */}
+      <Route path="/brand/funnel/dashboard" element={<ProtectedRoute><BrandFunnelDashboard /></ProtectedRoute>} />
+      <Route path="/brand/funnel/compare" element={<ProtectedRoute><BrandPerformanceCompare /></ProtectedRoute>} />
+      <Route path="/brand/funnel/orders" element={<ProtectedRoute><BrandOrders /></ProtectedRoute>} />
+      <Route path="/brand/funnel/pixel" element={<ProtectedRoute><BrandPixelInstall /></ProtectedRoute>} />
+      <Route path="/brand/funnel/attribution" element={<ProtectedRoute><BrandAttribution /></ProtectedRoute>} />
+
+      {/* ATH-01 (Athlete) */}
+      <Route path="/athlete/funnel/dashboard" element={<ProtectedRoute><AthleteFunnelDashboard /></ProtectedRoute>} />
+
+      {/* STO-01~03 (Public Mini Store) */}
+      <Route path="/store/:slug" element={<MiniStoreLanding />} />
+      <Route path="/store/:slug/product/:productId" element={<MiniStoreProduct />} />
+      <Route path="/store/:slug/checkout" element={<MiniStoreCheckout />} />
+
+      {/* 단축링크 redirect: /s/:shortCode */}
+      <Route path="/s/:shortCode" element={<ShortLinkRedirect />} />
 
       {/* Home & Redirect */}
       <Route path="/" element={<HomeRoute />} />

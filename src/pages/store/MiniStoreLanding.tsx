@@ -1,0 +1,141 @@
+/**
+ * STO-01: 브랜드 미니스토어 랜딩
+ *
+ * Refs: wireframe_spec.docx > STO-01
+ * - Hero: 브랜드 + 선수 + 혜택 배지
+ * - 추천 상품 리스트
+ * - Sticky CTA (모바일 전환 최적화)
+ * - landing_view 이벤트 자동 전송
+ */
+
+import { useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '../../services/api';
+import { ShoppingBag, Tag, Truck, ShieldCheck } from 'lucide-react';
+import { useFunnelTracking } from '../../hooks/useFunnelTracking';
+
+export default function MiniStoreLanding() {
+  const { slug } = useParams<{ slug: string }>();
+  const { trackEvent, sessionId } = useFunnelTracking();
+
+  const { data: resp, isLoading } = useQuery({
+    queryKey: ['public-mini-store', slug],
+    queryFn: () => api.getPublicMiniStore(slug!),
+    enabled: !!slug,
+  });
+  const store = resp?.data;
+
+  useEffect(() => {
+    if (store) {
+      trackEvent('landing-view', {
+        campaign_id: store.campaignId,
+        brand_id: store.brandId,
+        athlete_id: store.products?.[0]?.athleteId,
+        landing_page_id: slug,
+      });
+    }
+  }, [store, slug]);
+
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center">로딩 중...</div>;
+  if (!store) return <div className="min-h-screen flex items-center justify-center">스토어를 찾을 수 없습니다</div>;
+
+  return (
+    <div className="min-h-screen bg-slate-50 pb-24">
+      {/* Hero */}
+      <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white relative overflow-hidden">
+        <div className="max-w-3xl mx-auto px-5 py-12 text-center relative z-10">
+          {store.athleteImageUrl && (
+            <img
+              src={store.athleteImageUrl}
+              alt=""
+              className="w-28 h-28 rounded-full mx-auto mb-4 border-4 border-white/30 shadow-2xl object-cover"
+            />
+          )}
+          <div className="text-xs font-bold opacity-90 mb-1">{store.brand?.name}</div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold mb-3 leading-tight">
+            {store.mainCopy || `${store.brand?.name}와 함께하는 특별한 혜택`}
+          </h1>
+          {store.benefitBadge && (
+            <div className="inline-block px-4 py-2 bg-yellow-300 text-slate-900 text-sm font-extrabold rounded-full shadow-lg">
+              ⚡ {store.benefitBadge}
+            </div>
+          )}
+        </div>
+        <div className="absolute -bottom-12 -right-12 w-48 h-48 bg-white/10 rounded-full" />
+        <div className="absolute -top-8 -left-8 w-32 h-32 bg-white/10 rounded-full" />
+      </div>
+
+      {/* 추천 상품 */}
+      <div className="max-w-3xl mx-auto px-5 -mt-6 relative z-10">
+        <h2 className="text-lg font-bold text-slate-900 mb-3 inline-flex items-center gap-2">
+          <ShoppingBag className="w-5 h-5 text-emerald-500" /> 추천 상품
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {(store.products || []).map((p: any) => (
+            <Link
+              key={p.id}
+              to={`/store/${slug}/product/${p.id}`}
+              onClick={() => trackEvent('product-view', {
+                campaign_id: store.campaignId, brand_id: store.brandId, product_id: p.id, session_id: sessionId,
+              })}
+              className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-emerald-300 transition-colors"
+            >
+              {p.imageUrl ? (
+                <img src={p.imageUrl} alt={p.name} className="w-full aspect-square object-cover" />
+              ) : (
+                <div className="w-full aspect-square bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>
+              )}
+              <div className="p-3">
+                <div className="text-sm font-semibold text-slate-900 truncate">{p.name}</div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="text-base font-extrabold text-emerald-600">₩{Number(p.discountPrice || p.price).toLocaleString()}</span>
+                  {p.discountPrice && (
+                    <span className="text-xs text-slate-400 line-through">₩{Number(p.price).toLocaleString()}</span>
+                  )}
+                </div>
+                {p.soldOut && <div className="mt-1 text-xs text-rose-600 font-bold">품절</div>}
+              </div>
+            </Link>
+          ))}
+          {(!store.products || store.products.length === 0) && (
+            <div className="col-span-full text-center py-12 text-sm text-slate-400">아직 등록된 상품이 없습니다</div>
+          )}
+        </div>
+
+        {/* 신뢰 요소 */}
+        <div className="mt-8 grid grid-cols-3 gap-2 text-center">
+          <div className="p-3 bg-white border border-slate-100 rounded-lg">
+            <Tag className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
+            <div className="text-xs font-semibold">선수 추천 코드</div>
+          </div>
+          <div className="p-3 bg-white border border-slate-100 rounded-lg">
+            <Truck className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
+            <div className="text-xs font-semibold">전국 무료배송</div>
+          </div>
+          <div className="p-3 bg-white border border-slate-100 rounded-lg">
+            <ShieldCheck className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
+            <div className="text-xs font-semibold">교환·환불</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Sticky CTA */}
+      {store.products?.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3 shadow-2xl">
+          <div className="max-w-3xl mx-auto">
+            <Link
+              to={`/store/${slug}/checkout`}
+              onClick={() => trackEvent('cta-click', {
+                campaign_id: store.campaignId, brand_id: store.brandId, button_type: 'sticky_buy', session_id: sessionId,
+              })}
+              className="block w-full bg-emerald-500 hover:bg-emerald-600 text-white text-center font-extrabold py-3.5 rounded-xl shadow-lg"
+            >
+              {store.ctaText || '구매하기'}
+            </Link>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

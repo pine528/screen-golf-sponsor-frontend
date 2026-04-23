@@ -2883,6 +2883,150 @@ class ApiService {
     }>>(`/votes/user/${id}/settle`, { correctAnswer });
     return response.data;
   }
+
+  // ============================================
+  // Full Funnel Data Reporting (스폰픽 풀 퍼널)
+  // ============================================
+
+  // 캠페인 자산
+  async generateCampaignAssets(campaignId: string, body: any = {}) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/campaigns/${campaignId}/tracking-assets/generate`, body);
+    return r.data;
+  }
+  async getCampaignAssets(campaignId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/campaigns/${campaignId}/tracking-assets`);
+    return r.data;
+  }
+  async listFunnelCampaigns() {
+    const r = await this.client.get<ApiResponse<any[]>>(`/admin/funnel/campaigns`);
+    return r.data;
+  }
+  async getFunnelCampaign(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/funnel/campaigns/${id}`);
+    return r.data;
+  }
+
+  // 프로모션 코드
+  async listPromoCodes(campaignId: string) {
+    const r = await this.client.get<ApiResponse<any[]>>(`/admin/promo-codes`, { params: { campaignId } });
+    return r.data;
+  }
+  async createPromoCode(body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/promo-codes`, body);
+    return r.data;
+  }
+  async disablePromoCode(id: string) {
+    const r = await this.client.patch<ApiResponse<any>>(`/admin/promo-codes/${id}`, { status: 'DISABLED' });
+    return r.data;
+  }
+
+  // 트래킹 링크
+  async listTrackingLinks(campaignId: string) {
+    const r = await this.client.get<ApiResponse<any[]>>(`/admin/tracking-links`, { params: { campaignId } });
+    return r.data;
+  }
+  async createTrackingLink(body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/tracking-links`, body);
+    return r.data;
+  }
+
+  // 미니스토어
+  async getMiniStore(campaignId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/mini-stores/${campaignId}`);
+    return r.data;
+  }
+  async updateMiniStore(campaignId: string, body: any) {
+    const r = await this.client.put<ApiResponse<any>>(`/admin/mini-stores/${campaignId}`, body);
+    return r.data;
+  }
+  async publishMiniStore(campaignId: string, status: 'PUBLISHED' | 'HIDDEN' | 'DRAFT' = 'PUBLISHED') {
+    const r = await this.client.put<ApiResponse<any>>(`/admin/mini-stores/${campaignId}/publish`, { status });
+    return r.data;
+  }
+  async addStoreProduct(campaignId: string, body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/mini-stores/${campaignId}/products`, body);
+    return r.data;
+  }
+  async updateStoreProduct(productId: string, body: any) {
+    const r = await this.client.patch<ApiResponse<any>>(`/admin/mini-stores/products/${productId}`, body);
+    return r.data;
+  }
+  async deleteStoreProduct(productId: string) {
+    const r = await this.client.delete<ApiResponse<any>>(`/admin/mini-stores/products/${productId}`);
+    return r.data;
+  }
+
+  // 공개 미니스토어 (비회원 접근)
+  async getPublicMiniStore(slug: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/store/brand/${slug}`);
+    return r.data;
+  }
+  async resolveShortCode(shortCode: string, sessionId?: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/store/short/${shortCode}`, {
+      params: { session_id: sessionId },
+    });
+    return r.data;
+  }
+
+  // 이벤트 트래킹 (공개)
+  async trackFunnelEvent(eventName: string, body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/events/${eventName}`, body);
+    return r.data;
+  }
+  async applyPromoCode(body: { promo_code: string; order_preview_amount: number; session_id?: string }) {
+    const r = await this.client.post<ApiResponse<any>>(`/events/promo-apply`, body);
+    return r.data;
+  }
+  async createFunnelPurchase(body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/events/purchase`, body);
+    return r.data;
+  }
+
+  // 리포트
+  async getCampaignFunnelReport(campaignId: string, params?: { from?: string; to?: string; group_by?: string }) {
+    const r = await this.client.get<ApiResponse<any>>(`/reports/campaign/${campaignId}`, { params });
+    return r.data;
+  }
+  async getBrandFunnelReport(brandId: string, params?: any) {
+    const r = await this.client.get<ApiResponse<any>>(`/reports/brand/${brandId}`, { params });
+    return r.data;
+  }
+  async getAthleteFunnelReport(athleteId: string, params?: any) {
+    const r = await this.client.get<ApiResponse<any>>(`/reports/athlete/${athleteId}`, { params });
+    return r.data;
+  }
+  async getCampaignPredict(campaignId: string, method: 'sma' | 'ema' = 'ema') {
+    const r = await this.client.get<ApiResponse<any>>(`/reports/campaign/${campaignId}/predict`, { params: { method } });
+    return r.data;
+  }
+  async getBrandSegments(brandId: string, params?: any) {
+    const r = await this.client.get<ApiResponse<any>>(`/reports/brand/${brandId}/segments`, { params });
+    return r.data;
+  }
+  async getBrandAttribution(brandId: string, model: string = 'LAST_TOUCH', params?: any) {
+    const r = await this.client.get<ApiResponse<any>>(`/reports/brand/${brandId}/attribution`, { params: { model, ...params } });
+    return r.data;
+  }
+
+  // 브랜드 주문 (BRD-03)
+  async listBrandFunnelOrders(brandId: string, params?: any) {
+    const r = await this.client.get<ApiResponse<any[]>>(`/reports/brand/${brandId}/orders`, { params });
+    return r.data;
+  }
+
+  // Pixel (Phase 2)
+  async createPixel(brandId?: string, domains: string[] = []) {
+    const r = await this.client.post<ApiResponse<any>>(`/external/pixels`, { brand_id: brandId, domains });
+    return r.data;
+  }
+  async getPixel(brandId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/external/pixels/${brandId}`);
+    return r.data;
+  }
+  async updatePixel(brandId: string, body: { domains?: string[]; status?: string }) {
+    const r = await this.client.patch<ApiResponse<any>>(`/external/pixels/${brandId}`, body);
+    return r.data;
+  }
 }
 
 export const api = new ApiService();
