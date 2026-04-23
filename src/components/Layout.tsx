@@ -188,6 +188,12 @@ export function Layout({ children }: LayoutProps) {
     { path: '/brand/slot-analytics', label: '슬롯 분석', icon: BarChart3 },
     { path: '/brand/logo-templates', label: '로고 템플릿', icon: Image },
     { path: '/brand/roi-settings', label: 'ROI 설정', icon: Settings },
+    // === Full Funnel ===
+    { path: '/brand/funnel/dashboard', label: '🔥 풀 퍼널 대시보드', icon: TrendingUp },
+    { path: '/brand/funnel/compare', label: '🔥 성과 비교', icon: BarChart3 },
+    { path: '/brand/funnel/orders', label: '🔥 주문·매출 내역', icon: Receipt },
+    { path: '/brand/funnel/pixel', label: '🔥 픽셀 설치 (Phase 2)', icon: Wrench },
+    { path: '/brand/funnel/attribution', label: '🔥 멀티터치 (Phase 3)', icon: Target },
     { path: '/votes', label: '무료 투표', icon: Gift },
     { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
     { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
@@ -206,6 +212,8 @@ export function Layout({ children }: LayoutProps) {
     { path: '/athlete/withdrawals', label: '정산금 출금', icon: Banknote },
     { path: '/athlete/point-withdrawals', label: '포인트 출금', icon: Coins },
     { path: '/athlete/donations', label: '받은 후원', icon: Heart },
+    // === Full Funnel ===
+    { path: '/athlete/funnel/dashboard', label: '🔥 내 성과 대시보드', icon: TrendingUp },
     { path: '/votes', label: '무료 투표', icon: Gift },
     { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
     { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
@@ -246,6 +254,11 @@ export function Layout({ children }: LayoutProps) {
     { path: '/admin/roi/qa', label: '검출 검수', icon: ScanLine },
     { path: '/admin/roi/evidence', label: '증빙 관리', icon: FileImage },
     { path: '/admin/roi/reports', label: '리포트 관리', icon: FileText },
+    // === Full Funnel ===
+    { path: '/admin/funnel/campaigns', label: '🔥 풀 퍼널 캠페인', icon: Megaphone },
+    { path: '/admin/funnel/codes-links', label: '🔥 코드·링크', icon: Layers },
+    { path: '/admin/funnel/integrated-report', label: '🔥 통합 ROI', icon: TrendingUp },
+    { path: '/admin/funnel/settlements', label: '🔥 성과 정산 (Phase 3)', icon: Coins },
     { path: '/admin/ops', label: '운영 도구', icon: Wrench },
     { path: '/admin/reports', label: '통합 리포트', icon: BarChart3 },
     { path: '/admin/settings', label: '설정', icon: Settings },

@@ -89,6 +89,7 @@ import AdminFunnelCampaignDetail from './pages/admin/AdminFunnelCampaignDetail';
 import AdminPromoCodesLinks from './pages/admin/AdminPromoCodesLinks';
 import AdminMiniStoreSettings from './pages/admin/AdminMiniStoreSettings';
 import AdminIntegratedROIReport from './pages/admin/AdminIntegratedROIReport';
+import AdminPerformanceSettlement from './pages/admin/AdminPerformanceSettlement';
 import BrandFunnelDashboard from './pages/brand/BrandFunnelDashboard';
 import BrandPerformanceCompare from './pages/brand/BrandPerformanceCompare';
 import BrandOrders from './pages/brand/BrandOrders';
@@ -965,6 +966,7 @@ function App() {
       <Route path="/admin/funnel/codes-links" element={<ProtectedRoute><AdminPromoCodesLinks /></ProtectedRoute>} />
       <Route path="/admin/funnel/mini-store/:campaignId" element={<ProtectedRoute><AdminMiniStoreSettings /></ProtectedRoute>} />
       <Route path="/admin/funnel/integrated-report" element={<ProtectedRoute><AdminIntegratedROIReport /></ProtectedRoute>} />
+      <Route path="/admin/funnel/settlements" element={<ProtectedRoute><AdminPerformanceSettlement /></ProtectedRoute>} />
 
       {/* BRD-01~03 + Phase 2/3 (Brand) */}
       <Route path="/brand/funnel/dashboard" element={<ProtectedRoute><BrandFunnelDashboard /></ProtectedRoute>} />

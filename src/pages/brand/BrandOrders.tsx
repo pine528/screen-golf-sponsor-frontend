@@ -14,7 +14,7 @@ import { GlobalFilter, GlobalFilterValue } from '../../components/funnel/GlobalF
 import { DetailTable, Column } from '../../components/funnel/DetailTable';
 import { StatusBadge } from '../../components/funnel/StatusBadge';
 import { api } from '../../services/api';
-import { X, Receipt } from 'lucide-react';
+import { X, Receipt, Download } from 'lucide-react';
 
 export default function BrandOrders() {
   const [filter, setFilter] = useState<GlobalFilterValue>({});
@@ -27,15 +27,29 @@ export default function BrandOrders() {
   });
   const brandId = (meResp as any)?.id;
 
-  const { data: reportResp, isLoading } = useQuery({
-    queryKey: ['brand-funnel-report-orders', brandId, filter],
-    queryFn: () => api.getBrandFunnelReport(brandId!, { from: filter.from, to: filter.to, include_breakdown: false }),
+  const { data: ordersResp, isLoading } = useQuery({
+    queryKey: ['brand-funnel-orders', brandId, filter],
+    queryFn: () => api.listBrandFunnelOrders(brandId!, { from: filter.from, to: filter.to }),
     enabled: !!brandId,
   });
+  const orders: any[] = ordersResp?.data || [];
 
-  // 주문 목록은 funnel-report에서 별도 조회
-  // 백엔드 endpoint가 없으므로 클라이언트에서 임시 표시
-  const orders: any[] = (reportResp as any)?.data?.orders || [];
+  const downloadCsv = () => {
+    if (!brandId) return;
+    const params = new URLSearchParams();
+    if (filter.from) params.set('from', filter.from);
+    if (filter.to) params.set('to', filter.to);
+    const token = localStorage.getItem('accessToken');
+    fetch(`${import.meta.env.VITE_API_URL || '/api'}/reports/brand/${brandId}/orders.csv?${params}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then(async (r) => {
+      const blob = await r.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `orders-${brandId}-${Date.now()}.csv`;
+      a.click();
+    }).catch((e) => alert('다운로드 실패: ' + e.message));
+  };
 
   const filtered = includeRefunded ? orders : orders.filter((o) => o.status !== 'REFUNDED' && o.status !== 'CANCELLED');
 
@@ -69,9 +83,12 @@ export default function BrandOrders() {
             <input type="checkbox" checked={includeRefunded} onChange={(e) => setIncludeRefunded(e.target.checked)} className="rounded" />
             환불/취소 포함
           </label>
-          <span className="text-xs text-slate-500">
-            ※ 개인정보 보호 — 주문자 실명/전화/주소는 표시되지 않습니다
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-slate-500">※ 개인정보 보호 — 주문자 실명/전화/주소는 표시되지 않습니다</span>
+            <button onClick={downloadCsv} className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg">
+              <Download className="w-3.5 h-3.5" /> CSV
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
