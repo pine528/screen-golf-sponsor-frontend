@@ -37,6 +37,8 @@ export default function AdminFunnelCampaigns() {
   const [filter, setFilter] = useState<GlobalFilterValue>({});
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
+  const [brandFilter, setBrandFilter] = useState<string>('');
+  const [athleteFilter, setAthleteFilter] = useState<string>('');
 
   const { data: resp, isLoading } = useQuery({
     queryKey: ['admin-funnel-campaigns'],
@@ -49,6 +51,8 @@ export default function AdminFunnelCampaigns() {
       if (filter.from && c.dateStart && new Date(c.dateStart) < new Date(filter.from)) return false;
       if (filter.to && c.dateEnd && new Date(c.dateEnd) > new Date(filter.to)) return false;
       if (statusFilter && c.status !== statusFilter) return false;
+      if (brandFilter && c.brand.id !== brandFilter) return false;
+      if (athleteFilter && !c.athletes.some((a) => a.id === athleteFilter)) return false;
       if (search) {
         const q = search.toLowerCase();
         const inName = c.name.toLowerCase().includes(q);
@@ -67,6 +71,18 @@ export default function AdminFunnelCampaigns() {
     { value: 'COMPLETED', label: '완료' },
     { value: 'CANCELLED', label: '취소' },
   ];
+
+  // 브랜드/선수 고유 목록 추출
+  const brandOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    all.forEach((c) => map.set(c.brand.id, c.brand.name));
+    return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
+  }, [all]);
+  const athleteOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    all.forEach((c) => c.athletes.forEach((a) => map.set(a.id, a.name)));
+    return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
+  }, [all]);
 
   const counts = useMemo(() => ({
     total: all.length,
@@ -158,6 +174,20 @@ export default function AdminFunnelCampaigns() {
           <Link to="/campaigns" className="ml-auto px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-lg inline-flex items-center gap-1">
             <Plus className="w-3 h-3" /> 신규 캠페인
           </Link>
+        </div>
+
+        {/* 브랜드/선수 드롭다운 (wireframe TABLE 6) */}
+        <div className="bg-white border border-slate-200 rounded-xl p-3 mb-4 flex items-center gap-3">
+          <span className="text-xs font-semibold text-slate-500">브랜드</span>
+          <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)} className="text-sm border border-slate-200 rounded-lg px-2 py-1.5 max-w-[200px]">
+            <option value="">전체 ({brandOptions.length}개)</option>
+            {brandOptions.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+          </select>
+          <span className="text-xs font-semibold text-slate-500 ml-2">선수</span>
+          <select value={athleteFilter} onChange={(e) => setAthleteFilter(e.target.value)} className="text-sm border border-slate-200 rounded-lg px-2 py-1.5 max-w-[200px]">
+            <option value="">전체 ({athleteOptions.length}명)</option>
+            {athleteOptions.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+          </select>
         </div>
 
         <GlobalFilter value={filter} onChange={setFilter} hideCampaign hideAthlete />

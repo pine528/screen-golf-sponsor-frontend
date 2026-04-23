@@ -15,6 +15,7 @@ import { ActionBar } from '../../components/funnel/ActionBar';
 import { DetailTable, Column } from '../../components/funnel/DetailTable';
 import { api } from '../../services/api';
 import { Tag, Link2, QrCode, X, Plus, Download } from 'lucide-react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 type Tab = 'codes' | 'links' | 'qr';
 
@@ -67,6 +68,17 @@ export default function AdminPromoCodesLinks() {
       setNewLink({ contentId: '' });
     },
   });
+
+  // 일자별 추이 (캠페인 리포트 timeseries 활용)
+  const { data: tsResp } = useQuery({
+    queryKey: ['campaign-ts', campaignId],
+    queryFn: async () => {
+      const r = await api.getCampaignFunnelReport(campaignId, {});
+      return r;
+    },
+    enabled: !!campaignId,
+  });
+  const timeseries = (tsResp?.data?.timeseries || []) as any[];
 
   const downloadCsv = (kind: 'codes' | 'links') => {
     if (!campaignId) return;
@@ -245,6 +257,26 @@ export default function AdminPromoCodesLinks() {
                   <div className="flex justify-between"><span className="text-slate-500">전체 링크</span><span className="font-bold">{allLinks.length}</span></div>
                   <div className="flex justify-between"><span className="text-slate-500">총 클릭</span><span className="font-bold text-emerald-600">{allLinks.reduce((s, l) => s + l.clickCount, 0)}회</span></div>
                   <div className="flex justify-between"><span className="text-slate-500">콘텐츠별</span><span className="font-bold">{new Set(allLinks.map(l => l.contentId).filter(Boolean)).size}개</span></div>
+                </div>
+                {/* 일자별 클릭 추이 (wireframe TABLE 11) */}
+                <div className="mt-4 pt-3 border-t border-slate-100">
+                  <h4 className="text-xs font-bold text-slate-500 mb-2">📈 일자별 클릭/유입 추이</h4>
+                  {timeseries.length === 0 ? (
+                    <div className="text-xs text-slate-400 text-center py-4">데이터 없음</div>
+                  ) : (
+                    <div style={{ width: '100%', height: 120 }}>
+                      <ResponsiveContainer>
+                        <LineChart data={timeseries.slice(-14)}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                          <XAxis dataKey="date" tick={{ fontSize: 9 }} tickFormatter={(d) => d.slice(5)} />
+                          <YAxis tick={{ fontSize: 9 }} />
+                          <Tooltip contentStyle={{ fontSize: 10 }} />
+                          <Line type="monotone" dataKey="clicks" stroke="#10b981" strokeWidth={1.5} dot={false} name="클릭" />
+                          <Line type="monotone" dataKey="landingViews" stroke="#0ea5e9" strokeWidth={1.5} dot={false} name="유입" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  )}
                 </div>
                 <div className="mt-4 pt-3 border-t border-slate-100">
                   <h4 className="text-xs font-bold text-slate-500 mb-2">TOP 링크</h4>

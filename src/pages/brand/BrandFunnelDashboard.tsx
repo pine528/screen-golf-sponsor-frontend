@@ -15,7 +15,7 @@ import { SummaryCard } from '../../components/funnel/SummaryCard';
 import { TimeSeriesChart } from '../../components/funnel/TimeSeriesChart';
 import { DataSourceBadge } from '../../components/funnel/DataSourceBadge';
 import { api } from '../../services/api';
-import { Users, ShoppingCart, DollarSign, TrendingUp, BadgePercent, Target, Lightbulb, Smartphone, Globe, UserPlus, RotateCw } from 'lucide-react';
+import { Users, ShoppingCart, DollarSign, TrendingUp, BadgePercent, Target, Lightbulb, Smartphone, Globe, UserPlus, RotateCw, CreditCard } from 'lucide-react';
 
 type Tab = 'overview' | 'predict' | 'segments';
 
@@ -110,12 +110,13 @@ export default function BrandFunnelDashboard() {
           <SegmentPanel segments={segments} />
         ) : (
           <>
-            {/* KPI 카드 */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+            {/* KPI 카드 (체크아웃 완료율 추가로 7개) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 mb-6">
               <SummaryCard label="유입수" value={summary.landingViews || 0} icon={Users} />
               <SummaryCard label="주문수" value={summary.purchases || 0} icon={ShoppingCart} variant="highlight" />
               <SummaryCard label="순매출" value={summary.netRevenue || 0} format="currency" icon={DollarSign} variant="highlight" />
               <SummaryCard label="CVR" value={summary.cvr || 0} format="percent" icon={TrendingUp} hint="유입→구매" />
+              <SummaryCard label="체크아웃 완료율" value={summary.checkoutCompletion || 0} format="percent" icon={CreditCard} hint="결제시작→구매" />
               <SummaryCard label="CAC" value={summary.cac || 0} format="currency" icon={Target} hint="고객획득비용" />
               <SummaryCard label="ROAS" value={summary.roas?.toFixed(2) || '-'} icon={BadgePercent} hint="투자대비매출" />
             </div>
