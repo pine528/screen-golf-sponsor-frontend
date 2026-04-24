@@ -28,12 +28,13 @@ export default function AdminMiniStoreSettings() {
   const store = data?.data;
 
   const [form, setForm] = useState({
-    heroImageUrl: '', athleteImageUrl: '', mainCopy: '', benefitBadge: '', ctaText: '구매하기',
+    brandLogoUrl: '', heroImageUrl: '', athleteImageUrl: '', mainCopy: '', benefitBadge: '', ctaText: '구매하기',
   });
 
   useEffect(() => {
     if (store) {
       setForm({
+        brandLogoUrl: store.brandLogoUrl || '',
         heroImageUrl: store.heroImageUrl || '',
         athleteImageUrl: store.athleteImageUrl || '',
         mainCopy: store.mainCopy || '',
@@ -119,6 +120,7 @@ export default function AdminMiniStoreSettings() {
             <div className="bg-white border border-slate-200 rounded-xl p-5">
               <h3 className="text-sm font-bold text-slate-900 mb-3">기본 설정</h3>
               <div className="space-y-3">
+                <FormField label="브랜드 로고 URL" value={form.brandLogoUrl} onChange={(v: string) => setForm({ ...form, brandLogoUrl: v })} placeholder="https://... (Hero 좌상단 표시)" />
                 <FormField label="Hero 이미지 URL" value={form.heroImageUrl} onChange={(v: string) => setForm({ ...form, heroImageUrl: v })} placeholder="https://..." />
                 <FormField label="선수 이미지 URL" value={form.athleteImageUrl} onChange={(v: string) => setForm({ ...form, athleteImageUrl: v })} placeholder="https://..." />
                 <FormField label="메인 카피" value={form.mainCopy} onChange={(v: string) => setForm({ ...form, mainCopy: v })} placeholder="OO선수와 함께하는 특별한 혜택" />
@@ -194,8 +196,12 @@ export default function AdminMiniStoreSettings() {
               </div>
             </div>
             <div className={`bg-white rounded-xl shadow-sm mx-auto overflow-hidden ${previewMode === 'mobile' ? 'max-w-sm' : 'max-w-2xl'}`}>
-              <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5">
-                {form.athleteImageUrl && <img src={form.athleteImageUrl} alt="" className="w-20 h-20 rounded-full mx-auto mb-3 border-4 border-white" />}
+              <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5 relative">
+                {/* 브랜드 로고 (좌상단) */}
+                {form.brandLogoUrl && (
+                  <img src={form.brandLogoUrl} alt="brand" className="absolute top-3 left-3 h-8 bg-white/90 rounded px-2 py-0.5 object-contain" />
+                )}
+                {form.athleteImageUrl && <img src={form.athleteImageUrl} alt="" className="w-20 h-20 rounded-full mx-auto mb-3 border-4 border-white object-cover" />}
                 <div className="text-center">
                   <div className="text-lg font-bold">{form.mainCopy || '메인 카피를 입력하세요'}</div>
                   {form.benefitBadge && <div className="inline-block mt-2 px-3 py-1 bg-yellow-300 text-slate-900 text-xs font-bold rounded-full">{form.benefitBadge}</div>}

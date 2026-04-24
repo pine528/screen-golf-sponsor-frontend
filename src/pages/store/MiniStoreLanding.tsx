@@ -42,8 +42,18 @@ export default function MiniStoreLanding() {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
-      {/* Hero */}
+      {/* Hero (wireframe TABLE 32: 브랜드 로고 | 선수 이미지 | 카피 | 프로모션 배지) */}
       <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white relative overflow-hidden">
+        {/* 브랜드 로고 (좌상단) */}
+        {store.brandLogoUrl && (
+          <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
+            <img
+              src={store.brandLogoUrl}
+              alt={store.brand?.name}
+              className="h-10 sm:h-12 bg-white/95 rounded-lg px-3 py-1.5 shadow-lg object-contain"
+            />
+          </div>
+        )}
         <div className="max-w-3xl mx-auto px-5 py-12 text-center relative z-10">
           {store.athleteImageUrl && (
             <img

@@ -13,6 +13,7 @@ import { Layout } from '../../components/Layout';
 import { GlobalFilter, GlobalFilterValue } from '../../components/funnel/GlobalFilter';
 import { SummaryCard } from '../../components/funnel/SummaryCard';
 import { TimeSeriesChart } from '../../components/funnel/TimeSeriesChart';
+import { FunnelChart, FunnelStep } from '../../components/funnel/FunnelChart';
 import { DataSourceBadge } from '../../components/funnel/DataSourceBadge';
 import { api } from '../../services/api';
 import { Users, ShoppingCart, DollarSign, TrendingUp, BadgePercent, Target, Lightbulb, Smartphone, Globe, UserPlus, RotateCw, CreditCard } from 'lucide-react';
@@ -156,6 +157,22 @@ export default function BrandFunnelDashboard() {
               <SummaryCard label="체크아웃 완료율" value={summary.checkoutCompletion || 0} format="percent" icon={CreditCard} hint="결제시작→구매" />
               <SummaryCard label="CAC" value={summary.cac || 0} format="currency" icon={Target} hint="고객획득비용" />
               <SummaryCard label="ROAS" value={summary.roas?.toFixed(2) || '-'} icon={BadgePercent} hint="투자대비매출" />
+            </div>
+
+            {/* 풀 퍼널 차트 (handoff 7조: 노출→클릭→유입→장바구니→결제→구매→순매출) */}
+            <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-slate-900">📊 매출 증명 퍼널</h3>
+                <DataSourceBadge type="measured" />
+              </div>
+              <FunnelChart steps={[
+                { name: '클릭', value: summary.linkClicks || 0 },
+                { name: '유입', value: summary.landingViews || 0 },
+                { name: '상품조회', value: summary.productViews || 0 },
+                { name: '장바구니', value: summary.addToCarts || 0 },
+                { name: '결제시작', value: summary.beginCheckouts || 0 },
+                { name: '구매완료', value: summary.purchases || 0 },
+              ] as FunnelStep[]} height={280} />
             </div>
 
             {/* 추이 차트 */}
