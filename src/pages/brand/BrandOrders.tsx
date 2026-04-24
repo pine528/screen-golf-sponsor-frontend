@@ -37,6 +37,17 @@ export default function BrandOrders() {
   });
   const orders: any[] = ordersResp?.data || [];
 
+  // 선택된 주문의 이벤트 로그 (BRD-03 wireframe TABLE 24)
+  const { data: eventsResp } = useQuery({
+    queryKey: ['order-events', brandId, selectedOrder?.id],
+    queryFn: async () => {
+      const r = await api.get(`/reports/brand/${brandId}/orders/${selectedOrder.id}/events`);
+      return r;
+    },
+    enabled: !!selectedOrder && !!brandId,
+  });
+  const orderEvents = (eventsResp?.data || []) as any[];
+
   const downloadCsv = () => {
     if (!brandId) return;
     const params = new URLSearchParams();
@@ -91,6 +102,11 @@ export default function BrandOrders() {
   const columns: Column<any>[] = [
     { key: 'paidAt', label: '주문일시', sortable: true, render: (r) => new Date(r.paidAt).toLocaleString() },
     { key: 'id', label: '주문번호', render: (r) => <code className="text-[10px]">{r.id?.slice(0, 8)}...</code> },
+    { key: 'items', label: '상품', render: (r) => {
+      const items = Array.isArray(r.items) ? r.items : [];
+      const first = items[0]?.product_id || '-';
+      return items.length > 1 ? `${String(first).slice(0, 6)}... 외 ${items.length - 1}건` : String(first).slice(0, 12);
+    } },
     { key: 'athlete', label: '선수', render: (r) => r.athlete?.name || '-' },
     { key: 'promoCode', label: '코드', render: (r) => r.promoCode ? <code className="text-xs bg-emerald-50 px-1.5 py-0.5 rounded">{r.promoCode}</code> : <span className="text-slate-400">-</span> },
     { key: 'netAmount', label: '순매출', sortable: true, align: 'right', render: (r) => `₩${Math.round(Number(r.netAmount)).toLocaleString()}` },
@@ -205,7 +221,7 @@ export default function BrandOrders() {
                 <Field label="상태" value={<StatusBadge status={selectedOrder.status} />} />
                 {selectedOrder.items && (
                   <div>
-                    <div className="text-xs font-semibold text-slate-600 mb-1">상품</div>
+                    <div className="text-xs font-semibold text-slate-600 mb-1">주문 구성</div>
                     <div className="space-y-1">
                       {selectedOrder.items.map((it: any, i: number) => (
                         <div key={i} className="text-xs text-slate-700 bg-slate-50 px-2 py-1 rounded">
@@ -215,6 +231,27 @@ export default function BrandOrders() {
                     </div>
                   </div>
                 )}
+
+                {/* 이벤트 로그 (BRD-03 wireframe TABLE 24) */}
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <div className="text-xs font-semibold text-slate-600 mb-2">⏱️ 이벤트 로그</div>
+                  {orderEvents.length === 0 ? (
+                    <div className="text-xs text-slate-400 text-center py-2">이벤트 데이터 없음</div>
+                  ) : (
+                    <div className="relative pl-4 space-y-1.5">
+                      <div className="absolute left-1 top-1 bottom-1 w-px bg-emerald-200" />
+                      {orderEvents.map((e: any, i: number) => (
+                        <div key={i} className="relative">
+                          <div className="absolute -left-3 top-1 w-2 h-2 rounded-full bg-emerald-500" />
+                          <div className="text-[10px] text-slate-400">{new Date(e.occurredAt).toLocaleTimeString()}</div>
+                          <div className="text-xs font-semibold text-slate-700">
+                            {e.eventName === 'PURCHASE' ? '✅ ' : ''}{e.eventName.toLowerCase().replace(/_/g, ' ')}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}

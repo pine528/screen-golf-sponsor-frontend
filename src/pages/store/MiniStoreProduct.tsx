@@ -21,6 +21,7 @@ export default function MiniStoreProduct() {
   const { trackEvent } = useFunnelTracking();
   const [qty, setQty] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
 
   const { data: resp } = useQuery({
     queryKey: ['public-mini-store', slug],
@@ -53,6 +54,7 @@ export default function MiniStoreProduct() {
       // attribution snapshot: 결제 실패 시에도 동일 귀속 유지
       cart.push({
         productId: product.id, qty, name: product.name, price: finalPrice, slug,
+        options: selectedOptions,  // wireframe TABLE 36: 옵션
         attribution: {
           campaignId: store.campaignId,
           brandId: store.brandId,
@@ -100,6 +102,28 @@ export default function MiniStoreProduct() {
           </div>
           {product.description && (
             <p className="text-sm text-slate-600 leading-relaxed mb-6">{product.description}</p>
+          )}
+
+          {/* 상품 옵션 (variant) - wireframe TABLE 36 */}
+          {product.options && Array.isArray(product.options) && product.options.length > 0 && (
+            <div className="mb-4 space-y-3">
+              {product.options.map((opt: any) => (
+                <div key={opt.name}>
+                  <div className="text-xs font-semibold text-slate-700 mb-1.5">{opt.name}</div>
+                  <div className="flex flex-wrap gap-2">
+                    {opt.values.map((v: string) => (
+                      <button
+                        key={v}
+                        onClick={() => setSelectedOptions({ ...selectedOptions, [opt.name]: v })}
+                        className={`px-3 py-1.5 text-xs font-semibold rounded-lg border ${selectedOptions[opt.name] === v ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-200 text-slate-600 hover:border-slate-300'}`}
+                      >
+                        {v}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
 
           {/* 수량 선택 */}

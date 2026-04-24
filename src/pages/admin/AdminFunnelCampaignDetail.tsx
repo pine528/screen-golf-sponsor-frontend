@@ -191,15 +191,23 @@ export default function AdminFunnelCampaignDetail() {
             {/* 트래킹 링크 */}
             <AssetCard
               icon={<Link2 className="w-5 h-5 text-emerald-500" />}
-              title="트래킹 단축 링크"
+              title="트래킹 링크 (장/단축)"
               status={trackingLink ? 'ACTIVE' : 'MISSING'}
             >
               {trackingLink ? (
                 <>
-                  <div className="text-sm font-mono break-all bg-slate-50 px-3 py-2 rounded mb-2">{trackingLink.short_url}</div>
+                  <div className="mb-1 text-[10px] font-semibold text-slate-500">단축 URL</div>
+                  <div className="text-sm font-mono break-all bg-slate-50 px-3 py-2 rounded mb-3">{trackingLink.short_url}</div>
+                  {trackingLink.long_url && (
+                    <>
+                      <div className="mb-1 text-[10px] font-semibold text-slate-500">장(long) URL (UTM 포함)</div>
+                      <div className="text-xs font-mono break-all bg-slate-50 px-3 py-2 rounded mb-3 text-slate-600">{trackingLink.long_url}</div>
+                    </>
+                  )}
                   <div className="text-xs text-slate-500 mb-3">클릭: {trackingLink.click_count}회</div>
                   <ActionBar actions={[
-                    { type: 'copy', value: trackingLink.short_url },
+                    { type: 'copy', value: trackingLink.short_url, label: '단축 복사' },
+                    ...(trackingLink.long_url ? [{ type: 'copy' as const, value: trackingLink.long_url, label: '장 URL 복사' }] : []),
                     { type: 'preview', value: trackingLink.short_url },
                   ]} />
                 </>

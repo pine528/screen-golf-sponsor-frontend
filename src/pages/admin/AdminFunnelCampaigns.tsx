@@ -84,13 +84,18 @@ export default function AdminFunnelCampaigns() {
     return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
   }, [all]);
 
-  const counts = useMemo(() => ({
-    total: all.length,
-    active: all.filter((c) => c.status === 'ACTIVE').length,
-    draft: all.filter((c) => c.status === 'DRAFT').length,
-    expired: all.filter((c) => c.status === 'COMPLETED' || c.status === 'CANCELLED').length,
-    weekNew: all.filter((c) => c.dateStart && (Date.now() - new Date(c.dateStart).getTime() < 7 * 86400000)).length,
-  }), [all]);
+  const counts = useMemo(() => {
+    const now = Date.now();
+    return {
+      total: all.length,
+      active: all.filter((c) => c.status === 'ACTIVE').length,
+      // 만료 예정: 종료일이 7일 이내 + 아직 active
+      expiringSoon: all.filter((c) => c.status === 'ACTIVE' && c.dateEnd && new Date(c.dateEnd).getTime() - now < 7 * 86400000 && new Date(c.dateEnd).getTime() > now).length,
+      // 발급 실패: 자산 중 하나라도 MISSING
+      assetFailed: all.filter((c) => c.assetStatus.promoCode === 'MISSING' || c.assetStatus.trackingLink === 'MISSING' || c.assetStatus.miniStore === 'MISSING').length,
+      weekNew: all.filter((c) => c.dateStart && (now - new Date(c.dateStart).getTime() < 7 * 86400000)).length,
+    };
+  }, [all]);
 
   const generateMut = useMutation({
     mutationFn: (campaignId: string) => api.generateCampaignAssets(campaignId),
@@ -230,12 +235,12 @@ export default function AdminFunnelCampaigns() {
 
         <GlobalFilter value={filter} onChange={setFilter} hideCampaign hideAthlete />
 
-        {/* Summary cards */}
+        {/* Summary cards (wireframe TABLE 6) */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
           <SummaryCard label="전체 캠페인" value={counts.total} icon={Megaphone} />
-          <SummaryCard label="Active" value={counts.active} icon={CheckCircle2} variant="highlight" />
-          <SummaryCard label="Draft" value={counts.draft} icon={FileEdit} />
-          <SummaryCard label="만료/완료" value={counts.expired} icon={AlarmClock} />
+          <SummaryCard label="활성" value={counts.active} icon={CheckCircle2} variant="highlight" />
+          <SummaryCard label="만료 예정 (7일↓)" value={counts.expiringSoon} icon={AlarmClock} hint="조기 알림" />
+          <SummaryCard label="발급 실패" value={counts.assetFailed} icon={FileEdit} hint="자산 미발급" />
           <SummaryCard label="이번 주 신규" value={counts.weekNew} />
         </div>
 

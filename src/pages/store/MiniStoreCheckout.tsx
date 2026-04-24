@@ -184,6 +184,29 @@ export default function MiniStoreCheckout() {
           >
             <Share2 className="w-4 h-4" /> 친구에게 공유하기
           </button>
+
+          {/* 재구매 유도 CTA (wireframe TABLE 39) */}
+          {store.products && store.products.length > 1 && (
+            <div className="mb-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <div className="text-xs font-bold text-emerald-700 mb-2">🎁 함께 보면 좋은 상품</div>
+              <div className="grid grid-cols-3 gap-1.5">
+                {store.products.slice(0, 3).map((p: any) => (
+                  <Link
+                    key={p.id}
+                    to={`/store/${slug}/product/${p.id}`}
+                    className="block bg-white rounded-lg p-1.5 hover:shadow-sm transition-shadow"
+                  >
+                    {p.imageUrl ? <img src={p.imageUrl} alt="" className="w-full aspect-square rounded object-cover mb-1" /> : <div className="w-full aspect-square bg-slate-100 rounded mb-1" />}
+                    <div className="text-[10px] font-semibold truncate">{p.name}</div>
+                  </Link>
+                ))}
+              </div>
+              <Link to={`/store/${slug}`} className="block mt-2 text-center text-xs font-bold text-emerald-700 hover:text-emerald-800">
+                전체 상품 보러가기 →
+              </Link>
+            </div>
+          )}
+
           <Link to={`/store/${slug}`} className="block w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl">
             스토어로 돌아가기
           </Link>
