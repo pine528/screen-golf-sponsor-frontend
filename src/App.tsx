@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { Hexagon } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 import { useAuth } from './hooks/useAuth';
@@ -156,6 +156,17 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   }
 
   return <>{children}</>;
+}
+
+function LegacyStoreRedirect({ kind }: { kind?: 'product' | 'checkout' }) {
+  const params = useParams();
+  const slug = params.slug;
+  const productId = params.productId;
+  if (!slug) return <Navigate to="/" replace />;
+  let path = `/store/brand/${slug}`;
+  if (kind === 'product' && productId) path += `/product/${productId}`;
+  if (kind === 'checkout') path += '/checkout';
+  return <Navigate to={path} replace />;
 }
 
 function HomeRoute() {
@@ -978,10 +989,14 @@ function App() {
       {/* ATH-01 (Athlete) */}
       <Route path="/athlete/funnel/dashboard" element={<ProtectedRoute><AthleteFunnelDashboard /></ProtectedRoute>} />
 
-      {/* STO-01~03 (Public Mini Store) */}
-      <Route path="/store/:slug" element={<MiniStoreLanding />} />
-      <Route path="/store/:slug/product/:productId" element={<MiniStoreProduct />} />
-      <Route path="/store/:slug/checkout" element={<MiniStoreCheckout />} />
+      {/* STO-01~03 (Public Mini Store) - api_spec TABLE 13: /store/brand/:slug */}
+      <Route path="/store/brand/:slug" element={<MiniStoreLanding />} />
+      <Route path="/store/brand/:slug/product/:productId" element={<MiniStoreProduct />} />
+      <Route path="/store/brand/:slug/checkout" element={<MiniStoreCheckout />} />
+      {/* 하위 호환: /store/:slug → /store/brand/:slug */}
+      <Route path="/store/:slug" element={<LegacyStoreRedirect />} />
+      <Route path="/store/:slug/product/:productId" element={<LegacyStoreRedirect kind="product" />} />
+      <Route path="/store/:slug/checkout" element={<LegacyStoreRedirect kind="checkout" />} />
 
       {/* 단축링크 redirect: /s/:shortCode */}
       <Route path="/s/:shortCode" element={<ShortLinkRedirect />} />

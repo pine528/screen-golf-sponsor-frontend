@@ -118,7 +118,7 @@ export default function AdminMiniStoreSettings() {
                 <Globe className="w-4 h-4" /> 게시
               </button>
             )}
-            <a href={`/store/${store.slug}`} target="_blank" rel="noreferrer" className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-lg inline-flex items-center gap-1.5">
+            <a href={`/store/brand/${store.slug}`} target="_blank" rel="noreferrer" className="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-lg inline-flex items-center gap-1.5">
               <Eye className="w-4 h-4" /> 미리보기
             </a>
           </div>

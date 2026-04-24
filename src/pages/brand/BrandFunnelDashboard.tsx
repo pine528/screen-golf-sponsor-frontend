@@ -198,26 +198,38 @@ export default function BrandFunnelDashboard() {
             {/* 선수별 TOP / 코드별 성과 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-white border border-slate-200 rounded-xl p-5">
-                <h3 className="text-sm font-bold text-slate-900 mb-3">선수별 성과 TOP</h3>
-                <div className="space-y-2">
-                  {(report?.breakdown?.athletes || []).slice(0, 10).map((a: any, i: number) => (
-                    <div key={a.id} className="flex items-center gap-3 py-2 border-b border-slate-100 last:border-b-0">
-                      <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center">{i + 1}</span>
-                      {a.profileImageUrl ? (
-                        <img src={a.profileImageUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs">{a.name.charAt(0)}</div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-semibold truncate">{a.name}</div>
-                        <div className="text-[10px] text-slate-400">{a.tour}</div>
+                <h3 className="text-sm font-bold text-slate-900 mb-3">선수별 성과 TOP (카드 + 막대)</h3>
+                <div className="space-y-1.5">
+                  {(() => {
+                    const athletes = (report?.breakdown?.athletes || []).slice(0, 10);
+                    const max = Math.max(...athletes.map((a: any) => a.netRevenue || 0), 1);
+                    return athletes.map((a: any, i: number) => (
+                      <div key={a.id} className="py-2 border-b border-slate-100 last:border-b-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px] flex items-center justify-center">{i + 1}</span>
+                          {a.profileImageUrl ? (
+                            <img src={a.profileImageUrl} alt="" className="w-6 h-6 rounded-full object-cover" />
+                          ) : (
+                            <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">{a.name.charAt(0)}</div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <div className="text-xs font-semibold truncate">{a.name} <span className="text-[10px] text-slate-400 font-normal">{a.tour}</span></div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-xs font-bold">₩{Math.round(a.netRevenue).toLocaleString()}</div>
+                            <div className="text-[9px] text-slate-500">{a.purchases}건</div>
+                          </div>
+                        </div>
+                        {/* 막대차트 (wireframe TABLE 18: 카드+막대차트) */}
+                        <div className="ml-7 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full"
+                            style={{ width: `${Math.max(2, ((a.netRevenue || 0) / max) * 100)}%` }}
+                          />
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-sm font-bold">₩{Math.round(a.netRevenue).toLocaleString()}</div>
-                        <div className="text-[10px] text-slate-500">주문 {a.purchases}건</div>
-                      </div>
-                    </div>
-                  ))}
+                    ));
+                  })()}
                   {(report?.breakdown?.athletes || []).length === 0 && (
                     <div className="text-center py-8 text-xs text-slate-400">데이터가 없습니다</div>
                   )}

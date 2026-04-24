@@ -22,6 +22,7 @@ type ViewMode = 'athletes' | 'codes' | 'contents';
 export default function BrandPerformanceCompare() {
   const [filter, setFilter] = useState<GlobalFilterValue>({});
   const [view, setView] = useState<ViewMode>('athletes');
+  const [sortBy, setSortBy] = useState<'revenue' | 'purchases' | 'cvr'>('revenue');
 
   const { data: meResp } = useQuery({
     queryKey: ['my-brand'],
@@ -88,10 +89,18 @@ export default function BrandPerformanceCompare() {
     },
   ];
 
-  const chartData = items.slice(0, 10).map((r: any) => ({
+  // 정렬 기준 적용 (wireframe TABLE 21: 정렬 기준 변경 가능)
+  const sortedItems = [...enrichedItems].sort((a: any, b: any) => {
+    if (sortBy === 'revenue') return (b.netRevenue || 0) - (a.netRevenue || 0);
+    if (sortBy === 'purchases') return (b.purchases || 0) - (a.purchases || 0);
+    return (b.cvr || 0) - (a.cvr || 0);
+  });
+
+  const chartData = sortedItems.slice(0, 10).map((r: any) => ({
     name: view === 'athletes' ? r.name : r.code,
     purchases: r.purchases,
     netRevenue: Math.round(r.netRevenue / 10000),  // 만원 단위
+    cvr: Number(((r.cvr || 0) * 100).toFixed(2)),
   }));
 
   return (
@@ -130,7 +139,14 @@ export default function BrandPerformanceCompare() {
         {/* 비교 차트 */}
         {chartData.length > 0 && (
           <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
-            <h3 className="text-sm font-bold text-slate-900 mb-3">비교 차트 (TOP 10)</h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-slate-900">비교 차트 (TOP 10)</h3>
+              <div className="inline-flex bg-slate-100 rounded-lg p-0.5 text-xs">
+                <button onClick={() => setSortBy('revenue')} className={`px-2.5 py-1 rounded ${sortBy === 'revenue' ? 'bg-white shadow-sm font-bold' : 'text-slate-500'}`}>매출순</button>
+                <button onClick={() => setSortBy('purchases')} className={`px-2.5 py-1 rounded ${sortBy === 'purchases' ? 'bg-white shadow-sm font-bold' : 'text-slate-500'}`}>주문순</button>
+                <button onClick={() => setSortBy('cvr')} className={`px-2.5 py-1 rounded ${sortBy === 'cvr' ? 'bg-white shadow-sm font-bold' : 'text-slate-500'}`}>CVR순</button>
+              </div>
+            </div>
             <div style={{ width: '100%', height: 300 }}>
               <ResponsiveContainer>
                 <BarChart data={chartData} margin={{ left: 0, right: 30, top: 10, bottom: 50 }}>
@@ -168,7 +184,7 @@ export default function BrandPerformanceCompare() {
         {isLoading ? (
           <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
         ) : (
-          <DetailTable data={enrichedItems} columns={columns} pageSize={20} emptyMessage="비교할 데이터가 없습니다" />
+          <DetailTable data={sortedItems} columns={columns} pageSize={20} emptyMessage="비교할 데이터가 없습니다" />
         )}
       </div>
     </Layout>

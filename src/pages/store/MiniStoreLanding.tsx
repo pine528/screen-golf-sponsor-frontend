@@ -112,7 +112,7 @@ export default function MiniStoreLanding() {
           {(store.products || []).map((p: any) => (
             <Link
               key={p.id}
-              to={`/store/${slug}/product/${p.id}`}
+              to={`/store/brand/${slug}/product/${p.id}`}
               onClick={() => trackEvent('product-view', {
                 campaign_id: store.campaignId, brand_id: store.brandId, product_id: p.id, session_id: sessionId,
               })}
@@ -183,7 +183,7 @@ export default function MiniStoreLanding() {
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3 shadow-2xl">
           <div className="max-w-3xl mx-auto">
             <Link
-              to={`/store/${slug}/checkout`}
+              to={`/store/brand/${slug}/checkout`}
               onClick={() => trackEvent('cta-click', {
                 campaign_id: store.campaignId, brand_id: store.brandId, button_type: 'sticky_buy', session_id: sessionId,
               })}

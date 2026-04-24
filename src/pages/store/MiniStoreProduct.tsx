@@ -81,7 +81,7 @@ export default function MiniStoreProduct() {
     <div className="min-h-screen bg-white pb-24">
       <div className="max-w-3xl mx-auto">
         <div className="p-4">
-          <Link to={`/store/${slug}`} className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700">
+          <Link to={`/store/brand/${slug}`} className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700">
             <ArrowLeft className="w-4 h-4" /> 스토어로
           </Link>
         </div>
@@ -206,7 +206,7 @@ export default function MiniStoreProduct() {
               <h3 className="text-sm font-bold text-slate-900 mb-3">🛍️ 함께 보면 좋은 상품</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {store.products.filter((p: any) => p.id !== productId).slice(0, 3).map((p: any) => (
-                  <Link key={p.id} to={`/store/${slug}/product/${p.id}`} className="block bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-emerald-300">
+                  <Link key={p.id} to={`/store/brand/${slug}/product/${p.id}`} className="block bg-white border border-slate-200 rounded-lg overflow-hidden hover:border-emerald-300">
                     {p.imageUrl ? <img src={p.imageUrl} alt="" className="w-full aspect-square object-cover" /> : <div className="w-full aspect-square bg-slate-100" />}
                     <div className="p-2">
                       <div className="text-xs font-semibold truncate">{p.name}</div>
@@ -231,7 +231,7 @@ export default function MiniStoreProduct() {
             장바구니
           </button>
           <button
-            onClick={() => { addToCart(); navigate(`/store/${slug}/checkout`); }}
+            onClick={() => { addToCart(); navigate(`/store/brand/${slug}/checkout`); }}
             disabled={product.soldOut}
             className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold py-3 rounded-xl"
           >
@@ -268,7 +268,7 @@ export default function MiniStoreProduct() {
                 <span className="text-lg font-extrabold">₩{cartTotal.toLocaleString()}</span>
               </div>
               <button
-                onClick={() => navigate(`/store/${slug}/checkout`)}
+                onClick={() => navigate(`/store/brand/${slug}/checkout`)}
                 className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl"
               >
                 결제하기

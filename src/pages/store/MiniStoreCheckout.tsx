@@ -110,8 +110,8 @@ export default function MiniStoreCheckout() {
             orderName: cartItems[0]?.name + (cartItems.length > 1 ? ` 외 ${cartItems.length - 1}건` : ''),
             customerName: customerName || '고객',
             customerEmail: customerEmail || undefined,
-            successUrl: `${window.location.origin}/store/${slug}/checkout?status=success&orderId=${orderId}`,
-            failUrl: `${window.location.origin}/store/${slug}/checkout?status=fail&orderId=${orderId}`,
+            successUrl: `${window.location.origin}/store/brand/${slug}/checkout?status=success&orderId=${orderId}`,
+            failUrl: `${window.location.origin}/store/brand/${slug}/checkout?status=fail&orderId=${orderId}`,
           });
         } catch (e: any) {
           // 사용자 취소 또는 실패
@@ -211,7 +211,7 @@ export default function MiniStoreCheckout() {
                 {store.products.slice(0, 3).map((p: any) => (
                   <Link
                     key={p.id}
-                    to={`/store/${slug}/product/${p.id}`}
+                    to={`/store/brand/${slug}/product/${p.id}`}
                     className="block bg-white rounded-lg p-1.5 hover:shadow-sm transition-shadow"
                   >
                     {p.imageUrl ? <img src={p.imageUrl} alt="" className="w-full aspect-square rounded object-cover mb-1" /> : <div className="w-full aspect-square bg-slate-100 rounded mb-1" />}
@@ -219,13 +219,13 @@ export default function MiniStoreCheckout() {
                   </Link>
                 ))}
               </div>
-              <Link to={`/store/${slug}`} className="block mt-2 text-center text-xs font-bold text-emerald-700 hover:text-emerald-800">
+              <Link to={`/store/brand/${slug}`} className="block mt-2 text-center text-xs font-bold text-emerald-700 hover:text-emerald-800">
                 전체 상품 보러가기 →
               </Link>
             </div>
           )}
 
-          <Link to={`/store/${slug}`} className="block w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl">
+          <Link to={`/store/brand/${slug}`} className="block w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl">
             스토어로 돌아가기
           </Link>
         </div>
@@ -236,7 +236,7 @@ export default function MiniStoreCheckout() {
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
       <div className="max-w-3xl mx-auto p-4">
-        <Link to={`/store/${slug}`} className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 mb-4">
+        <Link to={`/store/brand/${slug}`} className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 mb-4">
           <ArrowLeft className="w-4 h-4" /> 스토어로
         </Link>
 
