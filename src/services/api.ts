@@ -66,6 +66,11 @@ class ApiService {
     return response.data;
   }
 
+  async patch<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
+    const response = await this.client.patch<ApiResponse<T>>(url, data);
+    return response.data;
+  }
+
   async put<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
     const response = await this.client.put<ApiResponse<T>>(url, data);
     return response.data;

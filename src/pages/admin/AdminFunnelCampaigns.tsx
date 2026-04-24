@@ -17,7 +17,7 @@ import { SummaryCard } from '../../components/funnel/SummaryCard';
 import { StatusBadge } from '../../components/funnel/StatusBadge';
 import { DetailTable, Column } from '../../components/funnel/DetailTable';
 import { api } from '../../services/api';
-import { Megaphone, CheckCircle2, FileEdit, AlarmClock, RefreshCw, Search, Plus } from 'lucide-react';
+import { Megaphone, CheckCircle2, FileEdit, AlarmClock, RefreshCw, Search, Plus, Pause, Play, Copy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface CampaignRow {
@@ -97,6 +97,17 @@ export default function AdminFunnelCampaigns() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-funnel-campaigns'] }),
   });
 
+  const statusMut = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      api.patch(`/admin/funnel/campaigns/${id}/status`, { status }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-funnel-campaigns'] }),
+  });
+
+  const copyCampaign = (c: CampaignRow) => {
+    const text = `${c.name} (${c.brand.name})\n선수: ${c.athletes.map(a => a.name).join(', ')}\n기간: ${c.dateStart?.slice(0, 10) || '-'} ~ ${c.dateEnd?.slice(0, 10) || '-'}`;
+    navigator.clipboard.writeText(text);
+  };
+
   const columns: Column<CampaignRow>[] = [
     { key: 'name', label: '캠페인명', sortable: true,
       render: (r) => <button className="text-emerald-600 hover:underline font-semibold" onClick={(e) => { e.stopPropagation(); navigate(`/admin/funnel/campaigns/${r.id}`); }}>{r.name}</button>
@@ -121,18 +132,45 @@ export default function AdminFunnelCampaigns() {
     { key: 'action', label: '액션', align: 'right',
       render: (r) => {
         const allMissing = r.assetStatus.promoCode === 'MISSING' || r.assetStatus.trackingLink === 'MISSING' || r.assetStatus.miniStore === 'MISSING';
-        if (allMissing) {
-          return (
+        return (
+          <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+            {allMissing && (
+              <button
+                onClick={() => generateMut.mutate(r.id)}
+                disabled={generateMut.isPending}
+                title="자산 재발급"
+                className="inline-flex items-center gap-1 px-1.5 py-1 text-xs font-semibold rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+              >
+                <RefreshCw className={`w-3 h-3 ${generateMut.isPending ? 'animate-spin' : ''}`} />
+              </button>
+            )}
+            {r.status === 'ACTIVE' ? (
+              <button
+                onClick={() => statusMut.mutate({ id: r.id, status: 'PAUSED' })}
+                disabled={statusMut.isPending}
+                title="일시중지"
+                className="p-1 text-amber-600 hover:bg-amber-50 rounded"
+              >
+                <Pause className="w-3 h-3" />
+              </button>
+            ) : r.status === 'PAUSED' ? (
+              <button
+                onClick={() => statusMut.mutate({ id: r.id, status: 'ACTIVE' })}
+                title="재개"
+                className="p-1 text-emerald-600 hover:bg-emerald-50 rounded"
+              >
+                <Play className="w-3 h-3" />
+              </button>
+            ) : null}
             <button
-              onClick={(e) => { e.stopPropagation(); generateMut.mutate(r.id); }}
-              disabled={generateMut.isPending}
-              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+              onClick={() => copyCampaign(r)}
+              title="복사"
+              className="p-1 text-slate-500 hover:bg-slate-50 rounded"
             >
-              <RefreshCw className={`w-3 h-3 ${generateMut.isPending ? 'animate-spin' : ''}`} /> 자산 생성
+              <Copy className="w-3 h-3" />
             </button>
-          );
-        }
-        return null;
+          </div>
+        );
       },
     },
   ];

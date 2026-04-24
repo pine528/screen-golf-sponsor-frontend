@@ -57,6 +57,24 @@ export default function BrandFunnelDashboard() {
   });
   const predict = predictResp?.data;
 
+  // 전일 대비 증감 (어제 ~ 오늘)
+  const { data: dailyDeltaResp } = useQuery({
+    queryKey: ['brand-daily-delta', brandId],
+    queryFn: async () => {
+      const today = new Date().toISOString().slice(0, 10);
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      const dayBefore = new Date(Date.now() - 2 * 86400000).toISOString().slice(0, 10);
+      const r = await api.get(`/reports/brand/${brandId}/period-compare`, {
+        from: yesterday, to: today,
+        prev_from: dayBefore, prev_to: yesterday,
+      });
+      return r;
+    },
+    enabled: !!brandId && tab === 'overview',
+    staleTime: 5 * 60 * 1000,
+  });
+  const dailyDelta = dailyDeltaResp?.data?.delta || {};
+
   // 콘텐츠별 성과 (BRD-01 위젯)
   const { data: contentsResp } = useQuery({
     queryKey: ['brand-contents', brandId, filter],
@@ -91,9 +109,28 @@ export default function BrandFunnelDashboard() {
           value={filter}
           onChange={setFilter}
           campaigns={(report?.campaigns || []) as any[]}
-          athletes={[]}
+          athletes={(report?.breakdown?.athletes || []).map((a: any) => ({ id: a.id, name: a.name }))}
         />
-        <div className="text-[10px] text-slate-400 -mt-4 mb-4 ml-2">※ 채널 필터는 추후 픽셀 연동 캠페인에 적용됩니다</div>
+        {/* 채널/코드 필터 */}
+        <div className="bg-white border border-slate-200 rounded-xl p-3 mb-6 flex items-center gap-3 flex-wrap text-xs -mt-4">
+          <span className="text-slate-500 font-semibold">채널:</span>
+          {['all', 'instagram', 'youtube', 'naver', 'kakao', 'direct'].map((ch) => (
+            <button key={ch} onClick={() => setFilter({ ...filter, channel: ch === 'all' ? undefined : ch })} className={`px-2 py-1 rounded-full border ${filter.channel === ch || (ch === 'all' && !filter.channel) ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-slate-600 border-slate-200'}`}>
+              {ch === 'all' ? '전체' : ch}
+            </button>
+          ))}
+          <span className="text-slate-500 font-semibold ml-3">코드:</span>
+          <select
+            value={filter.code || ''}
+            onChange={(e) => setFilter({ ...filter, code: e.target.value || undefined })}
+            className="text-xs border border-slate-200 rounded-lg px-2 py-1"
+          >
+            <option value="">전체</option>
+            {(report?.breakdown?.codes || []).map((c: any) => (
+              <option key={c.code} value={c.code}>{c.code}</option>
+            ))}
+          </select>
+        </div>
 
         {/* Tabs */}
         <div className="flex border-b border-slate-200 mb-4">
@@ -110,12 +147,12 @@ export default function BrandFunnelDashboard() {
           <SegmentPanel segments={segments} />
         ) : (
           <>
-            {/* KPI 카드 (체크아웃 완료율 추가로 7개) */}
+            {/* KPI 카드 (체크아웃 완료율 추가 + 전일 대비 증감) */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 mb-6">
-              <SummaryCard label="유입수" value={summary.landingViews || 0} icon={Users} />
-              <SummaryCard label="주문수" value={summary.purchases || 0} icon={ShoppingCart} variant="highlight" />
-              <SummaryCard label="순매출" value={summary.netRevenue || 0} format="currency" icon={DollarSign} variant="highlight" />
-              <SummaryCard label="CVR" value={summary.cvr || 0} format="percent" icon={TrendingUp} hint="유입→구매" />
+              <SummaryCard label="유입수" value={summary.landingViews || 0} icon={Users} delta={dailyDelta.landingViews ?? undefined} hint="전일 대비" />
+              <SummaryCard label="주문수" value={summary.purchases || 0} icon={ShoppingCart} variant="highlight" delta={dailyDelta.purchases ?? undefined} hint="전일 대비" />
+              <SummaryCard label="순매출" value={summary.netRevenue || 0} format="currency" icon={DollarSign} variant="highlight" delta={dailyDelta.netRevenue ?? undefined} hint="전일 대비" />
+              <SummaryCard label="CVR" value={summary.cvr || 0} format="percent" icon={TrendingUp} hint="유입→구매" delta={dailyDelta.cvr ?? undefined} />
               <SummaryCard label="체크아웃 완료율" value={summary.checkoutCompletion || 0} format="percent" icon={CreditCard} hint="결제시작→구매" />
               <SummaryCard label="CAC" value={summary.cac || 0} format="currency" icon={Target} hint="고객획득비용" />
               <SummaryCard label="ROAS" value={summary.roas?.toFixed(2) || '-'} icon={BadgePercent} hint="투자대비매출" />
