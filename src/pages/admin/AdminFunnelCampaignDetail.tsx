@@ -116,6 +116,26 @@ export default function AdminFunnelCampaignDetail() {
               <Field label="목표 노출" value={(campaign.goalImpressions || 0).toLocaleString()} />
               <Field label="목표 전환" value={(campaign.goalConversions || 0).toLocaleString()} />
             </Section>
+            <Section title="할인정책">
+              {promoCode ? (
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between"><span className="text-slate-500">대표 코드</span><code className="font-mono font-bold">{promoCode.code}</code></div>
+                  <div className="flex justify-between"><span className="text-slate-500">할인 타입</span><span>{promoCode.discount_type || promoCode.discountType || '-'}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">할인 값</span><span className="font-bold text-emerald-600">
+                    {(() => {
+                      const v = promoCode.discount_value ?? promoCode.discountValue;
+                      const t = promoCode.discount_type ?? promoCode.discountType;
+                      if (v == null) return '-';
+                      return t === 'PERCENT' ? `${Number(v)}%` : `₩${Number(v).toLocaleString()}`;
+                    })()}
+                  </span></div>
+                  <div className="flex justify-between"><span className="text-slate-500">사용 횟수</span><span>{promoCode.usage_count ?? promoCode.usageCount ?? 0}회</span></div>
+                </div>
+              ) : (
+                <div className="text-xs text-slate-400">발급된 코드가 없습니다</div>
+              )}
+            </Section>
+
             <Section title="매칭된 선수">
               {campaign.contracts?.length === 0 && <div className="text-xs text-slate-400">매칭된 선수가 없습니다</div>}
               {campaign.contracts?.map((cc: any) => (

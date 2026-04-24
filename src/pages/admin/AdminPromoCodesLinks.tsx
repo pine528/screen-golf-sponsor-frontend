@@ -24,6 +24,9 @@ export default function AdminPromoCodesLinks() {
   const [campaignId, setCampaignId] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [contentFilter, setContentFilter] = useState<string>('');
+  const [contentTypeFilter, setContentTypeFilter] = useState<string>('');
+  const [athleteFilter, setAthleteFilter] = useState<string>('');
+  const [issuedAfter, setIssuedAfter] = useState<string>('');
   const queryClient = useQueryClient();
 
   const { data: campaignsResp } = useQuery({
@@ -45,8 +48,20 @@ export default function AdminPromoCodesLinks() {
 
   const allCodes = (codesResp?.data || []) as any[];
   const allLinks = (linksResp?.data || []) as any[];
-  const codes = allCodes.filter((c) => !statusFilter || c.status === statusFilter);
-  const links = allLinks.filter((l) => (!statusFilter || l.status === statusFilter) && (!contentFilter || (l.contentId || '').includes(contentFilter)));
+  const codes = allCodes
+    .filter((c) => !statusFilter || c.status === statusFilter)
+    .filter((c) => !athleteFilter || c.athleteId === athleteFilter)
+    .filter((c) => !issuedAfter || new Date(c.createdAt) >= new Date(issuedAfter));
+  const links = allLinks
+    .filter((l) => !statusFilter || l.status === statusFilter)
+    .filter((l) => !contentFilter || (l.contentId || '').includes(contentFilter))
+    .filter((l) => !contentTypeFilter || l.contentType === contentTypeFilter)
+    .filter((l) => !athleteFilter || l.athleteId === athleteFilter)
+    .filter((l) => !issuedAfter || new Date(l.createdAt) >= new Date(issuedAfter));
+
+  // 선수 옵션 (현재 선택된 캠페인의 선수)
+  const selectedCampaignForFilter = campaigns.find((c) => c.id === campaignId);
+  const athleteOptions = selectedCampaignForFilter?.athletes || [];
 
   const disableCode = useMutation({
     mutationFn: (id: string) => api.disablePromoCode(id),
@@ -95,14 +110,24 @@ export default function AdminPromoCodesLinks() {
     });
   };
 
+  // wireframe TABLE 11: 코드명 | 적용률 | 주문수 | 매출
   const codeColumns: Column<any>[] = [
-    { key: 'code', label: '코드', render: (r) => <code className="font-mono font-bold">{r.code}</code> },
+    { key: 'code', label: '코드명', render: (r) => <code className="font-mono font-bold">{r.code}</code> },
+    { key: 'usageRate', label: '적용률', sortable: true, align: 'right',
+      render: (r) => {
+        if (r.usageRate != null) return `${(r.usageRate * 100).toFixed(0)}% (${r.usageCount}/${r.maxUsage})`;
+        return `${r.usageCount}회`;
+      },
+    },
+    { key: 'orderCount', label: '주문수', sortable: true, align: 'right' },
+    { key: 'revenue', label: '매출', sortable: true, align: 'right',
+      render: (r) => `₩${Math.round(r.revenue || 0).toLocaleString()}`,
+    },
     { key: 'discount', label: '할인',
       render: (r) => r.discountType === 'PERCENT'
         ? `${Number(r.discountValue)}%`
         : `₩${Number(r.discountValue).toLocaleString()}`,
     },
-    { key: 'usageCount', label: '사용', sortable: true, render: (r) => `${r.usageCount}/${r.maxUsage || '∞'}` },
     { key: 'status', label: '상태', render: (r) => <StatusBadge status={r.status} /> },
     { key: 'createdAt', label: '발급일', render: (r) => r.createdAt?.slice(0, 10) },
     { key: 'action', label: '액션', align: 'right',
@@ -161,9 +186,32 @@ export default function AdminPromoCodesLinks() {
           <div className="text-center py-16 text-sm text-slate-400 bg-slate-50 rounded-xl">캠페인을 선택해주세요</div>
         ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr_280px] gap-4">
-          {/* 좌측 필터 패널 */}
+          {/* 좌측 필터 패널 (wireframe TABLE 11: 선수/콘텐츠 유형/상태/발급일) */}
           <div className="bg-white border border-slate-200 rounded-xl p-3 h-fit">
             <h3 className="text-xs font-bold text-slate-500 mb-2">필터</h3>
+
+            <div className="mb-3">
+              <label className="text-[10px] font-semibold text-slate-500">선수</label>
+              <select value={athleteFilter} onChange={(e) => setAthleteFilter(e.target.value)} className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1">
+                <option value="">전체 ({athleteOptions.length}명)</option>
+                {athleteOptions.map((a: any) => <option key={a.id} value={a.id}>{a.name}</option>)}
+              </select>
+            </div>
+
+            {tab === 'links' && (
+              <div className="mb-3">
+                <label className="text-[10px] font-semibold text-slate-500">콘텐츠 유형</label>
+                <select value={contentTypeFilter} onChange={(e) => setContentTypeFilter(e.target.value)} className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1">
+                  <option value="">전체</option>
+                  <option value="INSTAGRAM">Instagram</option>
+                  <option value="YOUTUBE">YouTube</option>
+                  <option value="TIKTOK">TikTok</option>
+                  <option value="BLOG">블로그</option>
+                  <option value="OTHER">기타</option>
+                </select>
+              </div>
+            )}
+
             <div className="mb-3">
               <label className="text-[10px] font-semibold text-slate-500">상태</label>
               <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1">
@@ -174,12 +222,19 @@ export default function AdminPromoCodesLinks() {
                 <option value="OVERUSED">Overused</option>
               </select>
             </div>
+
+            <div className="mb-3">
+              <label className="text-[10px] font-semibold text-slate-500">발급일 이후</label>
+              <input type="date" value={issuedAfter} onChange={(e) => setIssuedAfter(e.target.value)} className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1" />
+            </div>
+
             {tab === 'links' && (
               <div className="mb-3">
-                <label className="text-[10px] font-semibold text-slate-500">콘텐츠 ID</label>
+                <label className="text-[10px] font-semibold text-slate-500">콘텐츠 ID 검색</label>
                 <input type="text" value={contentFilter} onChange={(e) => setContentFilter(e.target.value)} placeholder="instagram_..." className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1" />
               </div>
             )}
+
             <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-100">
               총 {tab === 'codes' ? codes.length : links.length}건
             </div>

@@ -22,6 +22,7 @@ export default function MiniStoreProduct() {
   const [qty, setQty] = useState(1);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [activeImageIdx, setActiveImageIdx] = useState(0);
 
   const { data: resp } = useQuery({
     queryKey: ['public-mini-store', slug],
@@ -53,7 +54,10 @@ export default function MiniStoreProduct() {
     } else {
       // attribution snapshot: 결제 실패 시에도 동일 귀속 유지
       cart.push({
-        productId: product.id, qty, name: product.name, price: finalPrice, slug,
+        productId: product.id, qty, name: product.name,
+        price: finalPrice,
+        originalPrice: Number(product.price),  // 할인 표시용 원가
+        slug,
         options: selectedOptions,  // wireframe TABLE 36: 옵션
         attribution: {
           campaignId: store.campaignId,
@@ -86,11 +90,33 @@ export default function MiniStoreProduct() {
           </Link>
         </div>
 
-        {product.imageUrl ? (
-          <img src={product.imageUrl} alt={product.name} className="w-full aspect-square object-cover" />
-        ) : (
-          <div className="w-full aspect-square bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>
-        )}
+        {(() => {
+          // wireframe TABLE 35: 상품 이미지 / 썸네일
+          const allImages = [product.imageUrl, ...(Array.isArray(product.images) ? product.images : [])].filter(Boolean);
+          const current = allImages[activeImageIdx] || product.imageUrl;
+          return (
+            <>
+              {current ? (
+                <img src={current} alt={product.name} className="w-full aspect-square object-cover" />
+              ) : (
+                <div className="w-full aspect-square bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>
+              )}
+              {allImages.length > 1 && (
+                <div className="flex gap-2 px-4 py-3 overflow-x-auto bg-white border-b border-slate-100">
+                  {allImages.map((img: string, i: number) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveImageIdx(i)}
+                      className={`flex-shrink-0 w-16 h-16 rounded border-2 overflow-hidden ${i === activeImageIdx ? 'border-emerald-500 ring-2 ring-emerald-200' : 'border-slate-200'}`}
+                    >
+                      <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          );
+        })()}
 
         <div className="p-5">
           <h1 className="text-xl font-extrabold text-slate-900 mb-2">{product.name}</h1>
@@ -251,18 +277,40 @@ export default function MiniStoreProduct() {
               </h3>
               <button onClick={() => setDrawerOpen(false)} className="p-1 text-slate-400"><X className="w-4 h-4" /></button>
             </div>
-            <div className="p-4 space-y-3 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 160px)' }}>
-              {cartItems.map((c: any, i: number) => (
-                <div key={i} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                  <div>
-                    <div className="text-sm font-semibold">{c.name}</div>
-                    <div className="text-xs text-slate-500">{c.qty}개 × ₩{c.price.toLocaleString()}</div>
+            <div className="p-4 space-y-3 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+              {cartItems.map((c: any, i: number) => {
+                // wireframe TABLE 35: drawer에 할인 표시
+                const originalPrice = c.originalPrice || c.price;
+                const discount = (originalPrice - c.price) * c.qty;
+                return (
+                  <div key={i} className="p-3 bg-slate-50 rounded-lg">
+                    <div className="flex items-center justify-between mb-1">
+                      <div>
+                        <div className="text-sm font-semibold">{c.name}</div>
+                        <div className="text-xs text-slate-500">{c.qty}개 × ₩{c.price.toLocaleString()}</div>
+                      </div>
+                      <div className="text-sm font-bold">₩{(c.price * c.qty).toLocaleString()}</div>
+                    </div>
+                    {discount > 0 && (
+                      <div className="flex justify-between text-[11px] text-emerald-600">
+                        <span>할인</span>
+                        <span>-₩{Math.round(discount).toLocaleString()}</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="text-sm font-bold">₩{(c.price * c.qty).toLocaleString()}</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-slate-200">
+              {(() => {
+                const totalDiscount = cartItems.reduce((s: number, c: any) => s + (((c.originalPrice || c.price) - c.price) * c.qty), 0);
+                return totalDiscount > 0 ? (
+                  <div className="flex justify-between text-xs text-emerald-600 mb-1">
+                    <span>총 할인</span>
+                    <span>-₩{Math.round(totalDiscount).toLocaleString()}</span>
+                  </div>
+                ) : null;
+              })()}
               <div className="flex justify-between mb-3">
                 <span className="text-sm">예상 결제금액</span>
                 <span className="text-lg font-extrabold">₩{cartTotal.toLocaleString()}</span>
