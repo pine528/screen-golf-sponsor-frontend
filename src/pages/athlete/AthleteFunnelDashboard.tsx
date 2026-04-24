@@ -16,7 +16,7 @@ import { SummaryCard } from '../../components/funnel/SummaryCard';
 import { TimeSeriesChart } from '../../components/funnel/TimeSeriesChart';
 import { ActionBar } from '../../components/funnel/ActionBar';
 import { api } from '../../services/api';
-import { MousePointer, Users, ShoppingCart, DollarSign, BadgePercent, Tag, Link2, Megaphone, Sparkles, Copy } from 'lucide-react';
+import { MousePointer, Users, ShoppingCart, DollarSign, Tag, Link2, Megaphone, Sparkles, Copy, Ticket } from 'lucide-react';
 
 export default function AthleteFunnelDashboard() {
   const [filter, setFilter] = useState<GlobalFilterValue>({});
@@ -97,13 +97,18 @@ export default function AthleteFunnelDashboard() {
               </div>
             )}
 
-            {/* KPI 카드 (본인 데이터만) */}
+            {/* KPI 카드 (본인 데이터만) - wireframe TABLE 26: 클릭/유입/주문/매출 기여/코드 사용 수 */}
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
               <SummaryCard label="내 클릭수" value={summary.linkClicks || 0} icon={MousePointer} />
               <SummaryCard label="내 유입수" value={summary.landingViews || 0} icon={Users} />
               <SummaryCard label="내 주문수" value={summary.purchases || 0} icon={ShoppingCart} variant="highlight" />
               <SummaryCard label="내 매출 기여" value={summary.netRevenue || 0} format="currency" icon={DollarSign} variant="highlight" />
-              <SummaryCard label="CTR" value={summary.ctr || 0} format="percent" icon={BadgePercent} hint="유입/클릭" />
+              <SummaryCard
+                label="내 코드 사용 수"
+                value={(assets.codes || []).reduce((s: number, c: any) => s + (c.usageCount || 0), 0)}
+                icon={Ticket}
+                hint={`${(assets.codes || []).length}개 코드`}
+              />
             </div>
 
             {/* 추이 차트 */}

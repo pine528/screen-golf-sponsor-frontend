@@ -20,8 +20,18 @@ import { Users, ShoppingCart, DollarSign, TrendingUp, BadgePercent, Target, Ligh
 
 type Tab = 'overview' | 'predict' | 'segments';
 
+// wireframe TABLE 18: 기본 30일
+function defaultThirtyDays(): GlobalFilterValue {
+  const to = new Date();
+  const from = new Date(to.getTime() - 30 * 86400000);
+  return {
+    from: from.toISOString().slice(0, 10),
+    to: to.toISOString().slice(0, 10),
+  };
+}
+
 export default function BrandFunnelDashboard() {
-  const [filter, setFilter] = useState<GlobalFilterValue>({});
+  const [filter, setFilter] = useState<GlobalFilterValue>(defaultThirtyDays());
   const [tab, setTab] = useState<Tab>('overview');
 
   // 브랜드 ID 조회

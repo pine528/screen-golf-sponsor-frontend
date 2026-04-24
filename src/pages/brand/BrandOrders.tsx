@@ -109,6 +109,12 @@ export default function BrandOrders() {
     } },
     { key: 'athlete', label: '선수', render: (r) => r.athlete?.name || '-' },
     { key: 'promoCode', label: '코드', render: (r) => r.promoCode ? <code className="text-xs bg-emerald-50 px-1.5 py-0.5 rounded">{r.promoCode}</code> : <span className="text-slate-400">-</span> },
+    { key: 'grossAmount', label: '결제금액', sortable: true, align: 'right',
+      render: (r) => `₩${Math.round(Number(r.grossAmount)).toLocaleString()}`,
+    },
+    { key: 'discountAmount', label: '할인', align: 'right',
+      render: (r) => Number(r.discountAmount) > 0 ? `-₩${Math.round(Number(r.discountAmount)).toLocaleString()}` : '-',
+    },
     { key: 'netAmount', label: '순매출', sortable: true, align: 'right', render: (r) => `₩${Math.round(Number(r.netAmount)).toLocaleString()}` },
     { key: 'attributionReason', label: '귀속', render: (r) => (
       <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">{r.attributionReason || 'manual'}</span>

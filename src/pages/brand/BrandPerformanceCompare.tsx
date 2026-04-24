@@ -42,21 +42,29 @@ export default function BrandPerformanceCompare() {
   // 자동 해석: 표본 부족 + 최고 성과 강조
   const interpretations = generateInterpretations(items, view);
 
-  // 추정 클릭/유입 (DB에 직접 없으므로 평균 비율 사용)
+  // 추정 노출/클릭/유입 (DB 직접 없으므로 평균 비율 사용)
   const enrichedItems = items.map((it: any) => {
     const purchases = it.purchases || 0;
     const netRevenue = it.netRevenue || 0;
-    // 추정값: 주문 1건당 평균 50회 유입, 비용은 캠페인 spent / 주문수 분배
+    // 추정 비율: 노출 → 클릭(2%) → 유입(70%) → 구매(2.5%)
     const estimatedLanding = purchases * 50;
+    const estimatedClicks = Math.round(estimatedLanding / 0.7);
+    const estimatedImpressions = Math.round(estimatedClicks / 0.02);
     const cvr = estimatedLanding > 0 ? purchases / estimatedLanding : 0;
     const aov = purchases > 0 ? netRevenue / purchases : 0;
     const cac = purchases > 0 ? Math.round(netRevenue * 0.15 / purchases) : 0; // 추정
     const roas = cac > 0 ? netRevenue / (cac * purchases) : null;
-    return { ...it, cvr, aov, cac, roas };
+    return {
+      ...it,
+      impressions: estimatedImpressions,
+      clicks: estimatedClicks,
+      landing: estimatedLanding,
+      cvr, aov, cac, roas,
+    };
   });
 
   const columns: Column<any>[] = view === 'athletes' ? [
-    { key: 'name', label: '선수', render: (r) => (
+    { key: 'name', label: '이름', render: (r) => (
       <div className="flex items-center gap-2">
         {r.profileImageUrl ? <img src={r.profileImageUrl} alt="" className="w-8 h-8 rounded-full object-cover" /> : <div className="w-8 h-8 rounded-full bg-slate-100" />}
         <div>
@@ -65,12 +73,18 @@ export default function BrandPerformanceCompare() {
         </div>
       </div>
     ) },
+    { key: 'impressions', label: '노출', sortable: true, align: 'right',
+      render: (r) => r.impressions?.toLocaleString() || '-',
+    },
+    { key: 'clicks', label: '클릭', sortable: true, align: 'right',
+      render: (r) => r.clicks?.toLocaleString() || '-',
+    },
+    { key: 'landing', label: '유입', sortable: true, align: 'right',
+      render: (r) => r.landing?.toLocaleString() || '-',
+    },
     { key: 'purchases', label: '주문', sortable: true, align: 'right' },
     { key: 'netRevenue', label: '순매출', sortable: true, align: 'right',
       render: (r) => `₩${Math.round(r.netRevenue).toLocaleString()}`,
-    },
-    { key: 'aov', label: '객단가', align: 'right',
-      render: (r) => r.purchases > 0 ? `₩${Math.round(r.netRevenue / r.purchases).toLocaleString()}` : '-',
     },
     { key: 'cvr', label: 'CVR', align: 'right',
       render: (r) => `${(r.cvr * 100).toFixed(1)}%`,
@@ -96,11 +110,15 @@ export default function BrandPerformanceCompare() {
     return (b.cvr || 0) - (a.cvr || 0);
   });
 
+  // wireframe TABLE 20: 비교 차트 - 클릭, 유입, 주문, 매출, CVR, CAC
   const chartData = sortedItems.slice(0, 10).map((r: any) => ({
     name: view === 'athletes' ? r.name : r.code,
+    clicks: r.clicks || 0,
+    landing: r.landing || 0,
     purchases: r.purchases,
     netRevenue: Math.round(r.netRevenue / 10000),  // 만원 단위
     cvr: Number(((r.cvr || 0) * 100).toFixed(2)),
+    cac: r.cac || 0,
   }));
 
   return (
@@ -156,7 +174,9 @@ export default function BrandPerformanceCompare() {
                   <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}만`} />
                   <Tooltip />
                   <Legend wrapperStyle={{ fontSize: 12 }} />
-                  <Bar yAxisId="left" dataKey="purchases" name="주문수" fill="#34d399" />
+                  <Bar yAxisId="left" dataKey="clicks" name="클릭" fill="#a7f3d0" />
+                  <Bar yAxisId="left" dataKey="landing" name="유입" fill="#6ee7b7" />
+                  <Bar yAxisId="left" dataKey="purchases" name="주문" fill="#34d399" />
                   <Bar yAxisId="right" dataKey="netRevenue" name="매출(만원)" fill="#0ea5e9" />
                 </BarChart>
               </ResponsiveContainer>
