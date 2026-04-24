@@ -94,10 +94,26 @@ export default function MiniStoreProduct() {
 
         <div className="p-5">
           <h1 className="text-xl font-extrabold text-slate-900 mb-2">{product.name}</h1>
-          <div className="flex items-baseline gap-3 mb-4">
+          <div className="flex items-baseline gap-3 mb-2">
             <span className="text-2xl font-extrabold text-emerald-600">₩{finalPrice.toLocaleString()}</span>
             {product.discountPrice && (
               <span className="text-base text-slate-400 line-through">₩{Number(product.price).toLocaleString()}</span>
+            )}
+          </div>
+          {/* 재고 상태 (wireframe TABLE 34: In Stock / Low Stock / Sold Out) */}
+          <div className="mb-4">
+            {product.soldOut ? (
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-rose-100 text-rose-700 text-xs font-bold rounded">
+                ❌ 품절
+              </span>
+            ) : product.stock <= 5 ? (
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded">
+                ⚠️ 마감 임박! 재고 {product.stock}개 남음
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded">
+                ✓ 재고 충분 ({product.stock}개)
+              </span>
             )}
           </div>
           {product.description && (

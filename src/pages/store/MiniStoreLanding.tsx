@@ -83,6 +83,26 @@ export default function MiniStoreLanding() {
         <div className="absolute -top-8 -left-8 w-32 h-32 bg-white/10 rounded-full" />
       </div>
 
+      {/* Promo Expired 배너 (wireframe TABLE 31) */}
+      {store.promoExpired && (
+        <div className="bg-amber-50 border-b border-amber-200 px-5 py-3">
+          <div className="max-w-3xl mx-auto text-center">
+            <span className="text-xs sm:text-sm font-semibold text-amber-700">
+              ⚠️ 현재 활성화된 프로모션 코드가 없습니다. 일부 혜택은 적용되지 않을 수 있어요.
+            </span>
+          </div>
+        </div>
+      )}
+      {store.hasSoldOut && (
+        <div className="bg-rose-50 border-b border-rose-200 px-5 py-2">
+          <div className="max-w-3xl mx-auto text-center">
+            <span className="text-xs font-semibold text-rose-600">
+              일부 인기 상품이 품절되었어요. 빠른 구매를 추천드립니다!
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* 추천 상품 */}
       <div className="max-w-3xl mx-auto px-5 -mt-6 relative z-10">
         <h2 className="text-lg font-bold text-slate-900 mb-3 inline-flex items-center gap-2">

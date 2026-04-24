@@ -140,6 +140,20 @@ export default function BrandFunnelDashboard() {
           <TabBtn active={tab === 'segments'} onClick={() => setTab('segments')}>👥 세그먼트 (Phase 3)</TabBtn>
         </div>
 
+        {/* No Data 배너 (wireframe TABLE 16: Live, No Data, Partial Sync) */}
+        {!isLoading && tab === 'overview' && (summary.linkClicks || 0) === 0 && (summary.purchases || 0) === 0 && (
+          <div className="bg-sky-50 border border-sky-200 rounded-xl p-4 mb-6 flex items-start gap-3">
+            <div className="text-2xl">📊</div>
+            <div className="flex-1">
+              <div className="text-sm font-bold text-sky-800 mb-1">아직 데이터가 없습니다</div>
+              <div className="text-xs text-sky-700 leading-relaxed">
+                선수가 SNS·콘텐츠에 트래킹 링크와 프로모션 코드를 게시하고 고객 유입이 발생해야 데이터가 표시됩니다.
+                Phase 2 외부몰 픽셀을 설치하면 외부 자사몰 구매도 함께 집계됩니다.
+              </div>
+            </div>
+          </div>
+        )}
+
         {isLoading ? (
           <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
         ) : tab === 'predict' ? (
