@@ -23,6 +23,8 @@ export default function BrandOrders() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [customerFilter, setCustomerFilter] = useState<'all' | 'new' | 'returning'>('all');
+  const [athleteFilter, setAthleteFilter] = useState<string>('');
+  const [codeFilter, setCodeFilter] = useState<string>('');
 
   const { data: meResp } = useQuery({
     queryKey: ['my-brand'],
@@ -68,6 +70,8 @@ export default function BrandOrders() {
   const filtered = orders
     .filter((o) => includeRefunded || (o.status !== 'REFUNDED' && o.status !== 'CANCELLED'))
     .filter((o) => !statusFilter || o.status === statusFilter)
+    .filter((o) => !athleteFilter || o.athleteId === athleteFilter)
+    .filter((o) => !codeFilter || o.promoCode === codeFilter)
     .filter((o) => {
       if (customerFilter === 'all') return true;
       if (customerFilter === 'new') return o.isNewCustomer;
@@ -80,6 +84,11 @@ export default function BrandOrders() {
         || (o.promoCode || '').toLowerCase().includes(q)
         || (o.id || '').toLowerCase().includes(q);
     });
+
+  // 선수/코드 옵션 (전체 주문에서 distinct 추출)
+  const athleteOptions = Array.from(new Map(orders.filter((o) => o.athlete).map((o) => [o.athleteId, o.athlete])).entries())
+    .map(([id, a]) => ({ id, name: (a as any)?.name || id.slice(0, 8) }));
+  const codeOptions = Array.from(new Set(orders.map((o) => o.promoCode).filter(Boolean)));
 
   const downloadXlsx = () => {
     // 간단한 XLSX 대체: CSV를 .xls 확장자로 저장 (Excel이 열어줌)
@@ -163,7 +172,7 @@ export default function BrandOrders() {
           </div>
         </div>
 
-        {/* 추가 필터 행 */}
+        {/* 추가 필터 행 (wireframe TABLE 24: 기간/주문상태/선수/코드/신규-재구매) */}
         <div className="flex items-center gap-2 flex-wrap mb-4 text-xs">
           <span className="text-slate-500 font-semibold">상태:</span>
           {['', 'PAID', 'REFUNDED', 'CANCELLED', 'PARTIAL_REFUND'].map((s) => (
@@ -177,6 +186,23 @@ export default function BrandOrders() {
               {c === 'all' ? '전체' : c === 'new' ? '신규' : '재구매'}
             </button>
           ))}
+        </div>
+
+        {/* 선수/코드 드롭다운 필터 (wireframe TABLE 24) */}
+        <div className="flex items-center gap-3 mb-4 flex-wrap text-xs">
+          <span className="text-slate-500 font-semibold">선수:</span>
+          <select value={athleteFilter} onChange={(e) => setAthleteFilter(e.target.value)} className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 max-w-[200px]">
+            <option value="">전체 ({athleteOptions.length}명)</option>
+            {athleteOptions.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+          </select>
+          <span className="text-slate-500 font-semibold ml-2">코드:</span>
+          <select value={codeFilter} onChange={(e) => setCodeFilter(e.target.value)} className="text-xs border border-slate-200 rounded-lg px-2 py-1.5 max-w-[200px]">
+            <option value="">전체 ({codeOptions.length}개)</option>
+            {codeOptions.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          {(athleteFilter || codeFilter) && (
+            <button onClick={() => { setAthleteFilter(''); setCodeFilter(''); }} className="text-rose-500 hover:underline ml-2">필터 초기화</button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

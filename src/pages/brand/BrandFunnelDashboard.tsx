@@ -172,6 +172,9 @@ export default function BrandFunnelDashboard() {
           <SegmentPanel segments={segments} />
         ) : (
           <>
+            {/* 자동 해석 코멘트 영역 (handoff 5조: 요약 코멘트 영역) */}
+            <BrandSummaryComment summary={summary} delta={dailyDelta} breakdown={report?.breakdown} />
+
             {/* KPI 카드 (체크아웃 완료율 추가 + 전일 대비 증감) */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 mb-6">
               <SummaryCard label="유입수" value={summary.landingViews || 0} icon={Users} delta={dailyDelta.landingViews ?? undefined} hint="전일 대비" />
@@ -309,6 +312,79 @@ export default function BrandFunnelDashboard() {
         )}
       </div>
     </Layout>
+  );
+}
+
+function BrandSummaryComment({ summary, delta, breakdown }: { summary: any; delta: any; breakdown: any }) {
+  const messages: { type: 'positive' | 'negative' | 'info'; text: string }[] = [];
+
+  if (!summary || !summary.purchases) {
+    return null; // No Data 배너가 따로 처리
+  }
+
+  // 매출 증감
+  if (delta?.netRevenue != null && Math.abs(delta.netRevenue) >= 5) {
+    messages.push({
+      type: delta.netRevenue > 0 ? 'positive' : 'negative',
+      text: `최근 24시간 순매출이 전일 대비 ${delta.netRevenue > 0 ? '+' : ''}${delta.netRevenue.toFixed(1)}% ${delta.netRevenue > 0 ? '증가' : '감소'}했습니다.`,
+    });
+  }
+
+  // CVR
+  if (summary.cvr) {
+    if (summary.cvr >= 0.03) {
+      messages.push({ type: 'positive', text: `전환율(CVR) ${(summary.cvr * 100).toFixed(2)}%로 시장 평균(2~3%) 대비 우수합니다.` });
+    } else if (summary.cvr < 0.01) {
+      messages.push({ type: 'negative', text: `전환율(CVR) ${(summary.cvr * 100).toFixed(2)}%로 낮습니다. 미니스토어 첫 화면 카피·CTA 점검을 권장합니다.` });
+    }
+  }
+
+  // ROAS
+  if (summary.roas) {
+    if (summary.roas >= 3) {
+      messages.push({ type: 'positive', text: `ROAS ${summary.roas.toFixed(2)}x — 투자 대비 매출이 매우 효율적입니다.` });
+    } else if (summary.roas < 1) {
+      messages.push({ type: 'negative', text: `ROAS ${summary.roas.toFixed(2)}x — 투자 대비 매출이 손실권. 캠페인 재구성 권장.` });
+    }
+  }
+
+  // TOP 선수
+  const topAthlete = (breakdown?.athletes || [])[0];
+  if (topAthlete && topAthlete.purchases >= 3) {
+    messages.push({
+      type: 'info',
+      text: `${topAthlete.name} 선수가 ₩${Math.round(topAthlete.netRevenue).toLocaleString()} 매출 기여로 1위입니다.`,
+    });
+  }
+
+  // TOP 코드
+  const topCode = (breakdown?.codes || [])[0];
+  if (topCode && topCode.purchases >= 3) {
+    messages.push({
+      type: 'info',
+      text: `코드 "${topCode.code}"가 ${topCode.purchases}회 사용되어 가장 활발합니다.`,
+    });
+  }
+
+  if (messages.length === 0) return null;
+
+  return (
+    <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-5 mb-6">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider">📊 자동 해석</span>
+        <span className="text-[10px] text-slate-400">실시간 KPI 기반 자동 생성</span>
+      </div>
+      <div className="space-y-2">
+        {messages.slice(0, 4).map((m, i) => (
+          <div key={i} className="flex items-start gap-2 text-sm leading-relaxed">
+            <span className={m.type === 'positive' ? 'text-emerald-400' : m.type === 'negative' ? 'text-rose-400' : 'text-sky-400'}>
+              {m.type === 'positive' ? '✓' : m.type === 'negative' ? '⚠️' : '•'}
+            </span>
+            <span>{m.text}</span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
