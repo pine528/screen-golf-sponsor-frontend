@@ -43,7 +43,14 @@ export default function MiniStoreLanding() {
   return (
     <div className="min-h-screen bg-slate-50 pb-24">
       {/* Hero (wireframe TABLE 32: 브랜드 로고 | 선수 이미지 | 카피 | 프로모션 배지) */}
-      <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white relative overflow-hidden">
+      <div
+        className="text-white relative overflow-hidden"
+        style={{
+          background: store.themeColor
+            ? `linear-gradient(135deg, ${store.themeColor} 0%, ${store.themeColor}dd 50%, ${store.themeColor}aa 100%)`
+            : 'linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #0ea5e9 100%)',
+        }}
+      >
         {/* 브랜드 로고 (좌상단) */}
         {store.brandLogoUrl && (
           <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
@@ -160,7 +167,8 @@ export default function MiniStoreLanding() {
               onClick={() => trackEvent('cta-click', {
                 campaign_id: store.campaignId, brand_id: store.brandId, button_type: 'sticky_buy', session_id: sessionId,
               })}
-              className="block w-full bg-emerald-500 hover:bg-emerald-600 text-white text-center font-extrabold py-3.5 rounded-xl shadow-lg"
+              className="block w-full text-white text-center font-extrabold py-3.5 rounded-xl shadow-lg hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: store.themeColor || '#10b981' }}
             >
               {store.ctaText || '구매하기'}
             </Link>

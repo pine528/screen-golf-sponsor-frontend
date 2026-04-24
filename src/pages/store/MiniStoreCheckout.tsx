@@ -170,7 +170,25 @@ export default function MiniStoreCheckout() {
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
           <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
           <h1 className="text-2xl font-extrabold text-slate-900 mb-2">주문이 완료되었습니다!</h1>
-          <p className="text-sm text-slate-500 mb-6">{store.athleteImageUrl ? `${store.brand?.name} 추천 상품을 주문해주셔서 감사합니다.` : ''}</p>
+          <p className="text-sm text-slate-500 mb-4">{store.brand?.name} 추천 상품을 주문해주셔서 감사합니다.</p>
+
+          {/* 선수 추천 문구 (wireframe TABLE 38) */}
+          {store.athlete && (
+            <div className="mb-6 p-4 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl">
+              <div className="flex items-center justify-center gap-3 mb-2">
+                {store.athlete.profileImageUrl && (
+                  <img src={store.athlete.profileImageUrl} alt={store.athlete.name} className="w-10 h-10 rounded-full object-cover border-2 border-white shadow" />
+                )}
+                <div className="text-left">
+                  <div className="text-xs text-emerald-600 font-semibold">{store.athlete.tour || 'PRO'}</div>
+                  <div className="text-sm font-bold text-slate-900">{store.athlete.name} 선수</div>
+                </div>
+              </div>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                "<strong>{store.athlete.name}</strong> 선수가 추천한 상품을 구매해주셔서 감사해요. 함께 응원해주세요! 💚"
+              </p>
+            </div>
+          )}
 
           <div className="bg-slate-50 rounded-lg p-4 text-left mb-6">
             <Field label="주문번호" value={<code className="text-xs">{orderResult?.purchase_event_id?.slice(0, 12)}</code>} />

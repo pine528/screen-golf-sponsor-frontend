@@ -28,13 +28,14 @@ export default function AdminMiniStoreSettings() {
   const store = data?.data;
 
   const [form, setForm] = useState({
-    brandLogoUrl: '', heroImageUrl: '', athleteImageUrl: '', mainCopy: '', benefitBadge: '', ctaText: '구매하기',
+    brandLogoUrl: '', themeColor: '#10b981', heroImageUrl: '', athleteImageUrl: '', mainCopy: '', benefitBadge: '', ctaText: '구매하기',
   });
 
   useEffect(() => {
     if (store) {
       setForm({
         brandLogoUrl: store.brandLogoUrl || '',
+        themeColor: store.themeColor || '#10b981',
         heroImageUrl: store.heroImageUrl || '',
         athleteImageUrl: store.athleteImageUrl || '',
         mainCopy: store.mainCopy || '',
@@ -43,6 +44,15 @@ export default function AdminMiniStoreSettings() {
       });
     }
   }, [store]);
+
+  const PRESET_COLORS = [
+    { value: '#10b981', label: '에메랄드' },
+    { value: '#0ea5e9', label: '스카이' },
+    { value: '#8b5cf6', label: '바이올렛' },
+    { value: '#f59e0b', label: '앰버' },
+    { value: '#ef4444', label: '로즈' },
+    { value: '#1e293b', label: '슬레이트' },
+  ];
 
   const saveMut = useMutation({
     mutationFn: () => api.updateMiniStore(campaignId!, form),
@@ -126,6 +136,30 @@ export default function AdminMiniStoreSettings() {
                 <FormField label="메인 카피" value={form.mainCopy} onChange={(v: string) => setForm({ ...form, mainCopy: v })} placeholder="OO선수와 함께하는 특별한 혜택" />
                 <FormField label="혜택 배지" value={form.benefitBadge} onChange={(v: string) => setForm({ ...form, benefitBadge: v })} placeholder="선수 추천 단독 20% 할인" />
                 <FormField label="CTA 버튼 텍스트" value={form.ctaText} onChange={(v: string) => setForm({ ...form, ctaText: v })} placeholder="구매하기" />
+
+                {/* 테마 컬러 (wireframe TABLE 14) */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">테마 컬러</label>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {PRESET_COLORS.map((c) => (
+                      <button
+                        key={c.value}
+                        onClick={() => setForm({ ...form, themeColor: c.value })}
+                        className={`w-8 h-8 rounded-full border-2 ${form.themeColor === c.value ? 'border-slate-900 ring-2 ring-offset-1 ring-slate-300' : 'border-white shadow'}`}
+                        style={{ backgroundColor: c.value }}
+                        title={c.label}
+                      />
+                    ))}
+                    <input
+                      type="color"
+                      value={form.themeColor}
+                      onChange={(e) => setForm({ ...form, themeColor: e.target.value })}
+                      className="w-8 h-8 rounded cursor-pointer"
+                      title="커스텀 컬러"
+                    />
+                    <code className="text-xs text-slate-500 ml-2">{form.themeColor}</code>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -196,7 +230,10 @@ export default function AdminMiniStoreSettings() {
               </div>
             </div>
             <div className={`bg-white rounded-xl shadow-sm mx-auto overflow-hidden ${previewMode === 'mobile' ? 'max-w-sm' : 'max-w-2xl'}`}>
-              <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-5 relative">
+              <div
+                className="text-white p-5 relative"
+                style={{ background: `linear-gradient(135deg, ${form.themeColor} 0%, ${darken(form.themeColor, 15)} 100%)` }}
+              >
                 {/* 브랜드 로고 (좌상단) */}
                 {form.brandLogoUrl && (
                   <img src={form.brandLogoUrl} alt="brand" className="absolute top-3 left-3 h-8 bg-white/90 rounded px-2 py-0.5 object-contain" />
@@ -218,13 +255,24 @@ export default function AdminMiniStoreSettings() {
                   </div>
                 ))}
               </div>
-              <button className="w-full bg-emerald-500 text-white py-3 font-bold text-sm">{form.ctaText}</button>
+              <button className="w-full text-white py-3 font-bold text-sm" style={{ backgroundColor: form.themeColor }}>{form.ctaText}</button>
             </div>
           </div>
         </div>
       </div>
     </Layout>
   );
+}
+
+// hex 컬러 darken 헬퍼 (간단한 버전)
+function darken(hex: string, percent: number): string {
+  const h = hex.replace('#', '');
+  const num = parseInt(h, 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.max(0, (num >> 16) - amt);
+  const G = Math.max(0, ((num >> 8) & 0xff) - amt);
+  const B = Math.max(0, (num & 0xff) - amt);
+  return `#${(0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)}`;
 }
 
 function FormField({ label, value, onChange, placeholder }: any) {
