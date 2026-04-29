@@ -100,6 +100,8 @@ import MiniStoreLanding from './pages/store/MiniStoreLanding';
 import MiniStoreProduct from './pages/store/MiniStoreProduct';
 import MiniStoreCheckout from './pages/store/MiniStoreCheckout';
 import { ShortLinkRedirect } from './pages/ShortLinkRedirect';
+import PublicAthletes from './pages/PublicAthletes';
+import PublicAthleteDetail from './pages/PublicAthleteDetail';
 import VotesList from './pages/fan/VoteV2List';
 import VotesDetail from './pages/fan/VoteV2Detail';
 import VoteCreate from './pages/fan/VoteCreate';
@@ -1000,6 +1002,10 @@ function App() {
 
       {/* 단축링크 redirect: /s/:shortCode */}
       <Route path="/s/:shortCode" element={<ShortLinkRedirect />} />
+
+      {/* 공개 선수 둘러보기 */}
+      <Route path="/athletes" element={<PublicAthletes />} />
+      <Route path="/athletes/:id" element={<PublicAthleteDetail />} />
 
       {/* Home & Redirect */}
       <Route path="/" element={<HomeRoute />} />

@@ -144,7 +144,7 @@ export function Home() {
   const navLinks = [
     { to: '/auctions', label: '경매' },
     { to: '/votes', label: '투표' },
-    { to: '/inventory', label: '선수' },
+    { to: '/athletes', label: '선수' },
     { to: '/how-it-works', label: '이용방법' },
   ];
 
@@ -248,7 +248,7 @@ export function Home() {
                   className="h-11 px-6 inline-flex items-center gap-2 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition-colors">
                   경매 둘러보기
                 </Link>
-                <Link to="/inventory"
+                <Link to="/athletes"
                   className="h-11 px-6 inline-flex items-center gap-2 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition-colors">
                   선수 둘러보기
                 </Link>

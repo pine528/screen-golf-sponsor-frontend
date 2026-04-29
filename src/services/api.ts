@@ -3019,6 +3019,16 @@ class ApiService {
     return r.data;
   }
 
+  // 공개 선수 (비회원)
+  async listPublicAthletes(params?: { q?: string; tour?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<{ items: any[]; total: number; page: number; limit: number }>>(`/athletes/public`, { params });
+    return r.data;
+  }
+  async getPublicAthlete(id: string) {
+    const r = await this.client.get<ApiResponse<{ athlete: any; slotInstances: any[]; exposureCount: number }>>(`/athletes/public/${id}`);
+    return r.data;
+  }
+
   // Pixel (Phase 2)
   async createPixel(brandId?: string, domains: string[] = []) {
     const r = await this.client.post<ApiResponse<any>>(`/external/pixels`, { brand_id: brandId, domains });
