@@ -51,6 +51,7 @@ export default function PublicAthleteDetail() {
   const slotInstances: any[] = (resp?.data as any)?.slotInstances || [];
   const recentEvents: any[] = (resp?.data as any)?.recentEvents || [];
   const exposureCount = (resp?.data as any)?.exposureCount || 0;
+  const eventResults: any[] = (resp?.data as any)?.eventResults || [];
 
   // 슬롯 동적 생성 + 첫 슬롯 디폴트 선택 (3-2)
   // OPEN/IN_AUCTION 우선, 그 다음 SOLD/CLOSED
@@ -248,6 +249,28 @@ export default function PublicAthleteDetail() {
                 </div>
               ))}
             </div>
+          )}
+        </div>
+
+        {/* 경기결과 / 분석 (docx 3-6, 연도별 그룹핑 + 최신순) */}
+        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-extrabold text-slate-900 inline-flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-emerald-500" /> 경기결과 / 분석
+            </h2>
+            {eventResults.length > 0 && (
+              <span className="text-[10px] text-slate-400">
+                업데이트: {new Date(eventResults[0].sourceUpdatedAt).toLocaleDateString('ko-KR')}
+              </span>
+            )}
+          </div>
+
+          {eventResults.length === 0 ? (
+            <div className="text-center py-8 text-sm text-slate-400 bg-slate-50 rounded-lg">
+              📡 최신 경기 정보 준비 중
+            </div>
+          ) : (
+            <EventResultsByYear results={eventResults} />
           )}
         </div>
 
@@ -485,6 +508,72 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
         )}
       </div>
     </>
+  );
+}
+
+/** 경기결과 — 연도별 그룹핑 + 같은 연도 내 최신순 (docx 3-6) */
+function EventResultsByYear({ results }: { results: any[] }) {
+  // 연도별 그룹
+  const byYear = useMemo(() => {
+    const map = new Map<number, any[]>();
+    for (const r of results) {
+      const y = new Date(r.eventDate).getFullYear();
+      if (!map.has(y)) map.set(y, []);
+      map.get(y)!.push(r);
+    }
+    // 각 연도 내에서 최신순 정렬
+    for (const arr of map.values()) {
+      arr.sort((a, b) => new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime());
+    }
+    // 연도 내림차순
+    return Array.from(map.entries()).sort(([a], [b]) => b - a);
+  }, [results]);
+
+  return (
+    <div className="space-y-4">
+      {byYear.map(([year, items]) => (
+        <div key={year}>
+          <h3 className="text-sm font-extrabold text-emerald-700 mb-2 inline-flex items-center gap-1">
+            {year}년 <span className="text-[10px] text-slate-400 font-normal">({items.length}개)</span>
+          </h3>
+          <div className="space-y-1.5">
+            {items.map((r: any) => (
+              <div key={r.id} className="flex items-start gap-3 py-2 px-3 bg-slate-50 hover:bg-emerald-50/30 rounded-lg transition-colors">
+                {/* 순위 */}
+                <div className="w-12 text-center">
+                  {r.rank != null ? (
+                    <div className={`text-lg font-extrabold ${r.rank === 1 ? 'text-amber-500' : r.rank <= 3 ? 'text-emerald-600' : 'text-slate-700'}`}>
+                      {r.rank}{r.rank === 1 ? '위' : r.rank <= 10 ? '위' : ''}
+                    </div>
+                  ) : (
+                    <div className="text-base text-slate-400">-</div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-slate-900 truncate">{r.eventName}</div>
+                  <div className="text-[10px] text-slate-500 mt-0.5">
+                    {new Date(r.eventDate).toLocaleDateString('ko-KR')}
+                    {r.category && <span className="ml-2 px-1.5 py-0.5 bg-slate-200 rounded text-slate-600">{r.category}</span>}
+                    {r.source !== 'MANUAL' && (
+                      <span className="ml-2 px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded">{r.source}</span>
+                    )}
+                  </div>
+                  {r.summary && (
+                    <p className="text-xs text-slate-600 mt-1 line-clamp-2">{r.summary}</p>
+                  )}
+                </div>
+                {r.score && (
+                  <div className="text-right">
+                    <div className="text-[10px] text-slate-500">스코어</div>
+                    <div className="text-sm font-bold text-slate-900">{r.score}</div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
