@@ -60,10 +60,17 @@ export default function PublicAthleteDetail() {
   const recentEvents: any[] = (resp?.data as any)?.recentEvents || [];
   const eventResults: any[] = (resp?.data as any)?.eventResults || [];
 
-  // 슬롯 동적 생성 + 첫 슬롯 디폴트 선택 (3-2)
-  // OPEN/IN_AUCTION 우선, 그 다음 SOLD/CLOSED
+  // 슬롯 동적 생성 + 첫 슬롯 디폴트 선택 (docx 3-2 + 4)
+  // 1순위: 관리자 slotOrder (낮을수록 먼저)
+  // 2순위: 상태 (IN_AUCTION/OPEN 우선)
+  // 3순위: createdAt (등록 순)
   const orderedSlots = useMemo(() => {
     return [...slotInstances].sort((a, b) => {
+      // slot_order 우선 적용 (null/undefined는 최하위)
+      const ao = a.slotOrder ?? Number.MAX_SAFE_INTEGER;
+      const bo = b.slotOrder ?? Number.MAX_SAFE_INTEGER;
+      if (ao !== bo) return ao - bo;
+
       const order = ['IN_AUCTION', 'OPEN', 'RESERVED', 'SOLD', 'CLOSED'];
       const ai = order.indexOf(a.status);
       const bi = order.indexOf(b.status);

@@ -21,14 +21,22 @@ const TOUR_OPTIONS = [
   { value: 'PGA', label: 'PGA' },
 ];
 
+// SPONPIK 3-8 + 2-4 — 1차 종목 (골프 > 스크린골프)
+const SPORT_OPTIONS = [
+  { value: '', label: '전체 종목' },
+  { value: 'GOLF', label: '🏌️ 골프' },
+  { value: 'SCREEN_GOLF', label: '⛳ 스크린골프' },
+];
+
 export default function PublicAthletes() {
   const [q, setQ] = useState('');
   const [tour, setTour] = useState('');
+  const [sport, setSport] = useState('');
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const { data: resp, isLoading } = useQuery({
-    queryKey: ['public-athletes', q, tour],
-    queryFn: () => api.listPublicAthletes({ q: q || undefined, tour: tour || undefined, limit: 50 }),
+    queryKey: ['public-athletes', q, tour, sport],
+    queryFn: () => api.listPublicAthletes({ q: q || undefined, tour: tour || undefined, sport: sport || undefined, limit: 50 } as any),
   });
   const items = resp?.data?.items || [];
   const total = resp?.data?.total || 0;
@@ -62,7 +70,8 @@ export default function PublicAthletes() {
 
       {/* 검색 + 필터 */}
       <div className="max-w-7xl mx-auto px-5 sm:px-8 -mt-6 relative z-10">
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-5">
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-5 space-y-3">
+          {/* 검색 + 투어 필터 */}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
@@ -70,7 +79,7 @@ export default function PublicAthletes() {
                 type="text"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="선수명, 투어로 검색해보세요"
+                placeholder="선수명, 투어, 소속, 지역으로 검색해보세요"
                 className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
               />
             </div>
@@ -83,6 +92,25 @@ export default function PublicAthletes() {
                     tour === opt.value
                       ? 'bg-emerald-500 text-white'
                       : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          {/* SPONPIK 3-8 — 종목별 소팅 (1차: 골프/스크린골프) */}
+          <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
+            <span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">종목</span>
+            <div className="flex gap-1.5 overflow-x-auto">
+              {SPORT_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setSport(opt.value)}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-full whitespace-nowrap transition-colors ${
+                    sport === opt.value
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
                   {opt.label}

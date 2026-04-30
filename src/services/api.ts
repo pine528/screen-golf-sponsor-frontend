@@ -3020,7 +3020,7 @@ class ApiService {
   }
 
   // 공개 선수 (비회원)
-  async listPublicAthletes(params?: { q?: string; tour?: string; page?: number; limit?: number }) {
+  async listPublicAthletes(params?: { q?: string; tour?: string; sport?: string; sportType?: string; page?: number; limit?: number }) {
     const r = await this.client.get<ApiResponse<{ items: any[]; total: number; page: number; limit: number }>>(`/athletes/public`, { params });
     return r.data;
   }
