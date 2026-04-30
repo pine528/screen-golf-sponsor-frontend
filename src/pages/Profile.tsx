@@ -49,7 +49,7 @@ export function Profile() {
     address: '',
   });
 
-  // Athlete form state
+  // Athlete form state (SPONPIK docx 4 권장 데이터 + 기존 필드)
   const [athleteForm, setAthleteForm] = useState({
     displayName: '',
     realName: '',
@@ -58,6 +58,12 @@ export function Profile() {
     bankName: '',
     bankAccount: '',
     bankHolder: '',
+    // 구조화 필드 (docx 4)
+    height: '' as number | '',
+    region: '',
+    debutYear: '' as number | '',
+    affiliation: '',
+    sportType: '',
   });
 
   // Notification settings
@@ -102,6 +108,12 @@ export function Profile() {
           bankName: bankInfo.bankName || '',
           bankAccount: bankInfo.accountNumber || '',
           bankHolder: bankInfo.accountHolder || '',
+          // 구조화 필드 (docx 4)
+          height: profile.height ?? '',
+          region: profile.region || '',
+          debutYear: profile.debutYear ?? '',
+          affiliation: profile.affiliation || '',
+          sportType: profile.sportType || '',
         });
       }
     }
@@ -714,6 +726,72 @@ export function Profile() {
                           className="input text-sm sm:text-base"
                           placeholder="인스타그램, 유튜브 등"
                         />
+                      </div>
+
+                      {/* SPONPIK docx 4 권장 데이터 — 구조화 필드 */}
+                      <div className="pt-3 sm:pt-4 border-t border-slate-200">
+                        <h3 className="text-xs sm:text-sm font-semibold text-slate-900 mb-3 sm:mb-4">선수 상세 정보 (선택)</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                          <div>
+                            <label className="label text-xs sm:text-sm">신장 (cm)</label>
+                            <input
+                              type="number"
+                              min={100}
+                              max={250}
+                              value={athleteForm.height as any}
+                              onChange={(e) => setAthleteForm({ ...athleteForm, height: e.target.value === '' ? '' : Number(e.target.value) })}
+                              className="input text-sm sm:text-base"
+                              placeholder="예: 170"
+                            />
+                          </div>
+                          <div>
+                            <label className="label text-xs sm:text-sm">데뷔 연도</label>
+                            <input
+                              type="number"
+                              min={1980}
+                              max={2030}
+                              value={athleteForm.debutYear as any}
+                              onChange={(e) => setAthleteForm({ ...athleteForm, debutYear: e.target.value === '' ? '' : Number(e.target.value) })}
+                              className="input text-sm sm:text-base"
+                              placeholder="예: 2018"
+                            />
+                          </div>
+                          <div>
+                            <label className="label text-xs sm:text-sm">거주 지역</label>
+                            <input
+                              type="text"
+                              value={athleteForm.region}
+                              onChange={(e) => setAthleteForm({ ...athleteForm, region: e.target.value })}
+                              className="input text-sm sm:text-base"
+                              placeholder="예: 경기도 성남시"
+                            />
+                          </div>
+                          <div>
+                            <label className="label text-xs sm:text-sm">소속</label>
+                            <input
+                              type="text"
+                              value={athleteForm.affiliation}
+                              onChange={(e) => setAthleteForm({ ...athleteForm, affiliation: e.target.value })}
+                              className="input text-sm sm:text-base"
+                              placeholder="예: SBSGOLF, 르꼬끄 골프"
+                            />
+                          </div>
+                          <div>
+                            <label className="label text-xs sm:text-sm">종목</label>
+                            <select
+                              value={athleteForm.sportType}
+                              onChange={(e) => setAthleteForm({ ...athleteForm, sportType: e.target.value })}
+                              className="input text-sm sm:text-base"
+                            >
+                              <option value="">선택</option>
+                              <option value="GOLF">🏌️ 골프</option>
+                              <option value="SCREEN_GOLF">⛳ 스크린골프</option>
+                            </select>
+                          </div>
+                        </div>
+                        <p className="text-[10px] sm:text-xs text-slate-500 mt-2">
+                          이 항목들은 선수 둘러보기 카드와 상세 페이지에 표시됩니다. 비워두면 "-"로 표기됩니다.
+                        </p>
                       </div>
                     </div>
                   )}
