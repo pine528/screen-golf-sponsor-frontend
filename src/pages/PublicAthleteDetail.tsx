@@ -1,17 +1,45 @@
 /**
  * 공개 선수 상세 페이지 (/athletes/:id)
  *
- * - 비회원 접근 가능
- * - 프로필 + 약력 + 진행 중 슬롯 + 후원 시작 CTA
+ * docx "SPONPIK 론칭 준비 개발과업지시서" 3-9 구조:
+ *   상단: 기본 프로필 + 진행 중 슬롯
+ *   중단: 슬롯별 실시간 경매 현황 (좌 슬롯목록 / 우 호가창·입찰내역)
+ *         - 첫 슬롯 디폴트 선택, 클릭 시 우측 즉시 변경
+ *         - WebSocket으로 실시간 입찰 반영
+ *   하단: 미디어 노출 / 풀퍼널 리포트 / 최근 대회 결과
+ *
+ * 원칙:
+ *   - 모든 값 실데이터 (mock/이미지 제거)
+ *   - Null/빈값 → "-"
+ *   - 슬롯 0개일 때 "현재 진행 중인 슬롯이 없습니다" 안내
  */
 
-import { Link, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Trophy, ExternalLink, Instagram, Globe, Award } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  ArrowLeft, Trophy, Instagram, Globe,
+  Gavel, Clock, TrendingUp, AlertCircle, Users, Calendar,
+} from 'lucide-react';
 import { api } from '../services/api';
+import { useAuctionSocket } from '../hooks/useSocket';
+import { useAuth } from '../hooks/useAuth';
+
+// 빈 값 → '-' 표기 헬퍼
+const dash = (v: any, suffix = ''): string => {
+  if (v == null || v === '' || (typeof v === 'number' && isNaN(v))) return '-';
+  return `${v}${suffix}`;
+};
+const dashKRW = (v: any): string => {
+  if (v == null || v === '' || isNaN(Number(v))) return '-';
+  return `₩${Number(v).toLocaleString()}`;
+};
 
 export default function PublicAthleteDetail() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: resp, isLoading, error } = useQuery({
     queryKey: ['public-athlete', id],
@@ -19,8 +47,46 @@ export default function PublicAthleteDetail() {
     enabled: !!id,
   });
 
+  const athlete = resp?.data?.athlete;
+  const slotInstances: any[] = (resp?.data as any)?.slotInstances || [];
+  const recentEvents: any[] = (resp?.data as any)?.recentEvents || [];
+  const exposureCount = (resp?.data as any)?.exposureCount || 0;
+
+  // 슬롯 동적 생성 + 첫 슬롯 디폴트 선택 (3-2)
+  // OPEN/IN_AUCTION 우선, 그 다음 SOLD/CLOSED
+  const orderedSlots = useMemo(() => {
+    return [...slotInstances].sort((a, b) => {
+      const order = ['IN_AUCTION', 'OPEN', 'RESERVED', 'SOLD', 'CLOSED'];
+      const ai = order.indexOf(a.status);
+      const bi = order.indexOf(b.status);
+      if (ai !== bi) return ai - bi;
+      return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+    });
+  }, [slotInstances]);
+
+  const [selectedSlotId, setSelectedSlotId] = useState<string | undefined>(undefined);
+
+  // 슬롯 로드되면 첫 슬롯 자동 선택
+  useEffect(() => {
+    if (orderedSlots.length > 0 && !selectedSlotId) {
+      setSelectedSlotId(orderedSlots[0].id);
+    }
+  }, [orderedSlots, selectedSlotId]);
+
+  const selectedSlot = orderedSlots.find((s) => s.id === selectedSlotId) || orderedSlots[0];
+  const auction = selectedSlot?.auction;
+
+  // WebSocket 실시간 (3-3)
+  useAuctionSocket(auction?.id, {
+    onBidPlaced: () => {
+      queryClient.invalidateQueries({ queryKey: ['public-athlete', id] });
+    },
+    onAuctionExtended: () => queryClient.invalidateQueries({ queryKey: ['public-athlete', id] }),
+    onAuctionStatus: () => queryClient.invalidateQueries({ queryKey: ['public-athlete', id] }),
+  });
+
   if (isLoading) return <div className="min-h-screen flex items-center justify-center text-sm text-slate-400">로딩 중...</div>;
-  if (error || !resp?.data) {
+  if (error || !athlete) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <div className="text-4xl mb-3">🔍</div>
@@ -30,20 +96,19 @@ export default function PublicAthleteDetail() {
     );
   }
 
-  const { athlete, slotInstances = [], exposureCount = 0 } = resp.data;
   const social = (athlete.socialLinks || {}) as Record<string, string>;
   const sponsors = (athlete.primarySponsors || []) as any[];
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Hero */}
+      {/* 상단: Hero 프로필 (실데이터) */}
       <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white">
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 py-6">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6">
           <Link to="/athletes" className="inline-flex items-center gap-1 text-xs opacity-90 hover:opacity-100">
             <ArrowLeft className="w-3 h-3" /> 선수 목록
           </Link>
         </div>
-        <div className="max-w-5xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-6 items-start">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-6 items-start">
           {/* 프로필 사진 */}
           <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden bg-white/20 backdrop-blur border-4 border-white/40 shadow-2xl mx-auto sm:mx-0">
             {athlete.profileImageUrl ? (
@@ -52,17 +117,17 @@ export default function PublicAthleteDetail() {
               <div className="w-full h-full flex items-center justify-center text-7xl font-extrabold">{athlete.name.charAt(0)}</div>
             )}
           </div>
-          {/* 정보 */}
+          {/* 기본 정보 (실데이터, 없으면 -) */}
           <div className="text-center sm:text-left">
             <div className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-full mb-2">
-              <Trophy className="w-3 h-3" /> {athlete.tour || 'PRO'}
+              <Trophy className="w-3 h-3" /> {dash(athlete.tour)}
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold mb-1">{athlete.name}</h1>
             {athlete.realName && athlete.realName !== athlete.name && (
               <div className="text-sm opacity-90 mb-3">본명: {athlete.realName}</div>
             )}
             <p className="text-sm sm:text-base opacity-95 leading-relaxed max-w-2xl mb-4">
-              {athlete.bio || '프로 골퍼로서 활발히 활동 중입니다.'}
+              {dash(athlete.bio)}
             </p>
 
             {/* 소셜 링크 */}
@@ -92,86 +157,334 @@ export default function PublicAthleteDetail() {
         </div>
       </div>
 
-      {/* 본문 */}
-      <div className="max-w-5xl mx-auto px-5 sm:px-8 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* 좌: 슬롯 + 통계 */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white border border-slate-200 rounded-2xl p-5">
-            <h2 className="text-base font-extrabold text-slate-900 mb-3 inline-flex items-center gap-2">
-              <Award className="w-4 h-4 text-emerald-500" /> 진행 중인 광고 슬롯
-            </h2>
-            {slotInstances.length === 0 ? (
-              <div className="text-center py-8 text-sm text-slate-400">현재 진행 중인 슬롯이 없습니다.</div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {slotInstances.map((s: any) => (
-                  <div key={s.id} className="bg-slate-50 border border-slate-100 rounded-xl p-3">
-                    <div className="text-xs font-bold text-slate-900">{s.slotTemplate?.name || '슬롯'}</div>
-                    <div className="text-[10px] text-slate-500 mb-2">{s.slotTemplate?.bodyPart || ''}</div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-slate-400">현재 입찰가</span>
-                      <span className="text-sm font-extrabold text-emerald-600">
-                        ₩{Number(s.currentBid || 0).toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+      {/* 중단: 슬롯별 실시간 경매 현황 (3-2 + 3-3 + 3-4) */}
+      <section className="max-w-6xl mx-auto px-5 sm:px-8 py-8">
+        <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
+          <Gavel className="w-5 h-5 text-emerald-500" />
+          진행 중인 광고 슬롯
+          {orderedSlots.length > 0 && (
+            <span className="text-sm font-semibold text-slate-500">({orderedSlots.length}개)</span>
+          )}
+        </h2>
 
-          {/* 활동 통계 */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5">
-            <h2 className="text-base font-extrabold text-slate-900 mb-3">📊 활동 통계</h2>
-            <div className="grid grid-cols-3 gap-3">
-              <Stat label="누적 노출" value={exposureCount.toLocaleString()} />
-              <Stat label="진행 슬롯" value={String(slotInstances.length)} />
-              <Stat
-                label="가입일"
-                value={athlete.createdAt ? new Date(athlete.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short' }) : '-'}
-              />
+        {orderedSlots.length === 0 ? (
+          /* 슬롯 0개 케이스 (3-2 예외 처리) */
+          <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center">
+            <Gavel className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+            <h3 className="text-base font-bold text-slate-900 mb-1">현재 진행 중인 슬롯이 없습니다</h3>
+            <p className="text-sm text-slate-500">{athlete.name} 선수의 슬롯이 등록되면 여기에 표시됩니다.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
+            {/* 좌측: 슬롯 목록 (동적 생성, 클릭 변경) */}
+            <div className="space-y-2">
+              {orderedSlots.map((s, i) => (
+                <SlotCard
+                  key={s.id}
+                  slot={s}
+                  selected={s.id === selectedSlotId}
+                  index={i + 1}
+                  onClick={() => setSelectedSlotId(s.id)}
+                />
+              ))}
+            </div>
+
+            {/* 우측: 호가창 + 입찰 내역 (선택 슬롯 기준 즉시 갱신) */}
+            <div className="space-y-4">
+              {selectedSlot && (
+                <SlotAuctionPanel
+                  slot={selectedSlot}
+                  athleteName={athlete.name}
+                  isAuthenticated={isAuthenticated}
+                  userRole={user?.role}
+                  onLoginRedirect={() => navigate('/login')}
+                  onPlaced={() => queryClient.invalidateQueries({ queryKey: ['public-athlete', id] })}
+                />
+              )}
             </div>
           </div>
+        )}
+      </section>
 
-          {/* 메인 스폰서 (있으면) */}
-          {sponsors.length > 0 && (
-            <div className="bg-white border border-slate-200 rounded-2xl p-5">
-              <h2 className="text-base font-extrabold text-slate-900 mb-3">🏆 메인 스폰서</h2>
-              <div className="flex flex-wrap gap-2">
-                {sponsors.map((s: any, i: number) => (
-                  <span key={i} className="text-xs bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full font-semibold">
-                    {typeof s === 'string' ? s : s.name || s.brand || ''}
-                  </span>
-                ))}
-              </div>
+      {/* 하단: 풀퍼널 리포트 / 최근 경기 / 메인 스폰서 */}
+      <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 풀퍼널 리포트 (값 없으면 -) */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-5">
+          <h2 className="text-base font-extrabold text-slate-900 mb-3 inline-flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-emerald-500" /> 미디어 노출 & 매출 기여
+          </h2>
+          <div className="grid grid-cols-2 gap-3">
+            <Stat label="누적 노출" value={dash(exposureCount)} />
+            <Stat label="진행 슬롯" value={String(orderedSlots.filter((s) => s.status === 'OPEN' || s.status === 'IN_AUCTION').length)} />
+            <Stat label="낙찰 슬롯" value={String(orderedSlots.filter((s) => s.status === 'SOLD').length)} />
+            <Stat label="가입일" value={athlete.createdAt ? new Date(athlete.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short' }) : '-'} />
+          </div>
+          <p className="text-[10px] text-slate-400 mt-3">※ 풀퍼널 매출 데이터는 선수 ROI 대시보드에서 상세 확인</p>
+        </div>
+
+        {/* 최근 참가 경기 (3-9 하단) */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-5">
+          <h2 className="text-base font-extrabold text-slate-900 mb-3 inline-flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-emerald-500" /> 최근 참가 대회
+          </h2>
+          {recentEvents.length === 0 ? (
+            <div className="text-center py-8 text-sm text-slate-400">최근 대회 정보가 없습니다.</div>
+          ) : (
+            <div className="space-y-2">
+              {recentEvents.map((e: any) => (
+                <div key={e.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-b-0">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold truncate">{e.name}</div>
+                    <div className="text-[10px] text-slate-400">
+                      {e.tour} · {e.dateStart ? new Date(e.dateStart).toLocaleDateString('ko-KR') : '-'}
+                      {e.venue && ` · ${e.venue}`}
+                    </div>
+                  </div>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ml-2 ${
+                    e.status === 'LIVE' ? 'bg-rose-100 text-rose-700'
+                    : e.status === 'UPCOMING' ? 'bg-emerald-100 text-emerald-700'
+                    : 'bg-slate-100 text-slate-500'
+                  }`}>{e.status}</span>
+                </div>
+              ))}
             </div>
           )}
         </div>
 
-        {/* 우: CTA */}
-        <div className="space-y-4">
-          <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-2xl p-6 sticky top-4">
-            <div className="text-xs font-bold opacity-90 mb-2">스폰서십 시작하기</div>
-            <h3 className="text-xl font-extrabold mb-3">{athlete.name} 선수와 함께</h3>
-            <p className="text-sm opacity-95 mb-5 leading-relaxed">
-              경기 중 노출 슬롯을 실시간 경매로 낙찰받아 브랜드 노출과 매출 증명까지 한 번에.
-            </p>
-            <Link
-              to="/auctions"
-              className="block w-full bg-white text-emerald-600 text-center font-extrabold py-3 rounded-xl hover:bg-emerald-50 transition-colors mb-2"
-            >
-              경매 둘러보기
-            </Link>
-            <Link
-              to="/register"
-              className="block w-full bg-white/20 backdrop-blur text-white text-center font-bold py-3 rounded-xl hover:bg-white/30 transition-colors text-sm inline-flex items-center justify-center gap-1"
-            >
-              브랜드 가입 <ExternalLink className="w-3.5 h-3.5" />
-            </Link>
+        {/* 메인 스폰서 */}
+        {sponsors.length > 0 && (
+          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5">
+            <h2 className="text-base font-extrabold text-slate-900 mb-3">🏆 메인 스폰서</h2>
+            <div className="flex flex-wrap gap-2">
+              {sponsors.map((s: any, i: number) => (
+                <span key={i} className="text-xs bg-slate-100 text-slate-700 px-3 py-1.5 rounded-full font-semibold">
+                  {typeof s === 'string' ? s : s.name || s.brand || ''}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+        )}
+      </section>
     </div>
+  );
+}
+
+/** 좌측 슬롯 카드 — 클릭 시 우측 호가창 변경 */
+function SlotCard({ slot, selected, index, onClick }: { slot: any; selected: boolean; index: number; onClick: () => void }) {
+  const auction = slot.auction;
+  const isLive = auction?.status === 'LIVE';
+  const isOpen = slot.status === 'OPEN' || slot.status === 'IN_AUCTION';
+  const tpl = slot.slotTemplate || {};
+
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full text-left p-3 rounded-xl border-2 transition-all ${
+        selected
+          ? 'border-emerald-500 bg-emerald-50 shadow-md'
+          : 'border-slate-200 bg-white hover:border-emerald-300'
+      } ${!isOpen ? 'opacity-60' : ''}`}
+    >
+      <div className="flex items-center gap-2 mb-1">
+        <span className="text-[10px] font-bold text-slate-400">#{index}</span>
+        {isLive && <span className="text-[9px] font-extrabold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded animate-pulse">LIVE</span>}
+        <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">{slot.status}</span>
+      </div>
+      <div className="text-sm font-extrabold text-slate-900">{dash(tpl.name || tpl.code)}</div>
+      <div className="text-[10px] text-slate-500 mb-2">{dash(tpl.bodyPart)}{tpl.grade && ` · ${tpl.grade}등급`}</div>
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-slate-500">현재가</span>
+        <span className="font-bold text-emerald-600">{dashKRW(auction?.currentPrice)}</span>
+      </div>
+    </button>
+  );
+}
+
+/** 우측 호가창 + 입찰 내역 + 입찰 영역 (3-3 + 3-4) */
+function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLoginRedirect, onPlaced }: any) {
+  const auction = slot.auction;
+  const tpl = slot.slotTemplate || {};
+
+  const placeBidMut = useMutation({
+    mutationFn: ({ amount }: { amount: number }) => api.placeBid(auction.id, amount),
+    onSuccess: () => {
+      onPlaced?.();
+      setBidError('');
+    },
+    onError: (e: any) => {
+      setBidError(e?.response?.data?.error?.message || '입찰 실패');
+    },
+  });
+
+  const [customBid, setCustomBid] = useState('');
+  const [bidError, setBidError] = useState('');
+
+  const currentPrice = auction?.currentPrice || 0;
+  const minIncrement = auction?.minBidIncrement || 10000;
+  const minNextBid = currentPrice + minIncrement;
+
+  // 카운트다운
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const remainingMs = auction?.endAt ? new Date(auction.endAt).getTime() - now : null;
+  const isEnded = remainingMs != null && remainingMs <= 0;
+  const remainingText = remainingMs == null
+    ? '-'
+    : isEnded
+      ? '경매 종료'
+      : formatRemaining(remainingMs);
+
+  const handleQuickBid = (delta: number) => {
+    if (!isAuthenticated) return onLoginRedirect();
+    if (userRole !== 'BRAND') {
+      setBidError('입찰은 브랜드 계정만 가능합니다.');
+      return;
+    }
+    setBidError('');
+    placeBidMut.mutate({ amount: currentPrice + delta });
+  };
+
+  const handleCustomBid = () => {
+    const amt = Number(customBid.replace(/,/g, ''));
+    if (!isAuthenticated) return onLoginRedirect();
+    if (userRole !== 'BRAND') return setBidError('입찰은 브랜드 계정만 가능합니다.');
+    if (isNaN(amt) || amt < minNextBid) return setBidError(`최소 ${dashKRW(minNextBid)} 이상 입력해주세요.`);
+    setBidError('');
+    placeBidMut.mutate({ amount: amt });
+  };
+
+  const bids = auction?.bids || [];
+
+  return (
+    <>
+      {/* 호가창 카드 */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-5">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="text-sm font-bold text-slate-700">{athleteName} · {dash(tpl.name || tpl.code)}</h3>
+            <div className="text-[10px] text-slate-400">{dash(tpl.bodyPart)}{tpl.grade && ` · ${tpl.grade}등급`}</div>
+          </div>
+          {auction?.status === 'LIVE' && <span className="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2 py-1 rounded animate-pulse">● LIVE</span>}
+        </div>
+
+        {!auction ? (
+          /* 경매 미생성 슬롯 */
+          <div className="text-center py-8 bg-slate-50 rounded-xl">
+            <AlertCircle className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+            <div className="text-sm text-slate-500">아직 경매가 시작되지 않은 슬롯입니다.</div>
+          </div>
+        ) : (
+          <>
+            {/* 현재가 + 카운트다운 */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-emerald-50 rounded-xl p-3">
+                <div className="text-[10px] font-bold text-emerald-700 mb-1">현재가</div>
+                <div className="text-2xl font-extrabold text-emerald-600">{dashKRW(currentPrice)}</div>
+              </div>
+              <div className={`rounded-xl p-3 ${isEnded ? 'bg-slate-100' : remainingMs && remainingMs < 60000 ? 'bg-rose-50' : 'bg-slate-50'}`}>
+                <div className="text-[10px] font-bold text-slate-700 mb-1 inline-flex items-center gap-1">
+                  <Clock className="w-3 h-3" /> 남은 시간
+                </div>
+                <div className={`text-xl font-extrabold tabular-nums ${isEnded ? 'text-slate-400' : remainingMs && remainingMs < 60000 ? 'text-rose-600' : 'text-slate-900'}`}>{remainingText}</div>
+              </div>
+            </div>
+
+            {/* 메타 정보 */}
+            <div className="grid grid-cols-3 gap-2 mb-4 text-center text-xs">
+              <div className="bg-slate-50 rounded p-2">
+                <div className="text-[9px] text-slate-500">입찰 건수</div>
+                <div className="font-bold">{dash(bids.length, '건')}</div>
+              </div>
+              <div className="bg-slate-50 rounded p-2">
+                <div className="text-[9px] text-slate-500">최소 단위</div>
+                <div className="font-bold">{dashKRW(minIncrement)}</div>
+              </div>
+              <div className="bg-slate-50 rounded p-2">
+                <div className="text-[9px] text-slate-500">상태</div>
+                <div className="font-bold text-[11px]">{dash(auction.status)}</div>
+              </div>
+            </div>
+
+            {/* 입찰 영역 */}
+            {auction.status === 'LIVE' && !isEnded && (
+              <>
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  {[500000, 1000000, 5000000].map((delta) => (
+                    <button
+                      key={delta}
+                      onClick={() => handleQuickBid(delta)}
+                      disabled={placeBidMut.isPending}
+                      className="px-2 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-lg disabled:opacity-50"
+                    >
+                      +₩{(delta / 10000).toLocaleString()}만
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={customBid}
+                    onChange={(e) => setCustomBid(e.target.value)}
+                    placeholder={`최소 ${dashKRW(minNextBid)}`}
+                    className="flex-1 text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:border-emerald-500"
+                  />
+                  <button
+                    onClick={handleCustomBid}
+                    disabled={placeBidMut.isPending || !customBid}
+                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg disabled:opacity-50"
+                  >
+                    입찰
+                  </button>
+                </div>
+                {bidError && (
+                  <div className="text-xs text-rose-600 bg-rose-50 px-3 py-2 rounded mb-2">{bidError}</div>
+                )}
+                {!isAuthenticated && (
+                  <div className="text-xs text-amber-700 bg-amber-50 px-3 py-2 rounded">
+                    로그인 후 입찰 가능합니다.{' '}
+                    <button onClick={onLoginRedirect} className="font-bold underline">로그인하기</button>
+                  </div>
+                )}
+              </>
+            )}
+
+            {isEnded && (
+              <div className="text-center py-4 bg-slate-50 rounded-xl text-sm font-bold text-slate-500">
+                ⏰ 경매가 종료되었습니다
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* 최근 입찰 내역 (3-4) */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-5">
+        <h3 className="text-sm font-bold text-slate-700 mb-3 inline-flex items-center gap-2">
+          <Users className="w-4 h-4 text-slate-400" /> 최근 입찰 내역
+        </h3>
+        {bids.length === 0 ? (
+          <div className="text-center py-6 text-sm text-slate-400">아직 입찰 내역이 없습니다.</div>
+        ) : (
+          <div className="space-y-1.5">
+            {bids.slice(0, 10).map((b: any, i: number) => (
+              <div key={b.id} className={`flex items-center justify-between py-2 px-3 rounded-lg text-sm ${i === 0 ? 'bg-emerald-50 border border-emerald-100' : 'bg-slate-50'}`}>
+                <div className="flex items-center gap-2 min-w-0">
+                  {i === 0 && <span className="text-[9px] font-bold text-emerald-700 bg-white px-1.5 py-0.5 rounded">최고</span>}
+                  <span className="font-semibold truncate">{maskBrand(b.brand?.name)}</span>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-emerald-600">{dashKRW(b.currentProxy || b.maxBid)}</div>
+                  <div className="text-[9px] text-slate-400">{b.createdAt ? formatRelativeTime(b.createdAt) : '-'}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -182,4 +495,31 @@ function Stat({ label, value }: { label: string; value: string }) {
       <div className="text-lg font-extrabold text-slate-900">{value}</div>
     </div>
   );
+}
+
+function formatRemaining(ms: number): string {
+  const sec = Math.max(0, Math.floor(ms / 1000));
+  const d = Math.floor(sec / 86400);
+  const h = Math.floor((sec % 86400) / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  if (d > 0) return `${d}일 ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+
+function formatRelativeTime(iso: string): string {
+  const ms = Date.now() - new Date(iso).getTime();
+  const sec = Math.floor(ms / 1000);
+  if (sec < 60) return `${sec}초 전`;
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min}분 전`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `${h}시간 전`;
+  return new Date(iso).toLocaleDateString('ko-KR');
+}
+
+function maskBrand(name?: string): string {
+  if (!name) return '익명';
+  if (name.length <= 2) return name[0] + '*';
+  return name[0] + '*'.repeat(name.length - 2) + name.slice(-1);
 }
