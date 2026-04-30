@@ -127,12 +127,44 @@ export default function PublicAthleteDetail() {
           </div>
           {/* 기본 정보 (실데이터, 없으면 -) */}
           <div className="text-center sm:text-left">
-            <div className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-full mb-2">
-              <Trophy className="w-3 h-3" /> {dash(athlete.tour)}
+            <div className="inline-flex flex-wrap items-center gap-1 mb-2 justify-center sm:justify-start">
+              <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-full">
+                <Trophy className="w-3 h-3" /> {dash(athlete.tour)}
+              </span>
+              {athlete.sportType && (
+                <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-full">
+                  🏅 {athlete.sportType === 'GOLF' ? '골프' : athlete.sportType === 'SCREEN_GOLF' ? '스크린골프' : athlete.sportType}
+                </span>
+              )}
+              {athlete.affiliation && (
+                <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-full">
+                  🤝 {athlete.affiliation}
+                </span>
+              )}
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold mb-1">{athlete.name}</h1>
             {athlete.realName && athlete.realName !== athlete.name && (
-              <div className="text-sm opacity-90 mb-3">본명: {athlete.realName}</div>
+              <div className="text-sm opacity-90 mb-2">본명: {athlete.realName}</div>
+            )}
+            {/* SPONPIK 4. 권장 데이터: 신장 · 지역 · 데뷔연도 (구조화 필드) */}
+            {(athlete.height || athlete.region || athlete.debutYear) && (
+              <div className="text-sm opacity-95 mb-3 inline-flex flex-wrap items-center gap-x-2 gap-y-1 justify-center sm:justify-start">
+                {athlete.height && (
+                  <span className="inline-flex items-center gap-1">📏 {athlete.height}cm</span>
+                )}
+                {athlete.region && (
+                  <>
+                    {athlete.height && <span className="opacity-50">·</span>}
+                    <span className="inline-flex items-center gap-1">📍 {athlete.region}</span>
+                  </>
+                )}
+                {athlete.debutYear && (
+                  <>
+                    {(athlete.height || athlete.region) && <span className="opacity-50">·</span>}
+                    <span className="inline-flex items-center gap-1">🎯 {athlete.debutYear}년 데뷔</span>
+                  </>
+                )}
+              </div>
             )}
             <p className="text-sm sm:text-base opacity-95 leading-relaxed max-w-2xl mb-4">
               {dash(athlete.bio)}
@@ -452,6 +484,22 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
               </div>
             </div>
 
+            {/* SPONPIK 3-3: 호가 리스트 (단계별 가격대) + 다음 5단계 + 총합 */}
+            <BidTierLadder
+              currentPrice={currentPrice}
+              minIncrement={minIncrement}
+              onTierClick={(tierAmt) => {
+                if (!isAuthenticated) return onLoginRedirect();
+                if (userRole !== 'BRAND') {
+                  setBidError('입찰은 브랜드 계정만 가능합니다.');
+                  return;
+                }
+                setBidError('');
+                placeBidMut.mutate({ amount: tierAmt });
+              }}
+              disabled={placeBidMut.isPending || auction.status !== 'LIVE' || isEnded}
+            />
+
             {/* 입찰 영역 */}
             {auction.status === 'LIVE' && !isEnded && (
               <>
@@ -529,6 +577,64 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
         )}
       </div>
     </>
+  );
+}
+
+/**
+ * SPONPIK 3-3 — 호가 리스트 (Bid Tier Ladder)
+ * 현재가 기준 다음 5단계 가격을 보여주고, 클릭으로 즉시 입찰.
+ * 총합(누적 5단계 합)도 표시 — 브랜드가 "5단계까지 가면 얼마"인지 한눈에 파악.
+ */
+function BidTierLadder({
+  currentPrice,
+  minIncrement,
+  onTierClick,
+  disabled,
+}: {
+  currentPrice: number;
+  minIncrement: number;
+  onTierClick: (amt: number) => void;
+  disabled: boolean;
+}) {
+  // 단계별 호가 (현재가 + 1*N, 2*N, ..., 5*N)
+  const tiers = Array.from({ length: 5 }, (_, i) => ({
+    step: i + 1,
+    amount: currentPrice + minIncrement * (i + 1),
+    delta: minIncrement * (i + 1),
+  }));
+  const totalSum = tiers.reduce((s, t) => s + t.amount, 0);
+
+  return (
+    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-3 mb-4">
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-[11px] font-extrabold text-emerald-700 inline-flex items-center gap-1">
+          📊 호가 리스트 (다음 5단계)
+        </div>
+        <div className="text-[10px] text-slate-500">
+          5단계 누적 <span className="font-bold text-emerald-700">₩{totalSum.toLocaleString()}</span>
+        </div>
+      </div>
+      <div className="grid grid-cols-5 gap-1.5">
+        {tiers.map((t) => (
+          <button
+            key={t.step}
+            onClick={() => onTierClick(t.amount)}
+            disabled={disabled}
+            className="bg-white hover:bg-emerald-100 border border-emerald-200 rounded-lg px-1.5 py-2 text-center disabled:opacity-50 disabled:hover:bg-white transition-colors group"
+            title={`${t.step}단계: ₩${t.amount.toLocaleString()}`}
+          >
+            <div className="text-[9px] font-bold text-emerald-600">{t.step}단계</div>
+            <div className="text-[11px] font-extrabold text-slate-900 group-hover:text-emerald-700 truncate">
+              ₩{t.amount.toLocaleString()}
+            </div>
+            <div className="text-[8px] text-slate-400">+₩{t.delta.toLocaleString()}</div>
+          </button>
+        ))}
+      </div>
+      <div className="text-[9px] text-slate-500 mt-1.5 text-center">
+        💡 단계 버튼을 클릭하면 해당 가격으로 즉시 입찰됩니다
+      </div>
+    </div>
   );
 }
 

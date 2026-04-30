@@ -165,6 +165,14 @@ function FeaturedCard({ athlete }: { athlete: any }) {
       </div>
       <div className="p-4">
         <h3 className="text-base font-extrabold text-slate-900 mb-1">{athlete.name}</h3>
+        {/* SPONPIK 4. 권장 데이터: 신장 · 지역 · 데뷔 (구조화) */}
+        {(athlete.height || athlete.region || athlete.debutYear) && (
+          <div className="text-[11px] text-slate-600 font-semibold mb-1 flex flex-wrap items-center gap-x-1.5">
+            {athlete.height && <span>📏 {athlete.height}cm</span>}
+            {athlete.region && <span>📍 {athlete.region}</span>}
+            {athlete.debutYear && <span>🎯 {athlete.debutYear}</span>}
+          </div>
+        )}
         <p className="text-xs text-slate-500 line-clamp-2 min-h-[2rem]">{athlete.bio || '프로 골퍼'}</p>
         <div className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 group-hover:gap-2 transition-all">
           프로필 보기 <ExternalLink className="w-3 h-3" />
@@ -198,6 +206,13 @@ function AthleteCard({ athlete }: { athlete: any }) {
           <h3 className="text-sm font-extrabold text-slate-900 truncate">{athlete.name}</h3>
           <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">{athlete.tour || 'PRO'}</span>
         </div>
+        {(athlete.height || athlete.region) && (
+          <div className="text-[10px] text-slate-600 font-semibold mb-0.5 truncate">
+            {athlete.height && <span>{athlete.height}cm</span>}
+            {athlete.height && athlete.region && <span className="opacity-50"> · </span>}
+            {athlete.region && <span>{athlete.region}</span>}
+          </div>
+        )}
         <p className="text-[10px] text-slate-500 line-clamp-1">{athlete.bio || '프로 골퍼'}</p>
       </div>
     </Link>

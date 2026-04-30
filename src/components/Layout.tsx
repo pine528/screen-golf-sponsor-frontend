@@ -256,6 +256,7 @@ export function Layout({ children }: LayoutProps) {
     { path: '/admin/roi/reports', label: '리포트 관리', icon: FileText },
     // === Full Funnel ===
     { path: '/admin/athletes/event-results', label: '🏆 선수 경기결과', icon: Trophy },
+    { path: '/admin/tournament-activation', label: '⚙️ 대회 활성화 / N값', icon: Settings },
     { path: '/admin/funnel/campaigns', label: '🔥 풀 퍼널 캠페인', icon: Megaphone },
     { path: '/admin/funnel/codes-links', label: '🔥 코드·링크', icon: Layers },
     { path: '/admin/funnel/integrated-report', label: '🔥 통합 ROI', icon: TrendingUp },
