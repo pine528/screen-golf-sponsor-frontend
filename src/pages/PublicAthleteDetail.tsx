@@ -47,10 +47,17 @@ export default function PublicAthleteDetail() {
     enabled: !!id,
   });
 
+  // ROI 대시보드 (docx 3-5)
+  const { data: roiResp } = useQuery({
+    queryKey: ['public-athlete-roi', id],
+    queryFn: () => api.getPublicAthleteRoiDashboard(id!),
+    enabled: !!id,
+  });
+  const roi = (roiResp?.data as any) || null;
+
   const athlete = resp?.data?.athlete;
   const slotInstances: any[] = (resp?.data as any)?.slotInstances || [];
   const recentEvents: any[] = (resp?.data as any)?.recentEvents || [];
-  const exposureCount = (resp?.data as any)?.exposureCount || 0;
   const eventResults: any[] = (resp?.data as any)?.eventResults || [];
 
   // 슬롯 동적 생성 + 첫 슬롯 디폴트 선택 (3-2)
@@ -207,20 +214,34 @@ export default function PublicAthleteDetail() {
         )}
       </section>
 
-      {/* 하단: 풀퍼널 리포트 / 최근 경기 / 메인 스폰서 */}
+      {/* ROI 대시보드 풀 섹션 (docx 3-5: 5카테고리 13지표) */}
+      <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xl font-extrabold text-slate-900 inline-flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-emerald-500" /> ROI 대시보드
+          </h2>
+          {roi?.meta && (
+            <span className="text-[10px] text-slate-400">
+              수집률 {roi.meta.collectionProgress.collected}/{roi.meta.collectionProgress.total} 지표
+            </span>
+          )}
+        </div>
+        <RoiDashboard roi={roi} />
+      </section>
+
+      {/* 하단: 최근 경기 / 메인 스폰서 */}
       <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* 풀퍼널 리포트 (값 없으면 -) */}
+        {/* 슬롯 요약 (간소화) */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5">
           <h2 className="text-base font-extrabold text-slate-900 mb-3 inline-flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-emerald-500" /> 미디어 노출 & 매출 기여
+            <Gavel className="w-4 h-4 text-emerald-500" /> 슬롯 현황
           </h2>
           <div className="grid grid-cols-2 gap-3">
-            <Stat label="누적 노출" value={dash(exposureCount)} />
-            <Stat label="진행 슬롯" value={String(orderedSlots.filter((s) => s.status === 'OPEN' || s.status === 'IN_AUCTION').length)} />
-            <Stat label="낙찰 슬롯" value={String(orderedSlots.filter((s) => s.status === 'SOLD').length)} />
+            <Stat label="전체 슬롯" value={dash(orderedSlots.length)} />
+            <Stat label="진행 중" value={String(orderedSlots.filter((s) => s.status === 'OPEN' || s.status === 'IN_AUCTION').length)} />
+            <Stat label="낙찰" value={String(orderedSlots.filter((s) => s.status === 'SOLD').length)} />
             <Stat label="가입일" value={athlete.createdAt ? new Date(athlete.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short' }) : '-'} />
           </div>
-          <p className="text-[10px] text-slate-400 mt-3">※ 풀퍼널 매출 데이터는 선수 ROI 대시보드에서 상세 확인</p>
         </div>
 
         {/* 최근 참가 경기 (3-9 하단) */}
@@ -508,6 +529,104 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
         )}
       </div>
     </>
+  );
+}
+
+/** ROI 대시보드 (docx 3-5: 5카테고리 13지표) */
+function RoiDashboard({ roi }: { roi: any }) {
+  if (!roi) {
+    return <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-sm text-slate-400">ROI 지표 로딩 중...</div>;
+  }
+
+  const fmt = (v: any, type: 'number' | 'currency' | 'percent' | 'time' = 'number'): string => {
+    if (v == null || v === '' || (typeof v === 'number' && isNaN(v))) return '-';
+    if (type === 'currency') return `₩${Math.round(Number(v)).toLocaleString()}`;
+    if (type === 'percent') return `${(Number(v) * 100).toFixed(2)}%`;
+    if (type === 'time') {
+      const sec = Number(v);
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}분 ${s}초`;
+    }
+    return Number(v).toLocaleString();
+  };
+
+  const cards = [
+    {
+      title: '📺 미디어 노출',
+      color: 'rose',
+      metrics: [
+        { label: '중계 노출 횟수', value: fmt(roi.mediaExposure.broadcastCount) },
+        { label: '중계 노출 시간', value: fmt(roi.mediaExposure.broadcastSeconds, 'time') },
+        { label: '캡처 수', value: fmt(roi.mediaExposure.captureCount) },
+      ],
+    },
+    {
+      title: '🎬 콘텐츠 반응',
+      color: 'sky',
+      metrics: [
+        { label: '조회수', value: fmt(roi.contentEngagement.videoViews) },
+        { label: '도달수', value: fmt(roi.contentEngagement.reach) },
+      ],
+    },
+    {
+      title: '🎯 랜딩 유입',
+      color: 'emerald',
+      metrics: [
+        { label: '클릭수', value: fmt(roi.landingTraffic.clicks) },
+        { label: '방문수', value: fmt(roi.landingTraffic.visits) },
+      ],
+    },
+    {
+      title: '💰 구매 / 전환 / ROI',
+      color: 'amber',
+      metrics: [
+        { label: '전환율', value: fmt(roi.conversion.conversionRate, 'percent') },
+        { label: '매출액', value: fmt(roi.conversion.revenue, 'currency') },
+        { label: 'CAC', value: fmt(roi.conversion.cac, 'currency') },
+        { label: 'ROAS', value: fmt(roi.conversion.roas) },
+      ],
+    },
+    {
+      title: '🏆 선수 성과 연계',
+      color: 'violet',
+      metrics: [
+        { label: '쿠폰 사용량', value: fmt(roi.athletePerformance.couponUsage) },
+        { label: '최신 순위', value: roi.athletePerformance.latestRank ? `${roi.athletePerformance.latestRank}위` : '-' },
+        { label: '최신 대회', value: roi.athletePerformance.latestEventName || '-', truncate: true },
+      ],
+    },
+  ];
+
+  const colorMap: Record<string, string> = {
+    rose: 'border-rose-200 bg-rose-50/30',
+    sky: 'border-sky-200 bg-sky-50/30',
+    emerald: 'border-emerald-200 bg-emerald-50/30',
+    amber: 'border-amber-200 bg-amber-50/30',
+    violet: 'border-violet-200 bg-violet-50/30',
+  };
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {cards.map((c) => (
+        <div key={c.title} className={`border rounded-2xl p-4 ${colorMap[c.color]}`}>
+          <h3 className="text-sm font-extrabold text-slate-900 mb-3">{c.title}</h3>
+          <div className="space-y-2">
+            {c.metrics.map((m: any) => (
+              <div key={m.label} className="flex items-center justify-between gap-2">
+                <span className="text-xs text-slate-500">{m.label}</span>
+                <span className={`text-sm font-extrabold ${m.value === '-' ? 'text-slate-400' : 'text-slate-900'} ${m.truncate ? 'truncate max-w-[140px]' : ''}`}>
+                  {m.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      <div className="sm:col-span-2 lg:col-span-3 text-[10px] text-slate-400 text-right">
+        ※ "-" 표시 = 아직 수집되지 않은 지표 (데이터 들어오면 자동 반영)
+      </div>
+    </div>
   );
 }
 

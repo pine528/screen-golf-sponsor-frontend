@@ -3028,6 +3028,10 @@ class ApiService {
     const r = await this.client.get<ApiResponse<{ athlete: any; slotInstances: any[]; exposureCount: number }>>(`/athletes/public/${id}`);
     return r.data;
   }
+  async getPublicAthleteRoiDashboard(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/athletes/public/${id}/roi-dashboard`);
+    return r.data;
+  }
 
   // Pixel (Phase 2)
   async createPixel(brandId?: string, domains: string[] = []) {
