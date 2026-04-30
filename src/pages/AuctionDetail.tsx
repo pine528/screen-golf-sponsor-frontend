@@ -101,6 +101,36 @@ export function AuctionDetail() {
       return;
     }
 
+    // docx 3-3 요구사항 — 클라이언트 사전 검증
+    const cur = Number(auctionData?.currentPrice || slot?.reservePrice || 0);
+    const inc = Number(auctionData?.minBidIncrement || 500_000);
+    const minNext = cur + inc;
+
+    // 1) 마감 여부
+    if (auctionData?.status !== 'LIVE') {
+      setBidError('진행 중인 경매가 아닙니다');
+      return;
+    }
+    if (auctionData?.endAt && new Date(auctionData.endAt).getTime() <= Date.now()) {
+      setBidError('경매가 종료되었습니다');
+      return;
+    }
+    // 2) 비활성 슬롯 여부
+    if (slot && slot.isActive === false) {
+      setBidError('비활성 상태인 슬롯입니다');
+      return;
+    }
+    // 3) 현재가보다 높은지 여부
+    if (amount <= cur) {
+      setBidError(`현재가(₩${cur.toLocaleString()})보다 높은 금액을 입력하세요`);
+      return;
+    }
+    // 4) 최소 입찰단위
+    if (amount < minNext) {
+      setBidError(`최소 ₩${minNext.toLocaleString()} 이상 입력하세요 (현재가 + 최소 단위)`);
+      return;
+    }
+
     placeBidMutation.mutate({ auctionId: id!, maxBid: amount });
   };
 
@@ -400,8 +430,15 @@ export function AuctionDetail() {
                         {tiers.map((t) => (
                           <button
                             key={t.step}
-                            onClick={() => placeBidMutation.mutate({ auctionId: id!, maxBid: t.amount })}
-                            disabled={placeBidMutation.isPending}
+                            onClick={() => {
+                              // docx 3-3 입찰 검증 (호가 단계 클릭)
+                              if (auctionData.status !== 'LIVE') return setBidError('진행 중인 경매가 아닙니다');
+                              if (auctionData.endAt && new Date(auctionData.endAt).getTime() <= Date.now()) return setBidError('경매가 종료되었습니다');
+                              if (slot && slot.isActive === false) return setBidError('비활성 상태인 슬롯입니다');
+                              setBidError(null);
+                              placeBidMutation.mutate({ auctionId: id!, maxBid: t.amount });
+                            }}
+                            disabled={placeBidMutation.isPending || auctionData.status !== 'LIVE'}
                             className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg px-1.5 py-2 text-center disabled:opacity-50 transition-colors"
                             title={`${t.step}단계: ₩${t.amount.toLocaleString()}`}
                           >

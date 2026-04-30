@@ -421,21 +421,36 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
       ? '경매 종료'
       : formatRemaining(remainingMs);
 
+  // docx 3-3: 입찰 사전 검증 — 마감/비활성/현재가/최소단위
+  const validateBid = (amt: number): string | null => {
+    if (auction?.status !== 'LIVE') return '진행 중인 경매가 아닙니다';
+    if (isEnded) return '경매가 종료되었습니다';
+    if (slot.isActive === false) return '비활성 상태인 슬롯입니다';
+    if (isNaN(amt) || amt <= 0) return '유효한 금액을 입력해주세요';
+    if (amt <= currentPrice) return `현재가(${dashKRW(currentPrice)})보다 높은 금액을 입력하세요`;
+    if (amt < minNextBid) return `최소 ${dashKRW(minNextBid)} 이상 입력해주세요`;
+    return null;
+  };
+
   const handleQuickBid = (delta: number) => {
     if (!isAuthenticated) return onLoginRedirect();
     if (userRole !== 'BRAND') {
       setBidError('입찰은 브랜드 계정만 가능합니다.');
       return;
     }
+    const amt = currentPrice + delta;
+    const err = validateBid(amt);
+    if (err) return setBidError(err);
     setBidError('');
-    placeBidMut.mutate({ amount: currentPrice + delta });
+    placeBidMut.mutate({ amount: amt });
   };
 
   const handleCustomBid = () => {
     const amt = Number(customBid.replace(/,/g, ''));
     if (!isAuthenticated) return onLoginRedirect();
     if (userRole !== 'BRAND') return setBidError('입찰은 브랜드 계정만 가능합니다.');
-    if (isNaN(amt) || amt < minNextBid) return setBidError(`최소 ${dashKRW(minNextBid)} 이상 입력해주세요.`);
+    const err = validateBid(amt);
+    if (err) return setBidError(err);
     setBidError('');
     placeBidMut.mutate({ amount: amt });
   };
