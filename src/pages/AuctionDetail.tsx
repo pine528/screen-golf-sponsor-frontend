@@ -378,24 +378,121 @@ export function AuctionDetail() {
               )}
             </div>
 
-            {/* 입찰 현황 표시 */}
+            {/* SPONPIK 론칭 docx 3-3 — 호가 리스트 (5단계) + 빠른 증액 버튼 */}
+            {auctionData.status === 'LIVE' && user?.role === 'BRAND' && (
+              <div className="card p-4 sm:p-6">
+                <h2 className="text-lg font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                  <Gavel className="w-5 h-5 text-emerald-600" />
+                  호가 리스트 · 빠른 입찰
+                </h2>
+                {(() => {
+                  const cur = Number(auctionData.currentPrice || slot?.reservePrice || 0);
+                  const inc = Number(auctionData.minBidIncrement || 500_000);
+                  const tiers = Array.from({ length: 5 }, (_, i) => ({
+                    step: i + 1,
+                    amount: cur + inc * (i + 1),
+                    delta: inc * (i + 1),
+                  }));
+                  const totalSum = tiers.reduce((s, t) => s + t.amount, 0);
+                  return (
+                    <>
+                      <div className="grid grid-cols-5 gap-1.5 mb-3">
+                        {tiers.map((t) => (
+                          <button
+                            key={t.step}
+                            onClick={() => placeBidMutation.mutate({ auctionId: id!, maxBid: t.amount })}
+                            disabled={placeBidMutation.isPending}
+                            className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg px-1.5 py-2 text-center disabled:opacity-50 transition-colors"
+                            title={`${t.step}단계: ₩${t.amount.toLocaleString()}`}
+                          >
+                            <div className="text-[9px] font-bold text-emerald-700">{t.step}단계</div>
+                            <div className="text-[11px] font-extrabold text-slate-900 truncate">₩{t.amount.toLocaleString()}</div>
+                            <div className="text-[8px] text-slate-500">+₩{t.delta.toLocaleString()}</div>
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 mb-3">
+                        <span>5단계 누적: <span className="font-bold text-emerald-700">₩{totalSum.toLocaleString()}</span></span>
+                        <span>최소 단위: ₩{inc.toLocaleString()}</span>
+                      </div>
+                      {/* 직접 입력 (UX docx) */}
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          value={bidAmount}
+                          onChange={(e) => setBidAmount(e.target.value)}
+                          placeholder={`최소 ${(cur + inc).toLocaleString()} 이상`}
+                          className="input flex-1 text-sm"
+                        />
+                        <button
+                          onClick={handleBid}
+                          disabled={!bidAmount || placeBidMutation.isPending}
+                          className="btn btn-primary text-sm whitespace-nowrap"
+                        >
+                          직접 입찰
+                        </button>
+                      </div>
+                      {bidError && (
+                        <div className="text-xs text-rose-600 bg-rose-50 px-3 py-2 rounded mt-2">{bidError}</div>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
+            )}
+
+            {/* 입찰 현황 표시 + 최근 입찰 내역 (docx 3-4) */}
             <div className="card p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-emerald-600" />
                 입찰 현황
               </h2>
-              <div className="p-4 bg-slate-50 rounded-lg text-center">
+              <div className="p-4 bg-slate-50 rounded-lg text-center mb-4">
                 <p className="text-sm text-slate-600 mb-2">
                   {isPublicAuction ? '공개 경매' : '비공개 경매'}
                 </p>
                 <p className="text-3xl font-bold text-emerald-600">{bids.length}</p>
                 <p className="text-sm text-slate-500 mt-1">개의 입찰이 접수되었습니다</p>
               </div>
-              <p className="text-xs text-slate-400 mt-4 text-center">
-                {isPublicAuction
-                  ? '공개 경매는 모든 입찰 내역이 공개됩니다'
-                  : '비공개 경매는 다른 입찰자의 입찰 금액을 확인할 수 없습니다'}
-              </p>
+
+              {/* 최근 입찰 내역 (docx 3-4 — 닉네임/입찰가/시간 최신순) */}
+              {isPublicAuction && bids.length > 0 ? (
+                <div>
+                  <h3 className="text-sm font-bold text-slate-700 mb-2">최근 입찰 내역</h3>
+                  <div className="space-y-1.5 max-h-72 overflow-y-auto">
+                    {[...bids]
+                      .sort((a: any, b: any) => +new Date(b.createdAt) - +new Date(a.createdAt))
+                      .slice(0, 10)
+                      .map((b: any, i: number) => (
+                        <div
+                          key={b.id}
+                          className={`flex items-center justify-between py-2 px-3 rounded-lg text-sm ${
+                            i === 0 ? 'bg-emerald-50 border border-emerald-100' : 'bg-slate-50'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            {i === 0 && <span className="text-[9px] font-bold text-emerald-700 bg-white px-1.5 py-0.5 rounded">최고</span>}
+                            <span className="font-semibold truncate">
+                              {b.brand?.name ? b.brand.name.charAt(0) + '*'.repeat(Math.max(1, b.brand.name.length - 1)) : '익명'}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-bold text-emerald-600">₩{Number(b.currentProxy || b.maxBid || 0).toLocaleString()}</div>
+                            <div className="text-[9px] text-slate-400">
+                              {b.createdAt ? new Date(b.createdAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              ) : !isPublicAuction ? (
+                <p className="text-xs text-slate-400 text-center">
+                  비공개 경매는 다른 입찰자의 입찰 금액을 확인할 수 없습니다
+                </p>
+              ) : (
+                <p className="text-xs text-slate-400 text-center">아직 입찰 내역이 없습니다</p>
+              )}
             </div>
           </div>
 
