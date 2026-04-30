@@ -102,6 +102,7 @@ import MiniStoreCheckout from './pages/store/MiniStoreCheckout';
 import { ShortLinkRedirect } from './pages/ShortLinkRedirect';
 import PublicAthletes from './pages/PublicAthletes';
 import PublicAthleteDetail from './pages/PublicAthleteDetail';
+import AdminAthleteEventResults from './pages/admin/AdminAthleteEventResults';
 import VotesList from './pages/fan/VoteV2List';
 import VotesDetail from './pages/fan/VoteV2Detail';
 import VoteCreate from './pages/fan/VoteCreate';
@@ -1006,6 +1007,9 @@ function App() {
       {/* 공개 선수 둘러보기 */}
       <Route path="/athletes" element={<PublicAthletes />} />
       <Route path="/athletes/:id" element={<PublicAthleteDetail />} />
+
+      {/* 관리자: 선수 경기결과 관리 (docx 3-6) */}
+      <Route path="/admin/athletes/event-results" element={<ProtectedRoute><AdminAthleteEventResults /></ProtectedRoute>} />
 
       {/* Home & Redirect */}
       <Route path="/" element={<HomeRoute />} />

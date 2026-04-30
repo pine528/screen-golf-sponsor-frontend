@@ -3033,6 +3033,24 @@ class ApiService {
     return r.data;
   }
 
+  // 선수 경기결과 관리 (관리자/본인)
+  async getAthleteEventResults(athleteId: string) {
+    const r = await this.client.get<ApiResponse<any[]>>(`/athletes/${athleteId}/event-results`);
+    return r.data;
+  }
+  async createAthleteEventResult(athleteId: string, body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/athletes/${athleteId}/event-results`, body);
+    return r.data;
+  }
+  async updateAthleteEventResult(resultId: string, body: any) {
+    const r = await this.client.patch<ApiResponse<any>>(`/athletes/event-results/${resultId}`, body);
+    return r.data;
+  }
+  async deleteAthleteEventResult(resultId: string) {
+    const r = await this.client.delete<ApiResponse<any>>(`/athletes/event-results/${resultId}`);
+    return r.data;
+  }
+
   // Pixel (Phase 2)
   async createPixel(brandId?: string, domains: string[] = []) {
     const r = await this.client.post<ApiResponse<any>>(`/external/pixels`, { brand_id: brandId, domains });
