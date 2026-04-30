@@ -289,69 +289,8 @@ export function Home() {
               </div>
             </div>
 
-            {/* Right - Hot Auction Card */}
-            <div className="relative z-10">
-              <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-300/30 overflow-hidden">
-                {/* LIVE badge */}
-                <div className="px-5 pt-5 pb-3">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100">
-                    <Zap className="w-3 h-3 text-emerald-500" />
-                    <span className="text-xs font-bold text-emerald-700">LIVE 경매</span>
-                  </span>
-                </div>
-
-                {/* Title */}
-                <div className="px-5 pb-4">
-                  <h3 className="text-lg font-black text-slate-900 leading-snug mb-1">
-                    [KLPGA] 안예인 프로 - 모자 중앙 메인 스폰서십 슬롯
-                  </h3>
-                </div>
-
-                {/* Media exposure */}
-                <div className="px-5 pb-4">
-                  <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5">
-                    <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3" /> 예상 미디어 노출</span>
-                    <span className="font-bold text-emerald-600">25분/경기</span>
-                  </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full" style={{ width: '75%' }} />
-                  </div>
-                </div>
-
-                {/* Current bid */}
-                <div className="px-5 pb-3">
-                  <p className="text-xs text-slate-400 mb-0.5">현재 1위 입찰가</p>
-                  <p className="text-3xl font-black text-slate-900 tracking-tight">₩5,000,000</p>
-                </div>
-
-                {/* Time remaining */}
-                <div className="px-5 pb-4">
-                  <p className="text-xs text-slate-400 mb-0.5">남은 시간</p>
-                  <p className="text-xl font-mono font-bold text-slate-700 tracking-widest">00 : 02 : 24</p>
-                </div>
-
-                {/* CTA */}
-                <div className="px-5 pb-4">
-                  <Link to="/auctions/mock/an-yein"
-                    className="w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20">
-                    입찰 참여하기 <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-
-                {/* Bottom stats */}
-                <div className="px-5 pb-5 flex items-center justify-center gap-8 text-center">
-                  <div>
-                    <p className="text-xs text-slate-400">입찰 참여</p>
-                    <p className="text-base font-black text-slate-900">12건</p>
-                  </div>
-                  <div className="w-px h-8 bg-slate-100" />
-                  <div>
-                    <p className="text-xs text-slate-400">관심 등록</p>
-                    <p className="text-base font-black text-slate-900">156명</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Right - Hot Auction Card (실데이터 바인딩, docx 2-1) */}
+            <HeroLiveAuctionCard hot={liveAuctions && liveAuctions.length > 0 ? liveAuctions[0] : null} />
           </div>
         </div>
       </section>
@@ -377,28 +316,29 @@ export function Home() {
           </div>
 
           {(() => {
-            const MOCK_GOLFERS = [
-              { id: 'm1', player: '김주연 프로', bodyPart: 'CAP_FRONT', slot: 'KLPGA', price: 5000000, timeLeft: '2시간 남음', bids: 12, playerImage: '/golfers/kim-juyeon.jpg' },
-              { id: 'm2', player: '채지은 프로', bodyPart: 'CHEST_R', slot: 'KLPGA', price: 3500000, timeLeft: '5시간 남음', bids: 8, playerImage: '/golfers/chae-jieun.jpg' },
-              { id: 'm3', player: '공미정 프로', bodyPart: 'SHOULDER_R', slot: 'KLPGA', price: 4200000, timeLeft: '3시간 남음', bids: 15, playerImage: '/golfers/gong-mijeong.jpg' },
-              { id: 'm4', player: '전승민 프로', bodyPart: 'SLEEVE_L', slot: 'KLPGA', price: 2800000, timeLeft: '1일 남음', bids: 6, playerImage: '/golfers/jeon-seungmin.jpg' },
-              { id: 'm5', player: '권민경 프로', bodyPart: 'CAP_SIDE_R', slot: 'KLPGA', price: 3000000, timeLeft: '8시간 남음', bids: 9, playerImage: '/golfers/kwon-minkyung.jpg' },
-              { id: 'm6', player: '김도은 프로', bodyPart: 'COLLAR_R', slot: 'LPGA', price: 1500000, timeLeft: '12시간 남음', bids: 4, playerImage: '/golfers/kim-doeun.jpg' },
-              { id: 'm7', player: '김현명 프로', bodyPart: 'CHEST_L', slot: 'KLPGA', price: 6000000, timeLeft: '30분 남음', bids: 23, playerImage: '/golfers/kim-hyunmyung.jpg' },
-              { id: 'm8', player: '남우리 프로', bodyPart: 'SHOULDER_L', slot: 'KLPGA', price: 3800000, timeLeft: '4시간 남음', bids: 11, playerImage: '/golfers/nam-woori.jpg' },
-              { id: 'm9', player: '노아영 프로', bodyPart: 'SLEEVE_R', slot: 'KLPGA', price: 2200000, timeLeft: '6시간 남음', bids: 7, playerImage: '/golfers/no-ayoung.jpg' },
-              { id: 'm10', player: '서하경 프로', bodyPart: 'WAIST_BACK', slot: 'KLPGA', price: 4500000, timeLeft: '2일 남음', bids: 5, playerImage: '/golfers/seo-hakyung.jpg' },
-              { id: 'm11', player: '석지우 프로', bodyPart: 'CAP_BACK', slot: 'KLPGA', price: 2500000, timeLeft: '10시간 남음', bids: 3, playerImage: '/golfers/seok-jiwoo.jpg' },
-            ];
+            // SPONPIK 론칭 docx 2-1: 프론트 하드코딩 값 사용 지양
+            // → MOCK_GOLFERS 제거, 실데이터(liveAuctions)만 사용. 빈 경우 명시적 empty state.
             const displayItems = liveAuctions && liveAuctions.length > 0 ? liveAuctions : null;
-            const mockItems = !displayItems ? MOCK_GOLFERS : null;
-            const items = displayItems || mockItems;
+            const items = displayItems;
+
+            if (!items || items.length === 0) {
+              return (
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-12 text-center">
+                  <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <h3 className="text-base font-bold text-slate-700 mb-1">현재 진행 중인 슬롯이 없습니다</h3>
+                  <p className="text-sm text-slate-500 mb-4">새로운 스폰서십 슬롯이 등록되면 여기에 표시됩니다.</p>
+                  <Link to="/athletes" className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600 hover:text-emerald-700">
+                    선수 둘러보기 <ChevronRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              );
+            }
 
             return items && items.length > 0 ? (
               <div ref={carouselRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 scrollbar-hide -mx-5 px-5">
                 {items.map((a: any) => {
-                  const isReal = !!displayItems;
-                  const linkTo = isReal ? `/auctions/${a.id}` : `/auctions/mock/${a.id}`;
+                  const isReal = true;
+                  const linkTo = `/auctions/${a.id}`;
                   return (
                     <Link key={a.id} to={linkTo} className="flex-shrink-0 w-[200px] sm:w-[220px] snap-start group cursor-pointer">
                       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-lg transition-all duration-300">
@@ -655,6 +595,103 @@ export function Home() {
           </div>
         </div>
       </footer>
+    </div>
+  );
+}
+
+/**
+ * Hero LIVE 경매 카드 — docx 2-1: 실데이터 바인딩 (하드코딩 제거)
+ * - hot: liveAuctions 응답의 첫 항목 (가장 임박한 LIVE 경매)
+ * - 데이터 없을 때: "LIVE 경매 준비 중" 안내 (- 처리, docx 2-2)
+ */
+function HeroLiveAuctionCard({ hot }: { hot: any | null }) {
+  if (!hot) {
+    return (
+      <div className="relative z-10">
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-300/30 overflow-hidden p-8 text-center">
+          <Zap className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-slate-700 mb-1">LIVE 경매 준비 중</h3>
+          <p className="text-sm text-slate-500 mb-4">곧 새로운 경매가 시작됩니다.</p>
+          <Link to="/auctions" className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600 hover:text-emerald-700">
+            전체 경매 보기 <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const tour = hot.slot || '-';
+  const playerName = hot.player || '-';
+  // bodyPart 한글 라벨 (Home 내 동일 매핑 일치)
+  const partLabels: Record<string, string> = {
+    CAP_FRONT: '모자 정면', CAP_SIDE_R: '모자 우측', CAP_SIDE_L: '모자 좌측', CAP_BACK: '모자 뒷면',
+    CHEST_CENTER: '상의 중앙', CHEST_L: '상의 좌측', CHEST_R: '상의 우측',
+    COLLAR_L: '카라 좌측', COLLAR_R: '카라 우측',
+    SLEEVE_L: '소매 좌측', SLEEVE_R: '소매 우측',
+    SHOULDER_L: '어깨 좌측', SHOULDER_R: '어깨 우측',
+    WAIST_BACK: '허리 뒷면', PANTS_SIDE: '바지 측면',
+  };
+  const slotName = hot.slotName || partLabels[hot.bodyPart] || hot.bodyPart || '-';
+  const price = hot.price || 0;
+  const bids = hot.bids ?? 0;
+
+  return (
+    <div className="relative z-10">
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-300/30 overflow-hidden">
+        {/* LIVE badge */}
+        <div className="px-5 pt-5 pb-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100">
+            <Zap className="w-3 h-3 text-emerald-500" />
+            <span className="text-xs font-bold text-emerald-700">LIVE 경매</span>
+          </span>
+        </div>
+
+        {/* Title — 실데이터 */}
+        <div className="px-5 pb-4">
+          <h3 className="text-lg font-black text-slate-900 leading-snug mb-1">
+            [{tour}] {playerName} - {slotName}
+          </h3>
+        </div>
+
+        {/* Current bid — 실데이터 */}
+        <div className="px-5 pb-3">
+          <p className="text-xs text-slate-400 mb-0.5">현재 1위 입찰가</p>
+          <p className="text-3xl font-black text-slate-900 tracking-tight">
+            {price > 0 ? `₩${Number(price).toLocaleString()}` : '-'}
+          </p>
+        </div>
+
+        {/* Time remaining — 실데이터 (endAt 기반) */}
+        <div className="px-5 pb-4">
+          <p className="text-xs text-slate-400 mb-0.5">남은 시간</p>
+          <p className="text-xl font-mono font-bold text-slate-700 tracking-widest">
+            {hot.endAt ? formatTimeRemaining(hot.endAt) : '-'}
+          </p>
+        </div>
+
+        {/* CTA → 실 경매 상세 */}
+        <div className="px-5 pb-4">
+          <Link
+            to={`/auctions/${hot.id}`}
+            className="w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20"
+          >
+            입찰 참여하기 <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        {/* Bottom stats — 실데이터 (관심 등록은 미수집이므로 -) */}
+        <div className="px-5 pb-5 flex items-center justify-center gap-8 text-center">
+          <div>
+            <p className="text-xs text-slate-400">입찰 참여</p>
+            <p className="text-base font-black text-slate-900">{bids > 0 ? `${bids}건` : '-'}</p>
+          </div>
+          <div className="w-px h-8 bg-slate-100" />
+          <div>
+            <p className="text-xs text-slate-400">관심 등록</p>
+            <p className="text-base font-black text-slate-900">-</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

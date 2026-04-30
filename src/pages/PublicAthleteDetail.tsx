@@ -719,8 +719,39 @@ function RoiDashboard({ roi }: { roi: any }) {
     violet: 'border-violet-200 bg-violet-50/30',
   };
 
+  // SPONPIK docx 4 — roi_score 단일 종합 점수 (0-100)
+  const roiScore: number | null = roi.roiScore ?? null;
+  const scoreColor = roiScore == null ? 'slate' : roiScore >= 70 ? 'emerald' : roiScore >= 40 ? 'amber' : 'rose';
+  const scoreColorClass: Record<string, string> = {
+    slate: 'from-slate-100 to-slate-50 text-slate-400 border-slate-200',
+    emerald: 'from-emerald-100 to-teal-50 text-emerald-700 border-emerald-300',
+    amber: 'from-amber-100 to-yellow-50 text-amber-700 border-amber-300',
+    rose: 'from-rose-100 to-pink-50 text-rose-700 border-rose-300',
+  };
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    <div className="space-y-4">
+      {/* 종합 ROI Score (docx 4. roi_score) */}
+      <div className={`border-2 rounded-2xl p-5 bg-gradient-to-br ${scoreColorClass[scoreColor]} flex items-center justify-between gap-4`}>
+        <div>
+          <div className="text-xs font-bold opacity-80 mb-1">📊 종합 ROI Score</div>
+          <div className="text-4xl font-black tabular-nums">
+            {roiScore != null ? roiScore.toFixed(1) : '-'}
+            {roiScore != null && <span className="text-lg font-bold opacity-70 ml-1">/ 100</span>}
+          </div>
+          <div className="text-[11px] opacity-70 mt-1">
+            클릭(20) · 방문(20) · 구매(30) · 쿠폰(20) · 순위(10) 가중 합산
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-[11px] font-bold opacity-80">등급</div>
+          <div className="text-2xl font-black">
+            {roiScore == null ? '-' : roiScore >= 70 ? 'A' : roiScore >= 40 ? 'B' : 'C'}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {cards.map((c) => (
         <div key={c.title} className={`border rounded-2xl p-4 ${colorMap[c.color]}`}>
           <h3 className="text-sm font-extrabold text-slate-900 mb-3">{c.title}</h3>
@@ -738,6 +769,7 @@ function RoiDashboard({ roi }: { roi: any }) {
       ))}
       <div className="sm:col-span-2 lg:col-span-3 text-[10px] text-slate-400 text-right">
         ※ "-" 표시 = 아직 수집되지 않은 지표 (데이터 들어오면 자동 반영)
+      </div>
       </div>
     </div>
   );
