@@ -150,6 +150,37 @@ export function Auctions() {
       return;
     }
 
+    // docx 3-3 — 클라이언트 사전 검증 (4가지 룰)
+    const slot = selectedAuction.slotInstance;
+    const cur = Number(selectedAuction.currentPrice || slot?.reservePrice || 0);
+    const inc = Number(selectedAuction.minBidIncrement || 500_000);
+    const minNext = cur + inc;
+
+    // 1) 마감 여부
+    if (selectedAuction.status !== 'LIVE') {
+      setBidError('진행 중인 경매가 아닙니다');
+      return;
+    }
+    if (selectedAuction.endAt && new Date(selectedAuction.endAt).getTime() <= Date.now()) {
+      setBidError('경매가 종료되었습니다');
+      return;
+    }
+    // 2) 비활성 슬롯 여부
+    if (slot && slot.isActive === false) {
+      setBidError('비활성 상태인 슬롯입니다');
+      return;
+    }
+    // 3) 현재가보다 높은지
+    if (amount <= cur) {
+      setBidError(`현재가(₩${cur.toLocaleString()})보다 높은 금액을 입력하세요`);
+      return;
+    }
+    // 4) 최소 입찰단위
+    if (amount < minNext) {
+      setBidError(`최소 ₩${minNext.toLocaleString()} 이상 입력하세요`);
+      return;
+    }
+
     placeBidMutation.mutate({ auctionId: selectedAuction.id, maxBid: amount });
   };
 
