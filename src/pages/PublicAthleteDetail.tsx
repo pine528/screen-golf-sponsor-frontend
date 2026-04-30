@@ -373,7 +373,8 @@ function SlotCard({ slot, selected, index, onClick }: { slot: any; selected: boo
         {isLive && <span className="text-[9px] font-extrabold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded animate-pulse">LIVE</span>}
         <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">{slot.status}</span>
       </div>
-      <div className="text-sm font-extrabold text-slate-900">{dash(tpl.name || tpl.code)}</div>
+      {/* docx 4: slot_name 우선, 없으면 SlotTemplate.name fallback */}
+      <div className="text-sm font-extrabold text-slate-900">{dash(slot.slotName || tpl.name || tpl.code)}</div>
       <div className="text-[10px] text-slate-500 mb-2">{dash(tpl.bodyPart)}{tpl.grade && ` · ${tpl.grade}등급`}</div>
       <div className="flex items-center justify-between text-xs">
         <span className="text-slate-500">현재가</span>
@@ -447,7 +448,7 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
       <div className="bg-white border border-slate-200 rounded-2xl p-5">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-sm font-bold text-slate-700">{athleteName} · {dash(tpl.name || tpl.code)}</h3>
+            <h3 className="text-sm font-bold text-slate-700">{athleteName} · {dash(slot.slotName || tpl.name || tpl.code)}</h3>
             <div className="text-[10px] text-slate-400">{dash(tpl.bodyPart)}{tpl.grade && ` · ${tpl.grade}등급`}</div>
           </div>
           {auction?.status === 'LIVE' && <span className="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2 py-1 rounded animate-pulse">● LIVE</span>}

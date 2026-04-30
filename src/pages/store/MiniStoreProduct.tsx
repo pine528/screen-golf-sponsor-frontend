@@ -186,23 +186,11 @@ export default function MiniStoreProduct() {
             </div>
           )}
 
-          {/* 리뷰 (mock) */}
+          {/* 리뷰 (docx 2-1: 하드코딩 제거 — 실 리뷰 시스템 도입 전까지 - 표기) */}
           <div className="mt-6 mb-6">
             <h3 className="text-sm font-bold text-slate-900 mb-3">⭐ 고객 리뷰</h3>
-            <div className="space-y-3">
-              {[
-                { author: '김**', stars: 5, text: '품질이 정말 좋아요. 선수 추천 코드 적용까지 완벽!' },
-                { author: '박**', stars: 5, text: '배송도 빠르고 디자인도 만족스러워요.' },
-                { author: '이**', stars: 4, text: '가격 대비 우수합니다. 재구매 의사 있음.' },
-              ].map((r, i) => (
-                <div key={i} className="p-3 bg-slate-50 rounded-lg">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-semibold">{r.author}</span>
-                    <span className="text-xs text-amber-500">{'★'.repeat(r.stars)}{'☆'.repeat(5 - r.stars)}</span>
-                  </div>
-                  <p className="text-sm text-slate-600">{r.text}</p>
-                </div>
-              ))}
+            <div className="p-4 bg-slate-50 rounded-lg text-center text-sm text-slate-400">
+              아직 등록된 리뷰가 없습니다.
             </div>
           </div>
 
