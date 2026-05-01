@@ -327,6 +327,13 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
     endDate: event?.endDate?.split('T')[0] || event?.dateEnd?.split('T')[0] || getDefaultEndDate(),
     description: event?.description || '',
     broadcastEpisode: event?.broadcastEpisode || '',
+    // SPONPIK 4. 권장 데이터 항목 (대회)
+    category: event?.category || '',
+    qualifyingDate: event?.qualifyingDate?.split('T')[0] || '',
+    displayOrder: event?.displayOrder ?? 0,
+    isActive: event?.isActive !== false,
+    activeDays: event?.activeDays ?? '',
+    sportType: event?.sportType || event?.sport?.code || '',
   });
   const [error, setError] = useState('');
 
@@ -363,7 +370,7 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
     }
 
     // 날짜를 ISO datetime 형식으로 변환
-    const payload = {
+    const payload: any = {
       name: formData.name,
       tour: formData.tour,
       venue: formData.venue || undefined,
@@ -371,6 +378,12 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
       dateEnd: endDate.toISOString(),
       description: formData.description || undefined,
       broadcastEpisode: formData.broadcastEpisode || undefined,
+      // SPONPIK 4. 권장 데이터 항목
+      category: formData.category || null,
+      qualifyingDate: formData.qualifyingDate ? new Date(formData.qualifyingDate).toISOString() : null,
+      displayOrder: Number(formData.displayOrder) || 0,
+      isActive: !!formData.isActive,
+      activeDays: formData.activeDays === '' ? null : Number(formData.activeDays),
     };
 
     if (event) {
@@ -477,6 +490,77 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
               placeholder="이벤트에 대한 상세 설명을 입력하세요"
             />
           </div>
+
+          {/* SPONPIK docx 4 권장 데이터 항목 (대회) */}
+          <div className="pt-4 border-t border-slate-200">
+            <h3 className="text-sm font-bold text-slate-900 mb-3">📊 운영 정보 (docx 4)</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="label text-xs">카테고리</label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="input"
+                >
+                  <option value="">(없음)</option>
+                  <option value="정규투어">정규투어</option>
+                  <option value="시드전">시드전</option>
+                  <option value="드림투어">드림투어</option>
+                  <option value="점프투어">점프투어</option>
+                  <option value="챔피언스투어">챔피언스투어</option>
+                  <option value="친선전">친선전</option>
+                  <option value="이벤트경기">이벤트경기</option>
+                  <option value="예선전">예선전</option>
+                </select>
+              </div>
+              <div>
+                <label className="label text-xs">예선 일자</label>
+                <input
+                  type="date"
+                  value={formData.qualifyingDate}
+                  onChange={(e) => setFormData({ ...formData, qualifyingDate: e.target.value })}
+                  className="input"
+                />
+              </div>
+              <div>
+                <label className="label text-xs">표시 순서 (낮을수록 상단)</label>
+                <input
+                  type="number"
+                  value={formData.displayOrder as any}
+                  onChange={(e) => setFormData({ ...formData, displayOrder: Number(e.target.value) })}
+                  className="input"
+                  min={0}
+                />
+              </div>
+              <div>
+                <label className="label text-xs">활성 N일 (관리자 우선)</label>
+                <input
+                  type="number"
+                  value={formData.activeDays as any}
+                  onChange={(e) => setFormData({ ...formData, activeDays: e.target.value === '' ? '' : Number(e.target.value) })}
+                  className="input"
+                  min={1}
+                  max={60}
+                  placeholder="기본 14"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="inline-flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={formData.isActive}
+                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <span>운영 활성 (체크 해제 시 공개 페이지에서 제외)</span>
+                </label>
+              </div>
+            </div>
+            <p className="text-[10px] text-slate-500 mt-2">
+              관리자 우선 정책: 활성 N일 미입력 시 시스템 기본 14일 적용
+            </p>
+          </div>
+
           <div className="flex gap-3 pt-4">
             <button type="button" onClick={onClose} disabled={isSubmitting} className="btn btn-secondary flex-1">
               취소
