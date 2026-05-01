@@ -489,6 +489,45 @@ export default function AdminEntityDetail() {
                             <span className="text-slate-900">{entity.tour}</span>
                           </div>
                         )}
+                        {/* SPONPIK docx 4 권장 데이터 항목 (구조화 필드) */}
+                        {entity.sportType && (
+                          <div className="flex items-center gap-3 text-sm">
+                            <Briefcase className="w-4 h-4 text-slate-400" />
+                            <span className="text-slate-600">종목:</span>
+                            <span className="text-slate-900">
+                              {entity.sportType === 'GOLF' ? '🏌️ 골프' : entity.sportType === 'SCREEN_GOLF' ? '⛳ 스크린골프' : entity.sportType}
+                              {entity.sport?.name && ` (${entity.sport.name})`}
+                            </span>
+                          </div>
+                        )}
+                        {entity.affiliation && (
+                          <div className="flex items-center gap-3 text-sm">
+                            <Building2 className="w-4 h-4 text-slate-400" />
+                            <span className="text-slate-600">소속:</span>
+                            <span className="text-slate-900">{entity.affiliation}</span>
+                          </div>
+                        )}
+                        {(entity.height || entity.region || entity.debutYear) && (
+                          <div className="flex items-start gap-3 text-sm">
+                            <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <span className="text-slate-600">상세:</span>
+                            <span className="text-slate-900 flex-1 inline-flex flex-wrap items-center gap-x-2">
+                              {entity.height && <span>📏 {entity.height}cm</span>}
+                              {entity.region && <span>📍 {entity.region}</span>}
+                              {entity.debutYear && <span>🎯 {entity.debutYear}년 데뷔</span>}
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-3 text-sm">
+                          <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded ${
+                            entity.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'
+                          }`}>
+                            {entity.isActive ? '🟢 운영 활성' : '⚪ 운영 비활성'}
+                          </span>
+                          <span className="text-[10px] text-slate-400">
+                            (공개 페이지 노출 {entity.isActive ? '대상' : '제외'})
+                          </span>
+                        </div>
                         {entity.bio && (
                           <div className="flex items-start gap-3 text-sm">
                             <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
