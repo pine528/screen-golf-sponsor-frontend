@@ -55,6 +55,14 @@ export default function PublicAthleteDetail() {
   });
   const roi = (roiResp?.data as any) || null;
 
+  // SPONPIK Phase 2 SNS — YouTube 채널 데이터 (콘텐츠 반응 카테고리)
+  const { data: ytResp } = useQuery({
+    queryKey: ['public-athlete-youtube', id],
+    queryFn: () => api.getYoutubeAthleteAggregate(id!),
+    enabled: !!id,
+  });
+  const youtube = (ytResp?.data as any) || null;
+
   const athlete = resp?.data?.athlete;
   const slotInstances: any[] = (resp?.data as any)?.slotInstances || [];
   const recentEvents: any[] = (resp?.data as any)?.recentEvents || [];
@@ -265,7 +273,7 @@ export default function PublicAthleteDetail() {
             </span>
           )}
         </div>
-        <RoiDashboard roi={roi} />
+        <RoiDashboard roi={roi} youtube={youtube} />
       </section>
 
       {/* 하단: 최근 경기 / 메인 스폰서 */}
@@ -662,10 +670,18 @@ function BidTierLadder({
 }
 
 /** ROI 대시보드 (docx 3-5: 5카테고리 13지표) */
-function RoiDashboard({ roi }: { roi: any }) {
+function RoiDashboard({ roi, youtube }: { roi: any; youtube?: any }) {
   if (!roi) {
     return <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-sm text-slate-400">ROI 지표 로딩 중...</div>;
   }
+
+  // SPONPIK Phase 2 SNS — YouTube 데이터를 콘텐츠 반응 카테고리에 병합
+  // 우선순위: roi.contentEngagement (수동입력) > youtube (자동수집)
+  const ytViews = youtube?.recent?.viewSum ?? youtube?.totalViews ?? null;
+  const ytReach = youtube?.subscriberCount ?? null;
+  const ytLikes = youtube?.recent?.likeSum ?? null;
+  const mergedVideoViews = roi.contentEngagement?.videoViews ?? ytViews;
+  const mergedReach = roi.contentEngagement?.reach ?? ytReach;
 
   const fmt = (v: any, type: 'number' | 'currency' | 'percent' | 'time' = 'number'): string => {
     if (v == null || v === '' || (typeof v === 'number' && isNaN(v))) return '-';
@@ -694,8 +710,9 @@ function RoiDashboard({ roi }: { roi: any }) {
       title: '🎬 콘텐츠 반응',
       color: 'sky',
       metrics: [
-        { label: '조회수', value: fmt(roi.contentEngagement.videoViews) },
-        { label: '도달수', value: fmt(roi.contentEngagement.reach) },
+        { label: '조회수' + (ytViews && !roi.contentEngagement?.videoViews ? ' (YT 자동)' : ''), value: fmt(mergedVideoViews) },
+        { label: '도달수' + (ytReach && !roi.contentEngagement?.reach ? ' (구독자)' : ''), value: fmt(mergedReach) },
+        ...(ytLikes ? [{ label: '좋아요 (YT)', value: fmt(ytLikes) }] : []),
       ],
     },
     {

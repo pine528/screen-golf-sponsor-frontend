@@ -852,6 +852,9 @@ export function Profile() {
                           이 항목들은 선수 둘러보기 카드와 상세 페이지에 표시됩니다. 비워두면 "-"로 표기됩니다.
                         </p>
                       </div>
+
+                      {/* SPONPIK Phase 2 SNS — YouTube 채널 연동 */}
+                      <YoutubeChannelSection profile={profile} />
                     </div>
                   )}
                 </div>
@@ -1045,5 +1048,155 @@ export function Profile() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+/**
+ * YouTube 채널 연동 섹션 (선수 본인 — Phase 2 SNS)
+ * - URL/핸들/Channel ID 입력 → 연결 → 즉시 메타+영상 동기화
+ * - 연결 후: 채널 정보 + 최근 영상 5개 + 재동기화/해제 버튼
+ */
+function YoutubeChannelSection({ profile }: { profile: any }) {
+  const qc = useQueryClient();
+  const [input, setInput] = useState('');
+  const athleteId = profile?.id;
+
+  const { data: ytResp } = useQuery({
+    queryKey: ['youtube-athlete', athleteId],
+    queryFn: () => api.getYoutubeAthleteAggregate(athleteId),
+    enabled: !!athleteId,
+  });
+  const yt = ytResp?.data;
+
+  const connectMut = useMutation({
+    mutationFn: (channelInput: string) => api.connectMyYoutube(channelInput),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['youtube-athlete', athleteId] });
+      setInput('');
+      alert('YouTube 채널이 연결되었습니다');
+    },
+    onError: (e: any) => alert(e?.response?.data?.error?.message || '연결 실패'),
+  });
+  const syncMut = useMutation({
+    mutationFn: () => api.syncMyYoutube(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['youtube-athlete', athleteId] }),
+    onError: (e: any) => alert(e?.response?.data?.error?.message || '동기화 실패'),
+  });
+  const disconnectMut = useMutation({
+    mutationFn: () => api.disconnectMyYoutube(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['youtube-athlete', athleteId] }),
+  });
+
+  return (
+    <div className="pt-3 sm:pt-4 border-t border-slate-200">
+      <h3 className="text-xs sm:text-sm font-semibold text-slate-900 mb-3 sm:mb-4 inline-flex items-center gap-2">
+        🎥 YouTube 채널 연동 <span className="text-[10px] text-slate-400 font-normal">Phase 2 · SNS</span>
+      </h3>
+
+      {!yt ? (
+        <div className="space-y-3">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="YouTube URL / @핸들 / 채널 ID (UCxxxx)"
+              className="input flex-1 text-sm"
+            />
+            <button
+              onClick={() => input && connectMut.mutate(input)}
+              disabled={!input || connectMut.isPending}
+              className="btn btn-primary text-sm whitespace-nowrap"
+            >
+              {connectMut.isPending ? '연결 중...' : '연결'}
+            </button>
+          </div>
+          <p className="text-[10px] sm:text-xs text-slate-500">
+            예: https://www.youtube.com/@yenisfree · 또는 @yenisfree · 또는 UCxxxxx<br />
+            연결 시 구독자/조회수/좋아요 등이 ROI 대시보드 "콘텐츠 반응" 카테고리에 자동 반영됩니다.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {/* 채널 카드 */}
+          <div className="border border-slate-200 rounded-xl p-3 sm:p-4 flex items-start gap-3">
+            {yt.thumbnailUrl ? (
+              <img src={yt.thumbnailUrl} alt={yt.title} className="w-12 h-12 rounded-full" />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-slate-100 inline-flex items-center justify-center text-xl">🎥</div>
+            )}
+            <div className="flex-1 min-w-0">
+              <div className="font-extrabold text-sm text-slate-900 truncate">{yt.title}</div>
+              <div className="text-[11px] text-slate-500 truncate">{yt.channelHandle || yt.channelId}</div>
+              <div className="mt-1.5 grid grid-cols-3 gap-2 text-center text-xs">
+                <div>
+                  <div className="text-[10px] text-slate-500">구독자</div>
+                  <div className="font-bold text-slate-900">{yt.subscriberCount?.toLocaleString() ?? '-'}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-500">총 영상</div>
+                  <div className="font-bold text-slate-900">{yt.videoCount?.toLocaleString() ?? '-'}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-slate-500">총 조회수</div>
+                  <div className="font-bold text-slate-900">{yt.totalViews?.toLocaleString() ?? '-'}</div>
+                </div>
+              </div>
+              {yt.syncStatus === 'FAILED' && (
+                <div className="mt-2 text-[10px] text-rose-600 bg-rose-50 px-2 py-1 rounded">
+                  ⚠ 동기화 실패: {yt.syncError}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-1">
+              <button
+                onClick={() => syncMut.mutate()}
+                disabled={syncMut.isPending}
+                className="text-[11px] font-bold px-2 py-1 bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 disabled:opacity-50"
+              >
+                {syncMut.isPending ? '동기화 중...' : '재동기화'}
+              </button>
+              <button
+                onClick={() => { if (confirm('YouTube 채널 연결을 해제할까요?')) disconnectMut.mutate(); }}
+                className="text-[11px] font-bold px-2 py-1 bg-slate-100 text-slate-600 rounded hover:bg-slate-200"
+              >
+                해제
+              </button>
+            </div>
+          </div>
+
+          {/* 최근 영상 5개 (있으면) */}
+          {yt.recent?.videos?.length > 0 && (
+            <div>
+              <div className="text-[11px] font-bold text-slate-500 mb-2">최근 영상 (조회수 합계: {yt.recent.viewSum.toLocaleString()})</div>
+              <div className="space-y-1.5">
+                {yt.recent.videos.map((v: any) => (
+                  <a
+                    key={v.videoId}
+                    href={v.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    {v.thumbnailUrl && <img src={v.thumbnailUrl} alt="" className="w-12 h-9 rounded object-cover" />}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs font-semibold text-slate-900 truncate">{v.title}</div>
+                      <div className="text-[10px] text-slate-500">
+                        👁 {v.viewCount.toLocaleString()} · 👍 {v.likeCount.toLocaleString()} · 💬 {v.commentCount.toLocaleString()}
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+          {yt.lastSyncedAt && (
+            <p className="text-[10px] text-slate-400">
+              마지막 동기화: {new Date(yt.lastSyncedAt).toLocaleString('ko-KR')}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

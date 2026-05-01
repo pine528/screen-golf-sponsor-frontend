@@ -528,6 +528,38 @@ class ApiService {
     return response.data;
   }
 
+  // ============================================
+  // SPONPIK Phase 2 SNS — YouTube Data API 연동
+  // ============================================
+  async getYoutubeAthleteAggregate(athleteId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/youtube/athletes/${athleteId}`);
+    return r.data;
+  }
+  async connectMyYoutube(channelInput: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/youtube/me/connect`, { channelInput });
+    return r.data;
+  }
+  async disconnectMyYoutube() {
+    const r = await this.client.delete<ApiResponse<any>>(`/youtube/me`);
+    return r.data;
+  }
+  async syncMyYoutube() {
+    const r = await this.client.post<ApiResponse<any>>(`/youtube/me/sync`);
+    return r.data;
+  }
+  async connectAthleteYoutubeAdmin(athleteId: string, channelInput: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/youtube/admin/athletes/${athleteId}/connect`, { channelInput });
+    return r.data;
+  }
+  async getAdminYoutubeChannels() {
+    const r = await this.client.get<ApiResponse<any>>(`/youtube/admin/channels`);
+    return r.data;
+  }
+  async getAdminYoutubeStatus() {
+    const r = await this.client.get<ApiResponse<any>>(`/youtube/admin/status`);
+    return r.data;
+  }
+
   async getMyAthleteStats() {
     const response = await this.client.get<ApiResponse<any>>('/athletes/me/stats');
     return response.data;
