@@ -319,6 +319,19 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
     return date.toISOString().split('T')[0];
   };
 
+  // SPONPIK 종목 카테고리 목록 조회 (활성만)
+  const { data: sportsResp } = useQuery({
+    queryKey: ['sports-active'],
+    queryFn: async () => {
+      const r = await fetch('/api/sports', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      const j = await r.json();
+      return j?.data || [];
+    },
+  });
+  const sports: any[] = sportsResp || [];
+
   const [formData, setFormData] = useState({
     name: event?.name || '',
     tour: event?.tour || 'KPGA',
@@ -333,7 +346,7 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
     displayOrder: event?.displayOrder ?? 0,
     isActive: event?.isActive !== false,
     activeDays: event?.activeDays ?? '',
-    sportType: event?.sportType || event?.sport?.code || '',
+    sportId: event?.sportId || event?.sport?.id || '',
   });
   const [error, setError] = useState('');
 
@@ -384,6 +397,7 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
       displayOrder: Number(formData.displayOrder) || 0,
       isActive: !!formData.isActive,
       activeDays: formData.activeDays === '' ? null : Number(formData.activeDays),
+      sportId: formData.sportId || null,
     };
 
     if (event) {
@@ -544,15 +558,30 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
                   placeholder="기본 14"
                 />
               </div>
-              <div className="col-span-2">
-                <label className="inline-flex items-center gap-2 text-sm">
+              <div>
+                <label className="label text-xs">종목 (Sport)</label>
+                <select
+                  value={formData.sportId}
+                  onChange={(e) => setFormData({ ...formData, sportId: e.target.value })}
+                  className="input"
+                >
+                  <option value="">(없음)</option>
+                  {sports.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.code === 'GOLF' ? '🏌️' : s.code === 'SCREEN_GOLF' ? '⛳' : '🏅'} {s.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="inline-flex items-center gap-2 text-sm mt-6">
                   <input
                     type="checkbox"
                     checked={formData.isActive}
                     onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                     className="w-4 h-4"
                   />
-                  <span>운영 활성 (체크 해제 시 공개 페이지에서 제외)</span>
+                  <span>운영 활성</span>
                 </label>
               </div>
             </div>
