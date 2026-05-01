@@ -147,6 +147,48 @@ export function Profile() {
     },
   });
 
+  // 프로필 사진 업로드 (선수)
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const uploadProfileImageMutation = useMutation({
+    mutationFn: async (file: File) => {
+      // 1) /upload/profile 로 파일 업로드 → URL 회수
+      const uploadResp = await api.uploadFile(file, 'profile');
+      const url = uploadResp?.data?.fileUrl;
+      if (!url) throw new Error('업로드 응답에 URL이 없습니다');
+      // 2) profileImageUrl 갱신
+      const updateFn = isBrand ? api.updateMyBrand : api.updateMyAthlete;
+      await updateFn({ profileImageUrl: url } as any);
+      return url;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [isBrand ? 'my-brand' : 'my-athlete'] });
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    },
+    onError: (e: any) => {
+      alert(e?.response?.data?.error?.message || e?.message || '이미지 업로드에 실패했습니다');
+    },
+    onSettled: () => setUploadingImage(false),
+  });
+
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // 파일 검증 (5MB 이하, image/* 만)
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다 (JPG/PNG/WebP)');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('이미지 크기는 5MB 이하로 업로드해주세요');
+      return;
+    }
+    setUploadingImage(true);
+    uploadProfileImageMutation.mutate(file);
+    // 같은 파일 재선택 가능하게 input value 리셋
+    e.target.value = '';
+  };
+
   // Password change state
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -517,16 +559,33 @@ export function Profile() {
             <div className="hidden lg:block card p-6 mb-6">
               <div className="text-center">
                 <div className="relative inline-block">
-                  <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center mx-auto">
-                    {isBrand ? (
+                  <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full overflow-hidden flex items-center justify-center mx-auto">
+                    {profile?.profileImageUrl ? (
+                      <img src={profile.profileImageUrl} alt="프로필" className="w-full h-full object-cover" />
+                    ) : isBrand ? (
                       <Building2 className="w-12 h-12 text-emerald-600" />
                     ) : (
                       <User className="w-12 h-12 text-emerald-600" />
                     )}
                   </div>
-                  <button className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center border border-slate-200 hover:bg-slate-50 transition-colors">
-                    <Camera className="w-4 h-4 text-slate-600" />
-                  </button>
+                  {/* SPONPIK — 프로필 사진 업로드 (5MB 이하 JPG/PNG/WebP) */}
+                  <label
+                    className={`absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center border border-slate-200 transition-colors ${uploadingImage ? 'cursor-wait opacity-60' : 'cursor-pointer hover:bg-slate-50'}`}
+                    title="프로필 사진 변경 (JPG/PNG/WebP, 5MB 이하)"
+                  >
+                    {uploadingImage ? (
+                      <div className="w-3 h-3 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Camera className="w-4 h-4 text-slate-600" />
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleProfileImageChange}
+                      disabled={uploadingImage}
+                    />
+                  </label>
                 </div>
                 <h3 className="font-semibold text-slate-900 mt-4">
                   {isBrand ? brandForm.companyName : athleteForm.displayName}

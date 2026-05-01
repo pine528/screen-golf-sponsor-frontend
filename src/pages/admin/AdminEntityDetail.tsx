@@ -94,6 +94,41 @@ export default function AdminEntityDetail() {
     },
   });
 
+  // 관리자 — 임의 선수 프로필 사진 업로드
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const uploadAthleteImageMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const uploadResp = await api.uploadFile(file, 'profile');
+      const url = uploadResp?.data?.fileUrl;
+      if (!url) throw new Error('업로드 응답에 URL이 없습니다');
+      await api.updateAthleteAdmin(id!, { profileImageUrl: url });
+      return url;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminEntity', type, id] });
+    },
+    onError: (e: any) => {
+      alert(e?.response?.data?.error?.message || e?.message || '이미지 업로드에 실패했습니다');
+    },
+    onSettled: () => setUploadingImage(false),
+  });
+
+  const handleAthleteImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다 (JPG/PNG/WebP)');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('이미지 크기는 5MB 이하로 업로드해주세요');
+      return;
+    }
+    setUploadingImage(true);
+    uploadAthleteImageMutation.mutate(file);
+    e.target.value = '';
+  };
+
   const entity = data?.data;
 
   const getKycStatusBadge = (status: string) => {
@@ -244,17 +279,37 @@ export default function AdminEntityDetail() {
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               {isAthlete ? (
-                entity.profileImageUrl ? (
-                  <img
-                    src={entity.profileImageUrl}
-                    alt={entity.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center">
-                    <Users className="w-8 h-8 text-slate-400" />
+                <label
+                  className={`relative group ${uploadingImage ? 'cursor-wait' : 'cursor-pointer'}`}
+                  title="프로필 사진 변경 (JPG/PNG/WebP, 5MB 이하)"
+                >
+                  {entity.profileImageUrl ? (
+                    <img
+                      src={entity.profileImageUrl}
+                      alt={entity.name}
+                      className="w-16 h-16 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center">
+                      <Users className="w-8 h-8 text-slate-400" />
+                    </div>
+                  )}
+                  {/* 호버 오버레이 + 카메라 아이콘 */}
+                  <div className={`absolute inset-0 rounded-full bg-black/50 flex items-center justify-center transition-opacity ${uploadingImage ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                    {uploadingImage ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <span className="text-white text-xs font-bold">📷 변경</span>
+                    )}
                   </div>
-                )
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleAthleteImageChange}
+                    disabled={uploadingImage}
+                  />
+                </label>
               ) : (
                 <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                   <Building2 className="w-8 h-8 text-white" />
