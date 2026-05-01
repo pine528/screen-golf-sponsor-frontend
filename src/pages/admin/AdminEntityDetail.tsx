@@ -81,6 +81,19 @@ export default function AdminEntityDetail() {
     },
   });
 
+  // SPONPIK docx 4 — 관리자 빠른 편집 (구조화 필드)
+  const [editForm, setEditForm] = useState<any>(null);
+  const editAthleteMutation = useMutation({
+    mutationFn: (patch: any) => api.updateAthleteAdmin(id!, patch),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminEntity', type, id] });
+      setEditForm(null);
+    },
+    onError: (e: any) => {
+      alert(e?.response?.data?.error?.message || '저장 실패');
+    },
+  });
+
   const entity = data?.data;
 
   const getKycStatusBadge = (status: string) => {
@@ -549,6 +562,118 @@ export default function AdminEntityDetail() {
                             <span className="text-slate-900">{entity.blockedCategories.join(', ')}</span>
                           </div>
                         )}
+
+                        {/* SPONPIK docx 4 — 관리자 빠른 편집 패널 (관리자 우선 정책) */}
+                        <div className="mt-4 pt-4 border-t border-slate-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="text-sm font-bold text-slate-900">⚙️ 관리자 빠른 편집</h4>
+                            {editForm == null ? (
+                              <button
+                                onClick={() => setEditForm({
+                                  height: entity.height ?? '',
+                                  region: entity.region ?? '',
+                                  debutYear: entity.debutYear ?? '',
+                                  affiliation: entity.affiliation ?? '',
+                                  sportType: entity.sportType ?? '',
+                                  isActive: entity.isActive ?? true,
+                                })}
+                                className="text-xs font-bold px-3 py-1 bg-emerald-500 text-white rounded hover:bg-emerald-600"
+                              >
+                                편집 시작
+                              </button>
+                            ) : (
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() => editAthleteMutation.mutate({
+                                    height: editForm.height === '' ? null : Number(editForm.height),
+                                    region: editForm.region || null,
+                                    debutYear: editForm.debutYear === '' ? null : Number(editForm.debutYear),
+                                    affiliation: editForm.affiliation || null,
+                                    sportType: editForm.sportType || null,
+                                    isActive: editForm.isActive,
+                                  })}
+                                  disabled={editAthleteMutation.isPending}
+                                  className="text-xs font-bold px-3 py-1 bg-emerald-500 text-white rounded hover:bg-emerald-600 disabled:opacity-50"
+                                >
+                                  {editAthleteMutation.isPending ? '저장 중...' : '저장'}
+                                </button>
+                                <button
+                                  onClick={() => setEditForm(null)}
+                                  className="text-xs font-bold px-3 py-1 bg-slate-200 text-slate-700 rounded hover:bg-slate-300"
+                                >
+                                  취소
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          {editForm != null && (
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div>
+                                <label className="block text-[10px] text-slate-500 mb-0.5">신장 (cm)</label>
+                                <input
+                                  type="number"
+                                  value={editForm.height}
+                                  onChange={(e) => setEditForm({ ...editForm, height: e.target.value === '' ? '' : Number(e.target.value) })}
+                                  className="w-full text-xs border rounded px-2 py-1"
+                                  placeholder="예: 170"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[10px] text-slate-500 mb-0.5">데뷔 연도</label>
+                                <input
+                                  type="number"
+                                  value={editForm.debutYear}
+                                  onChange={(e) => setEditForm({ ...editForm, debutYear: e.target.value === '' ? '' : Number(e.target.value) })}
+                                  className="w-full text-xs border rounded px-2 py-1"
+                                  placeholder="예: 2018"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[10px] text-slate-500 mb-0.5">거주 지역</label>
+                                <input
+                                  type="text"
+                                  value={editForm.region}
+                                  onChange={(e) => setEditForm({ ...editForm, region: e.target.value })}
+                                  className="w-full text-xs border rounded px-2 py-1"
+                                  placeholder="예: 경기도 성남시"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[10px] text-slate-500 mb-0.5">소속</label>
+                                <input
+                                  type="text"
+                                  value={editForm.affiliation}
+                                  onChange={(e) => setEditForm({ ...editForm, affiliation: e.target.value })}
+                                  className="w-full text-xs border rounded px-2 py-1"
+                                  placeholder="예: SBSGOLF"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-[10px] text-slate-500 mb-0.5">종목</label>
+                                <select
+                                  value={editForm.sportType}
+                                  onChange={(e) => setEditForm({ ...editForm, sportType: e.target.value })}
+                                  className="w-full text-xs border rounded px-2 py-1 bg-white"
+                                >
+                                  <option value="">선택</option>
+                                  <option value="GOLF">🏌️ 골프</option>
+                                  <option value="SCREEN_GOLF">⛳ 스크린골프</option>
+                                </select>
+                              </div>
+                              <div>
+                                <label className="block text-[10px] text-slate-500 mb-0.5">운영 활성</label>
+                                <button
+                                  onClick={() => setEditForm({ ...editForm, isActive: !editForm.isActive })}
+                                  className={`w-full text-xs font-bold px-2 py-1 rounded ${
+                                    editForm.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'
+                                  }`}
+                                >
+                                  {editForm.isActive ? '🟢 활성' : '⚪ 비활성'}
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </>
                     ) : (
                       <>

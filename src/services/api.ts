@@ -523,6 +523,11 @@ class ApiService {
     return response.data;
   }
 
+  async updateAthleteAdmin(athleteId: string, data: any) {
+    const response = await this.client.patch<ApiResponse<any>>(`/athletes/admin/${athleteId}`, data);
+    return response.data;
+  }
+
   async getMyAthleteStats() {
     const response = await this.client.get<ApiResponse<any>>('/athletes/me/stats');
     return response.data;
