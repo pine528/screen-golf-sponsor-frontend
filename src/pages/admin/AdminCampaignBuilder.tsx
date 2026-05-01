@@ -71,7 +71,7 @@ export function AdminCampaignBuilder() {
 
   const SLOT_LABELS: Record<string, string> = {
     CAP_FRONT: '모자 정면', CAP_SIDE_L: '모자 좌측', CAP_SIDE_R: '모자 우측',
-    CHEST_L: '가슴 좌', CHEST_R: '가슴 우',
+    CHEST_L: '상의 좌측', CHEST_R: '상의 우측',
     COLLAR_L: '카라 좌', COLLAR_R: '카라 우',
     SLEEVE_L: '소매 좌', SLEEVE_R: '소매 우',
   };

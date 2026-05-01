@@ -102,18 +102,18 @@ function getPosition(bodyPart: string): {
     }
   }
 
-  // 가슴 (CHEST) - 입은 사람 기준 (화면상 반대)
+  // 상의 (CHEST) - 입은 사람 기준 (화면상 반대)
   if (part.includes('CHEST')) {
     if (part.includes('LEFT') || part.includes('L')) {
-      // 입은 사람 기준 왼쪽 가슴 = 화면상 오른쪽
-      return { key: 'CHEST_L', x: 190, y: 140, label: '왼쪽 가슴', labelX: 190, labelY: 185 };
+      // 입은 사람 기준 좌측 = 화면상 오른쪽
+      return { key: 'CHEST_L', x: 190, y: 140, label: '상의 좌측', labelX: 190, labelY: 185 };
     }
     if (part.includes('RIGHT') || part.includes('R')) {
-      // 입은 사람 기준 오른쪽 가슴 = 화면상 왼쪽
-      return { key: 'CHEST_R', x: 110, y: 140, label: '오른쪽 가슴', labelX: 110, labelY: 185 };
+      // 입은 사람 기준 우측 = 화면상 왼쪽
+      return { key: 'CHEST_R', x: 110, y: 140, label: '상의 우측', labelX: 110, labelY: 185 };
     }
-    // 중앙 가슴
-    return { key: 'CHEST_C', x: 150, y: 140, label: '가슴 중앙', labelX: 150, labelY: 185 };
+    // 중앙
+    return { key: 'CHEST_C', x: 150, y: 140, label: '상의 중앙', labelX: 150, labelY: 185 };
   }
 
   // 등판 (BACK)
@@ -126,8 +126,8 @@ function getPosition(bodyPart: string): {
     return { key: 'BELT', x: 150, y: 240, label: '벨트', labelX: 150, labelY: 275 };
   }
 
-  // 기본값: 왼쪽 가슴 (골프 셔츠의 일반적인 로고 위치 - 입은 사람 기준)
-  return { key: 'CHEST_L', x: 190, y: 140, label: '왼쪽 가슴', labelX: 190, labelY: 185 };
+  // 기본값: 상의 좌측 (골프 셔츠의 일반적인 로고 위치 - 입은 사람 기준)
+  return { key: 'CHEST_L', x: 190, y: 140, label: '상의 좌측', labelX: 190, labelY: 185 };
 }
 
 /**
