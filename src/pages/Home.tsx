@@ -271,14 +271,14 @@ export function Home() {
               </div>
             </div>
 
-            {/* Center - Hero Model Image */}
+            {/* Center - Hero Model Image (배진리 프로 — 스폰픽 파운더 No.1) */}
             <div className="hidden lg:flex relative justify-center items-end z-[5] -ml-16 -mt-12">
               {/* Soft glow behind model */}
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] bg-emerald-400/10 rounded-full blur-[100px] pointer-events-none" />
               <div className="relative">
                 <img
-                  src="/hero-model.png"
-                  alt="SPONPIK 대표 프로골퍼"
+                  src="/golfers/bae-jinri.jpeg"
+                  alt="배진리 프로 — 스폰픽 파운더 No.1"
                   className="relative h-[700px] w-auto object-contain object-bottom"
                 />
                 {/* Bottom fade into background */}
@@ -286,6 +286,15 @@ export function Home() {
                 {/* Side fades */}
                 <div className="absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-[#f8fafc]/60 to-transparent pointer-events-none" />
                 <div className="absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-[#f8fafc]/60 to-transparent pointer-events-none" />
+
+                {/* 파운더 배지 (이미지 하단 중앙) */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/95 backdrop-blur shadow-lg shadow-emerald-500/30 mb-1.5">
+                    <span className="text-[10px] font-bold text-white tracking-wide">⭐ SPONPIK FOUNDER No.1</span>
+                  </div>
+                  <div className="text-base font-extrabold text-slate-900 drop-shadow-sm">배진리 프로</div>
+                  <div className="text-[11px] font-semibold text-emerald-700 mt-0.5">KLPGA · 170cm · 2020년 데뷔</div>
+                </div>
               </div>
             </div>
 
