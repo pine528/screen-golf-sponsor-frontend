@@ -855,6 +855,9 @@ export function Profile() {
 
                       {/* SPONPIK Phase 2 SNS — YouTube 채널 연동 */}
                       <YoutubeChannelSection profile={profile} />
+
+                      {/* SPONPIK Phase 2 SNS 옵션 B — 출연 영상(3rd-party) 큐레이션 */}
+                      <AthleteMentionSection profile={profile} />
                     </div>
                   )}
                 </div>
@@ -1197,6 +1200,208 @@ function YoutubeChannelSection({ profile }: { profile: any }) {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * 선수 출연 영상 큐레이션 (Phase 2 SNS — 옵션 B)
+ *
+ * 흐름:
+ * 1. URL 직접 추가 (즉시 APPROVED)
+ * 2. "내 이름으로 검색" 클릭 → PENDING 후보 자동 등록
+ * 3. PENDING 영상에 ✓ 승인 / ✗ 거절 / 🗑 삭제
+ * 4. APPROVED 합계가 RoiDashboard "콘텐츠 반응" 카테고리에 자동 반영
+ */
+function AthleteMentionSection({ profile }: { profile: any }) {
+  const qc = useQueryClient();
+  const [urlInput, setUrlInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const athleteId = profile?.id;
+
+  const { data: mentionsResp } = useQuery({
+    queryKey: ['my-mentions'],
+    queryFn: () => api.listMyMentions(),
+    enabled: !!athleteId,
+  });
+  const mentions: any[] = mentionsResp?.data || [];
+  const pending = mentions.filter((m) => m.status === 'PENDING');
+  const approved = mentions.filter((m) => m.status === 'APPROVED');
+  const rejected = mentions.filter((m) => m.status === 'REJECTED');
+
+  const addMut = useMutation({
+    mutationFn: (url: string) => api.addMyMention(url),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-mentions'] }); setUrlInput(''); },
+    onError: (e: any) => alert(e?.response?.data?.error?.message || '등록 실패'),
+  });
+  const searchMut = useMutation({
+    mutationFn: (q?: string) => api.searchMyMentions(q),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-mentions'] }); setSearchQuery(''); },
+    onError: (e: any) => alert(e?.response?.data?.error?.message || '검색 실패 (YOUTUBE_API_KEY 미설정 가능성)'),
+  });
+  const approveMut = useMutation({
+    mutationFn: (id: string) => api.approveMyMention(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['my-mentions'] }),
+  });
+  const rejectMut = useMutation({
+    mutationFn: (id: string) => api.rejectMyMention(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['my-mentions'] }),
+  });
+  const removeMut = useMutation({
+    mutationFn: (id: string) => api.deleteMyMention(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['my-mentions'] }),
+  });
+
+  const totalViews = approved.reduce((s: number, m: any) => s + (m.viewCount || 0), 0);
+  const totalLikes = approved.reduce((s: number, m: any) => s + (m.likeCount || 0), 0);
+
+  return (
+    <div className="pt-3 sm:pt-4 border-t border-slate-200">
+      <h3 className="text-xs sm:text-sm font-semibold text-slate-900 mb-3 sm:mb-4 inline-flex items-center gap-2">
+        🎬 출연 영상 (3rd-party 채널) <span className="text-[10px] text-slate-400 font-normal">Phase 2 · 검색+확인</span>
+      </h3>
+
+      {/* 1) URL 직접 추가 */}
+      <div className="mb-3">
+        <label className="text-[11px] font-bold text-slate-500 mb-1 block">출연 영상 URL 직접 추가 (즉시 등록)</label>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            placeholder="https://www.youtube.com/watch?v=xxx"
+            className="input flex-1 text-sm"
+          />
+          <button
+            onClick={() => urlInput && addMut.mutate(urlInput)}
+            disabled={!urlInput || addMut.isPending}
+            className="btn btn-primary text-sm whitespace-nowrap"
+          >
+            {addMut.isPending ? '등록 중...' : '추가'}
+          </button>
+        </div>
+      </div>
+
+      {/* 2) 자동 검색 */}
+      <div className="mb-4 bg-slate-50 rounded-lg p-3">
+        <label className="text-[11px] font-bold text-slate-500 mb-1 block">자동 검색 (선택 검토)</label>
+        <div className="flex flex-col sm:flex-row gap-2 mb-2">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={`기본: 내 이름 (${profile?.name || '-'})`}
+            className="input flex-1 text-sm"
+          />
+          <button
+            onClick={() => searchMut.mutate(searchQuery || undefined)}
+            disabled={searchMut.isPending}
+            className="btn btn-secondary text-sm whitespace-nowrap"
+          >
+            {searchMut.isPending ? '검색 중...' : '🔍 YouTube 검색'}
+          </button>
+        </div>
+        <p className="text-[10px] text-slate-500">
+          내 이름이 영상 제목/설명에 포함된 영상을 자동으로 검색하여 후보로 등록합니다. 후보는 본인이 ✓ 승인 / ✗ 거절해야 ROI에 반영됩니다.
+        </p>
+      </div>
+
+      {/* 3) PENDING 후보 (검토 대기) */}
+      {pending.length > 0 && (
+        <div className="mb-4">
+          <div className="text-[11px] font-bold text-amber-700 mb-2 flex items-center gap-1">
+            ⏳ 검토 대기 ({pending.length}개) — 본인 출연 영상이 맞으면 ✓ 승인
+          </div>
+          <div className="space-y-1.5">
+            {pending.map((m: any) => (
+              <MentionRow
+                key={m.id}
+                m={m}
+                actions={[
+                  { label: '✓ 승인', cls: 'bg-emerald-500 text-white hover:bg-emerald-600', onClick: () => approveMut.mutate(m.id) },
+                  { label: '✗ 거절', cls: 'bg-rose-100 text-rose-700 hover:bg-rose-200', onClick: () => rejectMut.mutate(m.id) },
+                ]}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 4) APPROVED (ROI 반영 중) */}
+      {approved.length > 0 && (
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-[11px] font-bold text-emerald-700">
+              ✅ ROI 반영 중 ({approved.length}개)
+            </div>
+            <div className="text-[10px] text-slate-600">
+              합계: 👁 {totalViews.toLocaleString()} · 👍 {totalLikes.toLocaleString()}
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            {approved.map((m: any) => (
+              <MentionRow
+                key={m.id}
+                m={m}
+                actions={[
+                  { label: '🗑', cls: 'bg-slate-100 text-slate-600 hover:bg-slate-200', onClick: () => { if (confirm('이 영상을 ROI에서 제외할까요?')) removeMut.mutate(m.id); } },
+                ]}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 5) REJECTED (참고용) */}
+      {rejected.length > 0 && (
+        <details className="text-xs text-slate-500">
+          <summary className="cursor-pointer">거절된 영상 ({rejected.length}개)</summary>
+          <div className="mt-2 space-y-1">
+            {rejected.map((m: any) => (
+              <div key={m.id} className="flex items-center gap-2 text-[11px] text-slate-400 py-1">
+                <span className="line-through truncate flex-1">{m.videoTitle}</span>
+                <button onClick={() => approveMut.mutate(m.id)} className="text-emerald-600 hover:underline">복원</button>
+                <button onClick={() => removeMut.mutate(m.id)} className="text-rose-500 hover:underline">완전 삭제</button>
+              </div>
+            ))}
+          </div>
+        </details>
+      )}
+
+      {mentions.length === 0 && (
+        <p className="text-xs text-slate-400 text-center py-3">
+          아직 등록된 출연 영상이 없습니다. URL 추가 또는 자동 검색으로 시작하세요.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function MentionRow({ m, actions }: { m: any; actions: Array<{ label: string; cls: string; onClick: () => void }> }) {
+  return (
+    <div className="flex items-center gap-2 p-2 border border-slate-200 rounded-lg">
+      {m.videoThumbnail ? (
+        <img src={m.videoThumbnail} alt="" className="w-16 h-12 rounded object-cover flex-shrink-0" />
+      ) : (
+        <div className="w-16 h-12 rounded bg-slate-100 inline-flex items-center justify-center text-lg flex-shrink-0">🎥</div>
+      )}
+      <div className="flex-1 min-w-0">
+        <a href={`https://www.youtube.com/watch?v=${m.videoId}`} target="_blank" rel="noreferrer"
+          className="text-xs font-semibold text-slate-900 truncate block hover:text-emerald-600">
+          {m.videoTitle}
+        </a>
+        <div className="text-[10px] text-slate-500 truncate">
+          {m.channelTitle && <span>{m.channelTitle} · </span>}
+          👁 {(m.viewCount || 0).toLocaleString()} · 👍 {(m.likeCount || 0).toLocaleString()} · 💬 {(m.commentCount || 0).toLocaleString()}
+        </div>
+      </div>
+      <div className="flex flex-col gap-1">
+        {actions.map((a, i) => (
+          <button key={i} onClick={a.onClick} className={`text-[11px] font-bold px-2 py-1 rounded ${a.cls}`}>
+            {a.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

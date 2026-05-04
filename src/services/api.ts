@@ -560,6 +560,36 @@ class ApiService {
     return r.data;
   }
 
+  // 선수 출연 영상 (Mention) — Phase 2 옵션 B
+  async getAthleteMentionsAggregate(athleteId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/youtube/mentions/athletes/${athleteId}`);
+    return r.data;
+  }
+  async listMyMentions(status?: 'PENDING' | 'APPROVED' | 'REJECTED') {
+    const r = await this.client.get<ApiResponse<any>>(`/youtube/mentions/me`, { params: status ? { status } : {} });
+    return r.data;
+  }
+  async searchMyMentions(query?: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/youtube/mentions/me/search`, query ? { query } : {});
+    return r.data;
+  }
+  async addMyMention(videoUrl: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/youtube/mentions/me`, { videoUrl });
+    return r.data;
+  }
+  async approveMyMention(mentionId: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/youtube/mentions/me/${mentionId}/approve`);
+    return r.data;
+  }
+  async rejectMyMention(mentionId: string, reason?: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/youtube/mentions/me/${mentionId}/reject`, reason ? { reason } : {});
+    return r.data;
+  }
+  async deleteMyMention(mentionId: string) {
+    const r = await this.client.delete<ApiResponse<any>>(`/youtube/mentions/me/${mentionId}`);
+    return r.data;
+  }
+
   async getMyAthleteStats() {
     const response = await this.client.get<ApiResponse<any>>('/athletes/me/stats');
     return response.data;

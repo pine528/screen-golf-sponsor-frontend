@@ -63,6 +63,14 @@ export default function PublicAthleteDetail() {
   });
   const youtube = (ytResp?.data as any) || null;
 
+  // SPONPIK Phase 2 SNS 옵션 B — 출연 영상 (mention) 집계
+  const { data: mentionsResp } = useQuery({
+    queryKey: ['public-athlete-mentions', id],
+    queryFn: () => api.getAthleteMentionsAggregate(id!),
+    enabled: !!id,
+  });
+  const mentions = (mentionsResp?.data as any) || null;
+
   const athlete = resp?.data?.athlete;
   const slotInstances: any[] = (resp?.data as any)?.slotInstances || [];
   const recentEvents: any[] = (resp?.data as any)?.recentEvents || [];
@@ -273,7 +281,7 @@ export default function PublicAthleteDetail() {
             </span>
           )}
         </div>
-        <RoiDashboard roi={roi} youtube={youtube} />
+        <RoiDashboard roi={roi} youtube={youtube} mentions={mentions} />
       </section>
 
       {/* 하단: 최근 경기 / 메인 스폰서 */}
@@ -670,17 +678,25 @@ function BidTierLadder({
 }
 
 /** ROI 대시보드 (docx 3-5: 5카테고리 13지표) */
-function RoiDashboard({ roi, youtube }: { roi: any; youtube?: any }) {
+function RoiDashboard({ roi, youtube, mentions }: { roi: any; youtube?: any; mentions?: any }) {
   if (!roi) {
     return <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-sm text-slate-400">ROI 지표 로딩 중...</div>;
   }
 
-  // SPONPIK Phase 2 SNS — YouTube 데이터를 콘텐츠 반응 카테고리에 병합
-  // 우선순위: roi.contentEngagement (수동입력) > youtube (자동수집)
-  const ytViews = youtube?.recent?.viewSum ?? youtube?.totalViews ?? null;
+  // SPONPIK Phase 2 SNS — 콘텐츠 반응 카테고리에 모든 소스 병합
+  //   ① roi.contentEngagement (수동 입력 / 미디어 캡처 시스템)
+  //   ② youtube (선수 본인 채널 — 최근 20개 영상 합계)
+  //   ③ mentions (3rd-party 출연 영상 — APPROVED만)
+  const ytChannelViews = youtube?.recent?.viewSum ?? 0;
+  const mentionViews = mentions?.viewSum ?? 0;
+  const totalAutoViews = ytChannelViews + mentionViews;
+
   const ytReach = youtube?.subscriberCount ?? null;
-  const ytLikes = youtube?.recent?.likeSum ?? null;
-  const mergedVideoViews = roi.contentEngagement?.videoViews ?? ytViews;
+  const ytLikes = youtube?.recent?.likeSum ?? 0;
+  const mentionLikes = mentions?.likeSum ?? 0;
+  const totalAutoLikes = ytLikes + mentionLikes;
+
+  const mergedVideoViews = roi.contentEngagement?.videoViews ?? (totalAutoViews > 0 ? totalAutoViews : null);
   const mergedReach = roi.contentEngagement?.reach ?? ytReach;
 
   const fmt = (v: any, type: 'number' | 'currency' | 'percent' | 'time' = 'number'): string => {
@@ -710,9 +726,10 @@ function RoiDashboard({ roi, youtube }: { roi: any; youtube?: any }) {
       title: '🎬 콘텐츠 반응',
       color: 'sky',
       metrics: [
-        { label: '조회수' + (ytViews && !roi.contentEngagement?.videoViews ? ' (YT 자동)' : ''), value: fmt(mergedVideoViews) },
+        { label: '조회수' + (totalAutoViews > 0 && !roi.contentEngagement?.videoViews ? ' (YT 자동)' : ''), value: fmt(mergedVideoViews) },
         { label: '도달수' + (ytReach && !roi.contentEngagement?.reach ? ' (구독자)' : ''), value: fmt(mergedReach) },
-        ...(ytLikes ? [{ label: '좋아요 (YT)', value: fmt(ytLikes) }] : []),
+        ...(mentions?.count ? [{ label: '출연 영상 수', value: `${mentions.count}건` }] : []),
+        ...(totalAutoLikes > 0 ? [{ label: '좋아요 합계', value: fmt(totalAutoLikes) }] : []),
       ],
     },
     {
