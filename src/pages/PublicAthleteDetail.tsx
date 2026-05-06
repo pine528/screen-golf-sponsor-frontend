@@ -585,6 +585,9 @@ export default function PublicAthleteDetail() {
           </div>
         )}
       </section>
+
+      {/* === G. 점수 산정 기준 / 데이터 출처 (docx §13 — F 이후 마지막 섹션) === */}
+      <ScoringAndDataSources roi={roi} viewMode="BASIC" />
     </div>
   );
 }
@@ -1127,7 +1130,27 @@ function RoiDashboard({ roi, youtube }: { roi: any; youtube?: any; mentions?: an
         </div>
       )}
 
-      {/* === G. 점수 산정 기준 + 데이터 출처 === */}
+      <div className="text-[10px] text-slate-400 text-right">
+        ※ "-" 표시 = 아직 수집되지 않은 지표 (데이터 들어오면 자동 반영)
+        {/* G 섹션은 페이지 최하단 (F 경기결과 이후) 별도 위치 — docx §13 순서 준수 */}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * G. 점수 산정 기준 + 데이터 출처 (docx §10, §13)
+ * - 페이지 최하단 (F 경기결과 이후)에 별도 섹션으로 배치
+ */
+function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' | 'EXTENDED' }) {
+  if (!roi) return null;
+  const isExtended = viewMode === 'EXTENDED';
+  return (
+    <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12">
+      <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
+        <Trophy className="w-5 h-5 text-emerald-500" />
+        점수 산정 기준 / 데이터 출처
+      </h2>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="bg-white border border-slate-200 rounded-2xl p-4">
           <h3 className="text-sm font-extrabold text-slate-900 mb-2">📐 {isExtended ? '확장형' : '기본형'} 점수 산정 기준</h3>
@@ -1162,11 +1185,7 @@ function RoiDashboard({ roi, youtube }: { roi: any; youtube?: any; mentions?: an
           </div>
         </div>
       </div>
-
-      <div className="text-[10px] text-slate-400 text-right">
-        ※ "-" 표시 = 아직 수집되지 않은 지표 (데이터 들어오면 자동 반영)
-      </div>
-    </div>
+    </section>
   );
 }
 
