@@ -24,6 +24,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
 import { formatTimeRemaining } from '../utils';
+import { ServiceAnnouncementModal } from '../components/ServiceAnnouncementModal';
 
 /* ── Intersection Observer counter ── */
 function useCounter(end: number, duration = 2000) {
@@ -150,6 +151,8 @@ export function Home() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 overflow-x-hidden">
+      {/* SPONPIK 서비스 오픈 안내 모달 (홈 진입 시 자동 표시) */}
+      <ServiceAnnouncementModal />
 
       {/* ════════════════════════ NAV ════════════════════════ */}
       <nav className="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-100">
