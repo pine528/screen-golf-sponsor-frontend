@@ -18,8 +18,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  ArrowLeft, Trophy, Instagram, Globe,
-  Gavel, Clock, TrendingUp, AlertCircle, Users, Calendar,
+  ArrowLeft, Trophy, Instagram, Globe, User,
+  Gavel, Clock, TrendingUp, AlertCircle, Users, Calendar, MapPin,
 } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuctionSocket } from '../hooks/useSocket';
@@ -238,12 +238,47 @@ export default function PublicAthleteDetail() {
                 )}
               </div>
             )}
+
+            {/* docx A 우측 버튼 3종 — 현재 슬롯 보기 / 프로필 상세 / 경매 참여하기 */}
+            <div className="mt-4 flex flex-wrap gap-2 justify-center sm:justify-start">
+              <button
+                onClick={() => {
+                  document.querySelector('[data-section="slots"]')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="inline-flex items-center gap-1.5 bg-white text-emerald-600 hover:bg-emerald-50 px-4 py-2 rounded-lg text-xs font-extrabold shadow-md transition-colors"
+              >
+                <Gavel className="w-3.5 h-3.5" /> 현재 슬롯 보기
+                {orderedSlots.length > 0 && (
+                  <span className="bg-emerald-100 text-emerald-700 text-[10px] px-1.5 py-0.5 rounded-full ml-0.5">{orderedSlots.length}</span>
+                )}
+              </button>
+              <button
+                onClick={() => {
+                  document.querySelector('[data-section="profile-detail"]')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 backdrop-blur text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors"
+              >
+                <User className="w-3.5 h-3.5" /> 프로필 상세
+              </button>
+              {orderedSlots.some((s) => s.auction?.status === 'LIVE') && (
+                <button
+                  onClick={() => {
+                    const liveSlot = orderedSlots.find((s) => s.auction?.status === 'LIVE');
+                    if (liveSlot) setSelectedSlotId(liveSlot.id);
+                    document.querySelector('[data-section="slots"]')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="inline-flex items-center gap-1.5 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-xs font-extrabold shadow-md transition-colors animate-pulse"
+                >
+                  🔥 경매 참여하기
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* 중단: 슬롯별 실시간 경매 현황 (3-2 + 3-3 + 3-4) */}
-      <section className="max-w-6xl mx-auto px-5 sm:px-8 py-8">
+      <section data-section="slots" className="max-w-6xl mx-auto px-5 sm:px-8 py-8">
         <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
           <Gavel className="w-5 h-5 text-emerald-500" />
           진행 중인 광고 슬롯
@@ -306,9 +341,9 @@ export default function PublicAthleteDetail() {
         <RoiDashboard roi={roi} youtube={youtube} mentions={mentions} />
       </section>
 
-      {/* 하단: 최근 경기 / 메인 스폰서 */}
-      <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* 슬롯 요약 (간소화) */}
+      {/* === E. 운영 현황 카드 영역 (docx E-1, E-2, E-3 — 3열) === */}
+      <section data-section="profile-detail" className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* E-1. 슬롯 현황 카드 */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5">
           <h2 className="text-base font-extrabold text-slate-900 mb-3 inline-flex items-center gap-2">
             <Gavel className="w-4 h-4 text-emerald-500" /> 슬롯 현황
@@ -319,27 +354,33 @@ export default function PublicAthleteDetail() {
             <Stat label="낙찰" value={String(orderedSlots.filter((s) => s.status === 'SOLD').length)} />
             <Stat label="가입일" value={athlete.createdAt ? new Date(athlete.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short' }) : '-'} />
           </div>
+          {/* 계약 상태 (docx E-1) */}
+          <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+            <span className="text-slate-500">계약 상태</span>
+            <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold text-[10px]">
+              ● 활동중
+            </span>
+          </div>
         </div>
 
-        {/* 최근 참가 경기 (3-9 하단) */}
+        {/* E-2. 최근 참가 대회 카드 */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5">
           <h2 className="text-base font-extrabold text-slate-900 mb-3 inline-flex items-center gap-2">
             <Calendar className="w-4 h-4 text-emerald-500" /> 최근 참가 대회
           </h2>
           {recentEvents.length === 0 ? (
-            <div className="text-center py-8 text-sm text-slate-400">최근 대회 정보가 없습니다.</div>
+            <div className="text-center py-6 text-sm text-slate-400">최근 대회 정보가 없습니다.</div>
           ) : (
             <div className="space-y-2">
-              {recentEvents.map((e: any) => (
+              {recentEvents.slice(0, 3).map((e: any) => (
                 <div key={e.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-b-0">
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold truncate">{e.name}</div>
+                    <div className="text-xs font-semibold truncate">{e.name}</div>
                     <div className="text-[10px] text-slate-400">
                       {e.tour} · {e.dateStart ? new Date(e.dateStart).toLocaleDateString('ko-KR') : '-'}
-                      {e.venue && ` · ${e.venue}`}
                     </div>
                   </div>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ml-2 ${
+                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ml-2 ${
                     e.status === 'LIVE' ? 'bg-rose-100 text-rose-700'
                     : e.status === 'UPCOMING' ? 'bg-emerald-100 text-emerald-700'
                     : 'bg-slate-100 text-slate-500'
@@ -349,6 +390,49 @@ export default function PublicAthleteDetail() {
             </div>
           )}
         </div>
+
+        {/* E-3. 다음 참가 예정 대회 카드 (신규 — docx E-3) */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-5">
+          <h2 className="text-base font-extrabold text-slate-900 mb-3 inline-flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-sky-500" /> 다음 참가 예정 대회
+          </h2>
+          {(() => {
+            const upcoming = recentEvents.filter((e: any) => e.status === 'UPCOMING' && new Date(e.dateStart) >= new Date());
+            const next = upcoming[0] || roi?.athletePerformance?.nextEvent || roi?.operations?.nextEvent;
+            if (!next) {
+              return <div className="text-center py-6 text-sm text-slate-400">예정된 대회가 없습니다.</div>;
+            }
+            return (
+              <div className="space-y-2">
+                <div className="text-sm font-extrabold text-slate-900">{next.name}</div>
+                <div className="text-xs text-slate-600 inline-flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  {next.dateStart ? new Date(next.dateStart).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }) : '-'}
+                </div>
+                {next.venue && (
+                  <div className="text-xs text-slate-600 inline-flex items-center gap-1">
+                    <MapPin className="w-3 h-3" />
+                    {next.venue}
+                  </div>
+                )}
+                {next.tour && (
+                  <div>
+                    <span className="inline-block text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                      {next.tour}
+                    </span>
+                  </div>
+                )}
+                <span className="inline-block text-[10px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full mt-1">
+                  📅 UPCOMING
+                </span>
+              </div>
+            );
+          })()}
+        </div>
+      </section>
+
+      {/* 경기결과 + 메인 스폰서 (별도 행) */}
+      <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* 경기결과 / 분석 (docx 3-6, 연도별 그룹핑 + 최신순) */}
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5">
@@ -1004,17 +1088,30 @@ function RoiCard({
           {score != null ? score.toFixed(1) : '-'}
         </span>
         {score != null && <span className="text-[10px] text-slate-400">/100</span>}
+        {score == null && (
+          <span className="text-[9px] text-slate-400 italic ml-auto">📡 수집 준비 중</span>
+        )}
       </div>
       <div className="space-y-1.5">
-        {metrics.map((m) => (
-          <div key={m.label} className="flex items-center justify-between gap-2">
-            <span className="text-[11px] text-slate-500">{m.label}</span>
-            <span className={`text-xs font-bold ${m.value === '-' ? 'text-slate-400' : 'text-slate-900'} ${m.truncate ? 'truncate max-w-[140px]' : ''}`}>
-              {m.value}
-            </span>
-          </div>
-        ))}
+        {metrics.map((m) => {
+          // docx 11. 상태값 처리 — 미수집 항목은 "-" 대신 의미있는 라벨 (옵션)
+          const isEmpty = m.value === '-' || m.value === '' || m.value == null;
+          return (
+            <div key={m.label} className="flex items-center justify-between gap-2">
+              <span className="text-[11px] text-slate-500">{m.label}</span>
+              <span className={`text-xs font-bold ${isEmpty ? 'text-slate-400' : 'text-slate-900'} ${m.truncate ? 'truncate max-w-[140px]' : ''}`}>
+                {m.value}
+              </span>
+            </div>
+          );
+        })}
       </div>
+      {/* 모든 지표 미수집 시 "수집 준비 중" 안내 (docx 11) */}
+      {metrics.every(m => m.value === '-' || !m.value) && (
+        <div className="mt-3 pt-2 border-t border-current/10 text-[10px] text-center text-slate-400">
+          📡 데이터 수집 준비 중
+        </div>
+      )}
     </div>
   );
 }
