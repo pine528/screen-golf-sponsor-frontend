@@ -274,12 +274,16 @@ export function Home() {
             {/* Center - Hero Model Image (배진리 프로 — 누끼 PNG, 좌측하단 텍스트 포함) */}
             <div className="hidden lg:flex relative justify-center items-end z-[5] -ml-16 -mt-12">
               {/* Soft glow behind model */}
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] bg-emerald-400/10 rounded-full blur-[100px] pointer-events-none" />
-              <img
-                src="/golfers/bae-jinri-cutout.png"
-                alt="배진리 프로 — SPONPIK Founder No.1"
-                className="relative h-[760px] w-auto object-contain object-bottom"
-              />
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-emerald-400/10 rounded-full blur-[100px] pointer-events-none" />
+              <div className="relative">
+                <img
+                  src="/golfers/bae-jinri-cutout.png"
+                  alt="배진리 프로 — SPONPIK Founder No.1"
+                  className="relative h-[600px] w-auto object-contain object-bottom"
+                />
+                {/* 하단 페이드 효과 — 사진 발 부분 자연스럽게 페이드아웃 */}
+                <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#f8fafc] via-[#f8fafc]/80 to-transparent pointer-events-none" />
+              </div>
             </div>
 
             {/* Right - Hot Auction Card (실데이터 바인딩, docx 2-1) */}
