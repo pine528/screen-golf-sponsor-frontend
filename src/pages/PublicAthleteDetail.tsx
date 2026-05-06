@@ -363,7 +363,7 @@ export default function PublicAthleteDetail() {
           </div>
         </div>
 
-        {/* E-2. 최근 참가 대회 카드 */}
+        {/* E-2. 최근 참가 대회 카드 (docx §8 — 최근 성적 포함) */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5">
           <h2 className="text-base font-extrabold text-slate-900 mb-3 inline-flex items-center gap-2">
             <Calendar className="w-4 h-4 text-emerald-500" /> 최근 참가 대회
@@ -372,21 +372,50 @@ export default function PublicAthleteDetail() {
             <div className="text-center py-6 text-sm text-slate-400">최근 대회 정보가 없습니다.</div>
           ) : (
             <div className="space-y-2">
-              {recentEvents.slice(0, 3).map((e: any) => (
-                <div key={e.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-b-0">
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs font-semibold truncate">{e.name}</div>
-                    <div className="text-[10px] text-slate-400">
-                      {e.tour} · {e.dateStart ? new Date(e.dateStart).toLocaleDateString('ko-KR') : '-'}
+              {recentEvents.slice(0, 3).map((e: any) => {
+                // docx §8 — 최근 성적: eventResults에서 같은 이름의 결과 찾기
+                const matched = eventResults.find((r: any) =>
+                  r.eventName && e.name && (
+                    r.eventName === e.name ||
+                    r.eventName.includes(e.name) ||
+                    e.name.includes(r.eventName)
+                  )
+                );
+                return (
+                  <div key={e.id} className="py-2 border-b border-slate-100 last:border-b-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-semibold truncate">{e.name}</div>
+                        <div className="text-[10px] text-slate-400">
+                          {e.tour} · {e.dateStart ? new Date(e.dateStart).toLocaleDateString('ko-KR') : '-'}
+                        </div>
+                      </div>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ${
+                        e.status === 'LIVE' ? 'bg-rose-100 text-rose-700'
+                        : e.status === 'UPCOMING' ? 'bg-emerald-100 text-emerald-700'
+                        : 'bg-slate-100 text-slate-500'
+                      }`}>{e.status}</span>
                     </div>
+                    {/* 최근 성적 (rank + score) */}
+                    {matched ? (
+                      <div className="mt-1.5 flex items-center gap-2 text-[11px]">
+                        {matched.rank != null && (
+                          <span className={`font-extrabold ${
+                            matched.rank <= 3 ? 'text-amber-600'
+                            : matched.rank <= 10 ? 'text-emerald-600'
+                            : 'text-slate-700'
+                          }`}>
+                            🏆 {matched.rank}위
+                          </span>
+                        )}
+                        {matched.score && <span className="text-slate-500 font-mono">{matched.score}</span>}
+                      </div>
+                    ) : e.status === 'COMPLETED' ? (
+                      <div className="mt-1.5 text-[10px] text-slate-400">📡 성적 수집 준비 중</div>
+                    ) : null}
                   </div>
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ml-2 ${
-                    e.status === 'LIVE' ? 'bg-rose-100 text-rose-700'
-                    : e.status === 'UPCOMING' ? 'bg-emerald-100 text-emerald-700'
-                    : 'bg-slate-100 text-slate-500'
-                  }`}>{e.status}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -884,7 +913,7 @@ function BidTierLadder({
  * 등급: A (≥80) / B (≥65) / C (≥50) / D (≥35) / E (<35)
  * 상태 배지: 공식 산정 (≥70%) / 예비 산정 (40-69%) / 산정중 (<40%)
  */
-function RoiDashboard({ roi }: { roi: any; youtube?: any; mentions?: any }) {
+function RoiDashboard({ roi, youtube }: { roi: any; youtube?: any; mentions?: any }) {
   const [viewMode, setViewMode] = useState<'BASIC' | 'EXTENDED'>('BASIC');
   if (!roi) {
     return <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-sm text-slate-400">ROI 지표 로딩 중...</div>;
@@ -1003,6 +1032,8 @@ function RoiDashboard({ roi }: { roi: any; youtube?: any; mentions?: any }) {
           color="sky"
           score={roi.contentEngagement?.score}
           subtitle="SNS 및 콘텐츠 반응 기준"
+          // YouTube 동기화 실패 시 docx §11 '오류: 데이터 확인 필요' 표시
+          error={youtube?.syncStatus === 'FAILED' ? `YouTube 동기화 실패: ${youtube?.syncError || '알 수 없는 오류'}` : undefined}
           metrics={[
             { label: '조회수', value: fmt(roi.contentEngagement?.videoViews) },
             { label: '도달수 (구독자)', value: fmt(roi.contentEngagement?.reach) },
@@ -1019,6 +1050,7 @@ function RoiDashboard({ roi }: { roi: any; youtube?: any; mentions?: any }) {
           color="violet"
           score={roi.fandom?.score}
           subtitle="팬 반응 및 참여 데이터 기준"
+          error={youtube?.syncStatus === 'FAILED' ? 'YouTube 동기화 실패 — 팔로워 정보 확인 필요' : undefined}
           metrics={[
             { label: '팔로워 수', value: fmt(roi.fandom?.followers) },
             { label: '최근 증가율', value: roi.fandom?.followerGrowthPct != null ? `${roi.fandom.followerGrowthPct}%` : '-' },
@@ -1139,7 +1171,7 @@ function RoiDashboard({ roi }: { roi: any; youtube?: any; mentions?: any }) {
 
 /** ROI 카드 — 영역 점수 + 지표 목록 */
 function RoiCard({
-  title, color, score, subtitle, metrics, extendedBadge,
+  title, color, score, subtitle, metrics, extendedBadge, error,
 }: {
   title: string;
   color: 'rose' | 'sky' | 'violet' | 'emerald' | 'amber' | 'orange';
@@ -1147,6 +1179,7 @@ function RoiCard({
   subtitle?: string;
   metrics: { label: string; value: string; truncate?: boolean }[];
   extendedBadge?: boolean;
+  error?: string | null;  // docx §11 — 오류 상태: "데이터 확인 필요"
 }) {
   const colorMap: Record<string, { border: string; bg: string; scoreText: string }> = {
     rose: { border: 'border-rose-200', bg: 'bg-rose-50/30', scoreText: 'text-rose-700' },
@@ -1161,11 +1194,18 @@ function RoiCard({
     <div className={`border rounded-2xl p-4 ${c.border} ${c.bg}`}>
       <div className="flex items-start justify-between mb-1">
         <h3 className="text-sm font-extrabold text-slate-900">{title}</h3>
-        {extendedBadge && (
-          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">
-            확장 전용
-          </span>
-        )}
+        <div className="flex items-center gap-1">
+          {error && (
+            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 border border-rose-200" title={error}>
+              ⚠ 데이터 확인 필요
+            </span>
+          )}
+          {extendedBadge && (
+            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">
+              확장 전용
+            </span>
+          )}
+        </div>
       </div>
       {subtitle && <p className="text-[10px] text-slate-500 mb-2">{subtitle}</p>}
       <div className="flex items-baseline gap-2 mb-3 pb-2 border-b border-current/10">
