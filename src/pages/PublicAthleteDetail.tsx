@@ -189,9 +189,31 @@ export default function PublicAthleteDetail() {
                 )}
               </div>
             )}
-            <p className="text-sm sm:text-base opacity-95 leading-relaxed max-w-2xl mb-4">
+            <p className="text-sm sm:text-base opacity-95 leading-relaxed max-w-2xl mb-3">
               {dash(athlete.bio)}
             </p>
+
+            {/* 활동 상태 배지 (docx A 섹션) */}
+            <div className="flex flex-wrap gap-1.5 mb-3 justify-center sm:justify-start">
+              <span className="inline-flex items-center gap-1 bg-emerald-400/90 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur">
+                ● 활동중
+              </span>
+              {orderedSlots.length > 0 && (
+                <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-[10px] font-bold px-2 py-1 rounded-full">
+                  🎯 슬롯 오픈 {orderedSlots.length}개
+                </span>
+              )}
+              {orderedSlots.some((s) => s.auction?.status === 'LIVE') && (
+                <span className="inline-flex items-center gap-1 bg-rose-500/90 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur animate-pulse">
+                  🔥 경매 진행중
+                </span>
+              )}
+              {recentEvents.length > 0 && (
+                <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-[10px] font-bold px-2 py-1 rounded-full">
+                  📅 최근 대회: {recentEvents[0].name?.slice(0, 20)}
+                </span>
+              )}
+            </div>
 
             {/* 소셜 링크 */}
             {(social.instagram || social.youtube || social.website) && (
@@ -678,31 +700,30 @@ function BidTierLadder({
 }
 
 /** ROI 대시보드 (docx 3-5: 5카테고리 13지표) */
-function RoiDashboard({ roi, youtube, mentions }: { roi: any; youtube?: any; mentions?: any }) {
+/**
+ * SPONPIK 선수 ROI 대시보드 (docx 2026-05-04 '선수 상세 페이지 수정개발')
+ *
+ * 계약유형별 2단 구조:
+ *  - BASIC (기본형, 모든 사용자): 4개 카드 — 미디어/콘텐츠/팬덤/선수성과
+ *  - EXTENDED (확장형, 중장기 계약 브랜드): + 랜딩 유입 + 구매·전환·ROI
+ *
+ * 가중치:
+ *  - BASIC: 미디어(30) + 콘텐츠(20) + 팬덤(20) + 선수성과(30)
+ *  - EXTENDED: 미디어(20) + 콘텐츠(15) + 팬덤(15) + 선수성과(20) + 랜딩(10) + 구매(20)
+ *
+ * 등급: A (≥80) / B (≥65) / C (≥50) / D (≥35) / E (<35)
+ * 상태 배지: 공식 산정 (≥70%) / 예비 산정 (40-69%) / 산정중 (<40%)
+ */
+function RoiDashboard({ roi }: { roi: any; youtube?: any; mentions?: any }) {
+  const [viewMode, setViewMode] = useState<'BASIC' | 'EXTENDED'>('BASIC');
   if (!roi) {
     return <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-sm text-slate-400">ROI 지표 로딩 중...</div>;
   }
 
-  // SPONPIK Phase 2 SNS — 콘텐츠 반응 카테고리에 모든 소스 병합
-  //   ① roi.contentEngagement (수동 입력 / 미디어 캡처 시스템)
-  //   ② youtube (선수 본인 채널 — 최근 20개 영상 합계)
-  //   ③ mentions (3rd-party 출연 영상 — APPROVED만)
-  const ytChannelViews = youtube?.recent?.viewSum ?? 0;
-  const mentionViews = mentions?.viewSum ?? 0;
-  const totalAutoViews = ytChannelViews + mentionViews;
-
-  const ytReach = youtube?.subscriberCount ?? null;
-  const ytLikes = youtube?.recent?.likeSum ?? 0;
-  const mentionLikes = mentions?.likeSum ?? 0;
-  const totalAutoLikes = ytLikes + mentionLikes;
-
-  const mergedVideoViews = roi.contentEngagement?.videoViews ?? (totalAutoViews > 0 ? totalAutoViews : null);
-  const mergedReach = roi.contentEngagement?.reach ?? ytReach;
-
   const fmt = (v: any, type: 'number' | 'currency' | 'percent' | 'time' = 'number'): string => {
     if (v == null || v === '' || (typeof v === 'number' && isNaN(v))) return '-';
     if (type === 'currency') return `₩${Math.round(Number(v)).toLocaleString()}`;
-    if (type === 'percent') return `${(Number(v) * 100).toFixed(2)}%`;
+    if (type === 'percent') return `${Number(v).toFixed(2)}%`;
     if (type === 'time') {
       const sec = Number(v);
       const m = Math.floor(sec / 60);
@@ -712,115 +733,298 @@ function RoiDashboard({ roi, youtube, mentions }: { roi: any; youtube?: any; men
     return Number(v).toLocaleString();
   };
 
-  const cards = [
-    {
-      title: '📺 미디어 노출',
-      color: 'rose',
-      metrics: [
-        { label: '중계 노출 횟수', value: fmt(roi.mediaExposure.broadcastCount) },
-        { label: '중계 노출 시간', value: fmt(roi.mediaExposure.broadcastSeconds, 'time') },
-        { label: '캡처 수', value: fmt(roi.mediaExposure.captureCount) },
-      ],
-    },
-    {
-      title: '🎬 콘텐츠 반응',
-      color: 'sky',
-      metrics: [
-        { label: '조회수' + (totalAutoViews > 0 && !roi.contentEngagement?.videoViews ? ' (YT 자동)' : ''), value: fmt(mergedVideoViews) },
-        { label: '도달수' + (ytReach && !roi.contentEngagement?.reach ? ' (구독자)' : ''), value: fmt(mergedReach) },
-        ...(mentions?.count ? [{ label: '출연 영상 수', value: `${mentions.count}건` }] : []),
-        ...(totalAutoLikes > 0 ? [{ label: '좋아요 합계', value: fmt(totalAutoLikes) }] : []),
-      ],
-    },
-    {
-      title: '🎯 랜딩 유입',
-      color: 'emerald',
-      metrics: [
-        { label: '클릭수', value: fmt(roi.landingTraffic.clicks) },
-        { label: '방문수', value: fmt(roi.landingTraffic.visits) },
-      ],
-    },
-    {
-      title: '💰 구매 / 전환 / ROI',
-      color: 'amber',
-      metrics: [
-        { label: '전환율', value: fmt(roi.conversion.conversionRate, 'percent') },
-        { label: '매출액', value: fmt(roi.conversion.revenue, 'currency') },
-        { label: 'CAC', value: fmt(roi.conversion.cac, 'currency') },
-        { label: 'ROAS', value: fmt(roi.conversion.roas) },
-      ],
-    },
-    {
-      title: '🏆 선수 성과 연계',
-      color: 'violet',
-      metrics: [
-        { label: '쿠폰 사용량', value: fmt(roi.athletePerformance.couponUsage) },
-        { label: '최신 순위', value: roi.athletePerformance.latestRank ? `${roi.athletePerformance.latestRank}위` : '-' },
-        { label: '최신 대회', value: roi.athletePerformance.latestEventName || '-', truncate: true },
-      ],
-    },
-  ];
-
-  const colorMap: Record<string, string> = {
-    rose: 'border-rose-200 bg-rose-50/30',
-    sky: 'border-sky-200 bg-sky-50/30',
-    emerald: 'border-emerald-200 bg-emerald-50/30',
-    amber: 'border-amber-200 bg-amber-50/30',
-    violet: 'border-violet-200 bg-violet-50/30',
-  };
-
-  // SPONPIK docx 4 — roi_score 단일 종합 점수 (0-100)
-  const roiScore: number | null = roi.roiScore ?? null;
-  const scoreColor = roiScore == null ? 'slate' : roiScore >= 70 ? 'emerald' : roiScore >= 40 ? 'amber' : 'rose';
-  const scoreColorClass: Record<string, string> = {
-    slate: 'from-slate-100 to-slate-50 text-slate-400 border-slate-200',
+  const sum = roi.summary || {};
+  const score = viewMode === 'EXTENDED' ? sum.extendedScore : sum.basicScore;
+  const grade = score == null ? null
+    : score >= 80 ? 'A' : score >= 65 ? 'B' : score >= 50 ? 'C' : score >= 35 ? 'D' : 'E';
+  const gradeColor = grade === 'A' ? 'emerald' : grade === 'B' ? 'sky' : grade === 'C' ? 'amber' : grade === 'D' ? 'orange' : grade === 'E' ? 'rose' : 'slate';
+  const gradeBgs: Record<string, string> = {
     emerald: 'from-emerald-100 to-teal-50 text-emerald-700 border-emerald-300',
+    sky: 'from-sky-100 to-blue-50 text-sky-700 border-sky-300',
     amber: 'from-amber-100 to-yellow-50 text-amber-700 border-amber-300',
+    orange: 'from-orange-100 to-amber-50 text-orange-700 border-orange-300',
     rose: 'from-rose-100 to-pink-50 text-rose-700 border-rose-300',
+    slate: 'from-slate-100 to-slate-50 text-slate-400 border-slate-200',
   };
+
+  const statusBadgeClass = sum.statusBadge === 'OFFICIAL' ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+    : sum.statusBadge === 'PRELIMINARY' ? 'bg-amber-100 text-amber-700 border-amber-200'
+    : 'bg-slate-100 text-slate-600 border-slate-200';
+
+  const isExtended = viewMode === 'EXTENDED';
 
   return (
     <div className="space-y-4">
-      {/* 종합 ROI Score (docx 4. roi_score) */}
-      <div className={`border-2 rounded-2xl p-5 bg-gradient-to-br ${scoreColorClass[scoreColor]} flex items-center justify-between gap-4`}>
-        <div>
-          <div className="text-xs font-bold opacity-80 mb-1">📊 종합 ROI Score</div>
-          <div className="text-4xl font-black tabular-nums">
-            {roiScore != null ? roiScore.toFixed(1) : '-'}
-            {roiScore != null && <span className="text-lg font-bold opacity-70 ml-1">/ 100</span>}
+      {/* === B. 종합 광고효과 요약 영역 === */}
+      <div className={`border-2 rounded-2xl p-5 bg-gradient-to-br ${gradeBgs[gradeColor]}`}>
+        <div className="flex items-start justify-between gap-4 mb-3">
+          <div>
+            <div className="text-[11px] font-bold opacity-70 mb-0.5">📊 SPONPIK Ad Impact Score</div>
+            <div className="text-[10px] opacity-60">{isExtended ? '확장형 종합 점수' : '기본 스폰서십 광고효과 종합지수'}</div>
           </div>
-          <div className="text-[11px] opacity-70 mt-1">
-            클릭(20) · 방문(20) · 구매(30) · 쿠폰(20) · 순위(10) 가중 합산
+          {/* 상태 배지 */}
+          <span className={`text-[10px] font-bold px-2 py-1 rounded-full border ${statusBadgeClass}`}>
+            {sum.statusLabel || '-'}
+          </span>
+        </div>
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <div className="text-5xl font-black tabular-nums leading-none">
+              {score != null ? score.toFixed(1) : '-'}
+              {score != null && <span className="text-xl font-bold opacity-70 ml-1">/ 100</span>}
+            </div>
+            <div className="text-[11px] opacity-70 mt-2">
+              {isExtended
+                ? '미디어(20)·콘텐츠(15)·팬덤(15)·선수성과(20)·랜딩(10)·구매(20)'
+                : '미디어(30)·콘텐츠(20)·팬덤(20)·선수성과(30) 가중 합산'}
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-[11px] font-bold opacity-70">등급</div>
+            <div className="text-4xl font-black leading-none">{grade ?? '-'}</div>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-[11px] font-bold opacity-80">등급</div>
-          <div className="text-2xl font-black">
-            {roiScore == null ? '-' : roiScore >= 70 ? 'A' : roiScore >= 40 ? 'B' : 'C'}
-          </div>
+        {/* 보조 정보 4개 */}
+        <div className="mt-4 pt-3 border-t border-current/10 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
+          <AuxStat label="데이터 수집률" value={`${sum.collectionRate ?? 0}%`} />
+          <AuxStat label="신뢰도" value={sum.reliabilityLabel ?? '-'} />
+          <AuxStat label="최근 업데이트" value={sum.updatedAt ? new Date(sum.updatedAt).toLocaleDateString('ko-KR') : '-'} />
+          <AuxStat label="최근 성과" value={sum.latestPerformance?.rank ? `${sum.latestPerformance.rank}위` : '-'} />
+        </div>
+        {/* 뷰 토글 */}
+        <div className="mt-3 flex items-center justify-end gap-1 text-[10px]">
+          <span className="opacity-60">대시보드 유형:</span>
+          <button
+            onClick={() => setViewMode('BASIC')}
+            className={`px-2 py-1 rounded font-bold ${viewMode === 'BASIC' ? 'bg-white shadow text-slate-900' : 'opacity-50'}`}
+          >
+            기본형
+          </button>
+          <button
+            onClick={() => setViewMode('EXTENDED')}
+            className={`px-2 py-1 rounded font-bold ${viewMode === 'EXTENDED' ? 'bg-white shadow text-slate-900' : 'opacity-50'}`}
+          >
+            확장형
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {cards.map((c) => (
-        <div key={c.title} className={`border rounded-2xl p-4 ${colorMap[c.color]}`}>
-          <h3 className="text-sm font-extrabold text-slate-900 mb-3">{c.title}</h3>
-          <div className="space-y-2">
-            {c.metrics.map((m: any) => (
-              <div key={m.label} className="flex items-center justify-between gap-2">
-                <span className="text-xs text-slate-500">{m.label}</span>
-                <span className={`text-sm font-extrabold ${m.value === '-' ? 'text-slate-400' : 'text-slate-900'} ${m.truncate ? 'truncate max-w-[140px]' : ''}`}>
-                  {m.value}
+      {/* === C. 핵심 성과 카드 영역 === */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
+        {/* C-1. 미디어노출지수 */}
+        <RoiCard
+          title="📺 미디어노출지수"
+          color="rose"
+          score={roi.mediaExposure?.score}
+          subtitle="방송/중계/외부노출 기준"
+          metrics={[
+            { label: '중계 노출 횟수', value: fmt(roi.mediaExposure?.broadcastCount) },
+            { label: '중계 노출 시간', value: fmt(roi.mediaExposure?.broadcastSeconds, 'time') },
+            { label: '패치/로고 노출 추정', value: fmt(roi.mediaExposure?.patchExposureEstimate) },
+            { label: '기사/외부 언급', value: fmt(roi.mediaExposure?.articleMentions) },
+            { label: '하이라이트 노출', value: fmt(roi.mediaExposure?.highlightCount) },
+            { label: '출연 영상 (YT 자동)', value: roi.mediaExposure?.mentionVideos ? `${roi.mediaExposure.mentionVideos}건` : '-' },
+          ]}
+        />
+
+        {/* C-2. 콘텐츠 반응 */}
+        <RoiCard
+          title="🎬 콘텐츠 반응"
+          color="sky"
+          score={roi.contentEngagement?.score}
+          subtitle="SNS 및 콘텐츠 반응 기준"
+          metrics={[
+            { label: '조회수', value: fmt(roi.contentEngagement?.videoViews) },
+            { label: '도달수 (구독자)', value: fmt(roi.contentEngagement?.reach) },
+            { label: '좋아요', value: fmt(roi.contentEngagement?.likes) },
+            { label: '댓글', value: fmt(roi.contentEngagement?.comments) },
+            { label: '저장 / 공유', value: '-' },
+            { label: '참여율 (ER)', value: roi.contentEngagement?.engagementRate != null ? `${roi.contentEngagement.engagementRate}%` : '-' },
+          ]}
+        />
+
+        {/* C-3. 팬덤지수 */}
+        <RoiCard
+          title="💜 팬덤지수"
+          color="violet"
+          score={roi.fandom?.score}
+          subtitle="팬 반응 및 참여 데이터 기준"
+          metrics={[
+            { label: '팔로워 수', value: fmt(roi.fandom?.followers) },
+            { label: '최근 증가율', value: roi.fandom?.followerGrowthPct != null ? `${roi.fandom.followerGrowthPct}%` : '-' },
+            { label: '팬 댓글/멘션', value: fmt(roi.fandom?.fanCommentsMentions) },
+            { label: '응원/이벤트', value: fmt(roi.fandom?.fanEvents) },
+            { label: '팬 투표 참여율', value: roi.fandom?.voteParticipationRate != null ? `${roi.fandom.voteParticipationRate}%` : '-' },
+            { label: 'UGC 건수', value: fmt(roi.fandom?.ugcCount) },
+          ]}
+        />
+
+        {/* C-4. 선수성과 / 대회가치 */}
+        <RoiCard
+          title="🏆 선수성과 / 대회가치"
+          color="emerald"
+          score={roi.athletePerformance?.score}
+          subtitle="공식 대회 기록 및 일정 기준"
+          metrics={[
+            { label: '최근 순위', value: roi.athletePerformance?.latestRank ? `${roi.athletePerformance.latestRank}위` : '-' },
+            { label: '최근 3개 평균', value: roi.athletePerformance?.recentAvgRank != null ? `${roi.athletePerformance.recentAvgRank}위` : '-' },
+            { label: '최근 대회', value: roi.athletePerformance?.latestEventName || '-', truncate: true },
+            { label: '다음 참가 예정', value: roi.athletePerformance?.nextEvent?.name || '-', truncate: true },
+            { label: '노출 기대지수', value: fmt(roi.athletePerformance?.exposureExpectation) },
+          ]}
+        />
+      </div>
+
+      {/* === D. 확장형 카드 (확장형 모드일 때만 노출) === */}
+      {isExtended && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <RoiCard
+            title="🎯 랜딩 유입"
+            color="amber"
+            score={roi.landingTraffic?.score}
+            subtitle="브랜드 전용 트래킹 데이터 기준"
+            extendedBadge
+            metrics={[
+              { label: '클릭 수', value: fmt(roi.landingTraffic?.clicks) },
+              { label: '방문 수', value: fmt(roi.landingTraffic?.visits) },
+              { label: 'CTR', value: roi.landingTraffic?.ctr != null ? `${roi.landingTraffic.ctr}%` : '-' },
+              { label: '신규 방문자', value: fmt(roi.landingTraffic?.newVisitors) },
+              { label: '평균 체류시간', value: fmt(roi.landingTraffic?.avgDwellTime, 'time') },
+            ]}
+          />
+          <RoiCard
+            title="💰 구매 / 전환 / ROI"
+            color="orange"
+            score={roi.conversion?.score}
+            subtitle="중장기 계약 브랜드 전용 성과지표"
+            extendedBadge
+            metrics={[
+              { label: '전환 수', value: fmt(roi.conversion?.conversions) },
+              { label: '구매 건수', value: fmt(roi.conversion?.purchases) },
+              { label: '매출액', value: fmt(roi.conversion?.revenue, 'currency') },
+              { label: '쿠폰 사용량', value: fmt(roi.conversion?.couponUsage) },
+              { label: 'CVR', value: roi.conversion?.cvr != null ? `${roi.conversion.cvr}%` : '-' },
+              { label: 'CAC', value: fmt(roi.conversion?.cac, 'currency') },
+              { label: 'ROAS', value: fmt(roi.conversion?.roas) },
+            ]}
+          />
+        </div>
+      )}
+      {!isExtended && (
+        <div className="bg-slate-50 border border-dashed border-slate-200 rounded-xl p-3 flex items-center justify-between">
+          <div className="text-[11px] text-slate-500">
+            🔒 <strong className="text-slate-700">랜딩 유입</strong>·<strong className="text-slate-700">구매/전환/ROI</strong> 카드는 중장기 계약 브랜드 전용 리포트에서 제공됩니다.
+          </div>
+          <button
+            onClick={() => setViewMode('EXTENDED')}
+            className="text-[10px] font-bold text-emerald-600 hover:text-emerald-700"
+          >
+            확장형 미리보기 →
+          </button>
+        </div>
+      )}
+
+      {/* === G. 점수 산정 기준 + 데이터 출처 === */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4">
+          <h3 className="text-sm font-extrabold text-slate-900 mb-2">📐 {isExtended ? '확장형' : '기본형'} 점수 산정 기준</h3>
+          <div className="space-y-1.5 text-[11px]">
+            {(isExtended ? roi.scoringRules?.extended : roi.scoringRules?.basic)?.map((r: any) => (
+              <div key={r.axis} className="flex items-center justify-between">
+                <span className="text-slate-600">{r.axis}</span>
+                <span className="font-bold text-slate-900">{r.weight}%</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-slate-500 mt-3">
+            {isExtended
+              ? '중장기 계약 브랜드에 한해 확장 성과지표가 제공됩니다.'
+              : '대회별 기본 입찰 및 직접 구매형 스폰서십에 제공되는 기본 광고효과 지표입니다. 랜딩 유입 및 구매전환 데이터는 중장기 계약 브랜드 전용 리포트에서 제공됩니다.'}
+          </p>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-2xl p-4">
+          <h3 className="text-sm font-extrabold text-slate-900 mb-2">📦 데이터 출처</h3>
+          <div className="space-y-1.5 text-[11px]">
+            {roi.dataSources?.map((s: any) => (
+              <div key={s.code} className="flex items-center justify-between">
+                <span className="text-slate-600">{s.name}</span>
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                  s.status === 'OK' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'
+                }`}>
+                  {s.status === 'OK' ? '연결됨' : '미수집'}
                 </span>
               </div>
             ))}
           </div>
         </div>
-      ))}
-      <div className="sm:col-span-2 lg:col-span-3 text-[10px] text-slate-400 text-right">
+      </div>
+
+      <div className="text-[10px] text-slate-400 text-right">
         ※ "-" 표시 = 아직 수집되지 않은 지표 (데이터 들어오면 자동 반영)
       </div>
+    </div>
+  );
+}
+
+/** ROI 카드 — 영역 점수 + 지표 목록 */
+function RoiCard({
+  title, color, score, subtitle, metrics, extendedBadge,
+}: {
+  title: string;
+  color: 'rose' | 'sky' | 'violet' | 'emerald' | 'amber' | 'orange';
+  score?: number | null;
+  subtitle?: string;
+  metrics: { label: string; value: string; truncate?: boolean }[];
+  extendedBadge?: boolean;
+}) {
+  const colorMap: Record<string, { border: string; bg: string; scoreText: string }> = {
+    rose: { border: 'border-rose-200', bg: 'bg-rose-50/30', scoreText: 'text-rose-700' },
+    sky: { border: 'border-sky-200', bg: 'bg-sky-50/30', scoreText: 'text-sky-700' },
+    violet: { border: 'border-violet-200', bg: 'bg-violet-50/30', scoreText: 'text-violet-700' },
+    emerald: { border: 'border-emerald-200', bg: 'bg-emerald-50/30', scoreText: 'text-emerald-700' },
+    amber: { border: 'border-amber-200', bg: 'bg-amber-50/30', scoreText: 'text-amber-700' },
+    orange: { border: 'border-orange-200', bg: 'bg-orange-50/30', scoreText: 'text-orange-700' },
+  };
+  const c = colorMap[color];
+  return (
+    <div className={`border rounded-2xl p-4 ${c.border} ${c.bg}`}>
+      <div className="flex items-start justify-between mb-1">
+        <h3 className="text-sm font-extrabold text-slate-900">{title}</h3>
+        {extendedBadge && (
+          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 border border-amber-200">
+            확장 전용
+          </span>
+        )}
       </div>
+      {subtitle && <p className="text-[10px] text-slate-500 mb-2">{subtitle}</p>}
+      <div className="flex items-baseline gap-2 mb-3 pb-2 border-b border-current/10">
+        <span className="text-[10px] text-slate-500">영역 점수</span>
+        <span className={`text-2xl font-black tabular-nums ${score == null ? 'text-slate-400' : c.scoreText}`}>
+          {score != null ? score.toFixed(1) : '-'}
+        </span>
+        {score != null && <span className="text-[10px] text-slate-400">/100</span>}
+      </div>
+      <div className="space-y-1.5">
+        {metrics.map((m) => (
+          <div key={m.label} className="flex items-center justify-between gap-2">
+            <span className="text-[11px] text-slate-500">{m.label}</span>
+            <span className={`text-xs font-bold ${m.value === '-' ? 'text-slate-400' : 'text-slate-900'} ${m.truncate ? 'truncate max-w-[140px]' : ''}`}>
+              {m.value}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** 보조 정보 (수집률/신뢰도/업데이트/최근성과) */
+function AuxStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="text-center">
+      <div className="opacity-60 mb-0.5">{label}</div>
+      <div className="font-bold text-[12px] truncate">{value}</div>
     </div>
   );
 }
