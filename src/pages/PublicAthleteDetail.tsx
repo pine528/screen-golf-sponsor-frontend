@@ -434,7 +434,7 @@ export default function PublicAthleteDetail() {
       {/* 경기결과 + 메인 스폰서 (별도 행) */}
       <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {/* 경기결과 / 분석 (docx 3-6, 연도별 그룹핑 + 최신순) */}
+        {/* === F. 경기결과 / 분석 (docx §9) === */}
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-extrabold text-slate-900 inline-flex items-center gap-2">
@@ -447,12 +447,98 @@ export default function PublicAthleteDetail() {
             )}
           </div>
 
+          {/* F 추가 권장 항목 (docx §9): 최근 3개 평균 / 시즌 누적 / 추이 / 향후 일정 */}
+          {roi?.matchAnalysis && (
+            <div className="mb-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="bg-emerald-50 rounded-lg p-2.5 text-center">
+                <div className="text-[10px] text-slate-500">최근 3개 평균</div>
+                <div className="text-lg font-extrabold text-emerald-700">
+                  {roi.matchAnalysis.recentAvgRank != null ? `${roi.matchAnalysis.recentAvgRank}위` : '-'}
+                </div>
+              </div>
+              <div className="bg-sky-50 rounded-lg p-2.5 text-center">
+                <div className="text-[10px] text-slate-500">시즌 누적 평균</div>
+                <div className="text-lg font-extrabold text-sky-700">
+                  {roi.matchAnalysis.seasonAvgRank != null ? `${roi.matchAnalysis.seasonAvgRank}위` : '-'}
+                </div>
+                <div className="text-[9px] text-slate-400">출전 {roi.matchAnalysis.seasonTotalEvents}회</div>
+              </div>
+              <div className="bg-amber-50 rounded-lg p-2.5 text-center">
+                <div className="text-[10px] text-slate-500">시즌 최고</div>
+                <div className="text-lg font-extrabold text-amber-700">
+                  {roi.matchAnalysis.seasonBestRank != null ? `${roi.matchAnalysis.seasonBestRank}위` : '-'}
+                </div>
+                <div className="text-[9px] text-slate-400">TOP3 {roi.matchAnalysis.seasonTop3Count}회</div>
+              </div>
+              <div className="bg-violet-50 rounded-lg p-2.5 text-center">
+                <div className="text-[10px] text-slate-500">TOP 10 진입</div>
+                <div className="text-lg font-extrabold text-violet-700">
+                  {roi.matchAnalysis.seasonTop10Count}회
+                </div>
+                <div className="text-[9px] text-slate-400">시즌 누적</div>
+              </div>
+            </div>
+          )}
+
+          {/* 최근 5개 추이 (간단 라인 차트) */}
+          {roi?.matchAnalysis?.recentTrend?.length >= 2 && (
+            <div className="mb-4 p-3 bg-slate-50 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold text-slate-700">📈 최근 대회 추이</span>
+                <span className="text-[9px] text-slate-400">최근 5개 (낮을수록 좋음)</span>
+              </div>
+              <div className="flex items-end justify-between gap-2 h-16">
+                {roi.matchAnalysis.recentTrend.map((t: any, i: number) => {
+                  const rank = t.rank || 99;
+                  // 1위 = 100% 높이, 50위+ = 10% 높이
+                  const heightPct = Math.max(10, Math.min(100, 100 - (rank - 1) * 2));
+                  const color = rank <= 3 ? 'bg-amber-500' : rank <= 10 ? 'bg-emerald-500' : rank <= 30 ? 'bg-sky-500' : 'bg-slate-400';
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative" title={`${t.eventName} · ${t.rank}위`}>
+                      <div className="text-[10px] font-bold text-slate-600">{rank}위</div>
+                      <div className={`w-full ${color} rounded-t transition-all`} style={{ height: `${heightPct}%`, minHeight: '4px' }} />
+                      <div className="text-[8px] text-slate-400 truncate max-w-full">
+                        {t.eventDate ? new Date(t.eventDate).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }) : '-'}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {eventResults.length === 0 ? (
             <div className="text-center py-8 text-sm text-slate-400 bg-slate-50 rounded-lg">
               📡 최신 경기 정보 준비 중
             </div>
           ) : (
             <EventResultsByYear results={eventResults} />
+          )}
+
+          {/* 향후 대회 일정 (docx §9 추가 권장) */}
+          {roi?.operations?.upcomingList?.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-slate-100">
+              <h3 className="text-sm font-bold text-slate-700 mb-2 inline-flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-sky-500" /> 향후 대회 일정 ({roi.operations.upcomingList.length})
+              </h3>
+              <div className="space-y-1.5">
+                {roi.operations.upcomingList.map((e: any) => (
+                  <div key={e.id} className="flex items-center justify-between py-1.5 px-2 rounded bg-sky-50/50 hover:bg-sky-50 transition-colors text-xs">
+                    <div className="flex-1 min-w-0">
+                      <span className="font-semibold truncate">{e.name}</span>
+                      {e.category && (
+                        <span className="ml-1.5 text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-full">
+                          {e.category}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-slate-500 ml-2 whitespace-nowrap">
+                      {new Date(e.dateStart).toLocaleDateString('ko-KR')}{e.venue ? ` · ${e.venue}` : ''}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
 
