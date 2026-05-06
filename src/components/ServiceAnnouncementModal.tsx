@@ -57,11 +57,11 @@ export function ServiceAnnouncementModal() {
           </button>
 
           {/* 로고 */}
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500 text-white shadow-md shadow-emerald-500/30 mb-4">
-            <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7">
-              <path d="M6 5h7a4 4 0 010 8H10v6H6V5z" stroke="white" strokeWidth="2.5" strokeLinejoin="round" fill="white" />
-            </svg>
-          </div>
+          <img
+            src="/logo-120.png"
+            alt="SPONPIK"
+            className="inline-block w-14 h-14 rounded-2xl shadow-md shadow-emerald-500/30 mb-4"
+          />
 
           {/* 제목 */}
           <h2 className="text-xl font-extrabold text-slate-900 mb-2">SPONPIK 서비스 오픈 안내</h2>
