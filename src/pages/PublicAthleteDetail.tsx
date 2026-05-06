@@ -352,7 +352,7 @@ export default function PublicAthleteDetail() {
             <Stat label="전체 슬롯" value={dash(orderedSlots.length)} />
             <Stat label="진행 중" value={String(orderedSlots.filter((s) => s.status === 'OPEN' || s.status === 'IN_AUCTION').length)} />
             <Stat label="낙찰" value={String(orderedSlots.filter((s) => s.status === 'SOLD').length)} />
-            <Stat label="가입일" value={athlete.createdAt ? new Date(athlete.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short' }) : '-'} />
+            <Stat label="계약 시작일" value={athlete.createdAt ? new Date(athlete.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short' }) : '-'} />
           </div>
           {/* 계약 상태 (docx E-1) */}
           <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
@@ -1039,7 +1039,8 @@ function RoiDashboard({ roi, youtube }: { roi: any; youtube?: any; mentions?: an
             { label: '도달수 (구독자)', value: fmt(roi.contentEngagement?.reach) },
             { label: '좋아요', value: fmt(roi.contentEngagement?.likes) },
             { label: '댓글', value: fmt(roi.contentEngagement?.comments) },
-            { label: '저장 / 공유', value: '-' },
+            { label: '저장', value: fmt(roi.contentEngagement?.saves) },
+            { label: '공유', value: fmt(roi.contentEngagement?.shares) },
             { label: '참여율 (ER)', value: roi.contentEngagement?.engagementRate != null ? `${roi.contentEngagement.engagementRate}%` : '-' },
           ]}
         />
