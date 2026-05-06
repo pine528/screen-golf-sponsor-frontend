@@ -271,28 +271,15 @@ export function Home() {
               </div>
             </div>
 
-            {/* Center - Hero Model Image (배진리 프로 — 누끼 PNG) */}
+            {/* Center - Hero Model Image (배진리 프로 — 누끼 PNG, 좌측하단 텍스트 포함) */}
             <div className="hidden lg:flex relative justify-center items-end z-[5] -ml-16 -mt-12">
               {/* Soft glow behind model */}
               <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[350px] h-[350px] bg-emerald-400/10 rounded-full blur-[100px] pointer-events-none" />
-              <div className="relative flex flex-col items-center">
-                <div className="relative">
-                  <img
-                    src="/golfers/bae-jinri-cutout.png"
-                    alt="배진리 프로"
-                    className="relative h-[700px] w-auto object-contain object-bottom"
-                  />
-                  {/* 하단 페이드 — 잘린 부분 자연스럽게 처리 */}
-                  <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#f8fafc] via-[#f8fafc]/85 to-transparent pointer-events-none" />
-                </div>
-                {/* 파운더 캡션 (이미지 아래) */}
-                <div className="mt-2 text-center">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 mb-1">
-                    <span className="text-[10px] font-bold tracking-wider text-emerald-700">⭐ SPONPIK FOUNDER No.1</span>
-                  </div>
-                  <div className="text-base font-extrabold text-slate-900">배진리 프로</div>
-                </div>
-              </div>
+              <img
+                src="/golfers/bae-jinri-cutout.png"
+                alt="배진리 프로 — SPONPIK Founder No.1"
+                className="relative h-[760px] w-auto object-contain object-bottom"
+              />
             </div>
 
             {/* Right - Hot Auction Card (실데이터 바인딩, docx 2-1) */}
