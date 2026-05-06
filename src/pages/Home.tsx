@@ -281,8 +281,11 @@ export function Home() {
                   alt="배진리 프로 — SPONPIK Founder No.1"
                   className="relative h-[600px] w-auto object-contain object-bottom"
                 />
-                {/* 하단 페이드 효과 — 사진 발 부분 자연스럽게 페이드아웃 */}
-                <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#f8fafc] via-[#f8fafc]/80 to-transparent pointer-events-none" />
+                {/* 하단 페이드 효과 — 우측(발) 영역만, 좌측 텍스트/사인 영역은 제외 */}
+                <div
+                  className="absolute bottom-0 right-0 h-32 bg-gradient-to-t from-[#f8fafc] via-[#f8fafc]/80 to-transparent pointer-events-none"
+                  style={{ left: '33%' }}
+                />
               </div>
             </div>
 
