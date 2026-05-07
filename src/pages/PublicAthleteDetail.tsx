@@ -1005,10 +1005,11 @@ function RoiDashboard({
               {score != null ? score.toFixed(1) : '-'}
               {score != null && <span className="text-xl font-bold opacity-70 ml-1">/ 100</span>}
             </div>
-            <div className="text-[11px] opacity-70 mt-2">
+            {/* docx §4 B-1 '산정 기준' — 4축(기본) / 6축(확장) 정확 라벨 */}
+            <div className="text-[11px] opacity-70 mt-2 leading-relaxed">
               {isExtended
-                ? '미디어(20)·콘텐츠(15)·팬덤(15)·선수성과(20)·랜딩(10)·구매(20)'
-                : '미디어(30)·콘텐츠(20)·팬덤(20)·선수성과(30) 가중 합산'}
+                ? '미디어노출지수(20) · 콘텐츠 반응(15) · 팬덤지수(15) · 선수성과/대회가치(20) · 랜딩 유입(10) · 구매/전환/ROI(20)'
+                : '미디어노출지수(30) · 콘텐츠 반응(20) · 팬덤지수(20) · 선수성과/대회가치(30) 가중 합산'}
             </div>
           </div>
           <div className="text-right">
