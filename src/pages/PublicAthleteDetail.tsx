@@ -41,6 +41,10 @@ export default function PublicAthleteDetail() {
   const { isAuthenticated, user } = useAuth();
   const queryClient = useQueryClient();
 
+  // ROI 대시보드 view mode (BASIC/EXTENDED) — RoiDashboard ↔ ScoringAndDataSources 동기화
+  // docx §10 G-1/G-2 — 점수 산정 기준은 현재 보고 있는 viewMode와 반드시 일치해야 함
+  const [roiViewMode, setRoiViewMode] = useState<'BASIC' | 'EXTENDED'>('BASIC');
+
   const { data: resp, isLoading, error } = useQuery({
     queryKey: ['public-athlete', id],
     queryFn: () => api.getPublicAthlete(id!),
@@ -338,7 +342,7 @@ export default function PublicAthleteDetail() {
             </span>
           )}
         </div>
-        <RoiDashboard roi={roi} youtube={youtube} mentions={mentions} />
+        <RoiDashboard roi={roi} youtube={youtube} mentions={mentions} viewMode={roiViewMode} onViewModeChange={setRoiViewMode} />
       </section>
 
       {/* === E. 운영 현황 카드 영역 (docx E-1, E-2, E-3 — 3열) === */}
@@ -541,7 +545,7 @@ export default function PublicAthleteDetail() {
               📡 최신 경기 정보 준비 중
             </div>
           ) : (
-            <EventResultsByYear results={eventResults} />
+            <EventResultsByYear results={eventResults} fallbackTour={athlete.tour} />
           )}
 
           {/* 향후 대회 일정 (docx §9 추가 권장) */}
@@ -586,8 +590,9 @@ export default function PublicAthleteDetail() {
         )}
       </section>
 
-      {/* === G. 점수 산정 기준 / 데이터 출처 (docx §13 — F 이후 마지막 섹션) === */}
-      <ScoringAndDataSources roi={roi} viewMode="BASIC" />
+      {/* === G. 점수 산정 기준 / 데이터 출처 (docx §13 — F 이후 마지막 섹션) ===
+           ※ docx §10 G-1/G-2 — 가중치 표는 현재 RoiDashboard 의 viewMode 와 동기화 */}
+      <ScoringAndDataSources roi={roi} viewMode={roiViewMode} />
     </div>
   );
 }
@@ -916,8 +921,26 @@ function BidTierLadder({
  * 등급: A (≥80) / B (≥65) / C (≥50) / D (≥35) / E (<35)
  * 상태 배지: 공식 산정 (≥70%) / 예비 산정 (40-69%) / 산정중 (<40%)
  */
-function RoiDashboard({ roi, youtube }: { roi: any; youtube?: any; mentions?: any }) {
-  const [viewMode, setViewMode] = useState<'BASIC' | 'EXTENDED'>('BASIC');
+function RoiDashboard({
+  roi,
+  youtube,
+  viewMode: viewModeProp,
+  onViewModeChange,
+}: {
+  roi: any;
+  youtube?: any;
+  mentions?: any;
+  viewMode?: 'BASIC' | 'EXTENDED';
+  onViewModeChange?: (m: 'BASIC' | 'EXTENDED') => void;
+}) {
+  // 부모(PublicAthleteDetail)가 viewMode 를 끌어올려 G 섹션과 공유 — controlled mode
+  // props 전달 안 됐을 때만 자체 로컬 상태로 동작 (uncontrolled fallback)
+  const [internalMode, setInternalMode] = useState<'BASIC' | 'EXTENDED'>('BASIC');
+  const viewMode = viewModeProp ?? internalMode;
+  const setViewMode = (m: 'BASIC' | 'EXTENDED') => {
+    if (onViewModeChange) onViewModeChange(m);
+    else setInternalMode(m);
+  };
   if (!roi) {
     return <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-sm text-slate-400">ROI 지표 로딩 중...</div>;
   }
@@ -1294,8 +1317,12 @@ function AuxStat({ label, value }: { label: string; value: string }) {
   );
 }
 
-/** 경기결과 — 연도별 그룹핑 + 같은 연도 내 최신순 (docx 3-6) */
-function EventResultsByYear({ results }: { results: any[] }) {
+/**
+ * 경기결과 — 연도별 그룹핑 + 같은 연도 내 최신순 (docx 3-6 + §9 F)
+ * docx §9 각 대회별 표시 항목: 순위 / 대회명 / 개최일 / 투어명 / 스코어 / 분석 코멘트
+ *  - 투어명은 r.tour > fallbackTour(선수.tour) 순으로 표시
+ */
+function EventResultsByYear({ results, fallbackTour }: { results: any[]; fallbackTour?: string }) {
   // 연도별 그룹
   const byYear = useMemo(() => {
     const map = new Map<number, any[]>();
@@ -1334,15 +1361,21 @@ function EventResultsByYear({ results }: { results: any[] }) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-bold text-slate-900 truncate">{r.eventName}</div>
-                  <div className="text-[10px] text-slate-500 mt-0.5">
-                    {new Date(r.eventDate).toLocaleDateString('ko-KR')}
-                    {r.category && <span className="ml-2 px-1.5 py-0.5 bg-slate-200 rounded text-slate-600">{r.category}</span>}
+                  <div className="text-[10px] text-slate-500 mt-0.5 flex flex-wrap items-center gap-1.5">
+                    <span>{new Date(r.eventDate).toLocaleDateString('ko-KR')}</span>
+                    {/* docx §9 — 투어명 (r.tour > 선수 tour fallback) */}
+                    {(r.tour || fallbackTour) && (
+                      <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded font-bold text-[9px]">
+                        🏌️ {r.tour || fallbackTour}
+                      </span>
+                    )}
+                    {r.category && <span className="px-1.5 py-0.5 bg-slate-200 rounded text-slate-600">{r.category}</span>}
                     {r.source !== 'MANUAL' && (
-                      <span className="ml-2 px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded">{r.source}</span>
+                      <span className="px-1.5 py-0.5 bg-sky-50 text-sky-700 rounded">{r.source}</span>
                     )}
                   </div>
                   {r.summary && (
-                    <p className="text-xs text-slate-600 mt-1 line-clamp-2">{r.summary}</p>
+                    <p className="text-xs text-slate-600 mt-1 line-clamp-2">📝 {r.summary}</p>
                   )}
                 </div>
                 {r.score && (
