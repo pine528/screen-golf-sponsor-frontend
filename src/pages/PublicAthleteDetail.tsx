@@ -197,8 +197,9 @@ export default function PublicAthleteDetail() {
               {dash(athlete.bio)}
             </p>
 
-            {/* docx §4 A 활동 상태 배지 — 활동중 / 슬롯 오픈 / 경매 진행중 (3개만 한정) */}
-            <div className="flex flex-wrap gap-1.5 mb-2 justify-center sm:justify-start">
+            {/* docx §4 A 활동 상태 배지 — 그룹 라벨 + 활동중 / 슬롯 오픈 / 경매 진행중 */}
+            <div className="flex flex-wrap items-center gap-1.5 mb-2 justify-center sm:justify-start">
+              <span className="text-[10px] font-bold opacity-80">활동 상태:</span>
               <span className="inline-flex items-center gap-1 bg-emerald-400/90 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur">
                 ● 활동중
               </span>
@@ -214,12 +215,11 @@ export default function PublicAthleteDetail() {
               )}
             </div>
 
-            {/* docx §4 A 최근 참가 대회 요약 — 별도 라인 */}
+            {/* docx §4 A '최근 참가 대회 요약' — docx 정확 라벨 */}
             {recentEvents.length > 0 && (
               <div className="text-xs opacity-90 mb-1 inline-flex items-center gap-1 justify-center sm:justify-start">
                 <Calendar className="w-3 h-3" />
-                <span className="font-semibold">최근 참가 대회</span>
-                <span className="opacity-50">·</span>
+                <span className="font-semibold">최근 참가 대회 요약:</span>
                 <span className="truncate max-w-[300px]">{recentEvents[0].name}</span>
                 {recentEvents[0].dateStart && (
                   <span className="opacity-70 text-[10px]">
@@ -229,11 +229,10 @@ export default function PublicAthleteDetail() {
               </div>
             )}
 
-            {/* docx §4 A 현재 열려 있는 슬롯 수 — 별도 라인 */}
+            {/* docx §4 A '현재 열려 있는 슬롯 수' — docx 정확 라벨 */}
             <div className="text-xs opacity-90 mb-3 inline-flex items-center gap-1 justify-center sm:justify-start">
               <Gavel className="w-3 h-3" />
-              <span className="font-semibold">현재 열려 있는 슬롯</span>
-              <span className="opacity-50">·</span>
+              <span className="font-semibold">현재 열려 있는 슬롯 수:</span>
               <span className={`font-extrabold ${orderedSlots.length > 0 ? 'text-amber-200' : 'opacity-60'}`}>
                 {orderedSlots.length}개
               </span>
@@ -1285,10 +1284,14 @@ function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' 
   const isExtended = viewMode === 'EXTENDED';
   return (
     <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12">
-      <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
+      <h2 className="text-xl font-extrabold text-slate-900 mb-2 inline-flex items-center gap-2">
         <Trophy className="w-5 h-5 text-emerald-500" />
         점수 산정 기준 / 데이터 출처
       </h2>
+      {/* docx §10 G. '이 영역은 반드시 넣는 것을 권장한다 / 브랜드가 점수를 신뢰하려면 무엇으로 계산된 점수인지를 알아야 하기 때문' */}
+      <p className="text-[11px] text-slate-500 mb-4">
+        📌 브랜드가 점수를 신뢰하려면 "무엇으로 계산된 점수인지"를 알아야 합니다.
+      </p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="bg-white border border-slate-200 rounded-2xl p-4">
           <h3 className="text-sm font-extrabold text-slate-900 mb-2">📐 {isExtended ? '확장형' : '기본형'} 점수 산정 기준</h3>
