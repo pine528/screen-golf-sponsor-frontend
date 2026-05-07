@@ -108,6 +108,18 @@ export default function PublicAthleteDetail() {
     }
   }, [orderedSlots, selectedSlotId]);
 
+  // docx §13 화면명 'selectedAthlete? > ROI 대시보드' — 브라우저 페이지 타이틀 동기화
+  const athleteName = (resp?.data as any)?.athlete?.name;
+  useEffect(() => {
+    const prev = document.title;
+    document.title = athleteName
+      ? `${athleteName} - 선수 상세 > ROI 대시보드 | SPONPIK`
+      : '선수 상세 > ROI 대시보드 | SPONPIK';
+    return () => {
+      document.title = prev;
+    };
+  }, [athleteName]);
+
   const selectedSlot = orderedSlots.find((s) => s.id === selectedSlotId) || orderedSlots[0];
   const auction = selectedSlot?.auction;
 
@@ -136,12 +148,14 @@ export default function PublicAthleteDetail() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* 상단: Hero 프로필 (실데이터) */}
+      {/* === A. 선수 기본 정보 영역 (docx §4 A) === */}
       <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-between">
           <Link to="/athletes" className="inline-flex items-center gap-1 text-xs opacity-90 hover:opacity-100">
             <ArrowLeft className="w-3 h-3" /> 선수 목록
           </Link>
+          {/* docx §3 #1, §4 A 영역명 — 다른 영역 (B/C/D/E/F/G) 과 일관성 */}
+          <span className="text-[10px] font-bold opacity-70 uppercase tracking-wide">A. 선수 기본 정보 영역</span>
         </div>
         <div className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-6 items-start">
           {/* 프로필 사진 */}
