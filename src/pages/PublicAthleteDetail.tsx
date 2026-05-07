@@ -1040,8 +1040,16 @@ function RoiDashboard({
               </div>
             )}
           </div>
-          {/* docx §4 B-1 상태 배지 */}
-          <span className={`text-[10px] font-bold px-2 py-1 rounded-full border ${statusBadgeClass}`}>
+          {/* docx §4 B-1 상태 배지 + §11 매핑 룰 안내 (호버 툴팁) */}
+          <span
+            className={`text-[10px] font-bold px-2 py-1 rounded-full border cursor-help ${statusBadgeClass}`}
+            title={
+              '점수 상태 매핑 (docx §11):\n' +
+              '· 공식 산정: 데이터 수집률 70% 이상\n' +
+              '· 예비 산정: 데이터 수집률 40~69%\n' +
+              '· 산정중: 데이터 수집률 40% 미만 (등급 보수적 처리)'
+            }
+          >
             {sum.statusLabel || '-'}
           </span>
         </div>
@@ -1300,6 +1308,25 @@ function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' 
                 </span>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* docx §11 점수 상태값 매핑 룰 안내 — 사용자가 점수 신뢰도 기준을 알 수 있도록 */}
+      <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-3">
+        <div className="text-[11px] font-bold text-slate-700 mb-1.5">📊 점수 상태값 산정 기준 (docx §11)</div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[10px]">
+          <div className="flex items-center gap-2">
+            <span className="inline-block px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">공식 산정</span>
+            <span className="text-slate-600">데이터 수집률 70% 이상</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-block px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-bold">예비 산정</span>
+            <span className="text-slate-600">40~69%</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-block px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-600 font-bold">산정중</span>
+            <span className="text-slate-600">40% 미만 · 등급 보수적 처리</span>
           </div>
         </div>
       </div>
