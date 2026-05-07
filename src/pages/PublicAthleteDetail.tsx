@@ -986,12 +986,34 @@ function RoiDashboard({ roi, youtube }: { roi: any; youtube?: any; mentions?: an
             <div className="text-4xl font-black leading-none">{grade ?? '-'}</div>
           </div>
         </div>
-        {/* 보조 정보 4개 */}
+        {/* B-2 보조 정보 4개 (docx §4 B-2 — 예시 형식 정확히 일치) */}
         <div className="mt-4 pt-3 border-t border-current/10 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
           <AuxStat label="데이터 수집률" value={`${sum.collectionRate ?? 0}%`} />
           <AuxStat label="신뢰도" value={sum.reliabilityLabel ?? '-'} />
-          <AuxStat label="최근 업데이트" value={sum.updatedAt ? new Date(sum.updatedAt).toLocaleDateString('ko-KR') : '-'} />
-          <AuxStat label="최근 성과" value={sum.latestPerformance?.rank ? `${sum.latestPerformance.rank}위` : '-'} />
+          {/* 예: 2026.05.03 14:20 (날짜+시간) */}
+          <AuxStat
+            label="최근 업데이트"
+            value={sum.updatedAt
+              ? (() => {
+                  const d = new Date(sum.updatedAt);
+                  const yy = d.getFullYear();
+                  const mm = String(d.getMonth() + 1).padStart(2, '0');
+                  const dd = String(d.getDate()).padStart(2, '0');
+                  const hh = String(d.getHours()).padStart(2, '0');
+                  const mi = String(d.getMinutes()).padStart(2, '0');
+                  return `${yy}.${mm}.${dd} ${hh}:${mi}`;
+                })()
+              : '-'}
+          />
+          {/* 예: 2026 WGTOUR 1차 / 2위 (대회명 + 순위) */}
+          <AuxStat
+            label="최근 성과"
+            value={sum.latestPerformance?.eventName && sum.latestPerformance?.rank
+              ? `${sum.latestPerformance.eventName} / ${sum.latestPerformance.rank}위`
+              : sum.latestPerformance?.rank
+              ? `${sum.latestPerformance.rank}위`
+              : '-'}
+          />
         </div>
         {/* 뷰 토글 */}
         <div className="mt-3 flex items-center justify-end gap-1 text-[10px]">
