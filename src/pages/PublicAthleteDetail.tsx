@@ -330,12 +330,15 @@ export default function PublicAthleteDetail() {
         )}
       </section>
 
-      {/* ROI 대시보드 풀 섹션 (docx 3-5: 5카테고리 13지표) */}
+      {/* ROI 대시보드 풀 섹션 (docx §13 화면명: 선수 상세 > ROI 대시보드) */}
       <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-extrabold text-slate-900 inline-flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-emerald-500" /> ROI 대시보드
-          </h2>
+          <div>
+            <div className="text-[10px] text-slate-400 mb-0.5">선수 상세 &gt; ROI 대시보드</div>
+            <h2 className="text-xl font-extrabold text-slate-900 inline-flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-emerald-500" /> ROI 대시보드
+            </h2>
+          </div>
           {roi?.meta && (
             <span className="text-[10px] text-slate-400">
               수집률 {roi.meta.collectionProgress.collected}/{roi.meta.collectionProgress.total} 지표
