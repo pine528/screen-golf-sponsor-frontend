@@ -1121,6 +1121,7 @@ function RoiDashboard({
           <AuxStat
             num={3}
             label="최근 업데이트"
+            hint="점수 갱신 시각"
             value={sum.updatedAt
               ? (() => {
                   const d = new Date(sum.updatedAt);
@@ -1137,6 +1138,7 @@ function RoiDashboard({
           <AuxStat
             num={4}
             label="최근 성과"
+            hint="대회명 / 순위"
             value={sum.latestPerformance?.eventName && sum.latestPerformance?.rank
               ? `${sum.latestPerformance.eventName} / ${sum.latestPerformance.rank}위`
               : sum.latestPerformance?.rank
@@ -1442,7 +1444,8 @@ function RoiCard({
         <span className={`text-2xl font-black tabular-nums ${score == null ? 'text-slate-400' : c.scoreText}`}>
           {score != null ? score.toFixed(1) : '-'}
         </span>
-        {score != null && <span className="text-[10px] text-slate-400">/100</span>}
+        {/* docx §4 B-1 형식 '00 / 100' (공백 포함) - B-1 메인 카드와 통일 */}
+        {score != null && <span className="text-[10px] text-slate-400">/ 100</span>}
         {score == null && (
           <span className="text-[9px] text-slate-400 italic ml-auto">📡 {emptyLabel || '수집 준비 중'}</span>
         )}
