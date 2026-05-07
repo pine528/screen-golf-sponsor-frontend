@@ -519,6 +519,10 @@ export default function PublicAthleteDetail() {
               </span>
             )}
           </div>
+          {/* docx §9 F. 영역 목적 — '선수의 최근 경기 흐름과 공식 성과를 연도별로 확인할 수 있게 구성' */}
+          <p className="text-[10px] text-slate-500 mb-3">
+            📌 선수의 최근 경기 흐름과 공식 성과를 연도별로 확인할 수 있게 구성
+          </p>
 
           {/* F 추가 권장 항목 (docx §9): 최근 3개 대회 평균순위 / 시즌 누적 성적 / 추이 / 향후 일정 */}
           {roi?.matchAnalysis && (
@@ -1088,10 +1092,11 @@ function RoiDashboard({
         {/* B-2 보조 정보 4개 (docx §4 B-2 — 예시 형식 정확히 일치) */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
           {/* docx §4 B-2 1) '현재 수집 완료된 데이터 비율 표시' 부연 설명 */}
-          <AuxStat label="데이터 수집률" value={`${sum.collectionRate ?? 0}%`} hint="수집 완료 비율" />
-          <AuxStat label="신뢰도" value={sum.reliabilityLabel ?? '-'} hint="높음/보통/낮음" />
+          <AuxStat num={1} label="데이터 수집률" value={`${sum.collectionRate ?? 0}%`} hint="수집 완료 비율" />
+          <AuxStat num={2} label="신뢰도" value={sum.reliabilityLabel ?? '-'} hint="높음/보통/낮음" />
           {/* 예: 2026.05.03 14:20 (날짜+시간) */}
           <AuxStat
+            num={3}
             label="최근 업데이트"
             value={sum.updatedAt
               ? (() => {
@@ -1107,6 +1112,7 @@ function RoiDashboard({
           />
           {/* 예: 2026 WGTOUR 1차 / 2위 (대회명 + 순위) */}
           <AuxStat
+            num={4}
             label="최근 성과"
             value={sum.latestPerformance?.eventName && sum.latestPerformance?.rank
               ? `${sum.latestPerformance.eventName} / ${sum.latestPerformance.rank}위`
@@ -1429,10 +1435,13 @@ function RoiCard({
 }
 
 /** 보조 정보 (수집률/신뢰도/업데이트/최근성과) */
-function AuxStat({ label, value, hint }: { label: string; value: string; hint?: string }) {
+function AuxStat({ label, value, hint, num }: { label: string; value: string; hint?: string; num?: number }) {
   return (
     <div className="text-center" title={hint || undefined}>
-      <div className="opacity-60 mb-0.5">{label}</div>
+      {/* docx §4 B-2 — '1)' '2)' '3)' '4)' 번호 매기기 (있을 때) */}
+      <div className="opacity-60 mb-0.5">
+        {num != null && <span className="opacity-50">{num}) </span>}{label}
+      </div>
       <div className="font-bold text-[12px] truncate">{value}</div>
       {hint && <div className="opacity-40 text-[8px] truncate">{hint}</div>}
     </div>
