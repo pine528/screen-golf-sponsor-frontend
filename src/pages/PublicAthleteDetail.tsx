@@ -154,7 +154,9 @@ export default function PublicAthleteDetail() {
           </div>
           {/* 기본 정보 (실데이터, 없으면 -) */}
           <div className="text-center sm:text-left">
+            {/* docx §4 A '소속 배지' — 그룹 라벨 + KLPGA / WGTOUR / 스크린골프 */}
             <div className="inline-flex flex-wrap items-center gap-1 mb-2 justify-center sm:justify-start">
+              <span className="text-[10px] font-bold opacity-80 mr-0.5">소속 배지:</span>
               <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-full">
                 <Trophy className="w-3 h-3" /> {dash(athlete.tour)}
               </span>
@@ -173,9 +175,10 @@ export default function PublicAthleteDetail() {
             {athlete.realName && athlete.realName !== athlete.name && (
               <div className="text-sm opacity-90 mb-2">본명: {athlete.realName}</div>
             )}
-            {/* docx §4 A 기본 프로필 요약 — 정확 순서: 키 → 프로 입회연도 → 지역 */}
+            {/* docx §4 A '기본 프로필 요약' — 그룹 라벨 + 키 / 프로 입회연도 / 지역 (docx 명시 순서) */}
             {(athlete.height || athlete.region || athlete.debutYear) && (
               <div className="text-sm opacity-95 mb-3 inline-flex flex-wrap items-center gap-x-2 gap-y-1 justify-center sm:justify-start">
+                <span className="text-[10px] font-bold opacity-80 mr-0.5">기본 프로필 요약:</span>
                 {athlete.height && (
                   <span className="inline-flex items-center gap-1">📏 {athlete.height}cm</span>
                 )}
