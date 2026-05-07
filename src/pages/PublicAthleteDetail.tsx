@@ -1141,6 +1141,7 @@ function RoiDashboard({
           color="rose"
           score={roi.mediaExposure?.score}
           subtitle="방송/중계/외부노출 기준"
+          purpose="선수가 실제 방송·중계·기사·하이라이트 등에서 얼마나 노출되었는지 보여주는 핵심 지표"
           metrics={[
             // docx §6 C-1 정확 라벨 — 횟수/수 등 단위 명시
             { label: '중계 노출 횟수', value: fmt(roi.mediaExposure?.broadcastCount) },
@@ -1158,6 +1159,7 @@ function RoiDashboard({
           color="sky"
           score={roi.contentEngagement?.score}
           subtitle="SNS 및 콘텐츠 반응 기준"
+          purpose="선수 관련 콘텐츠가 얼마나 주목받고 반응을 일으켰는지 보여줌"
           // YouTube 동기화 실패 시 docx §11 '오류: 데이터 확인 필요' 표시
           error={youtube?.syncStatus === 'FAILED' ? `YouTube 동기화 실패: ${youtube?.syncError || '알 수 없는 오류'}` : undefined}
           metrics={[
@@ -1177,6 +1179,7 @@ function RoiDashboard({
           color="violet"
           score={roi.fandom?.score}
           subtitle="팬 반응 및 참여 데이터 기준"
+          purpose="선수의 팬 기반 규모와 반응성, 브랜드 친화력을 보여주는 지표"
           error={youtube?.syncStatus === 'FAILED' ? 'YouTube 동기화 실패 — 팔로워 정보 확인 필요' : undefined}
           metrics={[
             // docx §6 C-3 정확 라벨
@@ -1195,6 +1198,7 @@ function RoiDashboard({
           color="emerald"
           score={roi.athletePerformance?.score}
           subtitle="공식 대회 기록 및 일정 기준"
+          purpose="선수의 최근 경기력과 향후 대회 노출 기대치를 함께 반영"
           metrics={[
             // docx §6 C-4 정확 라벨
             { label: '최근 순위', value: roi.athletePerformance?.latestRank ? `${roi.athletePerformance.latestRank}위` : '-' },
@@ -1214,6 +1218,7 @@ function RoiDashboard({
             color="amber"
             score={roi.landingTraffic?.score}
             subtitle="브랜드 전용 트래킹 데이터 기준"
+            purpose="노출이 실제 브랜드 페이지 방문으로 이어졌는지 보여주는 확장 지표"
             extendedBadge
             metrics={[
               // docx §6 D-1 정확 라벨
@@ -1229,6 +1234,7 @@ function RoiDashboard({
             color="orange"
             score={roi.conversion?.score}
             subtitle="중장기 계약 브랜드 전용 성과지표"
+            purpose="브랜드 입장에서 실제 매출성과를 보여주는 최종 퍼널 지표"
             extendedBadge
             metrics={[
               { label: '전환 수', value: fmt(roi.conversion?.conversions) },
@@ -1336,12 +1342,13 @@ function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' 
 
 /** ROI 카드 — 영역 점수 + 지표 목록 */
 function RoiCard({
-  title, color, score, subtitle, metrics, extendedBadge, error,
+  title, color, score, subtitle, purpose, metrics, extendedBadge, error,
 }: {
   title: string;
   color: 'rose' | 'sky' | 'violet' | 'emerald' | 'amber' | 'orange';
   score?: number | null;
   subtitle?: string;
+  purpose?: string;   // docx §6 카드별 '목적' 명시 설명문 (호버 툴팁 + ? 아이콘)
   metrics: { label: string; value: string; truncate?: boolean }[];
   extendedBadge?: boolean;
   error?: string | null;  // docx §11 — 오류 상태: "데이터 확인 필요"
@@ -1358,7 +1365,19 @@ function RoiCard({
   return (
     <div className={`border rounded-2xl p-4 ${c.border} ${c.bg}`}>
       <div className="flex items-start justify-between mb-1">
-        <h3 className="text-sm font-extrabold text-slate-900">{title}</h3>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <h3 className="text-sm font-extrabold text-slate-900">{title}</h3>
+          {/* docx §6 카드별 '목적' 명시 설명문 — ? 아이콘 호버 툴팁 */}
+          {purpose && (
+            <span
+              className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-slate-200 text-slate-600 text-[9px] font-bold cursor-help"
+              title={`📌 카드 목적 (docx §6)\n${purpose}`}
+              aria-label={`카드 목적: ${purpose}`}
+            >
+              ?
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-1">
           {error && (
             <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 border border-rose-200" title={error}>
@@ -1372,6 +1391,8 @@ function RoiCard({
           )}
         </div>
       </div>
+      {/* docx §6 - 목적 설명문 (있으면 subtitle 위에 표시) */}
+      {purpose && <p className="text-[10px] text-slate-600 mb-1 leading-relaxed">📌 {purpose}</p>}
       {subtitle && <p className="text-[10px] text-slate-500 mb-2">{subtitle}</p>}
       <div className="flex items-baseline gap-2 mb-3 pb-2 border-b border-current/10">
         <span className="text-[10px] text-slate-500">영역 점수</span>
