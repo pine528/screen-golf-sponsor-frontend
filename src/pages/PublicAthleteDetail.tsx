@@ -1151,13 +1151,14 @@ function RoiDashboard({
       {/* === C. 핵심 성과 카드 영역 (docx §3 #3, §6 C 영역명 / 기본형 4개 카드) === */}
       <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wide pt-2">C. 핵심 성과 카드 영역 <span className="text-slate-400">(기본형 4종)</span></div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
-        {/* C-1. 미디어노출지수 */}
+        {/* C-1. 미디어노출지수 — docx §6 C-1 '데이터 없을 때 상태 문구: 데이터 수집 전' */}
         <RoiCard
           title="📺 미디어노출지수"
           color="rose"
           score={roi.mediaExposure?.score}
           subtitle="방송/중계/외부노출 기준"
           purpose="선수가 실제 방송·중계·기사·하이라이트 등에서 얼마나 노출되었는지 보여주는 핵심 지표"
+          emptyLabel="데이터 수집 전"
           metrics={[
             // docx §6 C-1 정확 라벨 — 횟수/수 등 단위 명시
             { label: '중계 노출 횟수', value: fmt(roi.mediaExposure?.broadcastCount) },
@@ -1368,7 +1369,7 @@ function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' 
 
 /** ROI 카드 — 영역 점수 + 지표 목록 */
 function RoiCard({
-  title, color, score, subtitle, purpose, metrics, extendedBadge, error,
+  title, color, score, subtitle, purpose, metrics, extendedBadge, error, emptyLabel,
 }: {
   title: string;
   color: 'rose' | 'sky' | 'violet' | 'emerald' | 'amber' | 'orange';
@@ -1378,6 +1379,7 @@ function RoiCard({
   metrics: { label: string; value: string; truncate?: boolean }[];
   extendedBadge?: boolean;
   error?: string | null;  // docx §11 — 오류 상태: "데이터 확인 필요"
+  emptyLabel?: string;    // docx §6 카드별 '데이터 없을 때 상태 문구' (예: C-1 '데이터 수집 전')
 }) {
   const colorMap: Record<string, { border: string; bg: string; scoreText: string }> = {
     rose: { border: 'border-rose-200', bg: 'bg-rose-50/30', scoreText: 'text-rose-700' },
@@ -1427,7 +1429,7 @@ function RoiCard({
         </span>
         {score != null && <span className="text-[10px] text-slate-400">/100</span>}
         {score == null && (
-          <span className="text-[9px] text-slate-400 italic ml-auto">📡 수집 준비 중</span>
+          <span className="text-[9px] text-slate-400 italic ml-auto">📡 {emptyLabel || '수집 준비 중'}</span>
         )}
       </div>
       <div className="space-y-1.5">
@@ -1444,10 +1446,10 @@ function RoiCard({
           );
         })}
       </div>
-      {/* 모든 지표 미수집 시 docx §11 '수집 준비 중' 정확 문구 */}
+      {/* 모든 지표 미수집 시 docx §11 '수집 준비 중' (또는 카드별 명시 라벨, 예: C-1 '데이터 수집 전') */}
       {metrics.every(m => m.value === '-' || !m.value) && (
         <div className="mt-3 pt-2 border-t border-current/10 text-[10px] text-center text-slate-400">
-          📡 수집 준비 중
+          📡 {emptyLabel || '수집 준비 중'}
         </div>
       )}
     </div>
