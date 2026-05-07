@@ -1029,7 +1029,8 @@ function RoiDashboard({
 
   return (
     <div className="space-y-4">
-      {/* === B. 종합 광고효과 요약 영역 === */}
+      {/* === B. 종합 광고효과 요약 영역 (docx §3 #2, §4 B 영역명) === */}
+      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">B. 종합 광고효과 요약 영역</div>
       <div className={`border-2 rounded-2xl p-5 bg-gradient-to-br ${gradeBgs[gradeColor]}`}>
         <div className="flex items-start justify-between gap-4 mb-3">
           <div>
@@ -1147,7 +1148,8 @@ function RoiDashboard({
         </div>
       </div>
 
-      {/* === C. 핵심 성과 카드 영역 === */}
+      {/* === C. 핵심 성과 카드 영역 (docx §3 #3, §6 C 영역명 / 기본형 4개 카드) === */}
+      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wide pt-2">C. 핵심 성과 카드 영역 <span className="text-slate-400">(기본형 4종)</span></div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
         {/* C-1. 미디어노출지수 */}
         <RoiCard
@@ -1224,7 +1226,12 @@ function RoiDashboard({
         />
       </div>
 
-      {/* === D. 확장형 카드 (확장형 모드일 때만 노출) === */}
+      {/* === D. 확장형 대시보드 추가 카드 구성 (docx §6 D / 중장기 계약 브랜드 전용) === */}
+      {isExtended && (
+        <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wide pt-2">
+          D. 확장형 대시보드 추가 카드 <span className="text-slate-400">(중장기 계약 브랜드 전용)</span>
+        </div>
+      )}
       {isExtended && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <RoiCard
