@@ -188,7 +188,8 @@ export default function PublicAthleteDetail() {
                 {athlete.debutYear && (
                   <>
                     {(athlete.height || athlete.region) && <span className="opacity-50">·</span>}
-                    <span className="inline-flex items-center gap-1">🎯 {athlete.debutYear}년 데뷔</span>
+                    {/* docx §4 A 기본 프로필 요약 — '프로 입회연도' 정확 표기 */}
+                    <span className="inline-flex items-center gap-1">🎯 프로 입회 {athlete.debutYear}년</span>
                   </>
                 )}
               </div>
