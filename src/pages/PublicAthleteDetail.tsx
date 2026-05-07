@@ -173,23 +173,22 @@ export default function PublicAthleteDetail() {
             {athlete.realName && athlete.realName !== athlete.name && (
               <div className="text-sm opacity-90 mb-2">본명: {athlete.realName}</div>
             )}
-            {/* SPONPIK 4. 권장 데이터: 신장 · 지역 · 데뷔연도 (구조화 필드) */}
+            {/* docx §4 A 기본 프로필 요약 — 정확 순서: 키 → 프로 입회연도 → 지역 */}
             {(athlete.height || athlete.region || athlete.debutYear) && (
               <div className="text-sm opacity-95 mb-3 inline-flex flex-wrap items-center gap-x-2 gap-y-1 justify-center sm:justify-start">
                 {athlete.height && (
                   <span className="inline-flex items-center gap-1">📏 {athlete.height}cm</span>
                 )}
-                {athlete.region && (
-                  <>
-                    {athlete.height && <span className="opacity-50">·</span>}
-                    <span className="inline-flex items-center gap-1">📍 {athlete.region}</span>
-                  </>
-                )}
                 {athlete.debutYear && (
                   <>
-                    {(athlete.height || athlete.region) && <span className="opacity-50">·</span>}
-                    {/* docx §4 A 기본 프로필 요약 — '프로 입회연도' 정확 표기 */}
+                    {athlete.height && <span className="opacity-50">·</span>}
                     <span className="inline-flex items-center gap-1">🎯 프로 입회 {athlete.debutYear}년</span>
+                  </>
+                )}
+                {athlete.region && (
+                  <>
+                    {(athlete.height || athlete.debutYear) && <span className="opacity-50">·</span>}
+                    <span className="inline-flex items-center gap-1">📍 {athlete.region}</span>
                   </>
                 )}
               </div>
@@ -1074,11 +1073,12 @@ function RoiDashboard({
           score={roi.mediaExposure?.score}
           subtitle="방송/중계/외부노출 기준"
           metrics={[
+            // docx §6 C-1 정확 라벨 — 횟수/수 등 단위 명시
             { label: '중계 노출 횟수', value: fmt(roi.mediaExposure?.broadcastCount) },
             { label: '중계 노출 시간', value: fmt(roi.mediaExposure?.broadcastSeconds, 'time') },
-            { label: '패치/로고 노출 추정', value: fmt(roi.mediaExposure?.patchExposureEstimate) },
-            { label: '기사/외부 언급', value: fmt(roi.mediaExposure?.articleMentions) },
-            { label: '하이라이트 노출', value: fmt(roi.mediaExposure?.highlightCount) },
+            { label: '패치/로고 노출 추정 횟수', value: fmt(roi.mediaExposure?.patchExposureEstimate) },
+            { label: '기사/외부 언급 수', value: fmt(roi.mediaExposure?.articleMentions) },
+            { label: '하이라이트 노출 수', value: fmt(roi.mediaExposure?.highlightCount) },
             { label: '출연 영상 (YT 자동)', value: roi.mediaExposure?.mentionVideos ? `${roi.mediaExposure.mentionVideos}건` : '-' },
           ]}
         />
@@ -1110,10 +1110,11 @@ function RoiDashboard({
           subtitle="팬 반응 및 참여 데이터 기준"
           error={youtube?.syncStatus === 'FAILED' ? 'YouTube 동기화 실패 — 팔로워 정보 확인 필요' : undefined}
           metrics={[
+            // docx §6 C-3 정확 라벨
             { label: '팔로워 수', value: fmt(roi.fandom?.followers) },
             { label: '최근 증가율', value: roi.fandom?.followerGrowthPct != null ? `${roi.fandom.followerGrowthPct}%` : '-' },
-            { label: '팬 댓글/멘션', value: fmt(roi.fandom?.fanCommentsMentions) },
-            { label: '응원/이벤트', value: fmt(roi.fandom?.fanEvents) },
+            { label: '팬 댓글/멘션 수', value: fmt(roi.fandom?.fanCommentsMentions) },
+            { label: '응원/참여 이벤트 수', value: fmt(roi.fandom?.fanEvents) },
             { label: '팬 투표 참여율', value: roi.fandom?.voteParticipationRate != null ? `${roi.fandom.voteParticipationRate}%` : '-' },
             { label: 'UGC 건수', value: fmt(roi.fandom?.ugcCount) },
           ]}
@@ -1126,10 +1127,11 @@ function RoiDashboard({
           score={roi.athletePerformance?.score}
           subtitle="공식 대회 기록 및 일정 기준"
           metrics={[
+            // docx §6 C-4 정확 라벨
             { label: '최근 순위', value: roi.athletePerformance?.latestRank ? `${roi.athletePerformance.latestRank}위` : '-' },
-            { label: '최근 3개 평균', value: roi.athletePerformance?.recentAvgRank != null ? `${roi.athletePerformance.recentAvgRank}위` : '-' },
-            { label: '최근 대회', value: roi.athletePerformance?.latestEventName || '-', truncate: true },
-            { label: '다음 참가 예정', value: roi.athletePerformance?.nextEvent?.name || '-', truncate: true },
+            { label: '최근 3개 대회 평균 순위', value: roi.athletePerformance?.recentAvgRank != null ? `${roi.athletePerformance.recentAvgRank}위` : '-' },
+            { label: '최근 대회명', value: roi.athletePerformance?.latestEventName || '-', truncate: true },
+            { label: '다음 참가 예정 대회', value: roi.athletePerformance?.nextEvent?.name || '-', truncate: true },
             { label: '노출 기대지수', value: fmt(roi.athletePerformance?.exposureExpectation) },
           ]}
         />
@@ -1145,10 +1147,11 @@ function RoiDashboard({
             subtitle="브랜드 전용 트래킹 데이터 기준"
             extendedBadge
             metrics={[
+              // docx §6 D-1 정확 라벨
               { label: '클릭 수', value: fmt(roi.landingTraffic?.clicks) },
               { label: '방문 수', value: fmt(roi.landingTraffic?.visits) },
               { label: 'CTR', value: roi.landingTraffic?.ctr != null ? `${roi.landingTraffic.ctr}%` : '-' },
-              { label: '신규 방문자', value: fmt(roi.landingTraffic?.newVisitors) },
+              { label: '신규 방문자 수', value: fmt(roi.landingTraffic?.newVisitors) },
               { label: '평균 체류시간', value: fmt(roi.landingTraffic?.avgDwellTime, 'time') },
             ]}
           />
