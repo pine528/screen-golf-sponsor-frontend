@@ -1028,9 +1028,19 @@ function RoiDashboard({
         <div className="flex items-start justify-between gap-4 mb-3">
           <div>
             <div className="text-[11px] font-bold opacity-70 mb-0.5">📊 SPONPIK Ad Impact Score</div>
-            <div className="text-[10px] opacity-60">{isExtended ? '확장형 종합 점수' : '기본 스폰서십 광고효과 종합지수'}</div>
+            {/* docx §4 B-1 보조 문구 예시 — 2개 모두 노출 (기본형 모드) */}
+            <div className="text-[10px] opacity-60 leading-relaxed">
+              {isExtended
+                ? '확장형 종합 점수 — 광고효과 + 유입 + 전환까지 포함'
+                : '기본 스폰서십 광고효과 종합지수'}
+            </div>
+            {!isExtended && (
+              <div className="text-[10px] opacity-50 leading-relaxed">
+                미디어·콘텐츠·팬덤·선수성과 기준 산정
+              </div>
+            )}
           </div>
-          {/* 상태 배지 */}
+          {/* docx §4 B-1 상태 배지 */}
           <span className={`text-[10px] font-bold px-2 py-1 rounded-full border ${statusBadgeClass}`}>
             {sum.statusLabel || '-'}
           </span>
@@ -1063,8 +1073,12 @@ function RoiDashboard({
             <div className="text-[9px] opacity-50 mt-1">A · B · C · D · E</div>
           </div>
         </div>
+        {/* === B-2. 보조 정보 카드 (docx §4 B-2) === */}
+        <div className="mt-4 pt-3 border-t border-current/10">
+          <div className="text-[10px] font-bold opacity-70 mb-2">📋 보조 정보</div>
+        </div>
         {/* B-2 보조 정보 4개 (docx §4 B-2 — 예시 형식 정확히 일치) */}
-        <div className="mt-4 pt-3 border-t border-current/10 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
           <AuxStat label="데이터 수집률" value={`${sum.collectionRate ?? 0}%`} />
           <AuxStat label="신뢰도" value={sum.reliabilityLabel ?? '-'} />
           {/* 예: 2026.05.03 14:20 (날짜+시간) */}
