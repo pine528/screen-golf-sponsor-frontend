@@ -380,11 +380,11 @@ export default function PublicAthleteDetail() {
         <RoiDashboard roi={roi} youtube={youtube} mentions={mentions} viewMode={roiViewMode} onViewModeChange={setRoiViewMode} />
       </section>
 
-      {/* === E. 운영 현황 카드 영역 (docx §8 — 그룹 헤더 + E-1, E-2, E-3 3열) === */}
+      {/* === E. 운영 현황 카드 영역 (docx §8 정확 영역명 + E-1, E-2, E-3 3열) === */}
       <section data-section="profile-detail" className="max-w-6xl mx-auto px-5 sm:px-8 pb-12">
         <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
           <Gavel className="w-5 h-5 text-emerald-500" />
-          운영 현황
+          E. 운영 현황 카드 영역
           <span className="text-[10px] font-normal text-slate-400">슬롯 현황 / 최근 대회 / 예정 대회</span>
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -513,7 +513,7 @@ export default function PublicAthleteDetail() {
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-extrabold text-slate-900 inline-flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-emerald-500" /> 경기결과 / 분석
+              <Trophy className="w-4 h-4 text-emerald-500" /> F. 경기결과 / 분석
             </h2>
             {eventResults.length > 0 && (
               <span className="text-[10px] text-slate-400">
@@ -1230,7 +1230,7 @@ function RoiDashboard({
       {/* === D. 확장형 대시보드 추가 카드 구성 (docx §6 D / 중장기 계약 브랜드 전용) === */}
       {isExtended && (
         <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wide pt-2">
-          D. 확장형 대시보드 추가 카드 <span className="text-slate-400">(중장기 계약 브랜드 전용)</span>
+          D. 확장형 대시보드 추가 카드 구성 <span className="text-slate-400">(중장기 계약 브랜드 전용)</span>
         </div>
       )}
       {isExtended && (
@@ -1304,7 +1304,7 @@ function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' 
       {/* docx §10 G. '점수 산정 기준 안내' 정확 영역명 + G-3 '데이터 출처' */}
       <h2 className="text-xl font-extrabold text-slate-900 mb-2 inline-flex items-center gap-2">
         <Trophy className="w-5 h-5 text-emerald-500" />
-        점수 산정 기준 안내 / 데이터 출처
+        G. 점수 산정 기준 안내 / 데이터 출처
       </h2>
       {/* docx §10 G. '이 영역은 반드시 넣는 것을 권장한다 / 브랜드가 점수를 신뢰하려면 무엇으로 계산된 점수인지를 알아야 하기 때문' */}
       <p className="text-[11px] text-slate-500 mb-4">
@@ -1329,7 +1329,8 @@ function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' 
         </div>
 
         <div className="bg-white border border-slate-200 rounded-2xl p-4">
-          <h3 className="text-sm font-extrabold text-slate-900 mb-2">📦 데이터 출처</h3>
+          {/* docx §10 G-3 정확 카드명 '데이터 출처 카드' */}
+          <h3 className="text-sm font-extrabold text-slate-900 mb-2">📦 데이터 출처 카드</h3>
           <div className="space-y-1.5 text-[11px]">
             {roi.dataSources?.map((s: any) => (
               <div key={s.code} className="flex items-center justify-between">
