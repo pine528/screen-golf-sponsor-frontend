@@ -1033,7 +1033,13 @@ function RoiDashboard({
       <div className={`border-2 rounded-2xl p-5 bg-gradient-to-br ${gradeBgs[gradeColor]}`}>
         <div className="flex items-start justify-between gap-4 mb-3">
           <div>
-            <div className="text-[11px] font-bold opacity-70 mb-0.5">📊 SPONPIK Ad Impact Score</div>
+            <div className="flex items-center gap-1.5 mb-0.5">
+              <span className="text-[11px] font-bold opacity-70">📊 SPONPIK Ad Impact Score</span>
+              {/* docx §4 B-1 명시 헤더 '기본형 기준' / '확장형 기준' */}
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-current/10">
+                {isExtended ? '확장형 기준' : '기본형 기준'}
+              </span>
+            </div>
             {/* docx §4 B-1 보조 문구 예시 — 2개 모두 노출 (기본형 모드) */}
             <div className="text-[10px] opacity-60 leading-relaxed">
               {isExtended
@@ -1067,8 +1073,8 @@ function RoiDashboard({
               {score != null ? score.toFixed(1) : '-'}
               {score != null && <span className="text-xl font-bold opacity-70 ml-1">/ 100</span>}
             </div>
-            {/* docx §4 B-1 '산정 기준' — 헤더 + 안내문 + 4축(기본)/6축(확장) 가중치 */}
-            <div className="text-[10px] font-bold opacity-70 mt-2">📐 산정 기준</div>
+            {/* docx §4 B-1 + §7 '산정 기준' — 헤더 + 안내문 + 4축(기본)/6축(확장) 가중치 + 총 100점 */}
+            <div className="text-[10px] font-bold opacity-70 mt-2">📐 산정 기준 <span className="opacity-60">(총 100점)</span></div>
             <div className="text-[10px] opacity-60 mt-0.5">
               {isExtended
                 ? '확장형 종합점수는 아래 6개 축을 반영'
@@ -1287,9 +1293,10 @@ function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' 
   const isExtended = viewMode === 'EXTENDED';
   return (
     <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12">
+      {/* docx §10 G. '점수 산정 기준 안내' 정확 영역명 + G-3 '데이터 출처' */}
       <h2 className="text-xl font-extrabold text-slate-900 mb-2 inline-flex items-center gap-2">
         <Trophy className="w-5 h-5 text-emerald-500" />
-        점수 산정 기준 / 데이터 출처
+        점수 산정 기준 안내 / 데이터 출처
       </h2>
       {/* docx §10 G. '이 영역은 반드시 넣는 것을 권장한다 / 브랜드가 점수를 신뢰하려면 무엇으로 계산된 점수인지를 알아야 하기 때문' */}
       <p className="text-[11px] text-slate-500 mb-4">
