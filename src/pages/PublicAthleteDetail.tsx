@@ -483,19 +483,19 @@ export default function PublicAthleteDetail() {
             )}
           </div>
 
-          {/* F 추가 권장 항목 (docx §9): 최근 3개 평균 / 시즌 누적 / 추이 / 향후 일정 */}
+          {/* F 추가 권장 항목 (docx §9): 최근 3개 대회 평균순위 / 시즌 누적 성적 / 추이 / 향후 일정 */}
           {roi?.matchAnalysis && (
             <div className="mb-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div className="bg-emerald-50 rounded-lg p-2.5 text-center">
-                <div className="text-[10px] text-slate-500">최근 3개 평균</div>
+                <div className="text-[10px] text-slate-500">최근 3개 대회 평균순위</div>
                 <div className="text-lg font-extrabold text-emerald-700">
                   {roi.matchAnalysis.recentAvgRank != null ? `${roi.matchAnalysis.recentAvgRank}위` : '-'}
                 </div>
               </div>
               <div className="bg-sky-50 rounded-lg p-2.5 text-center">
-                <div className="text-[10px] text-slate-500">시즌 누적 평균</div>
+                <div className="text-[10px] text-slate-500">시즌 누적 성적</div>
                 <div className="text-lg font-extrabold text-sky-700">
-                  {roi.matchAnalysis.seasonAvgRank != null ? `${roi.matchAnalysis.seasonAvgRank}위` : '-'}
+                  {roi.matchAnalysis.seasonAvgRank != null ? `평균 ${roi.matchAnalysis.seasonAvgRank}위` : '-'}
                 </div>
                 <div className="text-[9px] text-slate-400">출전 {roi.matchAnalysis.seasonTotalEvents}회</div>
               </div>
