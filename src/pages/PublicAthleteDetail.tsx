@@ -1079,8 +1079,9 @@ function RoiDashboard({
         </div>
         {/* B-2 보조 정보 4개 (docx §4 B-2 — 예시 형식 정확히 일치) */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
-          <AuxStat label="데이터 수집률" value={`${sum.collectionRate ?? 0}%`} />
-          <AuxStat label="신뢰도" value={sum.reliabilityLabel ?? '-'} />
+          {/* docx §4 B-2 1) '현재 수집 완료된 데이터 비율 표시' 부연 설명 */}
+          <AuxStat label="데이터 수집률" value={`${sum.collectionRate ?? 0}%`} hint="수집 완료 비율" />
+          <AuxStat label="신뢰도" value={sum.reliabilityLabel ?? '-'} hint="높음/보통/낮음" />
           {/* 예: 2026.05.03 14:20 (날짜+시간) */}
           <AuxStat
             label="최근 업데이트"
@@ -1380,11 +1381,12 @@ function RoiCard({
 }
 
 /** 보조 정보 (수집률/신뢰도/업데이트/최근성과) */
-function AuxStat({ label, value }: { label: string; value: string }) {
+function AuxStat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="text-center">
+    <div className="text-center" title={hint || undefined}>
       <div className="opacity-60 mb-0.5">{label}</div>
       <div className="font-bold text-[12px] truncate">{value}</div>
+      {hint && <div className="opacity-40 text-[8px] truncate">{hint}</div>}
     </div>
   );
 }
