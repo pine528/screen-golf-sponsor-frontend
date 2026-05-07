@@ -964,8 +964,11 @@ function RoiDashboard({
 
   const sum = roi.summary || {};
   const score = viewMode === 'EXTENDED' ? sum.extendedScore : sum.basicScore;
-  const grade = score == null ? null
-    : score >= 80 ? 'A' : score >= 65 ? 'B' : score >= 50 ? 'C' : score >= 35 ? 'D' : 'E';
+  // docx §11 — 산정중 상태에서 보수적 처리는 backend toGrade()에서 적용되므로
+  // backend 가 보낸 basicGrade/extendedGrade 를 우선 사용 (frontend 자체 매핑 금지)
+  const backendGrade = viewMode === 'EXTENDED' ? sum.extendedGrade : sum.basicGrade;
+  const grade = backendGrade ?? (score == null ? null
+    : score >= 80 ? 'A' : score >= 65 ? 'B' : score >= 50 ? 'C' : score >= 35 ? 'D' : 'E');
   const gradeColor = grade === 'A' ? 'emerald' : grade === 'B' ? 'sky' : grade === 'C' ? 'amber' : grade === 'D' ? 'orange' : grade === 'E' ? 'rose' : 'slate';
   const gradeBgs: Record<string, string> = {
     emerald: 'from-emerald-100 to-teal-50 text-emerald-700 border-emerald-300',
