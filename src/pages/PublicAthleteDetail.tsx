@@ -378,8 +378,14 @@ export default function PublicAthleteDetail() {
         <RoiDashboard roi={roi} youtube={youtube} mentions={mentions} viewMode={roiViewMode} onViewModeChange={setRoiViewMode} />
       </section>
 
-      {/* === E. 운영 현황 카드 영역 (docx E-1, E-2, E-3 — 3열) === */}
-      <section data-section="profile-detail" className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 lg:grid-cols-3 gap-4">
+      {/* === E. 운영 현황 카드 영역 (docx §8 — 그룹 헤더 + E-1, E-2, E-3 3열) === */}
+      <section data-section="profile-detail" className="max-w-6xl mx-auto px-5 sm:px-8 pb-12">
+        <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
+          <Gavel className="w-5 h-5 text-emerald-500" />
+          운영 현황
+          <span className="text-[10px] font-normal text-slate-400">슬롯 현황 / 최근 대회 / 예정 대회</span>
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* E-1. 슬롯 현황 카드 */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5">
           <h2 className="text-base font-extrabold text-slate-900 mb-3 inline-flex items-center gap-2">
@@ -494,6 +500,7 @@ export default function PublicAthleteDetail() {
               </div>
             );
           })()}
+        </div>
         </div>
       </section>
 
@@ -1030,12 +1037,19 @@ function RoiDashboard({
         </div>
         <div className="flex items-end justify-between gap-4">
           <div>
+            {/* docx §4 B-1 '종합 점수: 00 / 100' 형식 — 라벨 명시 */}
+            <div className="text-[10px] font-bold opacity-70 mb-0.5">종합 점수</div>
             <div className="text-5xl font-black tabular-nums leading-none">
               {score != null ? score.toFixed(1) : '-'}
               {score != null && <span className="text-xl font-bold opacity-70 ml-1">/ 100</span>}
             </div>
-            {/* docx §4 B-1 '산정 기준' — 4축(기본) / 6축(확장) 정확 라벨 */}
+            {/* docx §4 B-1 '산정 기준' — 헤더 + 안내문 + 4축(기본)/6축(확장) 가중치 */}
             <div className="text-[10px] font-bold opacity-70 mt-2">📐 산정 기준</div>
+            <div className="text-[10px] opacity-60 mt-0.5">
+              {isExtended
+                ? '확장형 종합점수는 아래 6개 축을 반영'
+                : '기본형 종합점수는 아래 4개 축만 반영'}
+            </div>
             <div className="text-[11px] opacity-70 mt-0.5 leading-relaxed">
               {isExtended
                 ? '미디어노출지수(20) · 콘텐츠 반응(15) · 팬덤지수(15) · 선수성과/대회가치(20) · 랜딩 유입(10) · 구매/전환/ROI(20)'
@@ -1043,8 +1057,10 @@ function RoiDashboard({
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[11px] font-bold opacity-70">등급</div>
+            {/* docx §4 B-1 '등급: A / B / C / D / E' 형식 — 가능 옵션 안내 + 현재 등급 강조 */}
+            <div className="text-[10px] font-bold opacity-70 mb-0.5">등급</div>
             <div className="text-4xl font-black leading-none">{grade ?? '-'}</div>
+            <div className="text-[9px] opacity-50 mt-1">A · B · C · D · E</div>
           </div>
         </div>
         {/* B-2 보조 정보 4개 (docx §4 B-2 — 예시 형식 정확히 일치) */}
@@ -1339,10 +1355,10 @@ function RoiCard({
           );
         })}
       </div>
-      {/* 모든 지표 미수집 시 "수집 준비 중" 안내 (docx 11) */}
+      {/* 모든 지표 미수집 시 docx §11 '수집 준비 중' 정확 문구 */}
       {metrics.every(m => m.value === '-' || !m.value) && (
         <div className="mt-3 pt-2 border-t border-current/10 text-[10px] text-center text-slate-400">
-          📡 데이터 수집 준비 중
+          📡 수집 준비 중
         </div>
       )}
     </div>
@@ -1416,8 +1432,12 @@ function EventResultsByYear({ results, fallbackTour }: { results: any[]; fallbac
                       <span className="px-1.5 py-0.5 bg-sky-50 text-sky-700 rounded">{r.source}</span>
                     )}
                   </div>
+                  {/* docx §9 F 표시 항목 - '분석 코멘트' 명시 라벨 */}
                   {r.summary && (
-                    <p className="text-xs text-slate-600 mt-1 line-clamp-2">📝 {r.summary}</p>
+                    <div className="mt-1 flex items-start gap-1">
+                      <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded shrink-0 mt-0.5">분석 코멘트</span>
+                      <p className="text-xs text-slate-600 line-clamp-2 flex-1">{r.summary}</p>
+                    </div>
                   )}
                 </div>
                 {r.score && (
