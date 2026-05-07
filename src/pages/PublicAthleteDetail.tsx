@@ -1081,9 +1081,9 @@ function RoiDashboard({
             <div className="text-[9px] opacity-50 mt-1">A · B · C · D · E</div>
           </div>
         </div>
-        {/* === B-2. 보조 정보 카드 (docx §4 B-2) === */}
+        {/* === B-2. 보조 정보 카드 (docx §4 B-2 카드명 정확 일치) === */}
         <div className="mt-4 pt-3 border-t border-current/10">
-          <div className="text-[10px] font-bold opacity-70 mb-2">📋 보조 정보</div>
+          <div className="text-[10px] font-bold opacity-70 mb-2">📋 보조 정보 카드</div>
         </div>
         {/* B-2 보조 정보 4개 (docx §4 B-2 — 예시 형식 정확히 일치) */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
