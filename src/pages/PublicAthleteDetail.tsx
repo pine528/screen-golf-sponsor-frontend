@@ -197,14 +197,14 @@ export default function PublicAthleteDetail() {
               {dash(athlete.bio)}
             </p>
 
-            {/* 활동 상태 배지 (docx A 섹션) */}
-            <div className="flex flex-wrap gap-1.5 mb-3 justify-center sm:justify-start">
+            {/* docx §4 A 활동 상태 배지 — 활동중 / 슬롯 오픈 / 경매 진행중 (3개만 한정) */}
+            <div className="flex flex-wrap gap-1.5 mb-2 justify-center sm:justify-start">
               <span className="inline-flex items-center gap-1 bg-emerald-400/90 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur">
                 ● 활동중
               </span>
               {orderedSlots.length > 0 && (
                 <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-[10px] font-bold px-2 py-1 rounded-full">
-                  🎯 슬롯 오픈 {orderedSlots.length}개
+                  🎯 슬롯 오픈
                 </span>
               )}
               {orderedSlots.some((s) => s.auction?.status === 'LIVE') && (
@@ -212,11 +212,31 @@ export default function PublicAthleteDetail() {
                   🔥 경매 진행중
                 </span>
               )}
-              {recentEvents.length > 0 && (
-                <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-[10px] font-bold px-2 py-1 rounded-full">
-                  📅 최근 대회: {recentEvents[0].name?.slice(0, 20)}
-                </span>
-              )}
+            </div>
+
+            {/* docx §4 A 최근 참가 대회 요약 — 별도 라인 */}
+            {recentEvents.length > 0 && (
+              <div className="text-xs opacity-90 mb-1 inline-flex items-center gap-1 justify-center sm:justify-start">
+                <Calendar className="w-3 h-3" />
+                <span className="font-semibold">최근 참가 대회</span>
+                <span className="opacity-50">·</span>
+                <span className="truncate max-w-[300px]">{recentEvents[0].name}</span>
+                {recentEvents[0].dateStart && (
+                  <span className="opacity-70 text-[10px]">
+                    ({new Date(recentEvents[0].dateStart).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' })})
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* docx §4 A 현재 열려 있는 슬롯 수 — 별도 라인 */}
+            <div className="text-xs opacity-90 mb-3 inline-flex items-center gap-1 justify-center sm:justify-start">
+              <Gavel className="w-3 h-3" />
+              <span className="font-semibold">현재 열려 있는 슬롯</span>
+              <span className="opacity-50">·</span>
+              <span className={`font-extrabold ${orderedSlots.length > 0 ? 'text-amber-200' : 'opacity-60'}`}>
+                {orderedSlots.length}개
+              </span>
             </div>
 
             {/* 소셜 링크 */}
@@ -243,7 +263,7 @@ export default function PublicAthleteDetail() {
               </div>
             )}
 
-            {/* docx A 우측 버튼 3종 — 현재 슬롯 보기 / 프로필 상세 / 경매 참여하기 */}
+            {/* docx §4 A 우측 버튼 3종 — 현재 슬롯 보기 / 프로필 상세 / 경매 참여하기 (항상 노출, LIVE 없을 때 disabled) */}
             <div className="mt-4 flex flex-wrap gap-2 justify-center sm:justify-start">
               <button
                 onClick={() => {
@@ -264,18 +284,28 @@ export default function PublicAthleteDetail() {
               >
                 <User className="w-3.5 h-3.5" /> 프로필 상세
               </button>
-              {orderedSlots.some((s) => s.auction?.status === 'LIVE') && (
-                <button
-                  onClick={() => {
-                    const liveSlot = orderedSlots.find((s) => s.auction?.status === 'LIVE');
-                    if (liveSlot) setSelectedSlotId(liveSlot.id);
-                    document.querySelector('[data-section="slots"]')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="inline-flex items-center gap-1.5 bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-xs font-extrabold shadow-md transition-colors animate-pulse"
-                >
-                  🔥 경매 참여하기
-                </button>
-              )}
+              {(() => {
+                const hasLive = orderedSlots.some((s) => s.auction?.status === 'LIVE');
+                return (
+                  <button
+                    disabled={!hasLive}
+                    onClick={() => {
+                      if (!hasLive) return;
+                      const liveSlot = orderedSlots.find((s) => s.auction?.status === 'LIVE');
+                      if (liveSlot) setSelectedSlotId(liveSlot.id);
+                      document.querySelector('[data-section="slots"]')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    title={hasLive ? '진행 중인 경매에 참여' : '진행 중인 경매가 없습니다'}
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-extrabold transition-colors ${
+                      hasLive
+                        ? 'bg-rose-500 hover:bg-rose-600 text-white shadow-md animate-pulse'
+                        : 'bg-white/15 text-white/60 cursor-not-allowed'
+                    }`}
+                  >
+                    {hasLive ? '🔥 경매 참여하기' : '경매 참여하기'}
+                  </button>
+                );
+              })()}
             </div>
           </div>
         </div>
