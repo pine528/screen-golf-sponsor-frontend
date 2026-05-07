@@ -1091,8 +1091,9 @@ function RoiDashboard({
             {/* docx §4 B-1 + §7 '산정 기준' — 헤더 + 안내문 + 4축(기본)/6축(확장) 가중치 + 총 100점 */}
             <div className="text-[10px] font-bold opacity-70 mt-2">📐 산정 기준 <span className="opacity-60">(총 100점)</span></div>
             <div className="text-[10px] opacity-60 mt-0.5">
+              {/* docx §7-1 / §7-2 정확 표현 */}
               {isExtended
-                ? '확장형 종합점수는 아래 6개 축을 반영'
+                ? '확장형은 기본 4개 축에 추가로 아래 2개를 반영한다'
                 : '기본형 종합점수는 아래 4개 축만 반영'}
             </div>
             <div className="text-[11px] opacity-70 mt-0.5 leading-relaxed">
