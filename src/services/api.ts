@@ -3118,6 +3118,42 @@ class ApiService {
     return r.data;
   }
 
+  // ============================================
+  // 미디어 노출 수동 입력 (docx §6 C-1, 관리자/본인)
+  // ============================================
+  async getAthleteMediaExposures(athleteId: string) {
+    const r = await this.client.get<ApiResponse<any[]>>(`/athletes/${athleteId}/media-exposures`);
+    return r.data;
+  }
+  async createAthleteMediaExposure(athleteId: string, body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/athletes/${athleteId}/media-exposures`, body);
+    return r.data;
+  }
+  async updateAthleteMediaExposure(exposureId: string, body: any) {
+    const r = await this.client.patch<ApiResponse<any>>(`/athletes/media-exposures/${exposureId}`, body);
+    return r.data;
+  }
+  async deleteAthleteMediaExposure(exposureId: string) {
+    const r = await this.client.delete<ApiResponse<any>>(`/athletes/media-exposures/${exposureId}`);
+    return r.data;
+  }
+
+  // ============================================
+  // 자동 수집 트리거 (docx §6 C-1, C-3 관리자)
+  // ============================================
+  async syncAthleteNews(athleteId: string, extraKeyword = '골프') {
+    const r = await this.client.post<ApiResponse<any>>(`/athletes/${athleteId}/sync-news`, { extraKeyword });
+    return r.data;
+  }
+  async syncAllFollowers() {
+    const r = await this.client.post<ApiResponse<any>>(`/athletes/sync-followers-all`, {});
+    return r.data;
+  }
+  async syncAllNews() {
+    const r = await this.client.post<ApiResponse<any>>(`/athletes/sync-news-all`, {});
+    return r.data;
+  }
+
   // Pixel (Phase 2)
   async createPixel(brandId?: string, domains: string[] = []) {
     const r = await this.client.post<ApiResponse<any>>(`/external/pixels`, { brand_id: brandId, domains });

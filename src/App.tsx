@@ -103,6 +103,7 @@ import { ShortLinkRedirect } from './pages/ShortLinkRedirect';
 import PublicAthletes from './pages/PublicAthletes';
 import PublicAthleteDetail from './pages/PublicAthleteDetail';
 import AdminAthleteEventResults from './pages/admin/AdminAthleteEventResults';
+import AdminMediaExposure from './pages/admin/AdminMediaExposure';
 import AdminTournamentActivation from './pages/admin/AdminTournamentActivation';
 import VotesList from './pages/fan/VoteV2List';
 import VotesDetail from './pages/fan/VoteV2Detail';
@@ -1009,6 +1010,8 @@ function App() {
 
       {/* 관리자: 선수 경기결과 관리 (docx 3-6) */}
       <Route path="/admin/athletes/event-results" element={<ProtectedRoute><AdminAthleteEventResults /></ProtectedRoute>} />
+      {/* 관리자: 미디어 노출 데이터 관리 (docx §6 C-1 - 자동/수동 보강) */}
+      <Route path="/admin/athletes/media-exposure" element={<ProtectedRoute><AdminMediaExposure /></ProtectedRoute>} />
       {/* 관리자: 대회 활성화 / N값 / 카테고리 (SPONPIK 3-7) */}
       <Route path="/admin/tournament-activation" element={<ProtectedRoute><AdminTournamentActivation /></ProtectedRoute>} />
 
