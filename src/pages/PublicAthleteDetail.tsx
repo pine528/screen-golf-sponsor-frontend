@@ -150,12 +150,10 @@ export default function PublicAthleteDetail() {
     <div className="min-h-screen bg-slate-50">
       {/* === A. 선수 기본 정보 영역 (docx §4 A) === */}
       <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6">
           <Link to="/athletes" className="inline-flex items-center gap-1 text-xs opacity-90 hover:opacity-100">
             <ArrowLeft className="w-3 h-3" /> 선수 목록
           </Link>
-          {/* docx §3 #1, §4 A 영역명 — 다른 영역 (B/C/D/E/F/G) 과 일관성 */}
-          <span className="text-[10px] font-bold opacity-70 uppercase tracking-wide">A. 선수 기본 정보 영역</span>
         </div>
         <div className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-6 items-start">
           {/* 프로필 사진 */}
@@ -168,9 +166,8 @@ export default function PublicAthleteDetail() {
           </div>
           {/* 기본 정보 (실데이터, 없으면 -) */}
           <div className="text-center sm:text-left">
-            {/* docx §4 A '소속 배지' — 그룹 라벨 + KLPGA / WGTOUR / 스크린골프 */}
+            {/* docx §4 A '소속 배지' — KLPGA / WGTOUR / 스크린골프 */}
             <div className="inline-flex flex-wrap items-center gap-1 mb-2 justify-center sm:justify-start">
-              <span className="text-[10px] font-bold opacity-80 mr-0.5">소속 배지:</span>
               <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-full">
                 <Trophy className="w-3 h-3" /> {dash(athlete.tour)}
               </span>
@@ -189,10 +186,9 @@ export default function PublicAthleteDetail() {
             {athlete.realName && athlete.realName !== athlete.name && (
               <div className="text-sm opacity-90 mb-2">본명: {athlete.realName}</div>
             )}
-            {/* docx §4 A '기본 프로필 요약' — 그룹 라벨 + 키 / 프로 입회연도 / 지역 (docx 명시 순서) */}
+            {/* docx §4 A '기본 프로필 요약' — 키 / 프로 입회연도 / 지역 */}
             {(athlete.height || athlete.region || athlete.debutYear) && (
               <div className="text-sm opacity-95 mb-3 inline-flex flex-wrap items-center gap-x-2 gap-y-1 justify-center sm:justify-start">
-                <span className="text-[10px] font-bold opacity-80 mr-0.5">기본 프로필 요약:</span>
                 {athlete.height && (
                   <span className="inline-flex items-center gap-1">📏 {athlete.height}cm</span>
                 )}
@@ -214,9 +210,8 @@ export default function PublicAthleteDetail() {
               {dash(athlete.bio)}
             </p>
 
-            {/* docx §4 A 활동 상태 배지 — 그룹 라벨 + 활동중 / 슬롯 오픈 / 경매 진행중 */}
+            {/* docx §4 A 활동 상태 배지 — 활동중 / 슬롯 오픈 / 경매 진행중 */}
             <div className="flex flex-wrap items-center gap-1.5 mb-2 justify-center sm:justify-start">
-              <span className="text-[10px] font-bold opacity-80">활동 상태:</span>
               <span className="inline-flex items-center gap-1 bg-emerald-400/90 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur">
                 ● 활동중
               </span>
@@ -232,26 +227,25 @@ export default function PublicAthleteDetail() {
               )}
             </div>
 
-            {/* docx §4 A '최근 참가 대회 요약' — docx 정확 라벨 */}
-            {recentEvents.length > 0 && (
-              <div className="text-xs opacity-90 mb-1 inline-flex items-center gap-1 justify-center sm:justify-start">
-                <Calendar className="w-3 h-3" />
-                <span className="font-semibold">최근 참가 대회 요약:</span>
-                <span className="truncate max-w-[300px]">{recentEvents[0].name}</span>
-                {recentEvents[0].dateStart && (
-                  <span className="opacity-70 text-[10px]">
-                    ({new Date(recentEvents[0].dateStart).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' })})
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* docx §4 A '현재 열려 있는 슬롯 수' — docx 정확 라벨 */}
-            <div className="text-xs opacity-90 mb-3 inline-flex items-center gap-1 justify-center sm:justify-start">
-              <Gavel className="w-3 h-3" />
-              <span className="font-semibold">현재 열려 있는 슬롯 수:</span>
-              <span className={`font-extrabold ${orderedSlots.length > 0 ? 'text-amber-200' : 'opacity-60'}`}>
-                {orderedSlots.length}개
+            {/* docx §4 A 최근 대회 + 슬롯 수 — 한 줄로 통합 */}
+            <div className="text-xs opacity-90 mb-3 inline-flex flex-wrap items-center gap-x-3 gap-y-1 justify-center sm:justify-start">
+              {recentEvents.length > 0 && (
+                <span className="inline-flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  최근 대회 · {recentEvents[0].name}
+                  {recentEvents[0].dateStart && (
+                    <span className="opacity-70">
+                      ({new Date(recentEvents[0].dateStart).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' })})
+                    </span>
+                  )}
+                </span>
+              )}
+              <span className="inline-flex items-center gap-1">
+                <Gavel className="w-3 h-3" />
+                열린 슬롯
+                <span className={`font-extrabold ${orderedSlots.length > 0 ? 'text-amber-200' : 'opacity-60'}`}>
+                  {orderedSlots.length}개
+                </span>
               </span>
             </div>
 
@@ -379,27 +373,23 @@ export default function PublicAthleteDetail() {
       {/* ROI 대시보드 풀 섹션 (docx §13 화면명: 선수 상세 > ROI 대시보드) */}
       <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-6">
         <div className="flex items-center justify-between mb-3">
-          <div>
-            <div className="text-[10px] text-slate-400 mb-0.5">선수 상세 &gt; ROI 대시보드</div>
-            <h2 className="text-xl font-extrabold text-slate-900 inline-flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-emerald-500" /> ROI 대시보드
-            </h2>
-          </div>
+          <h2 className="text-xl font-extrabold text-slate-900 inline-flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-emerald-500" /> ROI 대시보드
+          </h2>
           {roi?.meta && (
             <span className="text-[10px] text-slate-400">
-              수집률 {roi.meta.collectionProgress.collected}/{roi.meta.collectionProgress.total} 지표
+              수집률 {roi.meta.collectionProgress.collected}/{roi.meta.collectionProgress.total}
             </span>
           )}
         </div>
         <RoiDashboard roi={roi} youtube={youtube} mentions={mentions} viewMode={roiViewMode} onViewModeChange={setRoiViewMode} />
       </section>
 
-      {/* === E. 운영 현황 카드 영역 (docx §8 정확 영역명 + E-1, E-2, E-3 3열) === */}
+      {/* === E. 운영 현황 (docx §8 — 슬롯 / 최근 대회 / 예정 대회) === */}
       <section data-section="profile-detail" className="max-w-6xl mx-auto px-5 sm:px-8 pb-12">
         <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
           <Gavel className="w-5 h-5 text-emerald-500" />
-          E. 운영 현황 카드 영역
-          <span className="text-[10px] font-normal text-slate-400">슬롯 현황 / 최근 대회 / 예정 대회</span>
+          운영 현황
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* E-1. 슬롯 현황 카드 */}
@@ -527,7 +517,7 @@ export default function PublicAthleteDetail() {
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-extrabold text-slate-900 inline-flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-emerald-500" /> F. 경기결과 / 분석
+              <Trophy className="w-4 h-4 text-emerald-500" /> 경기결과 / 분석
             </h2>
             {eventResults.length > 0 && (
               <span className="text-[10px] text-slate-400">
@@ -535,10 +525,6 @@ export default function PublicAthleteDetail() {
               </span>
             )}
           </div>
-          {/* docx §9 F. 영역 목적 — '선수의 최근 경기 흐름과 공식 성과를 연도별로 확인할 수 있게 구성' */}
-          <p className="text-[10px] text-slate-500 mb-3">
-            📌 선수의 최근 경기 흐름과 공식 성과를 연도별로 확인할 수 있게 구성
-          </p>
 
           {/* F 추가 권장 항목 (docx §9): 최근 3개 대회 평균순위 / 시즌 누적 성적 / 추이 / 향후 일정 */}
           {roi?.matchAnalysis && (
@@ -1043,38 +1029,27 @@ function RoiDashboard({
 
   return (
     <div className="space-y-4">
-      {/* === B. 종합 광고효과 요약 영역 (docx §3 #2, §4 B 영역명) === */}
-      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">B. 종합 광고효과 요약 영역</div>
+      {/* === B. 종합 광고효과 요약 영역 === */}
       <div className={`border-2 rounded-2xl p-5 bg-gradient-to-br ${gradeBgs[gradeColor]}`}>
         <div className="flex items-start justify-between gap-4 mb-3">
           <div>
-            <div className="flex items-center gap-1.5 mb-0.5">
+            <div className="flex items-center gap-1.5 mb-1">
               <span className="text-[11px] font-bold opacity-70">📊 SPONPIK Ad Impact Score</span>
-              {/* docx §4 B-1 명시 헤더 '기본형 기준' / '확장형 기준' */}
               <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-current/10">
-                {isExtended ? '확장형 기준' : '기본형 기준'}
+                {isExtended ? '확장형' : '기본형'}
               </span>
             </div>
-            {/* docx §4 B-1 보조 문구 예시 — 2개 모두 노출 (기본형 모드) */}
-            <div className="text-[10px] opacity-60 leading-relaxed">
-              {isExtended
-                ? '확장형 종합 점수 — 광고효과 + 유입 + 전환까지 포함'
-                : '기본 스폰서십 광고효과 종합지수'}
+            <div className="text-[10px] opacity-60">
+              {isExtended ? '광고효과 + 유입 + 전환 종합 점수' : '미디어 · 콘텐츠 · 팬덤 · 선수성과 기준 산정'}
             </div>
-            {!isExtended && (
-              <div className="text-[10px] opacity-50 leading-relaxed">
-                미디어·콘텐츠·팬덤·선수성과 기준 산정
-              </div>
-            )}
           </div>
-          {/* docx §4 B-1 상태 배지 + §11 매핑 룰 안내 (호버 툴팁) */}
           <span
             className={`text-[10px] font-bold px-2 py-1 rounded-full border cursor-help ${statusBadgeClass}`}
             title={
               '점수 상태 매핑 (docx §11):\n' +
               '· 공식 산정: 데이터 수집률 70% 이상\n' +
-              '· 예비 산정: 데이터 수집률 40~69%\n' +
-              '· 산정중: 데이터 수집률 40% 미만 (등급 보수적 처리)'
+              '· 예비 산정: 40~69%\n' +
+              '· 산정중: 40% 미만 (등급 보수적 처리)'
             }
           >
             {sum.statusLabel || '-'}
@@ -1082,45 +1057,32 @@ function RoiDashboard({
         </div>
         <div className="flex items-end justify-between gap-4">
           <div>
-            {/* docx §4 B-1 '종합 점수: 00 / 100' 형식 — 라벨 명시 */}
-            <div className="text-[10px] font-bold opacity-70 mb-0.5">종합 점수</div>
             <div className="text-5xl font-black tabular-nums leading-none">
               {score != null ? score.toFixed(1) : '-'}
               {score != null && <span className="text-xl font-bold opacity-70 ml-1">/ 100</span>}
             </div>
-            {/* docx §4 B-1 + §7 '산정 기준' — 헤더 + 안내문 + 4축(기본)/6축(확장) 가중치 + 총 100점 */}
-            <div className="text-[10px] font-bold opacity-70 mt-2">📐 산정 기준 <span className="opacity-60">(총 100점)</span></div>
-            <div className="text-[10px] opacity-60 mt-0.5">
-              {/* docx §7-1 / §7-2 정확 표현 */}
+            {/* 가중치 1줄로 압축 (산정 기준 안내문 제거) */}
+            <div
+              className="text-[10px] opacity-60 mt-2 leading-relaxed cursor-help"
+              title={isExtended
+                ? '확장형 가중치: 미디어노출지수 20% / 콘텐츠 반응 15% / 팬덤지수 15% / 선수성과/대회가치 20% / 랜딩 유입 10% / 구매/전환/ROI 20%'
+                : '기본형 가중치: 미디어노출지수 30% / 콘텐츠 반응 20% / 팬덤지수 20% / 선수성과/대회가치 30%'}
+            >
               {isExtended
-                ? '확장형은 기본 4개 축에 추가로 아래 2개를 반영한다'
-                : '기본형 종합점수는 아래 4개 축만 반영'}
-            </div>
-            <div className="text-[11px] opacity-70 mt-0.5 leading-relaxed">
-              {isExtended
-                ? '미디어노출지수(20) · 콘텐츠 반응(15) · 팬덤지수(15) · 선수성과/대회가치(20) · 랜딩 유입(10) · 구매/전환/ROI(20)'
-                : '미디어노출지수(30) · 콘텐츠 반응(20) · 팬덤지수(20) · 선수성과/대회가치(30) 가중 합산'}
+                ? '미디어 20 · 콘텐츠 15 · 팬덤 15 · 선수성과 20 · 랜딩 10 · 구매 20'
+                : '미디어 30 · 콘텐츠 20 · 팬덤 20 · 선수성과 30'}
             </div>
           </div>
           <div className="text-right">
-            {/* docx §4 B-1 '등급: A / B / C / D / E' 형식 — 가능 옵션 안내 + 현재 등급 강조 */}
             <div className="text-[10px] font-bold opacity-70 mb-0.5">등급</div>
             <div className="text-4xl font-black leading-none">{grade ?? '-'}</div>
-            <div className="text-[9px] opacity-50 mt-1">A · B · C · D · E</div>
           </div>
         </div>
-        {/* === B-2. 보조 정보 카드 (docx §4 B-2 카드명 정확 일치) === */}
-        <div className="mt-4 pt-3 border-t border-current/10">
-          <div className="text-[10px] font-bold opacity-70 mb-2">📋 보조 정보 카드</div>
-        </div>
-        {/* B-2 보조 정보 4개 (docx §4 B-2 — 예시 형식 정확히 일치) */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
-          {/* docx §4 B-2 1) '현재 수집 완료된 데이터 비율 표시' 부연 설명 */}
-          <AuxStat num={1} label="데이터 수집률" value={`${sum.collectionRate ?? 0}%`} hint="수집 완료 비율" />
-          <AuxStat num={2} label="신뢰도" value={sum.reliabilityLabel ?? '-'} hint="높음/보통/낮음" />
-          {/* 예: 2026.05.03 14:20 (날짜+시간) */}
+        {/* B-2 보조 정보 4개 (docx §4 B-2) */}
+        <div className="mt-4 pt-3 border-t border-current/10 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
+          <AuxStat label="데이터 수집률" value={`${sum.collectionRate ?? 0}%`} hint="수집 완료 비율" />
+          <AuxStat label="신뢰도" value={sum.reliabilityLabel ?? '-'} hint="높음/보통/낮음" />
           <AuxStat
-            num={3}
             label="최근 업데이트"
             hint="점수 갱신 시각"
             value={sum.updatedAt
@@ -1135,9 +1097,7 @@ function RoiDashboard({
                 })()
               : '-'}
           />
-          {/* 예: 2026 WGTOUR 1차 / 2위 (대회명 + 순위) */}
           <AuxStat
-            num={4}
             label="최근 성과"
             hint="대회명 / 순위"
             value={sum.latestPerformance?.eventName && sum.latestPerformance?.rank
@@ -1165,8 +1125,7 @@ function RoiDashboard({
         </div>
       </div>
 
-      {/* === C. 핵심 성과 카드 영역 (docx §3 #3, §6 C 영역명 / 기본형 4개 카드) === */}
-      <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wide pt-2">C. 핵심 성과 카드 영역 <span className="text-slate-400">(기본형 4종)</span></div>
+      {/* === C. 핵심 성과 카드 영역 (기본형 4종) === */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
         {/* C-1. 미디어노출지수 — docx §6 C-1 '데이터 없을 때 상태 문구: 데이터 수집 전' */}
         <RoiCard
@@ -1244,10 +1203,11 @@ function RoiDashboard({
         />
       </div>
 
-      {/* === D. 확장형 대시보드 추가 카드 구성 (docx §6 D / 중장기 계약 브랜드 전용) === */}
+      {/* === D. 확장형 추가 카드 (중장기 계약 브랜드 전용) === */}
       {isExtended && (
-        <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wide pt-2">
-          D. 확장형 대시보드 추가 카드 구성 <span className="text-slate-400">(중장기 계약 브랜드 전용)</span>
+        <div className="text-[11px] font-bold text-amber-600 inline-flex items-center gap-1.5 pt-1">
+          <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">확장 전용</span>
+          <span className="text-slate-500">랜딩 유입 + 구매/전환/ROI</span>
         </div>
       )}
       {isExtended && (
@@ -1288,23 +1248,13 @@ function RoiDashboard({
         </div>
       )}
       {!isExtended && (
-        <div className="bg-slate-50 border border-dashed border-slate-200 rounded-xl p-3 flex items-center justify-between">
-          <div className="text-[11px] text-slate-500">
-            🔒 <strong className="text-slate-700">랜딩 유입</strong>·<strong className="text-slate-700">구매/전환/ROI</strong> 카드는 중장기 계약 브랜드 전용 리포트에서 제공됩니다.
-          </div>
-          <button
-            onClick={() => setViewMode('EXTENDED')}
-            className="text-[10px] font-bold text-emerald-600 hover:text-emerald-700"
-          >
-            확장형 미리보기 →
-          </button>
-        </div>
+        <button
+          onClick={() => setViewMode('EXTENDED')}
+          className="w-full bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-200 rounded-xl p-3 text-[11px] text-slate-500 transition-colors text-left"
+        >
+          🔒 랜딩 유입·구매/전환/ROI 카드는 중장기 계약 브랜드 전용 — <span className="font-bold text-emerald-600">확장형 미리보기 →</span>
+        </button>
       )}
-
-      <div className="text-[10px] text-slate-400 text-right">
-        ※ "-" 표시 = 아직 수집되지 않은 지표 (데이터 들어오면 자동 반영)
-        {/* G 섹션은 페이지 최하단 (F 경기결과 이후) 별도 위치 — docx §13 순서 준수 */}
-      </div>
     </div>
   );
 }
@@ -1319,14 +1269,10 @@ function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' 
   return (
     <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12">
       {/* docx §10 G. '점수 산정 기준 안내' 정확 영역명 + G-3 '데이터 출처' */}
-      <h2 className="text-xl font-extrabold text-slate-900 mb-2 inline-flex items-center gap-2">
+      <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
         <Trophy className="w-5 h-5 text-emerald-500" />
-        G. 점수 산정 기준 안내 / 데이터 출처
+        점수 산정 기준
       </h2>
-      {/* docx §10 G. '이 영역은 반드시 넣는 것을 권장한다 / 브랜드가 점수를 신뢰하려면 무엇으로 계산된 점수인지를 알아야 하기 때문' */}
-      <p className="text-[11px] text-slate-500 mb-4">
-        📌 브랜드가 점수를 신뢰하려면 "무엇으로 계산된 점수인지"를 알아야 합니다.
-      </p>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="bg-white border border-slate-200 rounded-2xl p-4">
           <h3 className="text-sm font-extrabold text-slate-900 mb-2">📐 {isExtended ? '확장형' : '기본형'} 점수 산정 기준</h3>
@@ -1363,24 +1309,6 @@ function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' 
         </div>
       </div>
 
-      {/* docx §11 점수 상태값 매핑 룰 안내 — 사용자가 점수 신뢰도 기준을 알 수 있도록 */}
-      <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl p-3">
-        <div className="text-[11px] font-bold text-slate-700 mb-1.5">📊 점수 상태값 산정 기준 (docx §11)</div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[10px]">
-          <div className="flex items-center gap-2">
-            <span className="inline-block px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">공식 산정</span>
-            <span className="text-slate-600">데이터 수집률 70% 이상</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-bold">예비 산정</span>
-            <span className="text-slate-600">40~69%</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-600 font-bold">산정중</span>
-            <span className="text-slate-600">40% 미만 · 등급 보수적 처리</span>
-          </div>
-        </div>
-      </div>
     </section>
   );
 }
@@ -1437,8 +1365,7 @@ function RoiCard({
           )}
         </div>
       </div>
-      {/* docx §6 - 목적 설명문 (있으면 subtitle 위에 표시) */}
-      {purpose && <p className="text-[10px] text-slate-600 mb-1 leading-relaxed">📌 {purpose}</p>}
+      {/* 목적은 ? 호버 툴팁으로만 노출 (본문에서는 제거) — 가독성 우선 */}
       {subtitle && <p className="text-[10px] text-slate-500 mb-2">{subtitle}</p>}
       <div className="flex items-baseline gap-2 mb-3 pb-2 border-b border-current/10">
         <span className="text-[10px] text-slate-500">영역 점수</span>
@@ -1476,15 +1403,11 @@ function RoiCard({
 }
 
 /** 보조 정보 (수집률/신뢰도/업데이트/최근성과) */
-function AuxStat({ label, value, hint, num }: { label: string; value: string; hint?: string; num?: number }) {
+function AuxStat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="text-center" title={hint || undefined}>
-      {/* docx §4 B-2 — '1)' '2)' '3)' '4)' 번호 매기기 (있을 때) */}
-      <div className="opacity-60 mb-0.5">
-        {num != null && <span className="opacity-50">{num}) </span>}{label}
-      </div>
+      <div className="opacity-60 mb-0.5">{label}</div>
       <div className="font-bold text-[12px] truncate">{value}</div>
-      {hint && <div className="opacity-40 text-[8px] truncate">{hint}</div>}
     </div>
   );
 }
@@ -1546,12 +1469,8 @@ function EventResultsByYear({ results, fallbackTour }: { results: any[]; fallbac
                       <span className="px-1.5 py-0.5 bg-sky-50 text-sky-700 rounded">{r.source}</span>
                     )}
                   </div>
-                  {/* docx §9 F 표시 항목 - '분석 코멘트' 명시 라벨 */}
                   {r.summary && (
-                    <div className="mt-1 flex items-start gap-1">
-                      <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded shrink-0 mt-0.5">분석 코멘트</span>
-                      <p className="text-xs text-slate-600 line-clamp-2 flex-1">{r.summary}</p>
-                    </div>
+                    <p className="text-xs text-slate-600 mt-1 line-clamp-2 italic">{r.summary}</p>
                   )}
                 </div>
                 {r.score && (
