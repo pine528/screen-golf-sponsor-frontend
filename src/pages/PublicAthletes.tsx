@@ -10,7 +10,7 @@
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, ChevronLeft, ChevronRight, Users, ExternalLink, Trophy } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Users, ExternalLink, Trophy, ArrowLeft } from 'lucide-react';
 import { api } from '../services/api';
 
 const TOUR_OPTIONS = [
@@ -54,9 +54,14 @@ export default function PublicAthletes() {
     <div className="min-h-screen bg-slate-50">
       {/* 헤더 */}
       <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
-          <Link to="/" className="text-xs opacity-80 hover:opacity-100">← 홈으로</Link>
-          <h1 className="text-3xl sm:text-4xl font-extrabold mt-3 mb-2 inline-flex items-center gap-3">
+        {/* 상단 nav: 홈으로 버튼 별도 줄로 분리 */}
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-5">
+          <Link to="/" className="inline-flex items-center gap-1 text-xs opacity-90 hover:opacity-100 font-semibold">
+            <ArrowLeft className="w-3.5 h-3.5" /> 홈으로
+          </Link>
+        </div>
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-6 pb-12 sm:pb-16">
+          <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 inline-flex items-center gap-3">
             <Users className="w-8 h-8" /> 선수 둘러보기
           </h1>
           <p className="text-sm sm:text-base opacity-90 max-w-xl">
