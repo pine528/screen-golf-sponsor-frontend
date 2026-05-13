@@ -1064,27 +1064,14 @@ function RoiDashboard({
               {score != null ? score.toFixed(1) : '-'}
               {score != null && <span className="text-xl font-bold opacity-70 ml-1">/ 100</span>}
             </div>
-            {/* 가중치 1줄로 압축 (산정 기준 안내문 제거) */}
-            <div
-              className="text-[10px] opacity-60 mt-2 leading-relaxed cursor-help"
-              title={isExtended
-                ? '확장형 가중치: 미디어노출지수 20% / 콘텐츠 반응 15% / 팬덤지수 15% / 선수성과/대회가치 20% / 랜딩 유입 10% / 구매/전환/ROI 20%'
-                : '기본형 가중치: 미디어노출지수 30% / 콘텐츠 반응 20% / 팬덤지수 20% / 선수성과/대회가치 30%'}
-            >
-              {isExtended
-                ? '미디어 20 · 콘텐츠 15 · 팬덤 15 · 선수성과 20 · 랜딩 10 · 구매 20'
-                : '미디어 30 · 콘텐츠 20 · 팬덤 20 · 선수성과 30'}
-            </div>
           </div>
           <div className="text-right">
             <div className="text-[10px] font-bold opacity-70 mb-0.5">등급</div>
             <div className="text-4xl font-black leading-none">{grade ?? '-'}</div>
           </div>
         </div>
-        {/* B-2 보조 정보 4개 (docx §4 B-2) */}
-        <div className="mt-4 pt-3 border-t border-current/10 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]">
-          <AuxStat label="데이터 수집률" value={`${sum.collectionRate ?? 0}%`} hint="수집 완료 비율" />
-          <AuxStat label="신뢰도" value={sum.reliabilityLabel ?? '-'} hint="높음/보통/낮음" />
+        {/* B-2 보조 정보 — 최근 업데이트 + 최근 성과 2개만 (데이터 수집률/신뢰도 제거) */}
+        <div className="mt-4 pt-3 border-t border-current/10 grid grid-cols-2 gap-2 text-[10px]">
           <AuxStat
             label="최근 업데이트"
             hint="점수 갱신 시각"
