@@ -636,9 +636,8 @@ export default function PublicAthleteDetail() {
         )}
       </section>
 
-      {/* === G. 점수 산정 기준 / 데이터 출처 (docx §13 — F 이후 마지막 섹션) ===
-           ※ docx §10 G-1/G-2 — 가중치 표는 현재 RoiDashboard 의 viewMode 와 동기화 */}
-      <ScoringAndDataSources roi={roi} viewMode={roiViewMode} />
+      {/* G. 점수 산정 기준 / 데이터 출처 섹션은 사용자 요청으로 페이지에서 숨김.
+          ScoringAndDataSources 컴포넌트는 코드에 보존 (가중치는 B-1 카드의 호버 툴팁으로 노출). */}
     </div>
   );
 }
@@ -1262,8 +1261,11 @@ function RoiDashboard({
 /**
  * G. 점수 산정 기준 + 데이터 출처 (docx §10, §13)
  * - 페이지 최하단 (F 경기결과 이후)에 별도 섹션으로 배치
+ * - 사용자 요청으로 페이지에서 숨김 처리됨 (underscore prefix 로 미사용 표시)
+ * - 향후 다시 필요 시 export 또는 호출 부분 추가하면 즉시 복구 가능
  */
-function ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' | 'EXTENDED' }) {
+// @ts-ignore — 의도적으로 미사용 (나중 복구용 보존)
+function _ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC' | 'EXTENDED' }) {
   if (!roi) return null;
   const isExtended = viewMode === 'EXTENDED';
   return (
