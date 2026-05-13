@@ -382,7 +382,7 @@ export default function PublicAthleteDetail() {
             </span>
           )}
         </div>
-        <RoiDashboard roi={roi} youtube={youtube} mentions={mentions} viewMode={roiViewMode} onViewModeChange={setRoiViewMode} />
+        <RoiDashboard roi={roi} youtube={youtube} mentions={mentions} viewMode={roiViewMode} onViewModeChange={setRoiViewMode} isAuthenticated={isAuthenticated} onLoginClick={() => navigate('/login')} />
       </section>
 
       {/* === E. 운영 현황 (docx §8 — 슬롯 / 최근 대회 / 예정 대회) === */}
@@ -971,12 +971,16 @@ function RoiDashboard({
   youtube,
   viewMode: viewModeProp,
   onViewModeChange,
+  isAuthenticated = false,
+  onLoginClick,
 }: {
   roi: any;
   youtube?: any;
   mentions?: any;
   viewMode?: 'BASIC' | 'EXTENDED';
   onViewModeChange?: (m: 'BASIC' | 'EXTENDED') => void;
+  isAuthenticated?: boolean;
+  onLoginClick?: () => void;
 }) {
   // 부모(PublicAthleteDetail)가 viewMode 를 끌어올려 G 섹션과 공유 — controlled mode
   // props 전달 안 됐을 때만 자체 로컬 상태로 동작 (uncontrolled fallback)
@@ -1134,6 +1138,8 @@ function RoiDashboard({
           subtitle="방송/중계/외부노출 기준"
           purpose="선수가 실제 방송·중계·기사·하이라이트 등에서 얼마나 노출되었는지 보여주는 핵심 지표"
           emptyLabel="데이터 수집 전"
+          showMetrics={isAuthenticated}
+          onLoginClick={onLoginClick}
           metrics={[
             // docx §6 C-1 정확 라벨 — 횟수/수 등 단위 명시
             { label: '중계 노출 횟수', value: fmt(roi.mediaExposure?.broadcastCount) },
@@ -1154,6 +1160,8 @@ function RoiDashboard({
           purpose="선수 관련 콘텐츠가 얼마나 주목받고 반응을 일으켰는지 보여줌"
           // YouTube 동기화 실패 시 docx §11 '오류: 데이터 확인 필요' 표시
           error={youtube?.syncStatus === 'FAILED' ? `YouTube 동기화 실패: ${youtube?.syncError || '알 수 없는 오류'}` : undefined}
+          showMetrics={isAuthenticated}
+          onLoginClick={onLoginClick}
           metrics={[
             { label: '조회수', value: fmt(roi.contentEngagement?.videoViews) },
             { label: '도달수 (구독자)', value: fmt(roi.contentEngagement?.reach) },
@@ -1173,6 +1181,8 @@ function RoiDashboard({
           subtitle="팬 반응 및 참여 데이터 기준"
           purpose="선수의 팬 기반 규모와 반응성, 브랜드 친화력을 보여주는 지표"
           error={youtube?.syncStatus === 'FAILED' ? 'YouTube 동기화 실패 — 팔로워 정보 확인 필요' : undefined}
+          showMetrics={isAuthenticated}
+          onLoginClick={onLoginClick}
           metrics={[
             // docx §6 C-3 정확 라벨
             { label: '팔로워 수', value: fmt(roi.fandom?.followers) },
@@ -1191,6 +1201,8 @@ function RoiDashboard({
           score={roi.athletePerformance?.score}
           subtitle="공식 대회 기록 및 일정 기준"
           purpose="선수의 최근 경기력과 향후 대회 노출 기대치를 함께 반영"
+          showMetrics={isAuthenticated}
+          onLoginClick={onLoginClick}
           metrics={[
             // docx §6 C-4 정확 라벨
             { label: '최근 순위', value: roi.athletePerformance?.latestRank ? `${roi.athletePerformance.latestRank}위` : '-' },
@@ -1218,6 +1230,8 @@ function RoiDashboard({
             subtitle="브랜드 전용 트래킹 데이터 기준"
             purpose="노출이 실제 브랜드 페이지 방문으로 이어졌는지 보여주는 확장 지표"
             extendedBadge
+            showMetrics={isAuthenticated}
+            onLoginClick={onLoginClick}
             metrics={[
               // docx §6 D-1 정확 라벨
               { label: '클릭 수', value: fmt(roi.landingTraffic?.clicks) },
@@ -1234,6 +1248,8 @@ function RoiDashboard({
             subtitle="중장기 계약 브랜드 전용 성과지표"
             purpose="브랜드 입장에서 실제 매출성과를 보여주는 최종 퍼널 지표"
             extendedBadge
+            showMetrics={isAuthenticated}
+            onLoginClick={onLoginClick}
             metrics={[
               { label: '전환 수', value: fmt(roi.conversion?.conversions) },
               { label: '구매 건수', value: fmt(roi.conversion?.purchases) },
@@ -1318,6 +1334,8 @@ function _ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC'
 /** ROI 카드 — 영역 점수 + 지표 목록 */
 function RoiCard({
   title, color, score, subtitle, purpose, metrics, extendedBadge, error, emptyLabel,
+  showMetrics = true,
+  onLoginClick,
 }: {
   title: string;
   color: 'rose' | 'sky' | 'violet' | 'emerald' | 'amber' | 'orange';
@@ -1328,6 +1346,8 @@ function RoiCard({
   extendedBadge?: boolean;
   error?: string | null;  // docx §11 — 오류 상태: "데이터 확인 필요"
   emptyLabel?: string;    // docx §6 카드별 '데이터 없을 때 상태 문구' (예: C-1 '데이터 수집 전')
+  showMetrics?: boolean;  // 비로그인 시 세부 지표 숨김 (영역 점수만 표시)
+  onLoginClick?: () => void;
 }) {
   const colorMap: Record<string, { border: string; bg: string; scoreText: string }> = {
     rose: { border: 'border-rose-200', bg: 'bg-rose-50/30', scoreText: 'text-rose-700' },
@@ -1380,25 +1400,38 @@ function RoiCard({
           <span className="text-[9px] text-slate-400 italic ml-auto">📡 {emptyLabel || '수집 준비 중'}</span>
         )}
       </div>
-      <div className="space-y-1.5">
-        {metrics.map((m) => {
-          // docx 11. 상태값 처리 — 미수집 항목은 "-" 대신 의미있는 라벨 (옵션)
-          const isEmpty = m.value === '-' || m.value === '' || m.value == null;
-          return (
-            <div key={m.label} className="flex items-center justify-between gap-2">
-              <span className="text-[11px] text-slate-500">{m.label}</span>
-              <span className={`text-xs font-bold ${isEmpty ? 'text-slate-400' : 'text-slate-900'} ${m.truncate ? 'truncate max-w-[140px]' : ''}`}>
-                {m.value}
-              </span>
+      {showMetrics ? (
+        <>
+          <div className="space-y-1.5">
+            {metrics.map((m) => {
+              // docx 11. 상태값 처리 — 미수집 항목은 "-" 대신 의미있는 라벨 (옵션)
+              const isEmpty = m.value === '-' || m.value === '' || m.value == null;
+              return (
+                <div key={m.label} className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] text-slate-500">{m.label}</span>
+                  <span className={`text-xs font-bold ${isEmpty ? 'text-slate-400' : 'text-slate-900'} ${m.truncate ? 'truncate max-w-[140px]' : ''}`}>
+                    {m.value}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          {/* 모든 지표 미수집 시 docx §11 '수집 준비 중' (또는 카드별 명시 라벨, 예: C-1 '데이터 수집 전') */}
+          {metrics.every(m => m.value === '-' || !m.value) && (
+            <div className="mt-3 pt-2 border-t border-current/10 text-[10px] text-center text-slate-400">
+              📡 {emptyLabel || '수집 준비 중'}
             </div>
-          );
-        })}
-      </div>
-      {/* 모든 지표 미수집 시 docx §11 '수집 준비 중' (또는 카드별 명시 라벨, 예: C-1 '데이터 수집 전') */}
-      {metrics.every(m => m.value === '-' || !m.value) && (
-        <div className="mt-3 pt-2 border-t border-current/10 text-[10px] text-center text-slate-400">
-          📡 {emptyLabel || '수집 준비 중'}
-        </div>
+          )}
+        </>
+      ) : (
+        // 비로그인 상태 — 영역 점수만 노출 + 로그인 CTA
+        <button
+          type="button"
+          onClick={onLoginClick}
+          className="w-full text-center py-3 px-2 rounded-lg bg-slate-50 hover:bg-emerald-50 border border-dashed border-slate-200 hover:border-emerald-300 text-[11px] text-slate-500 hover:text-emerald-700 transition-colors"
+        >
+          🔒 세부 지표 {metrics.length}개 항목은 <span className="font-bold">로그인 후</span> 확인 가능
+        </button>
       )}
     </div>
   );
