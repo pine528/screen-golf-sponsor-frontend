@@ -233,7 +233,7 @@ export function Home() {
           <div className="grid lg:grid-cols-[1fr_auto_340px] gap-6 lg:gap-8 items-center">
             {/* Left - Text */}
             <div className="z-10">
-              <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black leading-[1.4] tracking-tight text-slate-900 mb-5">
+              <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black leading-[1.55] tracking-tight text-slate-900 mb-5">
                 티샷의 순간,<br />
                 수백만의 시선이<br />
                 <span className="text-emerald-500">당신의 브랜드</span>를 주목합니다.
