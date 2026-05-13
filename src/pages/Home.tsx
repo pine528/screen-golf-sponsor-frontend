@@ -220,10 +220,10 @@ export function Home() {
       </nav>
 
       {/* ════════════════════════ HERO ════════════════════════ */}
-      <section className="relative pt-24 sm:pt-28 pb-16 sm:pb-20 px-5 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
+      <section className="relative pt-32 sm:pt-36 pb-24 sm:pb-28 px-5 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
         <div className="max-w-7xl mx-auto">
           {/* Top badge */}
-          <div className="mb-6">
+          <div className="mb-10">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-semibold">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
               KPGA · KLPGA 남녀 프로골프 선수
@@ -233,16 +233,16 @@ export function Home() {
           <div className="grid lg:grid-cols-[1fr_auto_340px] gap-6 lg:gap-8 items-center">
             {/* Left - Text */}
             <div className="z-10">
-              <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black leading-[1.75] tracking-tight text-slate-900 mb-5">
+              <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black leading-[1.75] tracking-tight text-slate-900 mb-10">
                 티샷의 순간,<br />
                 수백만의 시선이<br />
                 <span className="text-emerald-500">당신의 브랜드</span>를 주목합니다.
               </h1>
-              <p className="text-base sm:text-lg text-slate-500 leading-relaxed mb-8 max-w-lg">
+              <p className="text-base sm:text-lg text-slate-500 leading-relaxed mb-12 max-w-lg">
                 필드와 스크린 위, 가장 돋보이는 순간. 경기 내내 시선이 머무는 프로 골퍼의 최적화된 광고 슬롯을 실시간 경매로 낙찰받으세요.
               </p>
 
-              <div className="flex flex-wrap gap-3 mb-10">
+              <div className="flex flex-wrap gap-3 mb-14">
                 <Link to={isAuthenticated ? '/dashboard' : '/register'}
                   className="h-11 px-6 inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20">
                   무료로 시작하기 <ArrowRight className="w-4 h-4" />
