@@ -233,10 +233,10 @@ export function Home() {
           <div className="grid lg:grid-cols-[1fr_auto_340px] gap-6 lg:gap-8 items-center">
             {/* Left - Text */}
             <div className="z-10">
-              <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black leading-[1.7] tracking-tight text-slate-900 mb-12">
-                티샷의 순간,<br />
-                수백만의 시선이<br />
-                <span className="text-emerald-500">당신의 브랜드</span>를 주목합니다.
+              <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-slate-900 mb-12 space-y-4">
+                <div>티샷의 순간,</div>
+                <div>수백만의 시선이</div>
+                <div><span className="text-emerald-500">당신의 브랜드</span>를 주목합니다.</div>
               </h1>
               <p className="text-base sm:text-lg text-slate-500 leading-relaxed mb-12 max-w-lg">
                 필드와 스크린 위, 가장 돋보이는 순간. 경기 내내 시선이 머무는 프로 골퍼의 최적화된 광고 슬롯을 실시간 경매로 낙찰받으세요.
