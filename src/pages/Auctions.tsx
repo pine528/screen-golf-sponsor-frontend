@@ -61,11 +61,36 @@ export function Auctions() {
     refetchInterval: statusFilter === 'LIVE' ? 3000 : false, // 3초 간격 실시간 갱신
   });
 
-  // 대회 필터 적용된 경매 목록
+  // 월별 옵션 생성 (이벤트 dateStart 기준)
+  const monthOptions = useMemo(() => {
+    if (!events?.data) return [];
+    const monthSet = new Map<string, string>();
+    events.data.forEach((ev: any) => {
+      const d = ev.dateStart || ev.date_start;
+      if (!d) return;
+      const dt = new Date(d);
+      const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+      const label = `${dt.getMonth() + 1}월`;
+      if (!monthSet.has(key)) monthSet.set(key, label);
+    });
+    return Array.from(monthSet.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([value, label]) => ({ value, label }));
+  }, [events?.data]);
+
+  // 대회 필터 적용된 경매 목록 (월별 필터링)
   const filteredAuctions = useMemo(() => {
     if (!auctions?.data) return [];
     if (eventFilter === 'ALL') return auctions.data;
-    return auctions.data.filter((auction: any) => auction.slotInstance?.event?.id === eventFilter);
+    return auctions.data.filter((auction: any) => {
+      const ev = auction.slotInstance?.event;
+      if (!ev) return false;
+      const d = ev.dateStart || ev.date_start;
+      if (!d) return false;
+      const dt = new Date(d);
+      const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+      return key === eventFilter;
+    });
   }, [auctions?.data, eventFilter]);
 
   // 즉시구매 가능 슬롯 조회 (enableDirectBuy: true, 경매중 슬롯도 포함)
@@ -236,10 +261,10 @@ export function Auctions() {
                 onChange={(e) => setEventFilter(e.target.value)}
                 className="input py-1.5 text-sm w-auto min-w-[200px]"
               >
-                <option value="ALL">전체 대회</option>
-                {events?.data?.map((event: any) => (
-                  <option key={event.id} value={event.id}>
-                    {event.name}
+                <option value="ALL">전체 월</option>
+                {monthOptions.map((opt: { value: string; label: string }) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
                   </option>
                 ))}
               </select>
