@@ -79,7 +79,7 @@ export function ServiceAnnouncementModal() {
             현재 정식 오픈을 위한 준비를 진행하고 있습니다.
           </p>
           <p>
-            <span className="font-semibold text-emerald-700">5월 30일 GTOUR MIXED 4차 대회</span> 시범 적용 이후<br />
+            <span className="font-semibold text-emerald-700">5월 중 대회</span> 시범 적용 이후<br />
             베타 테스트를 거쳐 <span className="font-semibold text-emerald-700">7월 정식 오픈</span>을 목표로 하고 있습니다.
           </p>
           <p>
