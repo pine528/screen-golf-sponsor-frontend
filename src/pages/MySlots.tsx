@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Layout } from '../components/Layout';
 import { api } from '../services/api';
@@ -51,8 +51,8 @@ export function MySlots() {
   });
 
   const { data: slotsData, isLoading } = useQuery({
-    queryKey: ['my-athlete-slots', selectedEvent],
-    queryFn: () => api.getMyAthleteSlots(selectedEvent !== 'all' ? selectedEvent : undefined),
+    queryKey: ['my-athlete-slots'],
+    queryFn: () => api.getMyAthleteSlots(),
   });
 
   const { data: statsData } = useQuery({
@@ -66,8 +66,40 @@ export function MySlots() {
   const stats = statsData?.data || {};
   const templates = templatesData?.data || [];
 
+  // 월별 옵션 생성
+  const monthOptions = useMemo(() => {
+    const monthSet = new Map<string, string>();
+    events.forEach((ev: any) => {
+      const d = ev.dateStart || ev.date_start;
+      if (!d) return;
+      const dt = new Date(d);
+      const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+      const label = `${dt.getMonth() + 1}월`;
+      if (!monthSet.has(key)) monthSet.set(key, label);
+    });
+    return Array.from(monthSet.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([value, label]) => ({ value, label }));
+  }, [events]);
+
+  // 선택 월에 해당하는 이벤트 ID 목록
+  const selectedEventIds = useMemo(() => {
+    if (selectedEvent === 'all') return null;
+    return events
+      .filter((ev: any) => {
+        const d = ev.dateStart || ev.date_start;
+        if (!d) return false;
+        const dt = new Date(d);
+        const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+        return key === selectedEvent;
+      })
+      .map((ev: any) => ev.id);
+  }, [events, selectedEvent]);
+
   const filteredSlots = slots
     .filter((slot: any) => {
+      // 월별 필터
+      if (selectedEventIds && !selectedEventIds.includes(slot.event?.id)) return false;
       if (statusFilter !== 'all') {
         if (statusFilter === 'auction' && slot.auction?.status !== 'LIVE') return false;
         if (statusFilter === 'contracted' && !slot.auction?.contract) return false;
@@ -235,9 +267,9 @@ export function MySlots() {
                 onChange={(e) => setSelectedEvent(e.target.value)}
                 className="input flex-1 min-w-[140px] text-sm sm:text-base"
               >
-                <option value="all">전체 이벤트</option>
-                {events.map((event: any) => (
-                  <option key={event.id} value={event.id}>{event.name}</option>
+                <option value="all">전체 월</option>
+                {monthOptions.map((opt: { value: string; label: string }) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
               <select
