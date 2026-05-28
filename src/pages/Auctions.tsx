@@ -43,12 +43,6 @@ export function Auctions() {
   const [selectedSlotForBuyNow, setSelectedSlotForBuyNow] = useState<any>(null);
   const [buyNowError, setBuyNowError] = useState<string | null>(null);
 
-  // 대회 목록 조회
-  const { data: events } = useQuery({
-    queryKey: ['events'],
-    queryFn: () => api.getEvents(),
-  });
-
   // 유효한 경매 상태 필터 (MY_BIDS, MY_RESERVATIONS, DIRECT_BUY 제외)
   const validAuctionStatuses = ['LIVE', 'SCHEDULED', 'ENDED', 'UNSOLD'];
   const isValidAuctionStatus = validAuctionStatuses.includes(statusFilter);
@@ -61,22 +55,15 @@ export function Auctions() {
     refetchInterval: statusFilter === 'LIVE' ? 3000 : false, // 3초 간격 실시간 갱신
   });
 
-  // 월별 옵션 생성 (이벤트 dateStart 기준)
-  const monthOptions = useMemo(() => {
-    if (!events?.data) return [];
-    const monthSet = new Map<string, string>();
-    events.data.forEach((ev: any) => {
-      const d = ev.dateStart || ev.date_start;
-      if (!d) return;
-      const dt = new Date(d);
-      const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
-      const label = `${dt.getMonth() + 1}월`;
-      if (!monthSet.has(key)) monthSet.set(key, label);
-    });
-    return Array.from(monthSet.entries())
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([value, label]) => ({ value, label }));
-  }, [events?.data]);
+  // 월별 옵션 (7~12월 고정)
+  const monthOptions = [
+    { value: '2026-07', label: '7월' },
+    { value: '2026-08', label: '8월' },
+    { value: '2026-09', label: '9월' },
+    { value: '2026-10', label: '10월' },
+    { value: '2026-11', label: '11월' },
+    { value: '2026-12', label: '12월' },
+  ];
 
   // 대회 필터 적용된 경매 목록 (월별 필터링)
   const filteredAuctions = useMemo(() => {

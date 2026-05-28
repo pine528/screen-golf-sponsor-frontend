@@ -66,21 +66,15 @@ export function MySlots() {
   const stats = statsData?.data || {};
   const templates = templatesData?.data || [];
 
-  // 월별 옵션 생성
-  const monthOptions = useMemo(() => {
-    const monthSet = new Map<string, string>();
-    events.forEach((ev: any) => {
-      const d = ev.dateStart || ev.date_start;
-      if (!d) return;
-      const dt = new Date(d);
-      const key = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
-      const label = `${dt.getMonth() + 1}월`;
-      if (!monthSet.has(key)) monthSet.set(key, label);
-    });
-    return Array.from(monthSet.entries())
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([value, label]) => ({ value, label }));
-  }, [events]);
+  // 월별 옵션 (7~12월 고정)
+  const monthOptions = [
+    { value: '2026-07', label: '7월' },
+    { value: '2026-08', label: '8월' },
+    { value: '2026-09', label: '9월' },
+    { value: '2026-10', label: '10월' },
+    { value: '2026-11', label: '11월' },
+    { value: '2026-12', label: '12월' },
+  ];
 
   // 선택 월에 해당하는 이벤트 ID 목록
   const selectedEventIds = useMemo(() => {
