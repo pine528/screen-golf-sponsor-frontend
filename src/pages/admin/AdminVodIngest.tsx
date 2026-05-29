@@ -24,6 +24,7 @@ import {
   ScanLine,
 } from 'lucide-react';
 import { cn } from '../../utils';
+import { getEventMonthLabel } from '../../utils/eventMonth';
 
 type VodStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
 
@@ -384,7 +385,7 @@ export function AdminVodIngest() {
                       <td className="px-6 py-4">
                         <div>
                           {vod.event && (
-                            <p className="text-sm text-slate-900">{vod.event.name}</p>
+                            <p className="text-sm text-slate-900">{getEventMonthLabel(vod.event)}</p>
                           )}
                           {vod.campaign && (
                             <p className="text-xs text-slate-500">{vod.campaign.name}</p>

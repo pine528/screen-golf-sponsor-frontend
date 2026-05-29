@@ -23,6 +23,7 @@ import {
   X,
 } from 'lucide-react';
 import { cn } from '../utils';
+import { getEventMonthLabel } from '../utils/eventMonth';
 
 export function Contracts() {
   const { user } = useAuth();
@@ -258,7 +259,7 @@ export function Contracts() {
                           </div>
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            <span className="truncate">{contract.auction?.slotInstance?.event?.name}</span>
+                            <span className="truncate">{getEventMonthLabel(contract.auction?.slotInstance?.event)}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -537,7 +538,7 @@ function ContractDetailModal({
               <h2 className="text-xl font-bold text-slate-900">
                 {contract.auction?.slotInstance?.slotTemplate?.name || '계약 상세'}
               </h2>
-              <p className="text-slate-600">{contract.auction?.slotInstance?.event?.name}</p>
+              <p className="text-slate-600">{getEventMonthLabel(contract.auction?.slotInstance?.event)}</p>
             </div>
             <span className={cn('badge', statusStyles[contract.status] || 'bg-slate-100')}>
               {statusLabels[contract.status] || contract.status}

@@ -4,6 +4,7 @@ import { FileImage, CheckCircle, XCircle, Clock, Eye, Filter, Building2, Calenda
 import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
 import { formatDate, cn } from '../../utils';
+import { getEventMonthLabel } from '../../utils/eventMonth';
 
 const STATUS_OPTIONS = [
   { value: '', label: '전체' },
@@ -155,7 +156,7 @@ export function AdminCreativeApprovals() {
             <option value="">전체 대회</option>
             {events?.data?.map((event: any) => (
               <option key={event.id} value={event.id}>
-                {event.name}
+                {getEventMonthLabel(event)}
               </option>
             ))}
           </select>
@@ -195,7 +196,7 @@ export function AdminCreativeApprovals() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-medium text-slate-900">
-                          {approval.event?.name || '대회'}
+                          {getEventMonthLabel(approval.event)}
                         </h3>
                         <span className={cn('badge text-xs flex items-center gap-1', statusInfo.color)}>
                           <StatusIcon className="w-3 h-3" />
@@ -266,7 +267,7 @@ export function AdminCreativeApprovals() {
                   </div>
                   <div>
                     <p className="font-medium text-slate-900">{selectedApproval.brand?.name}</p>
-                    <p className="text-sm text-slate-600">{selectedApproval.event?.name}</p>
+                    <p className="text-sm text-slate-600">{getEventMonthLabel(selectedApproval.event)}</p>
                     <p className="text-sm text-slate-500 mt-1">
                       {formatDate(selectedApproval.createdAt)}
                     </p>

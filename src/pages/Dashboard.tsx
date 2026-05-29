@@ -5,6 +5,7 @@ import { Layout } from '../components/Layout';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
 import { formatCurrency, formatDate, formatTimeRemaining, getStatusLabel, cn } from '../utils';
+import { getEventMonthLabel } from '../utils/eventMonth';
 
 export function Dashboard() {
   const { user } = useAuth();
@@ -176,7 +177,7 @@ function BrandDashboard() {
                   <div>
                     <p className="font-medium text-slate-900">{auction.slotInstance?.slotTemplate?.name}</p>
                     <p className="text-sm text-slate-500">
-                      {auction.slotInstance?.athlete?.name} · {auction.slotInstance?.event?.name}
+                      {auction.slotInstance?.athlete?.name} · {getEventMonthLabel(auction.slotInstance?.event)}
                     </p>
                   </div>
                   <div className="text-right">
@@ -267,7 +268,7 @@ function BrandDashboard() {
                 className="p-4 hover:bg-slate-50 flex items-center justify-between transition-colors"
               >
                 <div>
-                  <p className="font-medium text-slate-900">{event.name}</p>
+                  <p className="font-medium text-slate-900">{getEventMonthLabel(event)}</p>
                   <p className="text-sm text-slate-500">{event.tour}</p>
                 </div>
                 <div className="text-right">
@@ -382,7 +383,7 @@ function AthleteDashboard() {
                 <div>
                   <p className="font-medium text-slate-900">{contract.brand?.name}</p>
                   <p className="text-sm text-slate-500">
-                    {contract.auction?.slotInstance?.slotTemplate?.name} · {contract.auction?.slotInstance?.event?.name}
+                    {contract.auction?.slotInstance?.slotTemplate?.name} · {getEventMonthLabel(contract.auction?.slotInstance?.event)}
                   </p>
                 </div>
                 <div className="text-right">

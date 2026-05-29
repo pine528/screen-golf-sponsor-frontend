@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { api } from '../../services/api';
+import { getEventMonthLabel } from '../../utils/eventMonth';
 
 interface AthleteDetail {
   id: string;
@@ -792,7 +793,7 @@ export function AgencyAthleteDetail() {
                             {(slot.slotTemplate as any)?.nameKr || slot.slotTemplate?.name || slot.slotTemplate?.code}
                           </p>
                           <p className="text-sm text-slate-500">
-                            {slot.event?.name} · {slot.slotTemplate?.code}
+                            {getEventMonthLabel(slot.event)} · {slot.slotTemplate?.code}
                           </p>
                           <div className="flex items-center gap-2 mt-1 text-xs">
                             {slot.enableAuction && (
@@ -869,7 +870,7 @@ export function AgencyAthleteDetail() {
                         <div>
                           <p className="font-medium text-slate-900">{contract.brand.name}</p>
                           <p className="text-sm text-slate-500">
-                            {contract.auction?.slotInstance?.event?.name} -{' '}
+                            {getEventMonthLabel(contract.auction?.slotInstance?.event)} -{' '}
                             {contract.auction?.slotInstance?.slotTemplate?.name}
                           </p>
                           <p className="text-xs text-slate-400 mt-1">
@@ -1017,7 +1018,7 @@ export function AgencyAthleteDetail() {
                   <option value="">이벤트를 선택하세요</option>
                   {events.map((event) => (
                     <option key={event.id} value={event.id}>
-                      {event.name} ({new Date(event.dateStart).toLocaleDateString('ko-KR')})
+                      {getEventMonthLabel(event)} ({new Date(event.dateStart).toLocaleDateString('ko-KR')})
                     </option>
                   ))}
                 </select>
@@ -1105,7 +1106,7 @@ export function AgencyAthleteDetail() {
             <div className="space-y-4">
               <div className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg">
                 <p className="font-medium">{editingSlot.slotTemplate?.name}</p>
-                <p className="text-xs text-slate-500">{editingSlot.event?.name}</p>
+                <p className="text-xs text-slate-500">{getEventMonthLabel(editingSlot.event)}</p>
               </div>
 
               {/* Auction Toggle */}

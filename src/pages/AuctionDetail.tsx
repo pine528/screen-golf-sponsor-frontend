@@ -35,6 +35,7 @@ import {
   getBodyPartLabel,
   cn,
 } from '../utils';
+import { getEventMonthLabel } from '../utils/eventMonth';
 
 export function AuctionDetail() {
   const { id } = useParams<{ id: string }>();
@@ -252,7 +253,7 @@ export function AuctionDetail() {
               </div>
             </div>
             <p className="text-slate-600 mt-1 text-sm sm:text-base">
-              {athlete?.name} · {event?.name}
+              {athlete?.name} · {getEventMonthLabel(event)}
             </p>
           </div>
         </div>
@@ -575,7 +576,7 @@ export function AuctionDetail() {
               <div className="space-y-3">
                 <div>
                   <p className="text-xs text-slate-500">대회명</p>
-                  <p className="font-medium text-slate-900">{event?.name}</p>
+                  <p className="font-medium text-slate-900">{getEventMonthLabel(event)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-slate-500">투어</p>
@@ -651,7 +652,7 @@ export function AuctionDetail() {
               <div className="mb-4 p-4 bg-slate-50 rounded-lg">
                 <p className="font-medium text-slate-900">{template?.name}</p>
                 <p className="text-sm text-slate-600">
-                  {athlete?.name} · {event?.name}
+                  {athlete?.name} · {getEventMonthLabel(event)}
                 </p>
               </div>
 

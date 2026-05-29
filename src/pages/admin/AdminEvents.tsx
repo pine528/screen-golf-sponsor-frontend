@@ -19,6 +19,7 @@ import {
   X,
 } from 'lucide-react';
 import { cn } from '../../utils';
+import { getEventMonthLabel } from '../../utils/eventMonth';
 
 export function AdminEvents() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -189,7 +190,7 @@ export function AdminEvents() {
                           </div>
                           <div>
                             <p className="font-medium text-slate-900">{monthLabel} 대회</p>
-                            <p className="text-sm text-slate-500">{event.name}</p>
+                            <p className="text-sm text-slate-500">{getEventMonthLabel(event)}</p>
                           </div>
                         </div>
                       </td>

@@ -12,6 +12,7 @@ import {
   getBodyPartLabel,
   cn,
 } from '../utils';
+import { getEventMonthLabel } from '../utils/eventMonth';
 
 // 남은 시간 표시 (초 단위)
 function formatRemainingSeconds(seconds: number): string {
@@ -336,7 +337,7 @@ export function Auctions() {
                       </div>
                       <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
                         <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                        <span className="truncate">{auction.slotInstance?.event?.name}</span>
+                        <span className="truncate">{getEventMonthLabel(auction.slotInstance?.event)}</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
                         <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
@@ -646,7 +647,7 @@ export function Auctions() {
                         </div>
                         <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
                           <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                          <span className="truncate">{slot.event?.name}</span>
+                          <span className="truncate">{getEventMonthLabel(slot.event)}</span>
                         </div>
                         <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
                           <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
@@ -695,7 +696,7 @@ export function Auctions() {
                 <p className="font-medium text-slate-900">{selectedAuction.slotInstance?.slotTemplate?.name}</p>
                 <p className="text-sm text-slate-600">
                   {selectedAuction.slotInstance?.athlete?.name} ·{' '}
-                  {selectedAuction.slotInstance?.event?.name}
+                  {getEventMonthLabel(selectedAuction.slotInstance?.event)}
                 </p>
               </div>
 
@@ -807,7 +808,7 @@ export function Auctions() {
               <div className="mb-4">
                 <p className="font-medium text-slate-900">{selectedSlotForBuyNow.slotTemplate?.name}</p>
                 <p className="text-sm text-slate-600">
-                  {selectedSlotForBuyNow.athlete?.name} · {selectedSlotForBuyNow.event?.name}
+                  {selectedSlotForBuyNow.athlete?.name} · {getEventMonthLabel(selectedSlotForBuyNow.event)}
                 </p>
               </div>
 

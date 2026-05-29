@@ -23,6 +23,7 @@ import {
   X,
 } from 'lucide-react';
 import { cn } from '../../utils';
+import { getEventMonthLabel } from '../../utils/eventMonth';
 
 export function AdminAuctions() {
   const queryClient = useQueryClient();
@@ -348,7 +349,7 @@ export function AdminAuctions() {
                               {auction.slotInstance?.slotTemplate?.name || '슬롯'}
                             </p>
                             <p className="text-sm text-slate-500">
-                              {auction.slotInstance?.event?.name || '이벤트'}
+                              {getEventMonthLabel(auction.slotInstance?.event) || '이벤트'}
                             </p>
                           </div>
                         </div>
@@ -509,7 +510,7 @@ export function AdminAuctions() {
                   <option value="">슬롯을 선택하세요</option>
                   {availableSlots.map((slot: any) => (
                     <option key={slot.id} value={slot.id}>
-                      {slot.slotTemplate?.name} - {slot.athlete?.name} ({slot.event?.name})
+                      {slot.slotTemplate?.name} - {slot.athlete?.name} ({getEventMonthLabel(slot.event)})
                       {slot.reservePrice && ` / 시작가: ${formatCurrency(slot.reservePrice)}`}
                     </option>
                   ))}

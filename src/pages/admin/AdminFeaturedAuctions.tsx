@@ -14,6 +14,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { cn } from '../../utils';
+import { getEventMonthLabel } from '../../utils/eventMonth';
 
 export function AdminFeaturedAuctions() {
   const queryClient = useQueryClient();
@@ -195,7 +196,7 @@ export function AdminFeaturedAuctions() {
                       <div className="flex items-center gap-4 text-sm text-slate-500">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          {auction.slotInstance?.event?.name}
+                          {getEventMonthLabel(auction.slotInstance?.event)}
                         </span>
                         <span className="flex items-center gap-1">
                           <Clock className="w-4 h-4" />
@@ -271,7 +272,7 @@ export function AdminFeaturedAuctions() {
                     <option value="">이벤트를 선택하세요</option>
                     {events.map((event: any) => (
                       <option key={event.id} value={event.id}>
-                        {event.name} ({event.tour})
+                        {getEventMonthLabel(event)} ({event.tour})
                       </option>
                     ))}
                   </select>

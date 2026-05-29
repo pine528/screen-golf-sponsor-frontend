@@ -22,6 +22,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { cn } from '../utils';
+import { getEventMonthLabel } from '../utils/eventMonth';
 
 export function MySlots() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -366,7 +367,7 @@ export function MySlots() {
                             </div>
                             <div className="flex items-center gap-1">
                               <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                              <span className="truncate">{slot.event?.name}</span>
+                              <span className="truncate">{getEventMonthLabel(slot.event)}</span>
                             </div>
                           </div>
                           {/* Sale Mode Info */}
@@ -608,7 +609,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
           <div className="flex items-start sm:items-center justify-between gap-2">
             <div className="min-w-0">
               <h2 className="text-lg sm:text-xl font-bold text-slate-900">{slot.slotTemplate?.name}</h2>
-              <p className="text-sm sm:text-base text-slate-600 truncate">{slot.event?.name}</p>
+              <p className="text-sm sm:text-base text-slate-600 truncate">{getEventMonthLabel(slot.event)}</p>
             </div>
             <span className={cn('badge text-xs flex-shrink-0', status.style)}>{status.label}</span>
           </div>

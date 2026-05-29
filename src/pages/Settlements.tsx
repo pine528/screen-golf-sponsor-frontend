@@ -20,6 +20,7 @@ import {
   Building2,
 } from 'lucide-react';
 import { cn } from '../utils';
+import { getEventMonthLabel } from '../utils/eventMonth';
 
 export function Settlements() {
   const navigate = useNavigate();
@@ -300,7 +301,7 @@ export function Settlements() {
                           </div>
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                            <span className="truncate">{settlement.contract?.auction?.slotInstance?.event?.name || '이벤트'}</span>
+                            <span className="truncate">{getEventMonthLabel(settlement.contract?.auction?.slotInstance?.event) || '이벤트'}</span>
                           </div>
                         </div>
                         <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-xs sm:text-sm">
