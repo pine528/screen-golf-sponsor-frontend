@@ -177,7 +177,10 @@ export function AdminEvents() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {filteredEvents.map((event: any) => (
+                  {filteredEvents.map((event: any) => {
+                    const d = event.dateStart || event.startDate;
+                    const monthLabel = d ? `${new Date(d).getMonth() + 1}월` : '';
+                    return (
                     <tr key={event.id} className="hover:bg-slate-50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -185,8 +188,8 @@ export function AdminEvents() {
                             <Calendar className="w-5 h-5 text-emerald-600" />
                           </div>
                           <div>
-                            <p className="font-medium text-slate-900">{event.name}</p>
-                            <p className="text-sm text-slate-500">{event.type || '일반 대회'}</p>
+                            <p className="font-medium text-slate-900">{monthLabel} 대회</p>
+                            <p className="text-sm text-slate-500">{event.name}</p>
                           </div>
                         </div>
                       </td>
@@ -249,7 +252,8 @@ export function AdminEvents() {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
 
