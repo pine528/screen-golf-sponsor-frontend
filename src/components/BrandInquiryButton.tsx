@@ -9,11 +9,11 @@ import { useState } from 'react';
  *   예) 채널 URL이 http://pf.kakao.com/_AbCdE 이면  VITE_KAKAO_CHANNEL_ID=_AbCdE
  * - 미설정 시 이메일(support@sponpik.com) 문의로 폴백.
  */
-const KAKAO_CHANNEL_ID = (import.meta.env.VITE_KAKAO_CHANNEL_ID as string) || '';
+const KAKAO_CHANNEL_ID = (import.meta.env.VITE_KAKAO_CHANNEL_ID as string) || '_xmpxknX';
 const FALLBACK_EMAIL = 'support@sponpik.com';
 
-const channelChatUrl = KAKAO_CHANNEL_ID ? `http://pf.kakao.com/${KAKAO_CHANNEL_ID}/chat` : '';
-const channelHomeUrl = KAKAO_CHANNEL_ID ? `http://pf.kakao.com/${KAKAO_CHANNEL_ID}` : '';
+const channelChatUrl = KAKAO_CHANNEL_ID ? `https://pf.kakao.com/${KAKAO_CHANNEL_ID}/chat` : '';
+const channelHomeUrl = KAKAO_CHANNEL_ID ? `https://pf.kakao.com/${KAKAO_CHANNEL_ID}` : '';
 
 export default function BrandInquiryButton() {
   const [open, setOpen] = useState(false);
