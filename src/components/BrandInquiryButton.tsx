@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 /**
- * 브랜드 후원 문의 — 전역 플로팅 버튼 + 팝업
+ * 카카오톡 상담하기 — 전역 플로팅 버튼 + 팝업
  *
  * 카카오톡 채널(스폰픽 비즈니스)로 1:1 상담 연결.
  * - 채널 공개 ID만 있으면 JS SDK 없이 채팅 URL로 바로 연결됨.
@@ -31,13 +31,13 @@ export default function BrandInquiryButton() {
       {/* 플로팅 버튼 */}
       <button
         onClick={() => setOpen(true)}
-        aria-label="브랜드 후원 문의"
+        aria-label="카카오톡 상담하기"
         className="fixed bottom-5 right-5 z-[60] flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-3 text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700 hover:shadow-xl sm:px-5"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
           <path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.1.2 5.5 0 10-3.6 10-8S17.5 3 12 3z" />
         </svg>
-        <span className="text-sm font-bold whitespace-nowrap">브랜드 후원 문의</span>
+        <span className="text-sm font-bold whitespace-nowrap">카카오톡 상담하기</span>
       </button>
 
       {/* 팝업 */}
@@ -61,7 +61,7 @@ export default function BrandInquiryButton() {
                   <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
                 </svg>
               </button>
-              <h2 className="text-lg font-extrabold">브랜드 후원 문의</h2>
+              <h2 className="text-lg font-extrabold">카카오톡 상담하기</h2>
               <p className="mt-1 text-sm text-emerald-50">
                 관심 있는 선수의 슬롯 후원·제휴를 1:1로 상담해 드립니다.
               </p>
