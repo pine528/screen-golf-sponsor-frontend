@@ -245,7 +245,7 @@ export function Home() {
                 style={{ filter: 'drop-shadow(0 12px 22px rgba(15,23,42,0.10))' }}
               />
 
-              <h1 className="text-[26px] sm:text-4xl lg:text-[42px] font-black tracking-tight lg:tracking-wide text-slate-900 leading-[1.32] lg:leading-tight mb-0 lg:mb-12 space-y-1 lg:space-y-4 max-w-[56%] lg:max-w-none">
+              <h1 className="text-[26px] sm:text-4xl lg:text-[42px] font-black tracking-tight lg:tracking-wide text-slate-900 leading-[1.25] lg:leading-[1.18] mb-0 lg:mb-12 space-y-0.5 lg:space-y-1.5 max-w-[56%] lg:max-w-none">
                 <div>티샷의 순간<span className="hidden lg:inline">,</span></div>
                 <div>수백만의 시선이</div>
                 <div><span className="text-emerald-500">당신의 브랜드</span>를<br className="lg:hidden" /> 주목합니다.</div>
