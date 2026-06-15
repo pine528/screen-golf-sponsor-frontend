@@ -241,7 +241,7 @@ export function Home() {
               <img
                 src="/golfers/bae-jinri-hero.png"
                 alt="배진리 프로 — SPONPIK Founder No.1"
-                className="lg:hidden absolute -right-3 top-0 w-[44%] max-w-[220px] object-contain pointer-events-none select-none"
+                className="lg:hidden absolute right-2 top-0 w-[48%] max-w-[242px] object-contain pointer-events-none select-none"
                 style={{ filter: 'drop-shadow(0 12px 22px rgba(15,23,42,0.10))' }}
               />
 
