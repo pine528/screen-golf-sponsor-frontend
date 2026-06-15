@@ -227,14 +227,14 @@ export function Home() {
         </div>
         <div className="max-w-7xl mx-auto relative">
           {/* Top badge */}
-          <div className="mb-10">
+          <div className="mb-10 max-w-xl mx-auto lg:max-w-none lg:mx-0">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-semibold">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
               KPGA · KLPGA 남녀 프로골프 선수
             </span>
           </div>
 
-          <div className="grid lg:grid-cols-[1fr_auto_340px] gap-6 lg:gap-8 items-center">
+          <div className="grid lg:grid-cols-[1fr_auto_340px] gap-6 lg:gap-8 items-center max-w-xl mx-auto lg:max-w-none lg:mx-0">
             {/* Left - Text */}
             <div className="relative z-10">
               {/* 모바일 골퍼 누끼 (우측, lg에서는 중앙 이미지 사용) */}
