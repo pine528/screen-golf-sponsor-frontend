@@ -259,9 +259,7 @@ export function Home() {
                 <p className="mt-1.5 text-[22px] font-black text-slate-900 leading-none">
                   배진리 <span className="text-sm font-bold text-slate-400">프로</span>
                 </p>
-                <p className="mt-1.5 text-[19px] text-slate-300 italic -rotate-3 origin-left" style={{ fontFamily: "'Snell Roundhand','Brush Script MT','Segoe Script',cursive" }}>
-                  Bae Jinri
-                </p>
+                <img src="/golfers/bae-jinri-sign.png" alt="Bae Jinri" className="mt-2 h-9 w-auto select-none pointer-events-none" />
               </div>
 
               {/* 데스크톱 설명 문구 */}
