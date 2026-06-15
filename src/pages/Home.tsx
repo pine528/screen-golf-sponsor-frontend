@@ -221,7 +221,17 @@ export function Home() {
 
       {/* ════════════════════════ HERO ════════════════════════ */}
       <section className="relative pt-32 sm:pt-36 pb-24 sm:pb-28 px-5 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
-        <div className="max-w-7xl mx-auto">
+        {/* 장식 점 + 소프트 블롭 */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-10 right-0 w-72 h-72 rounded-full bg-emerald-200/30 blur-3xl" />
+          <span className="absolute top-[20%] left-[8%] w-2.5 h-2.5 rounded-full bg-emerald-300/70" />
+          <span className="absolute top-[28%] left-[46%] w-3 h-3 rounded-full bg-amber-300/80" />
+          <span className="absolute top-[15%] right-[28%] w-1.5 h-1.5 rounded-full bg-amber-200" />
+          <span className="absolute top-[44%] right-[7%] w-2 h-2 rounded-full bg-emerald-200" />
+          <span className="absolute top-[52%] left-[42%] w-4 h-4 rounded-full bg-sky-400/80" />
+          <span className="absolute bottom-[16%] left-[14%] w-2 h-2 rounded-full bg-emerald-200/80" />
+        </div>
+        <div className="max-w-7xl mx-auto relative">
           {/* Top badge */}
           <div className="mb-10">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-semibold">
@@ -232,17 +242,40 @@ export function Home() {
 
           <div className="grid lg:grid-cols-[1fr_auto_340px] gap-6 lg:gap-8 items-center">
             {/* Left - Text */}
-            <div className="z-10">
-              <h1 className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-wide text-slate-900 mb-12 space-y-4">
-                <div>티샷의 순간,</div>
+            <div className="relative z-10">
+              {/* 모바일 골퍼 누끼 (우측, lg에서는 중앙 이미지 사용) */}
+              <img
+                src="/golfers/bae-jinri-hero.png"
+                alt="배진리 프로 — SPONPIK Founder No.1"
+                className="lg:hidden absolute -right-3 top-0 w-[44%] max-w-[220px] object-contain pointer-events-none select-none"
+                style={{ filter: 'drop-shadow(0 12px 22px rgba(15,23,42,0.10))' }}
+              />
+
+              <h1 className="text-[26px] sm:text-4xl lg:text-[42px] font-black tracking-tight lg:tracking-wide text-slate-900 leading-[1.32] lg:leading-tight mb-0 lg:mb-12 space-y-1 lg:space-y-4 max-w-[56%] lg:max-w-none">
+                <div>티샷의 순간<span className="hidden lg:inline">,</span></div>
                 <div>수백만의 시선이</div>
-                <div><span className="text-emerald-500">당신의 브랜드</span>를 주목합니다.</div>
+                <div><span className="text-emerald-500">당신의 브랜드</span>를<br className="lg:hidden" /> 주목합니다.</div>
               </h1>
-              <p className="text-base sm:text-lg text-slate-500 leading-relaxed mb-12 max-w-lg">
+
+              {/* 모바일 파운더 라벨 */}
+              <div className="lg:hidden mt-7 max-w-[56%]">
+                <p className="text-[10px] font-extrabold tracking-[0.12em] text-slate-400">
+                  <span className="text-emerald-500">SPONPIK</span> FOUNDER PRO NO1
+                </p>
+                <p className="mt-1.5 text-[22px] font-black text-slate-900 leading-none">
+                  배진리 <span className="text-sm font-bold text-slate-400">프로</span>
+                </p>
+                <p className="mt-1.5 text-[19px] text-slate-300 italic -rotate-3 origin-left" style={{ fontFamily: "'Snell Roundhand','Brush Script MT','Segoe Script',cursive" }}>
+                  Bae Jinri
+                </p>
+              </div>
+
+              {/* 데스크톱 설명 문구 */}
+              <p className="hidden lg:block text-base sm:text-lg text-slate-500 leading-relaxed mb-12 max-w-lg">
                 필드와 스크린 위, 가장 돋보이는 순간. 경기 내내 시선이 머무는 프로 골퍼의 최적화된 광고 슬롯을 실시간 경매로 낙찰받으세요.
               </p>
 
-              <div className="flex flex-wrap gap-3 mb-14">
+              <div className="flex flex-wrap gap-2.5 sm:gap-3 mt-10 lg:mt-0 mb-10 lg:mb-14">
                 <Link to={isAuthenticated ? '/dashboard' : '/register'}
                   className="h-11 px-6 inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20">
                   무료로 시작하기 <ArrowRight className="w-4 h-4" />
