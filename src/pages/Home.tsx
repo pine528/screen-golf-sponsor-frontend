@@ -221,15 +221,9 @@ export function Home() {
 
       {/* ════════════════════════ HERO ════════════════════════ */}
       <section className="relative pt-32 sm:pt-36 pb-24 sm:pb-28 px-5 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
-        {/* 장식 점 + 소프트 블롭 */}
+        {/* 소프트 블롭 (장식 점 제거) */}
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -top-10 right-0 w-72 h-72 rounded-full bg-emerald-200/30 blur-3xl" />
-          <span className="absolute top-[20%] left-[8%] w-2.5 h-2.5 rounded-full bg-emerald-300/70" />
-          <span className="absolute top-[28%] left-[46%] w-3 h-3 rounded-full bg-amber-300/80" />
-          <span className="absolute top-[15%] right-[28%] w-1.5 h-1.5 rounded-full bg-amber-200" />
-          <span className="absolute top-[44%] right-[7%] w-2 h-2 rounded-full bg-emerald-200" />
-          <span className="absolute top-[52%] left-[42%] w-4 h-4 rounded-full bg-sky-400/80" />
-          <span className="absolute bottom-[16%] left-[14%] w-2 h-2 rounded-full bg-emerald-200/80" />
         </div>
         <div className="max-w-7xl mx-auto relative">
           {/* Top badge */}
