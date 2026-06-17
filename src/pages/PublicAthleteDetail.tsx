@@ -157,11 +157,19 @@ export default function PublicAthleteDetail() {
         </div>
         <div className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-6 items-start">
           {/* 프로필 사진 */}
-          <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden bg-white/20 backdrop-blur border-4 border-white/40 shadow-2xl mx-auto sm:mx-0">
-            {athlete.profileImageUrl ? (
-              <img src={athlete.profileImageUrl} alt={athlete.name} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-7xl font-extrabold">{athlete.name.charAt(0)}</div>
+          <div className="relative w-40 h-40 sm:w-48 sm:h-48 mx-auto sm:mx-0">
+            <div className="w-full h-full rounded-2xl overflow-hidden bg-white/20 backdrop-blur border-4 border-white/40 shadow-2xl">
+              {athlete.profileImageUrl ? (
+                <img src={athlete.profileImageUrl} alt={athlete.name} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-7xl font-extrabold">{athlete.name.charAt(0)}</div>
+              )}
+            </div>
+            {/* tour 배지 오버레이 (사진 좌상단 — 예: KPGA) */}
+            {athlete.tour && (
+              <span className="absolute top-2 left-2 inline-flex items-center gap-1 bg-white/90 text-emerald-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow">
+                <Trophy className="w-3 h-3" /> {athlete.tour}
+              </span>
             )}
           </div>
           {/* 기본 정보 (실데이터, 없으면 -) */}
@@ -176,11 +184,7 @@ export default function PublicAthleteDetail() {
                   🏅 {athlete.sportType === 'GOLF' ? '골프' : athlete.sportType === 'SCREEN_GOLF' ? '스크린골프' : athlete.sportType}
                 </span>
               )}
-              {athlete.affiliation && (
-                <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-full">
-                  🤝 {athlete.affiliation}
-                </span>
-              )}
+              {/* 소속(affiliation)은 아래 구조화 프로필의 '소속' 행에서 표기 */}
             </div>
             <h1 className="text-3xl sm:text-4xl font-extrabold mb-1">{athlete.name}</h1>
             {athlete.realName && athlete.realName !== athlete.name && (
@@ -206,9 +210,34 @@ export default function PublicAthleteDetail() {
                 )}
               </div>
             )}
-            <p className="text-sm sm:text-base opacity-95 leading-relaxed max-w-2xl mb-3">
-              {dash(athlete.bio)}
-            </p>
+            {/* SPONPIK 선수 프로필 구조화 — 소속/학력/수상/경력 (값 있는 항목만 라벨 구조로; 모두 없으면 bio 줄글 폴백) */}
+            {(() => {
+              const rows = [
+                { label: '소속', value: athlete.affiliation },
+                { label: '학력', value: athlete.education },
+                { label: '수상', value: athlete.awards },
+                { label: '경력', value: athlete.career },
+              ].filter((r) => r.value && String(r.value).trim());
+
+              if (rows.length === 0) {
+                return (
+                  <p className="text-sm sm:text-base opacity-95 leading-relaxed max-w-2xl mb-3">
+                    {dash(athlete.bio)}
+                  </p>
+                );
+              }
+
+              return (
+                <div className="max-w-2xl mb-3 space-y-1 text-left inline-block align-top">
+                  {rows.map((r) => (
+                    <div key={r.label} className="flex gap-3 text-sm sm:text-base leading-relaxed">
+                      <span className="shrink-0 w-11 font-bold opacity-75">{r.label}</span>
+                      <span className="opacity-95">{r.value}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
 
             {/* docx §4 A 활동 상태 배지 — 활동중 / 슬롯 오픈 / 경매 진행중 */}
             <div className="flex flex-wrap items-center gap-1.5 mb-2 justify-center sm:justify-start">

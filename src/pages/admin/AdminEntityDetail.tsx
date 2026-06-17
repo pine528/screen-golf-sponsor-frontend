@@ -13,6 +13,7 @@ import {
   AlertCircle,
   FileText,
   Briefcase,
+  Trophy,
   CreditCard,
   Mail,
   Phone,
@@ -575,6 +576,28 @@ export default function AdminEntityDetail() {
                             <span className="text-slate-900">{entity.affiliation}</span>
                           </div>
                         )}
+                        {/* 선수 프로필 구조화 — 학력/수상/경력 */}
+                        {entity.education && (
+                          <div className="flex items-start gap-3 text-sm">
+                            <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <span className="text-slate-600">학력:</span>
+                            <span className="text-slate-900 flex-1">{entity.education}</span>
+                          </div>
+                        )}
+                        {entity.awards && (
+                          <div className="flex items-start gap-3 text-sm">
+                            <Trophy className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <span className="text-slate-600">수상:</span>
+                            <span className="text-slate-900 flex-1">{entity.awards}</span>
+                          </div>
+                        )}
+                        {entity.career && (
+                          <div className="flex items-start gap-3 text-sm">
+                            <Briefcase className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <span className="text-slate-600">경력:</span>
+                            <span className="text-slate-900 flex-1">{entity.career}</span>
+                          </div>
+                        )}
                         {(entity.height || entity.region || entity.debutYear) && (
                           <div className="flex items-start gap-3 text-sm">
                             <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
@@ -629,6 +652,9 @@ export default function AdminEntityDetail() {
                                   region: entity.region ?? '',
                                   debutYear: entity.debutYear ?? '',
                                   affiliation: entity.affiliation ?? '',
+                                  education: entity.education ?? '',
+                                  awards: entity.awards ?? '',
+                                  career: entity.career ?? '',
                                   sportType: entity.sportType ?? '',
                                   isActive: entity.isActive ?? true,
                                 })}
@@ -644,6 +670,9 @@ export default function AdminEntityDetail() {
                                     region: editForm.region || null,
                                     debutYear: editForm.debutYear === '' ? null : Number(editForm.debutYear),
                                     affiliation: editForm.affiliation || null,
+                                    education: editForm.education || null,
+                                    awards: editForm.awards || null,
+                                    career: editForm.career || null,
                                     sportType: editForm.sportType || null,
                                     isActive: editForm.isActive,
                                   })}
@@ -725,6 +754,37 @@ export default function AdminEntityDetail() {
                                 >
                                   {editForm.isActive ? '🟢 활성' : '⚪ 비활성'}
                                 </button>
+                              </div>
+                              {/* 선수 프로필 구조화 — 학력/수상/경력 (각 항목 ' · ' 로 구분 입력) */}
+                              <div className="col-span-2">
+                                <label className="block text-[10px] text-slate-500 mb-0.5">학력</label>
+                                <textarea
+                                  value={editForm.education}
+                                  onChange={(e) => setEditForm({ ...editForm, education: e.target.value })}
+                                  rows={2}
+                                  className="w-full text-xs border rounded px-2 py-1 resize-y"
+                                  placeholder="예: 공주대 교육대학원 석사 · 중등 2급 정교사(체육) · 대전체육고 골프부 출신"
+                                />
+                              </div>
+                              <div className="col-span-2">
+                                <label className="block text-[10px] text-slate-500 mb-0.5">수상</label>
+                                <textarea
+                                  value={editForm.awards}
+                                  onChange={(e) => setEditForm({ ...editForm, awards: e.target.value })}
+                                  rows={2}
+                                  className="w-full text-xs border rounded px-2 py-1 resize-y"
+                                  placeholder="예: 대전광역시장배 준우승 · KPGA 프론티어투어 4위"
+                                />
+                              </div>
+                              <div className="col-span-2">
+                                <label className="block text-[10px] text-slate-500 mb-0.5">경력</label>
+                                <textarea
+                                  value={editForm.career}
+                                  onChange={(e) => setEditForm({ ...editForm, career: e.target.value })}
+                                  rows={2}
+                                  className="w-full text-xs border rounded px-2 py-1 resize-y"
+                                  placeholder="예: 전 GDR아카데미 대전스마트시티점 프로"
+                                />
                               </div>
                             </div>
                           )}
