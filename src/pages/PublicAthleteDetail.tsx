@@ -156,8 +156,8 @@ export default function PublicAthleteDetail() {
           </Link>
         </div>
         <div className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-6 items-start">
-          {/* 프로필 사진 */}
-          <div className="relative w-40 h-40 sm:w-48 sm:h-48 mx-auto sm:mx-0">
+          {/* 프로필 사진 (3:4 인물 비율) */}
+          <div className="relative w-40 sm:w-48 aspect-[3/4] mx-auto sm:mx-0">
             <div className="w-full h-full rounded-2xl overflow-hidden bg-white/20 backdrop-blur border-4 border-white/40 shadow-2xl">
               {athlete.profileImageUrl ? (
                 <img src={athlete.profileImageUrl} alt={athlete.name} className="w-full h-full object-cover" />

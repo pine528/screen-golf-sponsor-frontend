@@ -221,7 +221,7 @@ function AthleteCard({ athlete }: { athlete: any }) {
       to={`/athletes/${athlete.id}`}
       className="group bg-white rounded-xl overflow-hidden border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all"
     >
-      <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
+      <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
         {athlete.profileImageUrl ? (
           <img
             src={athlete.profileImageUrl}
