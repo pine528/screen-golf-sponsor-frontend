@@ -228,7 +228,7 @@ export default function PublicAthleteDetail() {
               }
 
               return (
-                <div className="max-w-2xl mb-3 space-y-1 text-left inline-block align-top">
+                <div className="max-w-2xl mb-3 flex flex-col items-center sm:items-start gap-1 text-left">
                   {rows.map((r) => (
                     <div key={r.label} className="flex gap-3 text-sm sm:text-base leading-relaxed">
                       <span className="shrink-0 w-11 font-bold opacity-75">{r.label}</span>
