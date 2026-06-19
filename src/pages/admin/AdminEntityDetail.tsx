@@ -789,6 +789,9 @@ export default function AdminEntityDetail() {
                             </div>
                           )}
                         </div>
+
+                        {/* 선수 경기결과 승인 (선수 자가등록 검수) */}
+                        <AdminAthleteEventResults athleteId={id!} />
                       </>
                     ) : (
                       <>
@@ -1269,5 +1272,62 @@ export default function AdminEntityDetail() {
         </div>
       </div>
     </Layout>
+  );
+}
+
+/** 관리자: 선수 경기결과 목록 + 자가등록(PENDING) 승인/반려 */
+function AdminAthleteEventResults({ athleteId }: { athleteId: string }) {
+  const qc = useQueryClient();
+  const { data: resp, isLoading } = useQuery({
+    queryKey: ['admin-athlete-results', athleteId],
+    queryFn: () => api.getAthleteEventResults(athleteId),
+    enabled: !!athleteId,
+  });
+  const results: any[] = resp?.data || [];
+  const pending = results.filter((r) => r.status === 'PENDING');
+
+  const approveMut = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: 'APPROVED' | 'REJECTED' }) => api.approveAthleteEventResult(id, status),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin-athlete-results', athleteId] }),
+  });
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => api.deleteAthleteEventResult(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin-athlete-results', athleteId] }),
+  });
+
+  if (isLoading || results.length === 0) return null;
+
+  return (
+    <div className="mt-4 pt-4 border-t border-slate-200">
+      <h4 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
+        🏆 경기결과
+        {pending.length > 0 && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">승인 대기 {pending.length}</span>}
+      </h4>
+      <div className="space-y-1.5">
+        {results.map((r) => (
+          <div key={r.id} className={`flex items-center justify-between gap-2 py-1.5 px-2 rounded text-sm border ${r.status === 'PENDING' ? 'bg-amber-50 border-amber-200' : 'bg-white border-slate-100'}`}>
+            <div className="min-w-0 flex-1">
+              <div className="font-semibold truncate">{r.eventName}</div>
+              <div className="text-[10px] text-slate-400">
+                {r.eventDate ? new Date(r.eventDate).toLocaleDateString('ko-KR') : '-'}
+                {r.tour ? ` · ${r.tour}` : ''}{r.rank != null ? ` · ${r.rank}위` : ''}
+                {r.source === 'ATHLETE_SELF' ? ' · 선수 입력' : ''}
+              </div>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              {r.status === 'PENDING' ? (
+                <>
+                  <button onClick={() => approveMut.mutate({ id: r.id, status: 'APPROVED' })} disabled={approveMut.isPending} className="text-[10px] font-bold px-2 py-1 bg-emerald-500 text-white rounded hover:bg-emerald-600">승인</button>
+                  <button onClick={() => approveMut.mutate({ id: r.id, status: 'REJECTED' })} disabled={approveMut.isPending} className="text-[10px] font-bold px-2 py-1 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">반려</button>
+                </>
+              ) : (
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${r.status === 'REJECTED' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`}>{r.status === 'REJECTED' ? '반려' : '공개'}</span>
+              )}
+              <button onClick={() => deleteMut.mutate(r.id)} className="text-[10px] text-rose-500 hover:text-rose-700 font-bold">삭제</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

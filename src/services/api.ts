@@ -3117,6 +3117,28 @@ class ApiService {
     const r = await this.client.delete<ApiResponse<any>>(`/athletes/event-results/${resultId}`);
     return r.data;
   }
+  // 선수 본인 경기결과 자가등록 (status PENDING → 관리자 승인)
+  async getMyEventResults() {
+    const r = await this.client.get<ApiResponse<any[]>>(`/athletes/me/event-results`);
+    return r.data;
+  }
+  async createMyEventResult(body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/athletes/me/event-results`, body);
+    return r.data;
+  }
+  async updateMyEventResult(resultId: string, body: any) {
+    const r = await this.client.patch<ApiResponse<any>>(`/athletes/me/event-results/${resultId}`, body);
+    return r.data;
+  }
+  async deleteMyEventResult(resultId: string) {
+    const r = await this.client.delete<ApiResponse<any>>(`/athletes/me/event-results/${resultId}`);
+    return r.data;
+  }
+  // 관리자: 선수 자가등록 결과 승인/반려
+  async approveAthleteEventResult(resultId: string, status: 'APPROVED' | 'REJECTED' = 'APPROVED') {
+    const r = await this.client.patch<ApiResponse<any>>(`/athletes/event-results/${resultId}/approve`, { status });
+    return r.data;
+  }
 
   // ============================================
   // 미디어 노출 수동 입력 (docx §6 C-1, 관리자/본인)

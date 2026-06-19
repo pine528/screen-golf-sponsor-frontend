@@ -63,6 +63,9 @@ export function Profile() {
     region: '',
     debutYear: '' as number | '',
     affiliation: '',
+    education: '',
+    awards: '',
+    career: '',
     sportType: '',
   });
 
@@ -113,6 +116,9 @@ export function Profile() {
           region: profile.region || '',
           debutYear: profile.debutYear ?? '',
           affiliation: profile.affiliation || '',
+          education: profile.education || '',
+          awards: profile.awards || '',
+          career: profile.career || '',
           sportType: profile.sportType || '',
         });
       }
@@ -847,6 +853,34 @@ export function Profile() {
                               <option value="SCREEN_GOLF">⛳ 스크린골프</option>
                             </select>
                           </div>
+                          {/* 선수 프로필 구조화 — 학력/수상/경력 (' · ' 로 구분 입력) */}
+                          <div className="sm:col-span-2">
+                            <label className="label text-xs sm:text-sm">학력</label>
+                            <textarea
+                              value={athleteForm.education}
+                              onChange={(e) => setAthleteForm({ ...athleteForm, education: e.target.value })}
+                              className="input min-h-[56px] text-sm sm:text-base"
+                              placeholder="예: 한국체육대학교 골프전공 · 체육고 골프부 출신"
+                            />
+                          </div>
+                          <div className="sm:col-span-2">
+                            <label className="label text-xs sm:text-sm">수상</label>
+                            <textarea
+                              value={athleteForm.awards}
+                              onChange={(e) => setAthleteForm({ ...athleteForm, awards: e.target.value })}
+                              className="input min-h-[56px] text-sm sm:text-base"
+                              placeholder="예: 2024 KLPGA 점프투어 우승 · 챔피언십 준우승"
+                            />
+                          </div>
+                          <div className="sm:col-span-2">
+                            <label className="label text-xs sm:text-sm">경력</label>
+                            <textarea
+                              value={athleteForm.career}
+                              onChange={(e) => setAthleteForm({ ...athleteForm, career: e.target.value })}
+                              className="input min-h-[56px] text-sm sm:text-base"
+                              placeholder="예: 현 ◯◯ 소속 · 전 △△ 아카데미 프로"
+                            />
+                          </div>
                         </div>
                         <p className="text-[10px] sm:text-xs text-slate-500 mt-2">
                           이 항목들은 선수 둘러보기 카드와 상세 페이지에 표시됩니다. 비워두면 "-"로 표기됩니다.
@@ -858,6 +892,9 @@ export function Profile() {
 
                       {/* SPONPIK Phase 2 SNS 옵션 B — 출연 영상(3rd-party) 큐레이션 */}
                       <AthleteMentionSection profile={profile} />
+
+                      {/* 선수 경기결과 자가등록 (관리자 승인 후 공개) */}
+                      <AthleteEventResultsSection />
                     </div>
                   )}
                 </div>
@@ -1059,6 +1096,96 @@ export function Profile() {
  * - URL/핸들/Channel ID 입력 → 연결 → 즉시 메타+영상 동기화
  * - 연결 후: 채널 정보 + 최근 영상 5개 + 재동기화/해제 버튼
  */
+/** 선수 본인 경기결과 자가등록 — 등록 시 PENDING(비공개), 관리자 승인 후 공개 */
+function AthleteEventResultsSection() {
+  const qc = useQueryClient();
+  const empty = { eventName: '', eventDate: '', tour: '', category: '', rank: '' as number | '', score: '', summary: '' };
+  const [form, setForm] = useState(empty);
+  const [open, setOpen] = useState(false);
+
+  const { data: resp, isLoading } = useQuery({
+    queryKey: ['my-event-results'],
+    queryFn: () => api.getMyEventResults(),
+  });
+  const results: any[] = resp?.data || [];
+
+  const createMut = useMutation({
+    mutationFn: (body: any) => api.createMyEventResult(body),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['my-event-results'] }); setForm(empty); setOpen(false); },
+    onError: (e: any) => alert(e?.response?.data?.error?.message || '등록 실패'),
+  });
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => api.deleteMyEventResult(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['my-event-results'] }),
+  });
+
+  const statusBadge = (s: string) => {
+    if (s === 'APPROVED') return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">공개</span>;
+    if (s === 'REJECTED') return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">반려</span>;
+    return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">승인 대기</span>;
+  };
+
+  const submit = () => {
+    if (!form.eventName || !form.eventDate) { alert('대회명과 날짜는 필수입니다'); return; }
+    createMut.mutate({ ...form, rank: form.rank === '' ? null : Number(form.rank) });
+  };
+
+  return (
+    <div className="pt-4 border-t border-slate-200">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-xs sm:text-sm font-semibold text-slate-900">경기결과 (입상내역)</h3>
+        <button type="button" onClick={() => setOpen(!open)} className="text-xs font-bold px-3 py-1 bg-emerald-500 text-white rounded hover:bg-emerald-600">
+          {open ? '닫기' : '+ 결과 추가'}
+        </button>
+      </div>
+      <p className="text-[10px] sm:text-xs text-slate-500 mb-3">직접 등록한 결과는 <b>관리자 승인 후</b> 공개 페이지에 표시됩니다.</p>
+
+      {open && (
+        <div className="mb-3 p-3 bg-slate-50 rounded-lg grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <input className="input text-sm" placeholder="대회명 *" value={form.eventName} onChange={(e) => setForm({ ...form, eventName: e.target.value })} />
+          <input className="input text-sm" type="date" value={form.eventDate} onChange={(e) => setForm({ ...form, eventDate: e.target.value })} />
+          <input className="input text-sm" placeholder="투어 (예: KLPGA 점프투어)" value={form.tour} onChange={(e) => setForm({ ...form, tour: e.target.value })} />
+          <input className="input text-sm" type="number" placeholder="순위 (예: 1)" value={form.rank as any} onChange={(e) => setForm({ ...form, rank: e.target.value === '' ? '' : Number(e.target.value) })} />
+          <input className="input text-sm" placeholder="스코어 (예: -7)" value={form.score} onChange={(e) => setForm({ ...form, score: e.target.value })} />
+          <input className="input text-sm" placeholder="구분 (예: 점프투어)" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
+          <input className="input text-sm sm:col-span-2" placeholder="요약 (선택)" value={form.summary} onChange={(e) => setForm({ ...form, summary: e.target.value })} />
+          <div className="sm:col-span-2 flex justify-end">
+            <button type="button" onClick={submit} disabled={createMut.isPending} className="text-xs font-bold px-4 py-1.5 bg-slate-900 text-white rounded hover:bg-slate-800 disabled:opacity-50">
+              {createMut.isPending ? '등록 중...' : '등록 (승인 요청)'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className="text-xs text-slate-400 py-2">불러오는 중...</div>
+      ) : results.length === 0 ? (
+        <div className="text-xs text-slate-400 py-2">등록된 경기결과가 없습니다.</div>
+      ) : (
+        <div className="space-y-1.5">
+          {results.map((r) => (
+            <div key={r.id} className="flex items-center justify-between gap-2 py-1.5 px-2 rounded bg-white border border-slate-100 text-sm">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1.5">
+                  {statusBadge(r.status)}
+                  <span className="font-semibold truncate">{r.eventName}</span>
+                </div>
+                <div className="text-[10px] text-slate-400">
+                  {r.eventDate ? new Date(r.eventDate).toLocaleDateString('ko-KR') : '-'}
+                  {r.tour ? ` · ${r.tour}` : ''}{r.rank != null ? ` · ${r.rank}위` : ''}{r.score ? ` · ${r.score}` : ''}
+                </div>
+              </div>
+              {r.source === 'ATHLETE_SELF' && (
+                <button type="button" onClick={() => deleteMut.mutate(r.id)} className="text-[10px] text-rose-500 hover:text-rose-700 font-bold shrink-0">삭제</button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function YoutubeChannelSection({ profile }: { profile: any }) {
   const qc = useQueryClient();
   const [input, setInput] = useState('');
