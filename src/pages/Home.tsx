@@ -122,6 +122,7 @@ export function Home() {
   const r2 = useReveal();
   const r3 = useReveal();
   const r4 = useReveal();
+  const r5 = useReveal();
 
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -568,6 +569,34 @@ export function Home() {
                 >
                   {card.link.label} <ArrowRight className="w-4 h-4" />
                 </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════ 함께하는 브랜드 ════════════════════════ */}
+      <section ref={r5.ref} className={`py-12 sm:py-16 px-5 transition-all duration-700 ${r5.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8 sm:mb-10">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">스폰픽과 함께하는 브랜드</h2>
+            <p className="text-sm sm:text-base text-slate-500">스크린골프 스폰서십을 함께 만들어가는 파트너 브랜드입니다.</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+            {[
+              { src: '/brands/elgrim.png', name: '엘그림' },
+              { src: '/brands/hoi-bakery.png', name: '호이베이커리' },
+              { src: '/brands/the-guys.png', name: 'the GUYS' },
+              { src: '/brands/sinus-holdings.jpg', name: 'SINUS HOLDINGS' },
+              { src: '/brands/andante.png', name: '스파리조트 안단테' },
+              { src: '/brands/animal-forest.png', name: '애니포레' },
+              { src: '/brands/orex.png', name: 'OREX' },
+              { src: '/brands/fau.png', name: 'FAU' },
+              { src: '/brands/elensilia.png', name: 'ELENSILIA' },
+              { src: '/brands/nature-republic.png', name: 'NATURE REPUBLIC' },
+            ].map((b) => (
+              <div key={b.name} className="flex items-center justify-center h-20 sm:h-24 bg-white rounded-2xl border border-slate-200 px-4 hover:shadow-md hover:border-emerald-200 transition-all">
+                <img src={b.src} alt={b.name} title={b.name} className="max-h-12 sm:max-h-14 max-w-full object-contain" loading="lazy" />
               </div>
             ))}
           </div>
