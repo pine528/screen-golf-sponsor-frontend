@@ -8,7 +8,8 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 
-const STORAGE_KEY = 'sponpik-announcement-hidden-until';
+// 공지 내용 변경 시 키 버전을 올려, 이전에 '오늘 하루 보지 않기'로 닫은 사용자도 새 공지를 보게 함
+const STORAGE_KEY = 'sponpik-announcement-hidden-until-sep';
 
 export function ServiceAnnouncementModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,29 +65,32 @@ export function ServiceAnnouncementModal() {
           />
 
           {/* 제목 */}
-          <h2 className="text-xl font-extrabold text-slate-900 mb-2">SPONPIK 서비스 오픈 안내</h2>
+          <h2 className="text-xl font-extrabold text-slate-900 mb-2">SPONPIK 공식 오픈 일정 변경 안내</h2>
 
           {/* 상태 뱃지 */}
           <span className="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-100">
-            서비스 준비중
+            9월 공식 오픈 예정
           </span>
         </div>
 
         {/* 본문 */}
         <div className="px-7 py-5 text-center text-sm text-slate-700 leading-relaxed space-y-4">
           <p>
-            SPONPIK은 프로골프선수와 브랜드를 연결하는 스포츠 후원 플랫폼으로,<br />
-            현재 정식 오픈을 위한 준비를 진행하고 있습니다.
+            SPONPIK은 보다 안정적인 자동화 시스템과 완성도 높은 서비스 제공을 위해<br />
+            공식 오픈 일정을 <span className="font-semibold text-emerald-700">9월</span>로 조정했습니다.
           </p>
           <p>
-            <span className="font-semibold text-emerald-700">5월 중 대회</span> 시범 적용 이후<br />
-            베타 테스트를 거쳐 <span className="font-semibold text-emerald-700">7월 정식 오픈</span>을 목표로 하고 있습니다.
+            <span className="font-semibold text-emerald-700">8월 대회</span>까지 수동·반자동 매칭을 운영하며
+            후원 슬롯 개설, 경매, AR 기반 패치 확인, 계약·검증, 정산, ROI 리포트 등
+            핵심 기능을 실제 운영 환경에서 최종 점검하겠습니다.
           </p>
           <p>
-            선수와 브랜드 모두가 만족할 수 있는 서비스가 될 수 있도록<br />
-            플랫폼 완성도와 선수·브랜드 유치에 최선을 다하겠습니다.
+            오픈을 기다려주신 분들께 송구한 말씀을 드리며,<br />
+            늦어진 만큼 더욱 안정적이고 신뢰할 수 있는 서비스로 찾아뵙겠습니다.
           </p>
-          <p className="font-semibold text-slate-900">많은 관심과 성원 부탁드립니다.</p>
+          <p className="font-semibold text-slate-900">
+            9월, SPONPIK이 스포츠 후원 거래시장을 공식 오픈합니다.
+          </p>
         </div>
 
         {/* 확인 버튼 */}
