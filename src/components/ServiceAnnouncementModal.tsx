@@ -74,15 +74,15 @@ export function ServiceAnnouncementModal() {
         </div>
 
         {/* 본문 */}
-        <div className="px-7 py-5 text-center text-sm text-slate-700 leading-relaxed space-y-4">
+        <div className="px-7 py-5 text-center text-sm text-slate-700 leading-relaxed space-y-4 break-keep">
           <p>
             SPONPIK은 보다 안정적인 자동화 시스템과 완성도 높은 서비스 제공을 위해<br />
             공식 오픈 일정을 <span className="font-semibold text-emerald-700">9월</span>로 조정했습니다.
           </p>
           <p>
-            <span className="font-semibold text-emerald-700">8월 대회</span>까지 수동·반자동 매칭을 운영하며
-            후원 슬롯 개설, 경매, AR 기반 패치 확인, 계약·검증, 정산, ROI 리포트 등
-            핵심 기능을 실제 운영 환경에서 최종 점검하겠습니다.
+            <span className="font-semibold text-emerald-700">8월 대회</span>까지 수동·반자동 매칭을 운영하며<br />
+            후원 슬롯 개설, 경매, AR 기반 패치 확인, 계약·검증, 정산, ROI 리포트 등<br />
+            <span className="sm:whitespace-nowrap">핵심 기능을 실제 운영 환경에서 최종 점검하겠습니다.</span>
           </p>
           <p>
             오픈을 기다려주신 분들께 송구한 말씀을 드리며,<br />
