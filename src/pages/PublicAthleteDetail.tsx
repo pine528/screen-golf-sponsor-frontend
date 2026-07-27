@@ -571,7 +571,7 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
           <ArrowLeft className="w-3 h-3" /> 선수 목록
         </Link>
       </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-10 grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)_320px] gap-4 items-start">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-10 grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)_250px] gap-4 items-start">
 
         {/* ───────── 좌측: 사진 · 온도 · 버튼 ───────── */}
         <div className="space-y-3">
@@ -731,9 +731,9 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
                   <div className="text-xs text-slate-400 py-3">등록된 이력이 없습니다.</div>
                 ) : (
                   <ul className="space-y-1.5">
-                    {fallbackHighlights.slice(0, 12).map((h: string, i: number) => (
-                      <li key={i} className="flex items-start gap-1.5 text-xs text-slate-700 leading-relaxed">
-                        <span className="text-emerald-500 mt-0.5">•</span> {h}
+                    {fallbackHighlights.slice(0, 14).map((h: string, i: number) => (
+                      <li key={i} className="flex items-start gap-1.5 text-xs text-slate-700 leading-relaxed break-keep">
+                        <span className="text-emerald-500 mt-0.5">•</span> <span className="min-w-0">{h}</span>
                       </li>
                     ))}
                   </ul>
@@ -748,21 +748,21 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
                     <table className="w-full text-xs">
                       <thead>
                         <tr className="text-[10px] text-slate-400 border-b border-slate-100">
-                          <th className="text-left py-1.5 pr-2 font-semibold">연도</th>
+                          <th className="text-left py-1.5 pr-2 font-semibold whitespace-nowrap">연도</th>
                           <th className="text-left py-1.5 pr-2 font-semibold">대회명</th>
-                          <th className="text-right py-1.5 pr-2 font-semibold">성적</th>
-                          <th className="text-right py-1.5 font-semibold">비고</th>
+                          <th className="text-right py-1.5 pr-2 font-semibold whitespace-nowrap">성적</th>
+                          <th className="text-right py-1.5 font-semibold whitespace-nowrap">비고</th>
                         </tr>
                       </thead>
                       <tbody>
                         {results.map((r: any) => (
                           <tr key={r.id} className="border-b border-slate-50 last:border-0">
-                            <td className="py-1.5 pr-2 text-slate-500">{r.eventDate ? new Date(r.eventDate).getFullYear() : '-'}</td>
-                            <td className="py-1.5 pr-2 font-semibold text-slate-800 max-w-[220px] truncate" title={r.eventName}>{r.eventName}</td>
-                            <td className={`py-1.5 pr-2 text-right font-extrabold ${r.rank != null && r.rank <= 3 ? 'text-amber-600' : 'text-slate-700'}`}>
+                            <td className="py-1.5 pr-2 text-slate-500 whitespace-nowrap">{r.eventDate ? new Date(r.eventDate).getFullYear() : '-'}</td>
+                            <td className="py-1.5 pr-2 font-semibold text-slate-800 max-w-[300px] truncate" title={r.eventName}>{r.eventName}</td>
+                            <td className={`py-1.5 pr-2 text-right font-extrabold whitespace-nowrap ${r.rank != null && r.rank <= 3 ? 'text-amber-600' : 'text-slate-700'}`}>
                               {r.rank != null ? `${r.rank}위` : r.score || '-'}
                             </td>
-                            <td className="py-1.5 text-right text-[10px] text-slate-400">{r.rank != null ? '출전' : '본선 진출'}</td>
+                            <td className="py-1.5 text-right text-[10px] text-slate-400 whitespace-nowrap">{r.rank != null ? '출전' : '본선 진출'}</td>
                           </tr>
                         ))}
                       </tbody>
