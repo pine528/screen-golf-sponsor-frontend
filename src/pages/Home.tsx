@@ -594,6 +594,9 @@ export function Home() {
               { src: '/brands/fau.png', name: 'FAU' },
               { src: '/brands/elensilia.png', name: 'ELENSILIA' },
               { src: '/brands/nature-republic.png', name: 'NATURE REPUBLIC' },
+              { src: '/brands/kilogram-studio.png', name: 'Kilogram studio' },
+              { src: '/brands/brrr-studio.png', name: 'Brrr. studio' },
+              { src: '/brands/nlt1.png', name: '(주)엔엘티원 NLT1 COMPANY' },
             ].map((b) => (
               <div key={b.name} className="flex items-center justify-center h-20 sm:h-24 bg-white rounded-2xl border border-slate-200 px-4 hover:shadow-md hover:border-emerald-200 transition-all">
                 <img src={b.src} alt={b.name} title={b.name} className="max-h-12 sm:max-h-14 max-w-full object-contain" loading="lazy" />
