@@ -114,6 +114,29 @@ export function Home() {
     refetchInterval: 30_000,
   });
 
+  // 즉시구매(고정가) 슬롯 — 경매와 함께 '진행중인 스폰서십 슬롯'에 노출
+  const { data: directBuySlots } = useQuery({
+    queryKey: ['home-direct-slots'],
+    queryFn: async () => {
+      const r = await api.getSlotInstances({ enableDirectBuy: true, limit: 12 });
+      return ((r as any)?.data || [])
+        .filter((s: any) => s.status !== 'SOLD' && s.status !== 'RESERVED' && s.isActive)
+        .map((s: any) => ({
+          id: s.id,
+          kind: 'DIRECT' as const,
+          athleteId: s.athleteId,
+          slot: s.slotTemplate?.code || 'SLOT',
+          slotName: s.slotTemplate?.nameKr || s.slotTemplate?.name || '',
+          bodyPart: s.slotTemplate?.bodyPart || '',
+          player: s.athlete?.name || '선수',
+          playerImage: s.athlete?.profileImageUrl || '',
+          price: Number(s.directBuyPrice || s.reservePrice || 0),
+          eventName: s.event?.name || '',
+        }));
+    },
+    staleTime: 60_000,
+  });
+
   // 2026-07 항목2 — 추천/신규 선수 롤링 섹션용
   const { data: homeAthletes } = useQuery({
     queryKey: ['home-athletes'],
@@ -360,8 +383,9 @@ export function Home() {
           {(() => {
             // SPONPIK 론칭 docx 2-1: 프론트 하드코딩 값 사용 지양
             // → MOCK_GOLFERS 제거, 실데이터(liveAuctions)만 사용. 빈 경우 명시적 empty state.
-            const displayItems = liveAuctions && liveAuctions.length > 0 ? liveAuctions : null;
-            const items = displayItems;
+            // 경매(LIVE) + 즉시구매(고정가) 슬롯을 함께 노출
+            const merged = [...(liveAuctions || []), ...(directBuySlots || [])];
+            const items = merged.length > 0 ? merged : null;
 
             if (!items || items.length === 0) {
               return (
@@ -380,7 +404,8 @@ export function Home() {
               <div ref={carouselRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 scrollbar-hide -mx-5 px-5">
                 {items.map((a: any) => {
                   const isReal = true;
-                  const linkTo = `/auctions/${a.id}`;
+                  const isDirect = a.kind === 'DIRECT';
+                  const linkTo = isDirect ? `/athletes/${a.athleteId}` : `/auctions/${a.id}`;
                   return (
                     <Link key={a.id} to={linkTo} className="flex-shrink-0 w-[200px] sm:w-[220px] snap-start group cursor-pointer">
                       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-lg transition-all duration-300">
@@ -397,10 +422,13 @@ export function Home() {
                             </div>
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-                          <div className="absolute top-3 left-3">
+                          <div className="absolute top-3 left-3 flex flex-col items-start gap-1">
                             <span className="text-[10px] font-bold tracking-wide text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md">
                               {a.slot}
                             </span>
+                            {isDirect && (
+                              <span className="text-[9px] font-extrabold text-sky-700 bg-sky-100 px-2 py-0.5 rounded-md">즉시구매</span>
+                            )}
                           </div>
                         </div>
 
@@ -409,14 +437,18 @@ export function Home() {
                           <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors truncate mb-0.5">{a.player}</p>
                           <p className="text-[10px] text-slate-400 mb-2">{bodyPartLabel(a.bodyPart)}</p>
                           <div className="mb-3">
-                            <p className="text-[10px] text-slate-400 mb-0.5">현재 1위 입찰가</p>
-                            <p className="text-base font-black text-slate-900">₩{(a.price || 0).toLocaleString()}</p>
+                            <p className="text-[10px] text-slate-400 mb-0.5">{isDirect ? '즉시구매가' : '현재 1위 입찰가'}</p>
+                            <p className={`text-base font-black ${isDirect ? 'text-sky-600' : 'text-slate-900'}`}>₩{(a.price || 0).toLocaleString()}</p>
                           </div>
                           <div className="flex items-center justify-between">
+                            {isDirect ? (
+                              <div className="text-[11px] font-bold text-sky-600">바로 구매 가능</div>
+                            ) : (
                             <div className="flex items-center gap-1.5 text-rose-500 font-bold text-xs">
                               <Timer className="w-3.5 h-3.5" />
                               <span className="font-mono">{isReal ? formatTimeRemaining(a.endAt) : a.timeLeft}</span>
                             </div>
+                            )}
                             {a.bids > 0 && (
                               <span className="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded">{a.bids}건</span>
                             )}
