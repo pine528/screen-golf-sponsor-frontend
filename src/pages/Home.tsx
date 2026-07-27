@@ -114,6 +114,16 @@ export function Home() {
     refetchInterval: 30_000,
   });
 
+  // 2026-07 항목2 — 추천/신규 선수 롤링 섹션용
+  const { data: homeAthletes } = useQuery({
+    queryKey: ['home-athletes'],
+    queryFn: async () => {
+      const r = await api.listPublicAthletes({ limit: 50 } as any);
+      return (r as any)?.data?.items || [];
+    },
+    staleTime: 60_000,
+  });
+
   const c1 = useCounter(1250);
   const c2 = useCounter(3400);
   const c3 = useCounter(180);
@@ -323,6 +333,9 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      {/* ════════════════════════ 스폰픽 추천선수 및 신규등록선수 (2026-07 항목2) ════════════════════════ */}
+      <RecommendedNewAthletes athletes={homeAthletes || []} />
 
       {/* ════════════════════════ 진행중인 스폰서십 슬롯 (캐러셀) ════════════════════════ */}
       <section className="py-12 sm:py-20 bg-white">
@@ -664,6 +677,101 @@ export function Home() {
  * - hot: liveAuctions 응답의 첫 항목 (가장 임박한 LIVE 경매)
  * - 데이터 없을 때: "LIVE 경매 준비 중" 안내 (- 처리, docx 2-2)
  */
+/* ── 2026-07 항목2: 메인 추천/신규 선수 롤링 섹션 ──
+ * 좌: 추천(운영 지정, recommendOrder 순) / 우: 신규(가입 60일 이내, 최신순)
+ * 각 3명씩 표시, 4.5초마다 다음 3명으로 자동 롤링 */
+function RecommendedNewAthletes({ athletes }: { athletes: any[] }) {
+  const rec = athletes
+    .filter((a) => a.isRecommended)
+    .sort((a, b) => (a.recommendOrder ?? 999) - (b.recommendOrder ?? 999));
+  const news = athletes
+    .filter((a) => a.createdAt && Date.now() - new Date(a.createdAt).getTime() < 60 * 86400000)
+    .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+
+  const [page, setPage] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setPage((p) => p + 1), 4500);
+    return () => clearInterval(t);
+  }, []);
+
+  if (rec.length === 0 && news.length === 0) return null;
+
+  const pick = (list: any[]) => {
+    if (list.length <= 3) return list;
+    const start = (page * 3) % list.length;
+    return [0, 1, 2].map((i) => list[(start + i) % list.length]);
+  };
+
+  return (
+    <section className="py-12 sm:py-16 bg-slate-50 border-y border-slate-100">
+      <style>{`@keyframes sponpikRoll { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }`}</style>
+      <div className="max-w-7xl mx-auto px-5">
+        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-8 flex items-center gap-2">
+          <span className="text-emerald-500">*</span> 스폰픽 추천선수 및 신규등록선수
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* 좌: 추천 */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-extrabold text-slate-900 inline-flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-0.5 bg-amber-400 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full animate-pulse">✨ 추천</span>
+                추천 선수
+              </h3>
+              <Link to="/athletes" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700">전체보기 →</Link>
+            </div>
+            <div key={`rec-${page}`} className="grid grid-cols-3 gap-3" style={{ animation: 'sponpikRoll .5s ease' }}>
+              {pick(rec).map((a) => (
+                <HomeAthleteMiniCard key={a.id} athlete={a} badge="recommend" />
+              ))}
+            </div>
+          </div>
+          {/* 우: 신규 */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-extrabold text-slate-900 inline-flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-0.5 bg-rose-500 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full animate-pulse">NEW</span>
+                신규 등록 선수
+              </h3>
+              <Link to="/athletes" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700">전체보기 →</Link>
+            </div>
+            {news.length === 0 ? (
+              <div className="text-xs text-slate-400 py-10 text-center">최근 등록된 선수가 없습니다.</div>
+            ) : (
+              <div key={`new-${page}`} className="grid grid-cols-3 gap-3" style={{ animation: 'sponpikRoll .5s ease' }}>
+                {pick(news).map((a) => (
+                  <HomeAthleteMiniCard key={a.id} athlete={a} badge="new" />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HomeAthleteMiniCard({ athlete, badge }: { athlete: any; badge: 'recommend' | 'new' }) {
+  return (
+    <Link to={`/athletes/${athlete.id}`} className="group block">
+      <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
+        {athlete.profileImageUrl ? (
+          <img src={athlete.profileImageUrl} alt={athlete.name} loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-3xl font-extrabold text-emerald-300">{athlete.name.charAt(0)}</div>
+        )}
+        <span className={`absolute top-1.5 right-1.5 text-[8px] font-extrabold text-white px-1.5 py-0.5 rounded-full shadow animate-pulse ${badge === 'recommend' ? 'bg-amber-400' : 'bg-rose-500'}`}>
+          {badge === 'recommend' ? '✨ 추천' : 'NEW'}
+        </span>
+      </div>
+      <div className="mt-1.5 px-0.5">
+        <div className="text-xs font-extrabold text-slate-900 truncate">{athlete.name}</div>
+        <div className="text-[10px] text-slate-500 truncate">{athlete.tour || 'PRO'}</div>
+      </div>
+    </Link>
+  );
+}
+
 function HeroLiveAuctionCard({ hot }: { hot: any | null }) {
   if (!hot) {
     return (

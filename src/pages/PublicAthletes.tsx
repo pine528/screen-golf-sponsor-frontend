@@ -46,8 +46,13 @@ export default function PublicAthletes() {
     sliderRef.current.scrollBy({ left: dir === 'left' ? -400 : 400, behavior: 'smooth' });
   };
 
-  // 추천 (상위 10명)
-  const featured = items.slice(0, 10);
+  // 2026-07 항목2 — 추천은 운영 지정(isRecommended) 선수만, 신규는 가입 최신순
+  const featured = items
+    .filter((a: any) => a.isRecommended)
+    .sort((a: any, b: any) => (a.recommendOrder ?? 999) - (b.recommendOrder ?? 999));
+  const newList = items
+    .filter((a: any) => isNewAthlete(a))
+    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   const allList = items;
 
   return (
@@ -136,7 +141,7 @@ export default function PublicAthletes() {
           </div>
         ) : (
           <>
-            {/* 가로 슬라이드 - 추천 */}
+            {/* 가로 슬라이드 - 추천 (운영 지정 선수만) */}
             {!q && featured.length > 0 && (
               <section>
                 <div className="flex items-center justify-between mb-4">
@@ -149,6 +154,21 @@ export default function PublicAthletes() {
                 <div ref={sliderRef} className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
                   {featured.map((a: any) => (
                     <FeaturedCard key={a.id} athlete={a} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* 신규 등록 선수 — 가입 최신순 (2026-07 항목2) */}
+            {!q && newList.length > 0 && (
+              <section>
+                <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
+                  🆕 신규 등록 선수
+                  <span className="text-xs font-semibold text-slate-400">최근 가입순</span>
+                </h2>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+                  {newList.map((a: any) => (
+                    <AthleteCard key={a.id} athlete={a} />
                   ))}
                 </div>
               </section>
@@ -168,6 +188,31 @@ export default function PublicAthletes() {
           </>
         )}
       </div>
+    </div>
+  );
+}
+
+/** 신규 기준: 가입(등록) 60일 이내 */
+function isNewAthlete(a: any): boolean {
+  return !!a?.createdAt && Date.now() - new Date(a.createdAt).getTime() < 60 * 86400000;
+}
+
+/** 반짝이는 추천/신규 뱃지 (우측 상단) */
+function AthleteBadges({ athlete, size = 'md' }: { athlete: any; size?: 'sm' | 'md' }) {
+  const cls = size === 'sm' ? 'text-[8px] px-1.5 py-0.5' : 'text-[9px] px-2 py-0.5';
+  if (!athlete.isRecommended && !isNewAthlete(athlete)) return null;
+  return (
+    <div className="absolute top-2.5 right-2.5 flex flex-col items-end gap-1">
+      {athlete.isRecommended && (
+        <span className={`inline-flex items-center gap-0.5 bg-amber-400 text-white font-extrabold rounded-full shadow-md animate-pulse ${cls}`}>
+          ✨ 추천
+        </span>
+      )}
+      {isNewAthlete(athlete) && (
+        <span className={`inline-flex items-center gap-0.5 bg-rose-500 text-white font-extrabold rounded-full shadow-md animate-pulse ${cls}`}>
+          NEW
+        </span>
+      )}
     </div>
   );
 }
@@ -195,6 +240,7 @@ function FeaturedCard({ athlete }: { athlete: any }) {
             <Trophy className="w-2.5 h-2.5" /> {athlete.tour || 'PRO'}
           </span>
         </div>
+        <AthleteBadges athlete={athlete} />
       </div>
       <div className="p-4">
         <h3 className="text-base font-extrabold text-slate-900 mb-1">{athlete.name}</h3>
@@ -233,6 +279,7 @@ function AthleteCard({ athlete }: { athlete: any }) {
             {athlete.name.charAt(0)}
           </div>
         )}
+        <AthleteBadges athlete={athlete} size="sm" />
       </div>
       <div className="p-3">
         <div className="flex items-center justify-between mb-1">
