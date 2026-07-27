@@ -18,7 +18,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
-  ArrowLeft, Trophy, Instagram, Globe, User,
+  ArrowLeft, Trophy, Instagram,
   Gavel, Clock, TrendingUp, AlertCircle, Users, Calendar, MapPin,
 } from 'lucide-react';
 import { api } from '../services/api';
@@ -76,6 +76,7 @@ export default function PublicAthleteDetail() {
   const mentions = (mentionsResp?.data as any) || null;
 
   const athlete = resp?.data?.athlete;
+  const sponpikTemp = (resp?.data as any)?.sponpikTemp || null;
   const slotInstances: any[] = (resp?.data as any)?.slotInstances || [];
   const recentEvents: any[] = (resp?.data as any)?.recentEvents || [];
   const eventResults: any[] = (resp?.data as any)?.eventResults || [];
@@ -148,207 +149,18 @@ export default function PublicAthleteDetail() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* === A. 선수 기본 정보 영역 (docx §4 A) === */}
-      <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6">
-          <Link to="/athletes" className="inline-flex items-center gap-1 text-xs opacity-90 hover:opacity-100">
-            <ArrowLeft className="w-3 h-3" /> 선수 목록
-          </Link>
-        </div>
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-6 items-start">
-          {/* 프로필 사진 (3:4 인물 비율) */}
-          <div className="relative w-40 sm:w-48 aspect-[3/4] mx-auto sm:mx-0">
-            <div className="w-full h-full rounded-2xl overflow-hidden bg-white/20 backdrop-blur border-4 border-white/40 shadow-2xl">
-              {athlete.profileImageUrl ? (
-                <img src={athlete.profileImageUrl} alt={athlete.name} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-7xl font-extrabold">{athlete.name.charAt(0)}</div>
-              )}
-            </div>
-            {/* tour 배지 오버레이 (사진 좌상단 — 예: KPGA) */}
-            {athlete.tour && (
-              <span className="absolute top-2 left-2 inline-flex items-center gap-1 bg-white/90 text-emerald-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow">
-                <Trophy className="w-3 h-3" /> {athlete.tour}
-              </span>
-            )}
-          </div>
-          {/* 기본 정보 (실데이터, 없으면 -) */}
-          <div className="text-center sm:text-left">
-            {/* docx §4 A '소속 배지' — KLPGA / WGTOUR / 스크린골프 */}
-            <div className="inline-flex flex-wrap items-center gap-1 mb-2 justify-center sm:justify-start">
-              <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-full">
-                <Trophy className="w-3 h-3" /> {dash(athlete.tour)}
-              </span>
-              {athlete.sportType && (
-                <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-xs font-bold px-2.5 py-1 rounded-full">
-                  🏅 {athlete.sportType === 'GOLF' ? '골프' : athlete.sportType === 'SCREEN_GOLF' ? '스크린골프' : athlete.sportType}
-                </span>
-              )}
-              {/* 소속(affiliation)은 아래 구조화 프로필의 '소속' 행에서 표기 */}
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold mb-1">{athlete.name}</h1>
-            {athlete.realName && athlete.realName !== athlete.name && (
-              <div className="text-sm opacity-90 mb-2">본명: {athlete.realName}</div>
-            )}
-            {/* docx §4 A '기본 프로필 요약' — 키 / 프로 입회연도 / 지역 */}
-            {(athlete.height || athlete.region || athlete.debutYear) && (
-              <div className="text-sm opacity-95 mb-3 inline-flex flex-wrap items-center gap-x-2 gap-y-1 justify-center sm:justify-start">
-                {athlete.height && (
-                  <span className="inline-flex items-center gap-1">📏 {athlete.height}cm</span>
-                )}
-                {athlete.debutYear && (
-                  <>
-                    {athlete.height && <span className="opacity-50">·</span>}
-                    <span className="inline-flex items-center gap-1">🎯 프로 입회 {athlete.debutYear}년</span>
-                  </>
-                )}
-                {athlete.region && (
-                  <>
-                    {(athlete.height || athlete.debutYear) && <span className="opacity-50">·</span>}
-                    <span className="inline-flex items-center gap-1">📍 {athlete.region}</span>
-                  </>
-                )}
-              </div>
-            )}
-            {/* SPONPIK 선수 프로필 구조화 — 소속/학력/수상/경력 (값 있는 항목만 라벨 구조로; 모두 없으면 bio 줄글 폴백) */}
-            {(() => {
-              const rows = [
-                { label: '소속', value: athlete.affiliation },
-                { label: '학력', value: athlete.education },
-                { label: '수상', value: athlete.awards },
-                { label: '경력', value: athlete.career },
-              ].filter((r) => r.value && String(r.value).trim());
-
-              if (rows.length === 0) {
-                return (
-                  <p className="text-sm sm:text-base opacity-95 leading-relaxed max-w-2xl mb-3">
-                    {dash(athlete.bio)}
-                  </p>
-                );
-              }
-
-              return (
-                <div className="max-w-2xl mb-3 flex flex-col items-center sm:items-start gap-1 text-left">
-                  {rows.map((r) => (
-                    <div key={r.label} className="flex gap-3 text-sm sm:text-base leading-relaxed">
-                      <span className="shrink-0 w-11 font-bold opacity-75">{r.label}</span>
-                      <span className="opacity-95">{r.value}</span>
-                    </div>
-                  ))}
-                </div>
-              );
-            })()}
-
-            {/* docx §4 A 활동 상태 배지 — 활동중 / 슬롯 오픈 / 경매 진행중 */}
-            <div className="flex flex-wrap items-center gap-1.5 mb-2 justify-center sm:justify-start">
-              <span className="inline-flex items-center gap-1 bg-emerald-400/90 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur">
-                ● 활동중
-              </span>
-              {orderedSlots.length > 0 && (
-                <span className="inline-flex items-center gap-1 bg-white/20 backdrop-blur text-[10px] font-bold px-2 py-1 rounded-full">
-                  🎯 슬롯 오픈
-                </span>
-              )}
-              {orderedSlots.some((s) => s.auction?.status === 'LIVE') && (
-                <span className="inline-flex items-center gap-1 bg-rose-500/90 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur animate-pulse">
-                  🔥 경매 진행중
-                </span>
-              )}
-            </div>
-
-            {/* docx §4 A 최근 대회 + 슬롯 수 — 한 줄로 통합 */}
-            <div className="text-xs opacity-90 mb-3 inline-flex flex-wrap items-center gap-x-3 gap-y-1 justify-center sm:justify-start">
-              {recentEvents.length > 0 && (
-                <span className="inline-flex items-center gap-1">
-                  <Calendar className="w-3 h-3" />
-                  최근 대회 · {recentEvents[0].name}
-                  {recentEvents[0].dateStart && (
-                    <span className="opacity-70">
-                      ({new Date(recentEvents[0].dateStart).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' })})
-                    </span>
-                  )}
-                </span>
-              )}
-              <span className="inline-flex items-center gap-1">
-                <Gavel className="w-3 h-3" />
-                열린 슬롯
-                <span className={`font-extrabold ${orderedSlots.length > 0 ? 'text-amber-200' : 'opacity-60'}`}>
-                  {orderedSlots.length}개
-                </span>
-              </span>
-            </div>
-
-            {/* 소셜 링크 */}
-            {(social.instagram || social.youtube || social.website) && (
-              <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-                {social.instagram && (
-                  <a href={social.instagram.startsWith('http') ? social.instagram : `https://instagram.com/${social.instagram}`} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-1.5 rounded-lg text-xs font-semibold">
-                    <Instagram className="w-3.5 h-3.5" /> Instagram
-                  </a>
-                )}
-                {social.youtube && (
-                  <a href={social.youtube} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-1.5 rounded-lg text-xs font-semibold">
-                    🎥 YouTube
-                  </a>
-                )}
-                {social.website && (
-                  <a href={social.website} target="_blank" rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 backdrop-blur px-3 py-1.5 rounded-lg text-xs font-semibold">
-                    <Globe className="w-3.5 h-3.5" /> 웹사이트
-                  </a>
-                )}
-              </div>
-            )}
-
-            {/* docx §4 A 우측 버튼 3종 — 현재 슬롯 보기 / 프로필 상세 / 경매 참여하기 (항상 노출, LIVE 없을 때 disabled) */}
-            <div className="mt-4 flex flex-wrap gap-2 justify-center sm:justify-start">
-              <button
-                onClick={() => {
-                  document.querySelector('[data-section="slots"]')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="inline-flex items-center gap-1.5 bg-white text-emerald-600 hover:bg-emerald-50 px-4 py-2 rounded-lg text-xs font-extrabold shadow-md transition-colors"
-              >
-                <Gavel className="w-3.5 h-3.5" /> 현재 슬롯 보기
-                {orderedSlots.length > 0 && (
-                  <span className="bg-emerald-100 text-emerald-700 text-[10px] px-1.5 py-0.5 rounded-full ml-0.5">{orderedSlots.length}</span>
-                )}
-              </button>
-              <button
-                onClick={() => {
-                  document.querySelector('[data-section="profile-detail"]')?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 backdrop-blur text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors"
-              >
-                <User className="w-3.5 h-3.5" /> 프로필 상세
-              </button>
-              {(() => {
-                const hasLive = orderedSlots.some((s) => s.auction?.status === 'LIVE');
-                return (
-                  <button
-                    disabled={!hasLive}
-                    onClick={() => {
-                      if (!hasLive) return;
-                      const liveSlot = orderedSlots.find((s) => s.auction?.status === 'LIVE');
-                      if (liveSlot) setSelectedSlotId(liveSlot.id);
-                      document.querySelector('[data-section="slots"]')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    title={hasLive ? '진행 중인 경매에 참여' : '진행 중인 경매가 없습니다'}
-                    className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-extrabold transition-colors ${
-                      hasLive
-                        ? 'bg-rose-500 hover:bg-rose-600 text-white shadow-md animate-pulse'
-                        : 'bg-white/15 text-white/60 cursor-not-allowed'
-                    }`}
-                  >
-                    {hasLive ? '🔥 경매 참여하기' : '경매 참여하기'}
-                  </button>
-                );
-              })()}
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* === A. 선수 프로필 상단 (2026-07 개편: 좌 프로필/온도 · 중 기본정보/활동/성적 · 우 지수/SNS) === */}
+      <AthleteHeroV2
+        athlete={athlete}
+        social={social}
+        sponpikTemp={sponpikTemp}
+        roi={roi}
+        eventResults={eventResults}
+        slotsCount={orderedSlots.length}
+        isAuthenticated={isAuthenticated}
+        userRole={user?.role}
+        onLogin={() => navigate('/login')}
+      />
 
       {/* 중단: 슬롯별 실시간 경매 현황 (3-2 + 3-3 + 3-4) */}
       <section data-section="slots" className="max-w-6xl mx-auto px-5 sm:px-8 py-8">
@@ -400,7 +212,7 @@ export default function PublicAthleteDetail() {
       </section>
 
       {/* ROI 대시보드 풀 섹션 (docx §13 화면명: 선수 상세 > ROI 대시보드) */}
-      <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-6">
+      <section data-section="roi" className="max-w-6xl mx-auto px-5 sm:px-8 pb-6">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xl font-extrabold text-slate-900 inline-flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-emerald-500" /> ROI 대시보드
@@ -668,6 +480,414 @@ export default function PublicAthleteDetail() {
       {/* G. 점수 산정 기준 / 데이터 출처 섹션은 사용자 요청으로 페이지에서 숨김.
           ScoringAndDataSources 컴포넌트는 코드에 보존 (가중치는 B-1 카드의 호버 툴팁으로 노출). */}
     </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════════════
+ * 2026-07 선수화면 개편 — 상단 3컬럼 히어로
+ *  좌: 사진/온도/버튼 · 중: 기본정보/활동분야/이력·성적 · 우: 지수 레이더/SNS
+ * ════════════════════════════════════════════════════════════════ */
+function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsCount, isAuthenticated, userRole, onLogin }: any) {
+  const [favDone, setFavDone] = useState(false);
+  const favMut = useMutation({
+    mutationFn: () => api.addFavoriteAthlete(athlete.id),
+    onSuccess: () => setFavDone(true),
+    onError: (e: any) => {
+      const msg = e?.response?.data?.error?.message;
+      if (e?.response?.status === 409) setFavDone(true);
+      else alert(msg || '관심 등록에 실패했습니다. 팬 계정으로 로그인해주세요.');
+    },
+  });
+
+  // 나이 계산 (birthDate "1996.07.30")
+  const age = (() => {
+    const m = String(athlete.birthDate || '').match(/(\d{4})[.](\d{1,2})[.](\d{1,2})/);
+    if (!m) return null;
+    const bd = new Date(+m[1], +m[2] - 1, +m[3]);
+    const now = new Date();
+    let a = now.getFullYear() - bd.getFullYear();
+    if (now.getMonth() < bd.getMonth() || (now.getMonth() === bd.getMonth() && now.getDate() < bd.getDate())) a--;
+    return a;
+  })();
+
+  const act = (athlete.activityFields || {}) as Record<string, boolean>;
+  const tourLabel = athlete.tour === 'KPGA' ? 'KPGA 1부 투어' : athlete.tour === 'KLPGA' ? 'KLPGA 1부 투어' : `${athlete.tour || ''} 투어`;
+  const ACT_TILES = [
+    { key: 'tour1', label: tourLabel },
+    { key: 'gtour', label: 'GTOUR' },
+    { key: 'sns', label: '인스타그램' },
+    { key: 'lesson', label: '레슨' },
+    { key: 'proAm', label: '프로암' },
+    { key: 'youtube', label: '유튜브' },
+  ];
+  const hasActivityData = Object.keys(act).length > 0;
+
+  const sns = (athlete.snsStats || {}) as Record<string, string>;
+  const highlights: string[] = Array.isArray(athlete.highlights) ? athlete.highlights : [];
+  // 이력이 없으면 수상/경력에서 폴백 생성
+  const fallbackHighlights = highlights.length > 0 ? highlights : [
+    ...(athlete.awards ? String(athlete.awards).split(' · ') : []),
+    ...(athlete.career ? String(athlete.career).split(' · ') : []),
+  ].filter(Boolean);
+
+  const fmtFollower = (v?: string | null) => {
+    if (!v) return null;
+    const n = Number(String(v).replace(/,/g, ''));
+    if (!isNaN(n) && n > 0) return n >= 10000 ? `${(n / 10000).toFixed(1).replace(/\.0$/, '')}만` : n.toLocaleString();
+    return v; // "1.2만", "약 6000명" 등 원문
+  };
+  const instaFollowers = fmtFollower(sns.instagramFollowers);
+
+  // 레이더 5축 — ROI 축 점수 + 활동 부문(활성 타일 비율)
+  const activityScore = hasActivityData ? Math.round((ACT_TILES.filter((t) => act[t.key]).length / ACT_TILES.length) * 100) : null;
+  const axes = [
+    { label: '미디어 지수', value: roi?.mediaExposure?.score ?? null },
+    { label: '콘텐츠 지수', value: roi?.contentEngagement?.score ?? null },
+    { label: '팬덤 지수', value: roi?.fandom?.score ?? null },
+    { label: '선수 성과', value: roi?.athletePerformance?.score ?? null },
+    { label: '활동 부문', value: activityScore },
+  ];
+  const overall = roi?.summary?.basicScore ?? roi?.summary?.score ?? null;
+
+  const isNew = athlete.createdAt && Date.now() - new Date(athlete.createdAt).getTime() < 60 * 86400000;
+  const results = (eventResults || []).slice(0, 10);
+  const temp = sponpikTemp?.value ?? null;
+  const stats = sponpikTemp?.stats || {};
+
+  const scrollTo = (sel: string) => document.querySelector(sel)?.scrollIntoView({ behavior: 'smooth' });
+
+  const onFavorite = () => {
+    if (!isAuthenticated) return onLogin();
+    if (userRole && userRole !== 'FAN') { alert('관심 선수 등록은 팬 계정에서 이용할 수 있습니다.'); return; }
+    if (!favDone) favMut.mutate();
+  };
+
+  return (
+    <div className="bg-slate-100/70 border-b border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+        <Link to="/athletes" className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800">
+          <ArrowLeft className="w-3 h-3" /> 선수 목록
+        </Link>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-10 grid grid-cols-1 lg:grid-cols-[280px_minmax(0,1fr)_320px] gap-4 items-start">
+
+        {/* ───────── 좌측: 사진 · 온도 · 버튼 ───────── */}
+        <div className="space-y-3">
+          <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100 shadow-lg border border-white">
+            {athlete.profileImageUrl ? (
+              <img src={athlete.profileImageUrl} alt={athlete.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-7xl font-extrabold text-emerald-300">{athlete.name.charAt(0)}</div>
+            )}
+            {athlete.tour && (
+              <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 bg-white/95 text-emerald-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow">
+                <Trophy className="w-3 h-3" /> {athlete.tour}
+              </span>
+            )}
+            {social.instagram && instaFollowers && (
+              <a
+                href={`https://instagram.com/${String(social.instagram).replace(/^@/, '')}`} target="_blank" rel="noreferrer"
+                className="absolute bottom-2.5 left-2.5 inline-flex items-center gap-1 bg-black/55 hover:bg-black/70 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur"
+              >
+                <Instagram className="w-3 h-3" /> 팔로워 {instaFollowers}
+              </a>
+            )}
+          </div>
+
+          <div className="px-1 flex items-center gap-2 flex-wrap">
+            <h1 className="text-xl font-extrabold text-slate-900">
+              {athlete.name} <span className="text-sm font-bold text-slate-500">프로</span>
+            </h1>
+            {isNew && (
+              <span className="text-[9px] font-extrabold text-white bg-rose-500 px-1.5 py-0.5 rounded-full">NEW</span>
+            )}
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">● 활동중</span>
+          </div>
+
+          {/* SPONPIK 온도 */}
+          <div className="relative bg-white rounded-2xl border border-slate-200 p-4 overflow-hidden">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-extrabold text-slate-800 inline-flex items-center gap-1">
+                SPONPIK 온도 <span className="text-slate-300" title="관심 등록·투표·커뮤니티·구매 활동 기반 인기척도 (기본 30℃ ~ 최대 100℃)">ⓘ</span>
+              </span>
+              <span className="text-[9px] text-slate-400">팬심·반응 기반 인기척도</span>
+            </div>
+            <div className={isAuthenticated ? '' : 'blur-[6px] select-none pointer-events-none'}>
+              <div className="flex items-end gap-2 mb-2">
+                <span className="text-4xl font-extrabold text-emerald-600 leading-none">{temp != null ? temp : '--'}</span>
+                <span className="text-lg font-extrabold text-emerald-500">℃</span>
+              </div>
+              <div className="h-2 bg-slate-100 rounded-full overflow-hidden mb-3">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 transition-all"
+                  style={{ width: `${Math.min(100, temp ?? 0)}%` }}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-1.5 text-center">
+                <div className="bg-slate-50 rounded-lg py-1.5">
+                  <div className="text-[9px] text-slate-500">팬</div>
+                  <div className="text-xs font-extrabold text-slate-800">{(stats.fans ?? 0).toLocaleString()}명</div>
+                </div>
+                <div className="bg-slate-50 rounded-lg py-1.5">
+                  <div className="text-[9px] text-slate-500">VOTE 등록</div>
+                  <div className="text-xs font-extrabold text-slate-800">{(stats.votesCreated ?? 0).toLocaleString()}건</div>
+                </div>
+                <div className="bg-slate-50 rounded-lg py-1.5">
+                  <div className="text-[9px] text-slate-500">실제 투표</div>
+                  <div className="text-xs font-extrabold text-slate-800">{(stats.voteParticipants ?? 0).toLocaleString()}회</div>
+                </div>
+                <div className="bg-slate-50 rounded-lg py-1.5">
+                  <div className="text-[9px] text-slate-500">커뮤니티 지수</div>
+                  <div className="text-xs font-extrabold text-slate-800">{(stats.community ?? 0).toLocaleString()}</div>
+                </div>
+              </div>
+            </div>
+            {!isAuthenticated && (
+              <div className="absolute inset-0 top-8 flex flex-col items-center justify-center gap-1.5 text-center">
+                <div className="w-9 h-9 rounded-full bg-slate-800/85 text-white flex items-center justify-center text-sm">🔒</div>
+                <div className="text-[11px] font-bold text-slate-600">로그인 시 보실 수 있습니다</div>
+              </div>
+            )}
+          </div>
+
+          {/* 버튼 3종 */}
+          <button
+            onClick={() => alert('선수 커뮤니티는 오픈 준비 중입니다.')}
+            className="w-full h-11 rounded-xl border-2 border-emerald-500 text-emerald-600 text-sm font-extrabold hover:bg-emerald-50 transition-colors inline-flex items-center justify-center gap-1"
+          >
+            선수커뮤니티 바로가기 <span className="text-[9px] font-bold text-emerald-400">(준비중)</span>
+          </button>
+          <button
+            onClick={onFavorite}
+            disabled={favMut.isPending}
+            className={`w-full h-11 rounded-xl text-sm font-extrabold transition-colors inline-flex items-center justify-center gap-1.5 ${
+              favDone
+                ? 'bg-amber-100 text-amber-700 border-2 border-amber-200 cursor-default'
+                : 'border-2 border-slate-300 text-slate-700 hover:border-amber-400 hover:text-amber-600'
+            }`}
+          >
+            ★ {favDone ? '관심 선수 등록됨' : '관심 선수 등록'}
+          </button>
+          <button
+            onClick={() => scrollTo('[data-section="slots"]')}
+            className="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-extrabold transition-colors inline-flex items-center justify-center gap-1.5"
+          >
+            <Gavel className="w-4 h-4" /> 진행중인 후원슬롯보기
+            {slotsCount > 0 && <span className="bg-emerald-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{slotsCount}</span>}
+          </button>
+        </div>
+
+        {/* ───────── 중앙: 기본정보 · 활동분야 · 이력/성적 ───────── */}
+        <div className="space-y-4">
+          {/* 기본 정보 */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <h2 className="text-sm font-extrabold text-slate-900 mb-4">기본 정보</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-3.5">
+              <HeroInfoRow label="이름" value={athlete.name} />
+              <HeroInfoRow label="소속 협회" value={athlete.tour} />
+              <HeroInfoRow label="나이" value={age != null ? `${age}세${athlete.birthDate ? ` (${athlete.birthDate})` : ''}` : athlete.birthDate || null} />
+              <HeroInfoRow label="투어 자격" value={athlete.tourQualification} />
+              <HeroInfoRow label="프로 입회연도" value={athlete.debutYear ? `${athlete.debutYear}년` : null} />
+              <HeroInfoRow label="현재 소속" value={athlete.affiliation} />
+              <HeroInfoRow label="출신지역" value={athlete.birthplace} />
+              <HeroInfoRow label="거주지" value={athlete.region} />
+              <HeroInfoRow label="출신학교" value={athlete.education} />
+              <HeroInfoRow label="신장" value={athlete.height ? `${athlete.height}cm` : null} />
+            </div>
+          </div>
+
+          {/* 현재 활동 분야 */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <h2 className="text-sm font-extrabold text-slate-900 mb-3.5">현재 활동 분야</h2>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              {ACT_TILES.map((t) => {
+                const active = !!act[t.key];
+                return (
+                  <div
+                    key={t.key}
+                    className={`rounded-xl border p-2.5 text-center transition-colors ${
+                      active ? 'border-emerald-200 bg-emerald-50/60' : 'border-slate-150 bg-slate-50 opacity-70'
+                    }`}
+                  >
+                    <div className="text-[11px] font-bold text-slate-800 leading-tight mb-1 break-keep">{t.label}</div>
+                    <div className={`text-[9px] font-extrabold ${active ? 'text-emerald-600' : 'text-slate-400'}`}>
+                      {hasActivityData ? (active ? '활동 중' : '준비 중') : '-'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 주요 이력 및 성적 */}
+          <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <h2 className="text-sm font-extrabold text-slate-900 mb-3.5">주요 이력 및 성적</h2>
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-6">
+              <div>
+                <div className="text-[11px] font-bold text-slate-500 mb-2">주요 이력</div>
+                {fallbackHighlights.length === 0 ? (
+                  <div className="text-xs text-slate-400 py-3">등록된 이력이 없습니다.</div>
+                ) : (
+                  <ul className="space-y-1.5">
+                    {fallbackHighlights.slice(0, 12).map((h: string, i: number) => (
+                      <li key={i} className="flex items-start gap-1.5 text-xs text-slate-700 leading-relaxed">
+                        <span className="text-emerald-500 mt-0.5">•</span> {h}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div>
+                <div className="text-[11px] font-bold text-slate-500 mb-2">주요 대회 성적</div>
+                {results.length === 0 ? (
+                  <div className="text-xs text-slate-400 py-3">등록된 대회 성적이 없습니다.</div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="text-[10px] text-slate-400 border-b border-slate-100">
+                          <th className="text-left py-1.5 pr-2 font-semibold">연도</th>
+                          <th className="text-left py-1.5 pr-2 font-semibold">대회명</th>
+                          <th className="text-right py-1.5 pr-2 font-semibold">성적</th>
+                          <th className="text-right py-1.5 font-semibold">비고</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {results.map((r: any) => (
+                          <tr key={r.id} className="border-b border-slate-50 last:border-0">
+                            <td className="py-1.5 pr-2 text-slate-500">{r.eventDate ? new Date(r.eventDate).getFullYear() : '-'}</td>
+                            <td className="py-1.5 pr-2 font-semibold text-slate-800 max-w-[220px] truncate" title={r.eventName}>{r.eventName}</td>
+                            <td className={`py-1.5 pr-2 text-right font-extrabold ${r.rank != null && r.rank <= 3 ? 'text-amber-600' : 'text-slate-700'}`}>
+                              {r.rank != null ? `${r.rank}위` : r.score || '-'}
+                            </td>
+                            <td className="py-1.5 text-right text-[10px] text-slate-400">{r.rank != null ? '출전' : '본선 진출'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <div className="text-[9px] text-slate-400 mt-1.5">* 최근 자료 기준</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ───────── 우측: 지수 레이더 · SNS ───────── */}
+        <div className="space-y-4">
+          <div className="relative bg-white rounded-2xl border border-slate-200 p-5 overflow-hidden">
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="text-sm font-extrabold text-slate-900">Sponpik Index &amp; Ad Impact Score</h2>
+              <span className="text-[9px] text-slate-400 whitespace-nowrap ml-2">지수 기준 ⓘ</span>
+            </div>
+            <div className={isAuthenticated ? '' : 'blur-[7px] select-none pointer-events-none'}>
+              <RadarPentagon axes={axes} overall={overall} />
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-[9px] text-slate-400">* 최근 3개월 기준</span>
+                <button
+                  onClick={() => scrollTo('[data-section="roi"]') as any}
+                  className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 border border-emerald-200 rounded-lg px-3 py-1"
+                >
+                  자세히 보기 →
+                </button>
+              </div>
+            </div>
+            {!isAuthenticated && (
+              <div className="absolute inset-0 top-8 flex flex-col items-center justify-center gap-1.5 text-center">
+                <div className="w-9 h-9 rounded-full bg-slate-800/85 text-white flex items-center justify-center text-sm">🔒</div>
+                <div className="text-[11px] font-bold text-slate-600">로그인 시 보실 수 있습니다</div>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-white rounded-2xl border border-slate-200 p-5">
+            <h2 className="text-sm font-extrabold text-slate-900 mb-3">SNS &amp; 콘텐츠 채널</h2>
+            <div className="space-y-2">
+              <a
+                href={social.instagram ? `https://instagram.com/${String(social.instagram).replace(/^@/, '')}` : undefined}
+                target="_blank" rel="noreferrer"
+                className={`flex items-center justify-between gap-2 p-2.5 rounded-xl border border-slate-100 ${social.instagram ? 'hover:border-pink-200 hover:bg-pink-50/40' : 'opacity-60 cursor-default'}`}
+              >
+                <span className="inline-flex items-center gap-2 min-w-0">
+                  <span className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-400 via-pink-500 to-violet-500 text-white flex items-center justify-center shrink-0">
+                    <Instagram className="w-4 h-4" />
+                  </span>
+                  <span className="text-xs font-bold text-slate-800 truncate">
+                    인스타그램{social.instagram ? <span className="text-slate-400 font-semibold"> @{String(social.instagram).replace(/^@/, '')}</span> : null}
+                  </span>
+                </span>
+                <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                  {instaFollowers ? `팔로워 ${instaFollowers}` : '-'}
+                </span>
+              </a>
+              <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-slate-100">
+                <span className="inline-flex items-center gap-2 min-w-0">
+                  <span className="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center text-[10px] font-extrabold shrink-0">▶</span>
+                  <span className="text-xs font-bold text-slate-800 truncate">{sns.youtubeChannel || '유튜브'}</span>
+                </span>
+                <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                  {sns.youtubeSubs ? `구독자 ${fmtFollower(sns.youtubeSubs)}` : '준비 중'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HeroInfoRow({ label, value }: { label: string; value: any }) {
+  return (
+    <div className="flex items-start gap-3 text-sm">
+      <span className="shrink-0 w-20 text-[11px] font-bold text-slate-400 pt-0.5">{label}</span>
+      <span className="font-semibold text-slate-800 leading-snug">{value || '-'}</span>
+    </div>
+  );
+}
+
+/** 오각형 레이더 차트 (SVG, 라이브러리 無) — 미디어/콘텐츠/팬덤/선수성과/활동 */
+function RadarPentagon({ axes, overall }: { axes: { label: string; value: number | null }[]; overall: number | null }) {
+  const size = 260;
+  const cx = size / 2, cy = size / 2 + 6, R = 86;
+  const pt = (i: number, r: number) => {
+    const ang = (-90 + i * 72) * (Math.PI / 180);
+    return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)];
+  };
+  const ringPath = (r: number) => axes.map((_, i) => pt(i, r).join(',')).join(' ');
+  const valuePath = axes.map((a, i) => pt(i, ((a.value ?? 0) / 100) * R).join(',')).join(' ');
+
+  return (
+    <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-auto">
+      {[0.25, 0.5, 0.75, 1].map((f) => (
+        <polygon key={f} points={ringPath(R * f)} fill="none" stroke="#e2e8f0" strokeWidth={1} />
+      ))}
+      {axes.map((_, i) => {
+        const [x, y] = pt(i, R);
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="#e2e8f0" strokeWidth={1} />;
+      })}
+      <polygon points={valuePath} fill="rgba(16,185,129,0.18)" stroke="#10b981" strokeWidth={2} strokeLinejoin="round" />
+      {axes.map((a, i) => {
+        const [x, y] = pt(i, ((a.value ?? 0) / 100) * R);
+        return <circle key={i} cx={x} cy={y} r={3} fill="#10b981" />;
+      })}
+      {/* 축 라벨 + 값 */}
+      {axes.map((a, i) => {
+        const [x, y] = pt(i, R + 24);
+        return (
+          <g key={i} textAnchor="middle">
+            <text x={x} y={y - 5} fontSize={10} fontWeight={700} fill="#475569">{a.label}</text>
+            <text x={x} y={y + 8} fontSize={11} fontWeight={800} fill="#0f766e">{a.value != null ? a.value : '-'}</text>
+          </g>
+        );
+      })}
+      {/* 중앙 종합 점수 */}
+      <circle cx={cx} cy={cy} r={30} fill="white" stroke="#a7f3d0" strokeWidth={2} />
+      <text x={cx} y={cy - 3} textAnchor="middle" fontSize={15} fontWeight={800} fill="#059669">
+        {overall != null ? overall : '--'}
+      </text>
+      <text x={cx} y={cy + 12} textAnchor="middle" fontSize={8} fill="#94a3b8">종합 / 100</text>
+    </svg>
   );
 }
 
