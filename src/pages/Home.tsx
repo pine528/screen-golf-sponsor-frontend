@@ -231,7 +231,7 @@ export function Home() {
       </nav>
 
       {/* ════════════════════════ HERO ════════════════════════ */}
-      <section className="relative pt-32 sm:pt-36 pb-24 sm:pb-28 px-5 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
+      <section className="relative pt-32 sm:pt-36 pb-8 sm:pb-10 px-5 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
         {/* 소프트 블롭 (장식 점 제거) */}
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -top-10 right-0 w-72 h-72 rounded-full bg-emerald-200/30 blur-3xl" />
@@ -703,7 +703,7 @@ function RecommendedNewAthletes({ athletes }: { athletes: any[] }) {
   };
 
   return (
-    <section className="py-12 sm:py-16 bg-slate-50 border-y border-slate-100">
+    <section className="pt-6 sm:pt-8 pb-12 sm:pb-16 bg-slate-50 border-y border-slate-100">
       <style>{`@keyframes sponpikRoll { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }`}</style>
       <div className="max-w-7xl mx-auto px-5">
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-8 flex items-center gap-2">
