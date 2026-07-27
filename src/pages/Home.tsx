@@ -732,7 +732,7 @@ function RecommendedNewAthletes({ athletes }: { athletes: any[] }) {
                 <span className="inline-flex items-center gap-0.5 bg-rose-500 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full animate-pulse">NEW</span>
                 신규 등록 선수
               </h3>
-              <Link to="/athletes" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700">전체보기 →</Link>
+              <Link to="/athletes?filter=new" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700">전체보기 →</Link>
             </div>
             {news.length === 0 ? (
               <div className="text-xs text-slate-400 py-10 text-center">최근 등록된 선수가 없습니다.</div>

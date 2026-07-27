@@ -8,7 +8,7 @@
  */
 
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search, ChevronLeft, ChevronRight, Users, ExternalLink, Trophy, ArrowLeft } from 'lucide-react';
 import { api } from '../services/api';
@@ -33,6 +33,10 @@ export default function PublicAthletes() {
   const [tour, setTour] = useState('');
   const [sport, setSport] = useState('');
   const sliderRef = useRef<HTMLDivElement>(null);
+  const newSliderRef = useRef<HTMLDivElement>(null);
+  // 메인에서 '신규등록선수 > 전체보기'로 진입하면 추천 라인은 숨기고 신규부터 노출 (?filter=new)
+  const [searchParams] = useSearchParams();
+  const onlyNew = searchParams.get('filter') === 'new';
 
   const { data: resp, isLoading } = useQuery({
     queryKey: ['public-athletes', q, tour, sport],
@@ -41,10 +45,11 @@ export default function PublicAthletes() {
   const items = resp?.data?.items || [];
   const total = resp?.data?.total || 0;
 
-  const scroll = (dir: 'left' | 'right') => {
-    if (!sliderRef.current) return;
-    sliderRef.current.scrollBy({ left: dir === 'left' ? -400 : 400, behavior: 'smooth' });
+  const scrollBy = (ref: React.RefObject<HTMLDivElement>, dir: 'left' | 'right') => {
+    if (!ref.current) return;
+    ref.current.scrollBy({ left: dir === 'left' ? -400 : 400, behavior: 'smooth' });
   };
+  const scroll = (dir: 'left' | 'right') => scrollBy(sliderRef, dir);
 
   // 2026-07 항목2 — 추천은 운영 지정(isRecommended) 선수만, 신규는 가입 최신순
   const featured = items
@@ -141,8 +146,8 @@ export default function PublicAthletes() {
           </div>
         ) : (
           <>
-            {/* 가로 슬라이드 - 추천 (운영 지정 선수만) */}
-            {!q && featured.length > 0 && (
+            {/* 가로 슬라이드 - 추천 (운영 지정 선수만) — ?filter=new 진입 시 숨김 */}
+            {!q && !onlyNew && featured.length > 0 && (
               <section>
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg sm:text-xl font-extrabold text-slate-900">⭐ 추천 선수</h2>
@@ -159,16 +164,22 @@ export default function PublicAthletes() {
               </section>
             )}
 
-            {/* 신규 등록 선수 — 가입 최신순 (2026-07 항목2) */}
+            {/* 신규 등록 선수 — 가입 최신순, 가로 슬라이드 (2026-07 항목2) */}
             {!q && newList.length > 0 && (
-              <section>
-                <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
-                  🆕 신규 등록 선수
-                  <span className="text-xs font-semibold text-slate-400">최근 가입순</span>
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+              <section id="new-athletes" className="scroll-mt-24">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 inline-flex items-center gap-2">
+                    🆕 신규 등록 선수
+                    <span className="text-xs font-semibold text-slate-400">최근 가입순</span>
+                  </h2>
+                  <div className="flex gap-1">
+                    <button onClick={() => scrollBy(newSliderRef, 'left')} className="w-9 h-9 rounded-full bg-white border border-slate-200 hover:bg-slate-50 inline-flex items-center justify-center"><ChevronLeft className="w-4 h-4" /></button>
+                    <button onClick={() => scrollBy(newSliderRef, 'right')} className="w-9 h-9 rounded-full bg-white border border-slate-200 hover:bg-slate-50 inline-flex items-center justify-center"><ChevronRight className="w-4 h-4" /></button>
+                  </div>
+                </div>
+                <div ref={newSliderRef} className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
                   {newList.map((a: any) => (
-                    <AthleteCard key={a.id} athlete={a} />
+                    <FeaturedCard key={a.id} athlete={a} />
                   ))}
                 </div>
               </section>
