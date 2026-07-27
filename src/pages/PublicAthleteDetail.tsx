@@ -34,6 +34,8 @@ const dashKRW = (v: any): string => {
   if (v == null || v === '' || isNaN(Number(v))) return '-';
   return `₩${Number(v).toLocaleString()}`;
 };
+// SlotGrade enum → 표시용 (A_PLUS → A+)
+const fmtGrade = (g?: string | null): string | null => (g ? g.replace('A_PLUS', 'A+') : null);
 
 export default function PublicAthleteDetail() {
   const { id } = useParams<{ id: string }>();
@@ -914,7 +916,7 @@ function SlotCard({ slot, selected, index, onClick }: { slot: any; selected: boo
       </div>
       {/* docx 4: slot_name 우선, 없으면 SlotTemplate.name fallback */}
       <div className="text-sm font-extrabold text-slate-900">{dash(slot.slotName || tpl.name || tpl.code)}</div>
-      <div className="text-[10px] text-slate-500 mb-2">{dash(tpl.bodyPart)}{tpl.grade && ` · ${tpl.grade}등급`}</div>
+      <div className="text-[10px] text-slate-500 mb-2">{dash(tpl.bodyPart)}{tpl.grade && ` · ${fmtGrade(tpl.grade)}등급`}</div>
       <div className="flex items-center justify-between text-xs">
         <span className="text-slate-500">현재가</span>
         <span className="font-bold text-emerald-600">{dashKRW(auction?.currentPrice)}</span>
@@ -1003,7 +1005,7 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
         <div className="flex items-center justify-between mb-3">
           <div>
             <h3 className="text-sm font-bold text-slate-700">{athleteName} · {dash(slot.slotName || tpl.name || tpl.code)}</h3>
-            <div className="text-[10px] text-slate-400">{dash(tpl.bodyPart)}{tpl.grade && ` · ${tpl.grade}등급`}</div>
+            <div className="text-[10px] text-slate-400">{dash(tpl.bodyPart)}{tpl.grade && ` · ${fmtGrade(tpl.grade)}등급`}</div>
           </div>
           {auction?.status === 'LIVE' && <span className="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2 py-1 rounded animate-pulse">● LIVE</span>}
         </div>
