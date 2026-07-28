@@ -286,6 +286,8 @@ class ApiService {
   }
 
   async updateSlotSaleMode(slotId: string, data: {
+    /** 판매 방식 (택1) — 지정 시 enableAuction/enableDirectBuy는 서버에서 파생됨 */
+    saleMode?: 'AUCTION' | 'DIRECT' | 'INQUIRY';
     enableAuction?: boolean;
     enableDirectBuy?: boolean;
     directBuyPrice?: number | null;

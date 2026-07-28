@@ -14,7 +14,6 @@ import {
   CheckCircle,
   XCircle,
   Timer,
-  DollarSign,
   MapPin,
   Ruler,
   FileText,
@@ -686,7 +685,7 @@ export function AuctionDetail() {
               <div className="mb-6">
                 <label className="label">최대 입찰가</label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-slate-400 leading-none">₩</span>
                   <input
                     type="number"
                     className="input pl-10"
