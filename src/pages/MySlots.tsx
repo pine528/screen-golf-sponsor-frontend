@@ -510,9 +510,12 @@ interface SlotDetailModalProps {
 function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }: SlotDetailModalProps) {
   const [activeTab, setActiveTab] = useState('info');
 
-  // Sale mode state
-  const [enableAuction, setEnableAuction] = useState(slot.enableAuction ?? true);
-  const [enableDirectBuy, setEnableDirectBuy] = useState(slot.enableDirectBuy ?? false);
+  // Sale mode state — 판매 방식 3종 중 택1 (경매 / 즉시구매 / 스폰픽 협의)
+  const [saleMode, setSaleMode] = useState<'AUCTION' | 'DIRECT' | 'INQUIRY'>(
+    slot.saleMode || (slot.enableDirectBuy ? 'DIRECT' : slot.enableAuction ? 'AUCTION' : 'INQUIRY')
+  );
+  const enableAuction = saleMode === 'AUCTION';
+  const enableDirectBuy = saleMode === 'DIRECT';
   const [directBuyPrice, setDirectBuyPrice] = useState(slot.directBuyPrice ? String(slot.directBuyPrice) : '');
   const [auctionMinBid, setAuctionMinBid] = useState(slot.auctionMinBid ? String(Number(slot.auctionMinBid)) : String(Number(slot.reservePrice) || 100000));
   const [auctionEndAt, setAuctionEndAt] = useState(
@@ -524,8 +527,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
 
   const saleModeSubmitting = useMutation({
     mutationFn: () => api.updateSlotSaleMode(slot.id, {
-      enableAuction,
-      enableDirectBuy,
+      saleMode,
       directBuyPrice: enableDirectBuy && directBuyPrice ? Number(directBuyPrice) : null,
       auctionMinBid: enableAuction && auctionMinBid ? Number(auctionMinBid) : null,
       auctionEndAt: enableAuction && auctionEndAt ? auctionEndAt : null,
@@ -545,11 +547,6 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
 
   const handleSaleModeSubmit = () => {
     setSaleModeError('');
-
-    if (!enableAuction && !enableDirectBuy) {
-      setSaleModeError('최소 하나의 판매 방식을 선택해주세요');
-      return;
-    }
 
     if (enableDirectBuy && (!directBuyPrice || Number(directBuyPrice) <= 0)) {
       setSaleModeError('즉시구매 가격을 입력해주세요');
@@ -727,26 +724,49 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                     </div>
                   )}
 
-                  {/* Auction Toggle */}
-                  <div className="p-4 bg-slate-50 rounded-xl">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <Gavel className="w-5 h-5 text-amber-600" />
-                        <span className="font-medium text-slate-900">경매</span>
-                      </div>
-                      <button
-                        onClick={() => setEnableAuction(!enableAuction)}
-                        className={cn(
-                          'flex items-center gap-1 text-sm font-medium transition-colors',
-                          enableAuction ? 'text-emerald-600' : 'text-slate-400'
-                        )}
-                      >
-                        {enableAuction ? (
-                          <><ToggleRight className="w-8 h-8" /> 활성</>
-                        ) : (
-                          <><ToggleLeft className="w-8 h-8" /> 비활성</>
-                        )}
-                      </button>
+                  {/* 판매 방식 선택 (택1) */}
+                  <div className="p-4 bg-white border border-slate-200 rounded-xl">
+                    <div className="text-sm font-bold text-slate-900 mb-1">판매 방식 선택</div>
+                    <p className="text-xs text-slate-500 mb-3">슬롯마다 하나의 방식을 선택할 수 있습니다.</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      {([
+                        { key: 'AUCTION', label: '경매', desc: '브랜드 입찰로 낙찰', icon: '🔨' },
+                        { key: 'DIRECT', label: '직접 구매', desc: '고정가 즉시 판매', icon: '🛒' },
+                        { key: 'INQUIRY', label: '스폰픽 협의', desc: '슬롯만 오픈 후 상담 확정', icon: '💬' },
+                      ] as const).map((m) => (
+                        <button
+                          key={m.key}
+                          onClick={() => setSaleMode(m.key)}
+                          className={cn(
+                            'text-left p-3 rounded-xl border-2 transition-all',
+                            saleMode === m.key
+                              ? 'border-emerald-500 bg-emerald-50 shadow-sm'
+                              : 'border-slate-200 bg-white hover:border-emerald-300'
+                          )}
+                        >
+                          <div className="text-sm font-bold text-slate-900 mb-0.5">{m.icon} {m.label}</div>
+                          <div className="text-[11px] text-slate-500 leading-snug">{m.desc}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 스폰픽 협의 안내 */}
+                  {saleMode === 'INQUIRY' && (
+                    <div className="p-4 bg-sky-50 border border-sky-200 rounded-xl">
+                      <div className="text-sm font-bold text-sky-900 mb-1">💬 스폰픽 협의 방식</div>
+                      <p className="text-xs text-sky-800 leading-relaxed">
+                        후원 가능 슬롯만 공개되고 가격은 노출되지 않습니다. 브랜드가 상담을 신청하면
+                        스폰픽이 조건을 협의해 후원을 확정합니다.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Auction 설정 */}
+                  <div className={cn('p-4 bg-slate-50 rounded-xl', !enableAuction && 'hidden')}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Gavel className="w-5 h-5 text-amber-600" />
+                      <span className="font-medium text-slate-900">경매 설정</span>
                     </div>
                     {enableAuction && (
                       <div className="space-y-3 pt-3 border-t border-slate-200">
@@ -797,39 +817,22 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                     )}
                   </div>
 
-                  {/* Direct Buy Toggle */}
-                  <div className="p-4 bg-slate-50 rounded-xl">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <ShoppingCart className="w-5 h-5 text-violet-600" />
-                        <span className="font-medium text-slate-900">즉시구매</span>
-                      </div>
-                      <button
-                        onClick={() => setEnableDirectBuy(!enableDirectBuy)}
-                        className={cn(
-                          'flex items-center gap-1 text-sm font-medium transition-colors',
-                          enableDirectBuy ? 'text-emerald-600' : 'text-slate-400'
-                        )}
-                      >
-                        {enableDirectBuy ? (
-                          <><ToggleRight className="w-8 h-8" /> 활성</>
-                        ) : (
-                          <><ToggleLeft className="w-8 h-8" /> 비활성</>
-                        )}
-                      </button>
+                  {/* 직접 구매 설정 */}
+                  <div className={cn('p-4 bg-slate-50 rounded-xl', !enableDirectBuy && 'hidden')}>
+                    <div className="flex items-center gap-2 mb-3">
+                      <ShoppingCart className="w-5 h-5 text-violet-600" />
+                      <span className="font-medium text-slate-900">직접 구매 설정</span>
                     </div>
-                    {enableDirectBuy && (
-                      <div className="pt-3 border-t border-slate-200">
-                        <label className="block text-xs text-slate-600 mb-1">즉시구매 가격 (원)</label>
-                        <input
-                          type="number"
-                          value={directBuyPrice}
-                          onChange={(e) => setDirectBuyPrice(e.target.value)}
-                          className="input w-full text-sm"
-                          placeholder="500000"
-                        />
-                      </div>
-                    )}
+                    <div className="pt-3 border-t border-slate-200">
+                      <label className="block text-xs text-slate-600 mb-1">즉시구매 가격 (원)</label>
+                      <input
+                        type="number"
+                        value={directBuyPrice}
+                        onChange={(e) => setDirectBuyPrice(e.target.value)}
+                        className="input w-full text-sm"
+                        placeholder="500000"
+                      />
+                    </div>
                   </div>
 
                   {/* Save Button */}

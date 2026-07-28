@@ -97,18 +97,22 @@ export function Home() {
   const { data: liveAuctions } = useQuery({
     queryKey: ['home-auctions'],
     queryFn: async () => {
-      const r = await api.getAuctions({ status: 'LIVE', pageSize: 8 });
-      return (r.data || []).map((a: any) => ({
-        id: a.id,
-        slot: a.slotInstance?.slotTemplate?.code || 'SLOT',
-        slotName: a.slotInstance?.slotTemplate?.nameKr || a.slotInstance?.slotTemplate?.name || '',
-        bodyPart: a.slotInstance?.slotTemplate?.bodyPart || '',
-        player: a.slotInstance?.athlete?.name || '선수',
-        playerImage: a.slotInstance?.athlete?.profileImageUrl || '',
-        price: a.currentPrice || a.slotInstance?.reservePrice || 0,
-        endAt: a.endAt,
-        bids: a._count?.bids ?? 0,
-      }));
+      const r = await api.getAuctions({ status: 'LIVE', pageSize: 30 });
+      return (r.data || [])
+        // 메인은 추천 선수 경매만 노출 (운영 지정)
+        .filter((a: any) => a.slotInstance?.athlete?.isRecommended)
+        .slice(0, 8)
+        .map((a: any) => ({
+          id: a.id,
+          slot: a.slotInstance?.slotTemplate?.code || 'SLOT',
+          slotName: a.slotInstance?.slotTemplate?.nameKr || a.slotInstance?.slotTemplate?.name || '',
+          bodyPart: a.slotInstance?.slotTemplate?.bodyPart || '',
+          player: a.slotInstance?.athlete?.name || '선수',
+          playerImage: a.slotInstance?.athlete?.profileImageUrl || '',
+          price: a.currentPrice || a.slotInstance?.reservePrice || 0,
+          endAt: a.endAt,
+          bids: a._count?.bids ?? 0,
+        }));
     },
     staleTime: 30_000,
     refetchInterval: 30_000,
@@ -118,9 +122,11 @@ export function Home() {
   const { data: directBuySlots } = useQuery({
     queryKey: ['home-direct-slots'],
     queryFn: async () => {
-      const r = await api.getSlotInstances({ enableDirectBuy: true, limit: 12 });
+      const r = await api.getSlotInstances({ enableDirectBuy: true, limit: 60 });
       return ((r as any)?.data || [])
-        .filter((s: any) => s.status !== 'SOLD' && s.status !== 'RESERVED' && s.isActive)
+        // 메인은 추천 선수 슬롯만 노출 (경매와 동일 정책)
+        .filter((s: any) => s.status !== 'SOLD' && s.status !== 'RESERVED' && s.isActive && s.athlete?.isRecommended)
+        .slice(0, 12)
         .map((s: any) => ({
           id: s.id,
           kind: 'DIRECT' as const,

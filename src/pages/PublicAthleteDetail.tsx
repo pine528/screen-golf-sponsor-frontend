@@ -899,6 +899,7 @@ function SlotCard({ slot, selected, index, onClick }: { slot: any; selected: boo
   const isLive = auction?.status === 'LIVE';
   const isOpen = slot.status === 'OPEN' || slot.status === 'IN_AUCTION';
   const isDirectBuy = !!slot.enableDirectBuy && slot.directBuyPrice != null;
+  const isInquiry = slot.saleMode === 'INQUIRY' || (!slot.enableAuction && !slot.enableDirectBuy);
   const tpl = slot.slotTemplate || {};
 
   return (
@@ -914,15 +915,16 @@ function SlotCard({ slot, selected, index, onClick }: { slot: any; selected: boo
         <span className="text-[10px] font-bold text-slate-400">#{index}</span>
         {isLive && <span className="text-[9px] font-extrabold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded animate-pulse">LIVE</span>}
         {!auction && isDirectBuy && <span className="text-[9px] font-extrabold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded">즉시구매</span>}
+        {!auction && isInquiry && <span className="text-[9px] font-extrabold text-violet-700 bg-violet-50 px-1.5 py-0.5 rounded">협의</span>}
         <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">{slot.status}</span>
       </div>
       {/* docx 4: slot_name 우선, 없으면 SlotTemplate.name fallback */}
       <div className="text-sm font-extrabold text-slate-900">{dash(slot.slotName || tpl.name || tpl.code)}</div>
       <div className="text-[10px] text-slate-500 mb-2">{dash(tpl.bodyPart)}{tpl.grade && ` · ${fmtGrade(tpl.grade)}등급`}</div>
       <div className="flex items-center justify-between text-xs">
-        <span className="text-slate-500">{auction ? '현재가' : isDirectBuy ? '즉시구매가' : '기준가'}</span>
-        <span className={`font-bold ${auction ? 'text-emerald-600' : 'text-sky-600'}`}>
-          {dashKRW(auction?.currentPrice ?? (isDirectBuy ? slot.directBuyPrice : slot.reservePrice))}
+        <span className="text-slate-500">{auction ? '현재가' : isDirectBuy ? '즉시구매가' : isInquiry ? '후원 조건' : '기준가'}</span>
+        <span className={`font-bold ${auction ? 'text-emerald-600' : isInquiry ? 'text-violet-600' : 'text-sky-600'}`}>
+          {isInquiry && !auction ? '협의' : dashKRW(auction?.currentPrice ?? (isDirectBuy ? slot.directBuyPrice : slot.reservePrice))}
         </span>
       </div>
     </button>
@@ -935,8 +937,18 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
   const tpl = slot.slotTemplate || {};
   const navigate = useNavigate();
 
-  // 즉시구매 (경매 없이 고정가 판매) — POST /slots/instances/:id/buy-now (BRAND 전용)
+  // 판매 방식: AUCTION 경매 / DIRECT 즉시구매 / INQUIRY 스폰픽 협의(카카오 상담)
+  const isInquiry = slot.saleMode === 'INQUIRY' || (!slot.enableAuction && !slot.enableDirectBuy);
   const isDirectBuy = !!slot.enableDirectBuy && slot.directBuyPrice != null;
+  const openInquiry = () => {
+    const channelId = (import.meta.env.VITE_KAKAO_CHANNEL_ID as string) || '_xmpxknX';
+    const slotLabel = `${athleteName} · ${slot.slotName || tpl.name || tpl.code}`;
+    if (channelId) {
+      window.open(`https://pf.kakao.com/${channelId}/chat`, '_blank', 'noopener,noreferrer');
+    } else {
+      window.location.href = `mailto:support@sponpik.com?subject=${encodeURIComponent(`[후원 문의] ${slotLabel}`)}`;
+    }
+  };
   const isSold = slot.status === 'SOLD' || slot.status === 'RESERVED';
   const [buyError, setBuyError] = useState('');
   const buyNowMut = useMutation({
@@ -1040,7 +1052,25 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
         </div>
 
         {!auction ? (
-          isDirectBuy ? (
+          isInquiry ? (
+            /* 협의 문의 슬롯 — 가격 비공개, 스폰픽 상담으로 확정 */
+            <div>
+              <div className="bg-violet-50 rounded-xl p-4 mb-3">
+                <div className="text-[10px] font-bold text-violet-700 mb-1">스폰픽 협의 후원</div>
+                <div className="text-lg font-extrabold text-violet-700">가격 협의</div>
+                <div className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                  이 슬롯은 후원 가능 상태로만 공개되어 있습니다. 상담을 신청하시면 스폰픽이 노출 조건·기간·금액을 협의해 후원을 확정해 드립니다.
+                </div>
+              </div>
+              <button
+                onClick={openInquiry}
+                className="w-full h-11 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-sm font-extrabold shadow-md transition-colors inline-flex items-center justify-center gap-1.5"
+              >
+                💬 스폰픽 상담 문의
+              </button>
+              <div className="text-[10px] text-slate-400 text-center mt-2">카카오톡 채널로 연결됩니다</div>
+            </div>
+          ) : isDirectBuy ? (
             /* 즉시구매 슬롯 (경매 없이 고정가 판매) */
             <div>
               <div className="bg-sky-50 rounded-xl p-4 mb-3">
