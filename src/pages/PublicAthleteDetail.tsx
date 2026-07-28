@@ -25,6 +25,7 @@ import { api } from '../services/api';
 import { useAuctionSocket } from '../hooks/useSocket';
 import { useAuth } from '../hooks/useAuth';
 import LegalNotice from '../components/LegalNotice';
+import UnifiedPurchase from '../components/purchase/UnifiedPurchase';
 
 // 빈 값 → '-' 표기 헬퍼
 const dash = (v: any, suffix = ''): string => {
@@ -53,6 +54,14 @@ export default function PublicAthleteDetail() {
     queryFn: () => api.getPublicAthlete(id!),
     enabled: !!id,
   });
+
+  // 개편 Phase 2 — 기간별 슬롯 인벤토리 (통합 구매화면 데이터 소스)
+  const { data: invResp, isLoading: inventoryLoading } = useQuery({
+    queryKey: ['public-athlete-inventory', id],
+    queryFn: () => api.getAthleteInventory(id!),
+    enabled: !!id,
+  });
+  const inventorySlots: any[] = (invResp?.data as any)?.slots || [];
 
   // ROI 대시보드 (docx 3-5)
   const { data: roiResp } = useQuery({
@@ -151,7 +160,8 @@ export default function PublicAthleteDetail() {
   const sponsors = (athlete.primarySponsors || []) as any[];
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    /* pb-24: 모바일 하단 고정 구매바가 최하단 콘텐츠를 가리지 않도록 */
+    <div className="min-h-screen bg-slate-50 pb-24 lg:pb-0">
       {/* === A. 선수 프로필 상단 (2026-07 개편: 좌 프로필/온도 · 중 기본정보/활동/성적 · 우 지수/SNS) === */}
       <AthleteHeroV2
         athlete={athlete}
@@ -166,10 +176,22 @@ export default function PublicAthleteDetail() {
       />
 
       {/* 중단: 슬롯별 실시간 경매 현황 (3-2 + 3-3 + 3-4) */}
+      {/* 개편 Phase 2 (WF-04): 선수정보·슬롯 인벤토리·구매 패널 통합 3열 */}
+      <UnifiedPurchase
+        athlete={athlete}
+        slotInstances={orderedSlots}
+        inventorySlots={inventorySlots}
+        inventoryLoading={inventoryLoading}
+        isAuthenticated={isAuthenticated}
+        userRole={user?.role}
+        onLogin={() => navigate('/login')}
+        onPurchased={() => queryClient.invalidateQueries({ queryKey: ['public-athlete', id] })}
+      />
+
       <section data-section="slots" className="max-w-6xl mx-auto px-5 sm:px-8 py-8">
         <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
           <Gavel className="w-5 h-5 text-emerald-500" />
-          진행중인 스폰서십 슬롯
+          슬롯별 경매 현황
           {orderedSlots.length > 0 && (
             <span className="text-sm font-semibold text-slate-500">({orderedSlots.length}개)</span>
           )}

@@ -3102,6 +3102,12 @@ class ApiService {
     return r.data;
   }
 
+  // 개편 Phase 1/2 — 선수 기간별 슬롯 인벤토리 (통합 구매화면 데이터 소스)
+  async getAthleteInventory(id: string, params?: { start?: string; end?: string }) {
+    const r = await this.client.get<ApiResponse<{ slots: any[] }>>(`/athletes/public/${id}/inventory`, { params });
+    return r.data;
+  }
+
   // 선수 경기결과 관리 (관리자/본인)
   async getAthleteEventResults(athleteId: string) {
     const r = await this.client.get<ApiResponse<any[]>>(`/athletes/${athleteId}/event-results`);
