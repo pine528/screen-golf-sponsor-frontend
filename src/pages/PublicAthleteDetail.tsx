@@ -168,7 +168,7 @@ export default function PublicAthleteDetail() {
       <section data-section="slots" className="max-w-6xl mx-auto px-5 sm:px-8 py-8">
         <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
           <Gavel className="w-5 h-5 text-emerald-500" />
-          진행 중인 광고 슬롯
+          진행중인 스폰서십 슬롯
           {orderedSlots.length > 0 && (
             <span className="text-sm font-semibold text-slate-500">({orderedSlots.length}개)</span>
           )}
@@ -674,7 +674,7 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
             onClick={() => scrollTo('[data-section="slots"]')}
             className="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-extrabold transition-colors inline-flex items-center justify-center gap-1.5"
           >
-            <Gavel className="w-4 h-4" /> 진행중인 후원슬롯보기
+            <Gavel className="w-4 h-4" /> 진행중인 스폰서십 슬롯
             {slotsCount > 0 && <span className="bg-emerald-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{slotsCount}</span>}
           </button>
         </div>
