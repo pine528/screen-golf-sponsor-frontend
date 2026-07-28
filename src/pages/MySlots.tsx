@@ -138,7 +138,7 @@ export function MySlots() {
     if (slot.auction?.status === 'SCHEDULED') {
       return { label: '경매 예정', style: 'bg-sky-100 text-sky-700 border-sky-200' };
     }
-    // 즉시구매 활성화 + 가격 설정됨 = 판매중
+    // 바로 구매 활성화 + 가격 설정됨 = 판매중
     if (slot.enableDirectBuy && slot.directBuyPrice) {
       return { label: '판매중', style: 'bg-violet-100 text-violet-700 border-violet-200' };
     }
@@ -156,7 +156,7 @@ export function MySlots() {
   const getSaleModeLabel = (slot: any) => {
     const modes = [];
     if (slot.enableAuction) modes.push('경매');
-    if (slot.enableDirectBuy) modes.push('즉시구매');
+    if (slot.enableDirectBuy) modes.push('바로 구매');
     return modes.length > 0 ? modes.join(' + ') : '미설정';
   };
 
@@ -322,7 +322,7 @@ export function MySlots() {
                             <h3 className="font-semibold text-slate-900 text-sm sm:text-base">
                               {slot.slotTemplate?.name}
                             </h3>
-                            {/* 경매중 + 즉시구매 둘 다 설정된 경우 각각 배지 표시 */}
+                            {/* 경매중 + 바로 구매 둘 다 설정된 경우 각각 배지 표시 */}
                             {slot.auction?.status === 'LIVE' && (
                               <span className="badge bg-amber-100 text-amber-700 border-amber-200 text-xs">
                                 경매중
@@ -330,10 +330,10 @@ export function MySlots() {
                             )}
                             {slot.enableDirectBuy && slot.directBuyPrice && (
                               <span className="badge bg-violet-100 text-violet-700 border-violet-200 text-xs">
-                                즉시구매
+                                바로 구매
                               </span>
                             )}
-                            {/* 경매도 즉시구매도 아닌 경우 기존 상태 배지 */}
+                            {/* 경매도 바로 구매도 아닌 경우 기존 상태 배지 */}
                             {!(slot.auction?.status === 'LIVE') && !(slot.enableDirectBuy && slot.directBuyPrice) && (
                               <span className={cn('badge text-xs', status.style)}>
                                 {status.label}
@@ -396,7 +396,7 @@ export function MySlots() {
                               </span>
                               {slot.enableDirectBuy && slot.directBuyPrice && (
                                 <span className="text-xs sm:text-sm text-slate-500">
-                                  즉시구매: <strong className="text-violet-600">
+                                  바로 구매: <strong className="text-violet-600">
                                     {formatCurrency(Number(slot.directBuyPrice))}
                                   </strong>
                                 </span>
@@ -510,7 +510,7 @@ interface SlotDetailModalProps {
 function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }: SlotDetailModalProps) {
   const [activeTab, setActiveTab] = useState('info');
 
-  // Sale mode state — 판매 방식 3종 중 택1 (경매 / 즉시구매 / 스폰픽 협의)
+  // Sale mode state — 판매 방식 3종 중 택1 (경매 / 바로 구매 / 스폰픽 협의)
   const [saleMode, setSaleMode] = useState<'AUCTION' | 'DIRECT' | 'INQUIRY'>(
     slot.saleMode || (slot.enableDirectBuy ? 'DIRECT' : slot.enableAuction ? 'AUCTION' : 'INQUIRY')
   );
@@ -549,7 +549,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
     setSaleModeError('');
 
     if (enableDirectBuy && (!directBuyPrice || Number(directBuyPrice) <= 0)) {
-      setSaleModeError('즉시구매 가격을 입력해주세요');
+      setSaleModeError('바로 구매 가격을 입력해주세요');
       return;
     }
 
@@ -583,7 +583,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
     if (slot.auction?.status === 'SCHEDULED') {
       return { label: '경매 예정', style: 'bg-sky-100 text-sky-700 border-sky-200' };
     }
-    // 즉시구매 활성화 + 가격 설정됨 = 판매중
+    // 바로 구매 활성화 + 가격 설정됨 = 판매중
     if (slot.enableDirectBuy && slot.directBuyPrice) {
       return { label: '판매중', style: 'bg-violet-100 text-violet-700 border-violet-200' };
     }
@@ -824,7 +824,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                       <span className="font-medium text-slate-900">직접 구매 설정</span>
                     </div>
                     <div className="pt-3 border-t border-slate-200">
-                      <label className="block text-xs text-slate-600 mb-1">즉시구매 가격 (원)</label>
+                      <label className="block text-xs text-slate-600 mb-1">바로 구매 가격 (원)</label>
                       <input
                         type="number"
                         value={directBuyPrice}
@@ -845,7 +845,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                   </button>
 
                   <p className="text-xs text-slate-500 text-center">
-                    * 경매와 즉시구매를 동시에 활성화하면 브랜드는 원하는 방식으로 구매할 수 있습니다
+                    * 경매와 바로 구매를 동시에 활성화하면 브랜드는 원하는 방식으로 구매할 수 있습니다
                   </p>
                 </>
               )}

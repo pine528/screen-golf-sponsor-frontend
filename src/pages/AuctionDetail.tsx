@@ -35,6 +35,7 @@ import {
   cn,
 } from '../utils';
 import { getEventMonthLabel } from '../utils/eventMonth';
+import LegalNotice from '../components/LegalNotice';
 
 export function AuctionDetail() {
   const { id } = useParams<{ id: string }>();
@@ -531,6 +532,9 @@ export function AuctionDetail() {
                 <p className="text-xs text-slate-400 text-center">아직 입찰 내역이 없습니다</p>
               )}
             </div>
+
+            {/* 권리관계 고정 안내문 (개편 LEG-04/05) */}
+            <LegalNotice className="mt-4" />
           </div>
 
           {/* Sidebar */}

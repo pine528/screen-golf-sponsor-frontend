@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   ArrowRight,
@@ -26,35 +26,7 @@ import { api } from '../services/api';
 import { formatTimeRemaining } from '../utils';
 import { ServiceAnnouncementModal } from '../components/ServiceAnnouncementModal';
 
-/* ── Intersection Observer counter ── */
-function useCounter(end: number, duration = 2000) {
-  const [count, setCount] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStarted(true); }, { threshold: 0.2 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!started) return;
-    let start: number, raf: number;
-    const tick = (ts: number) => {
-      if (!start) start = ts;
-      const p = Math.min((ts - start) / duration, 1);
-      setCount(Math.floor(p * end));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [end, duration, started]);
-
-  return { count, ref };
-}
+/* useCounter 제거 — 개편 LEG-06: 하드코딩 실적 수치 대신 public-stats API 실데이터 사용 */
 
 /* ── Scroll-reveal hook ── */
 function useReveal() {
@@ -118,7 +90,7 @@ export function Home() {
     refetchInterval: 30_000,
   });
 
-  // 즉시구매(고정가) 슬롯 — 경매와 함께 '진행중인 스폰서십 슬롯'에 노출
+  // 바로 구매(고정가) 슬롯 — 경매와 함께 '진행중인 스폰서십 슬롯'에 노출
   const { data: directBuySlots } = useQuery({
     queryKey: ['home-direct-slots'],
     queryFn: async () => {
@@ -153,9 +125,17 @@ export function Home() {
     staleTime: 60_000,
   });
 
-  const c1 = useCounter(1250);
-  const c2 = useCounter(3400);
-  const c3 = useCounter(180);
+  // 개편 §7.2 통합 검색 + LEG-06 실수치 API
+  const navigate = useNavigate();
+  const [heroSearch, setHeroSearch] = useState('');
+  const { data: publicStats } = useQuery({
+    queryKey: ['public-stats'],
+    queryFn: async () => {
+      const r = await fetch(`${(import.meta.env.VITE_API_URL as string) || '/api'}/athletes/public-stats`).then((x) => x.json());
+      return r?.data || null;
+    },
+    staleTime: 300_000,
+  });
 
   const r1 = useReveal();
   const r2 = useReveal();
@@ -285,10 +265,10 @@ export function Home() {
                 style={{ filter: 'drop-shadow(0 12px 22px rgba(15,23,42,0.10))' }}
               />
 
-              <h1 className="text-[26px] sm:text-4xl lg:text-[42px] font-black tracking-tight lg:tracking-wide text-slate-900 leading-[1.25] lg:leading-[1.18] mb-0 lg:mb-12 space-y-0.5 lg:space-y-1.5 max-w-[56%] lg:max-w-none">
-                <div>티샷의 순간<span className="hidden lg:inline">,</span></div>
-                <div>수백만의 시선이</div>
-                <div><span className="text-emerald-500">당신의 브랜드</span>를<br className="lg:hidden" /> 주목합니다.</div>
+              <h1 className="text-[26px] sm:text-4xl lg:text-[42px] font-black tracking-tight lg:tracking-wide text-slate-900 leading-[1.25] lg:leading-[1.18] mb-0 lg:mb-8 space-y-0.5 lg:space-y-1.5 max-w-[56%] lg:max-w-none break-keep">
+                <div>선수를 선택하고,</div>
+                <div><span className="text-emerald-500">후원방식</span>을 고르고,</div>
+                <div>바로 시작하세요.</div>
               </h1>
 
               {/* 모바일 파운더 라벨 */}
@@ -302,40 +282,64 @@ export function Home() {
                 <img src="/golfers/bae-jinri-sign.png" alt="Bae Jinri" className="mt-2 h-9 w-auto select-none pointer-events-none" />
               </div>
 
-              {/* 데스크톱 설명 문구 */}
-              <p className="hidden lg:block text-base sm:text-lg text-slate-500 leading-relaxed mb-12 max-w-lg">
-                필드와 스크린 위, 가장 돋보이는 순간. 경기 내내 시선이 머무는 프로 골퍼의 최적화된 광고 슬롯을 실시간 경매로 낙찰받으세요.
+              {/* 데스크톱 설명 문구 (개편 §7.1 서브 카피) */}
+              <p className="hidden lg:block text-base sm:text-lg text-slate-500 leading-relaxed mb-10 max-w-lg break-keep">
+                프로 골퍼의 착장 슬롯부터 SNS 콘텐츠, 매장 홍보, 장기 파트너십까지
+                한 화면에서 비교하고 계약하는 스포츠 후원 플랫폼.
               </p>
 
-              <div className="flex flex-wrap gap-2.5 sm:gap-3 mt-10 lg:mt-0 mb-10 lg:mb-14">
-                <Link to={isAuthenticated ? '/dashboard' : '/register'}
-                  className="h-11 px-6 inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20">
-                  무료로 시작하기 <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link to="/auctions"
-                  className="h-11 px-6 inline-flex items-center gap-2 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition-colors">
-                  경매 둘러보기
-                </Link>
+              {/* 주요 CTA (개편 §7.1 — 경매 둘러보기는 메인 버튼에서 제외) */}
+              <div className="flex flex-wrap gap-2.5 sm:gap-3 mt-10 lg:mt-0 mb-4">
                 <Link to="/athletes"
-                  className="h-11 px-6 inline-flex items-center gap-2 rounded-xl border border-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-50 transition-colors">
-                  선수 둘러보기
+                  className="h-11 px-6 inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20">
+                  후원 가능한 선수 찾기 <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link to={isAuthenticated ? '/dashboard' : '/register'}
+                  className="h-11 px-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors">
+                  {isAuthenticated ? '내 대시보드' : '브랜드로 시작하기'}
                 </Link>
               </div>
+              {/* 보조 CTA */}
+              {!isAuthenticated && (
+                <div className="flex flex-wrap gap-x-4 gap-y-1 mb-8 lg:mb-10">
+                  <Link to="/register" className="text-xs font-semibold text-slate-500 hover:text-emerald-600 underline-offset-2 hover:underline">
+                    선수로 등록하기
+                  </Link>
+                  <Link to="/register" className="text-xs font-semibold text-slate-500 hover:text-emerald-600 underline-offset-2 hover:underline">
+                    팬으로 가입하기
+                  </Link>
+                </div>
+              )}
 
-              {/* Stats */}
-              <div ref={c1.ref} className="flex gap-8 sm:gap-10">
-                <div>
-                  <p className="text-2xl sm:text-3xl font-black text-slate-900">{c1.count.toLocaleString()}<span className="text-emerald-500">+</span></p>
-                  <p className="text-xs text-slate-400 mt-0.5">등록 선수</p>
-                </div>
-                <div ref={c2.ref}>
-                  <p className="text-2xl sm:text-3xl font-black text-slate-900">{c2.count.toLocaleString()}<span className="text-emerald-500">+</span></p>
-                  <p className="text-xs text-slate-400 mt-0.5">성사된 계약</p>
-                </div>
-                <div ref={c3.ref}>
-                  <p className="text-2xl sm:text-3xl font-black text-slate-900">{c3.count.toLocaleString()}<span className="text-emerald-500">+</span></p>
-                  <p className="text-xs text-slate-400 mt-0.5">파트너 브랜드</p>
-                </div>
+              {/* 통합 검색 (개편 §7.2 — 선수명·예산·목적 → 맞춤 선수 찾기) */}
+              <form
+                onSubmit={(e) => { e.preventDefault(); const q = heroSearch.trim(); navigate(`/athletes${q ? `?q=${encodeURIComponent(q)}` : ''}`); }}
+                className="hidden sm:flex items-center gap-2 mb-10 lg:mb-12 max-w-lg bg-white border border-slate-200 rounded-2xl p-1.5 shadow-sm"
+              >
+                <input
+                  type="text"
+                  value={heroSearch}
+                  onChange={(e) => setHeroSearch(e.target.value)}
+                  placeholder="선수명·투어·지역으로 검색"
+                  className="flex-1 min-w-0 px-3 py-2 text-sm bg-transparent focus:outline-none"
+                />
+                <button type="submit" className="h-9 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold whitespace-nowrap transition-colors">
+                  맞춤 선수 찾기
+                </button>
+              </form>
+
+              {/* Stats — 검증 가능한 실데이터만 노출 (개편 LEG-06: 하드코딩 수치 금지) */}
+              <div className="flex gap-8 sm:gap-10">
+                {[
+                  { label: '등록 선수', value: publicStats?.athletes },
+                  { label: '진행 중 후원상품', value: publicStats?.activeSlots },
+                  { label: '파트너 브랜드', value: publicStats?.brands },
+                ].filter((s) => (s.value ?? 0) > 0).map((s) => (
+                  <div key={s.label}>
+                    <p className="text-2xl sm:text-3xl font-black text-slate-900">{Number(s.value).toLocaleString()}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -389,7 +393,7 @@ export function Home() {
           {(() => {
             // SPONPIK 론칭 docx 2-1: 프론트 하드코딩 값 사용 지양
             // → MOCK_GOLFERS 제거, 실데이터(liveAuctions)만 사용. 빈 경우 명시적 empty state.
-            // 경매(LIVE) + 즉시구매(고정가) 슬롯을 함께 노출
+            // 경매(LIVE) + 바로 구매(고정가) 슬롯을 함께 노출
             const merged = [...(liveAuctions || []), ...(directBuySlots || [])];
             const items = merged.length > 0 ? merged : null;
 
@@ -433,7 +437,7 @@ export function Home() {
                               {a.slot}
                             </span>
                             {isDirect && (
-                              <span className="text-[9px] font-extrabold text-sky-700 bg-sky-100 px-2 py-0.5 rounded-md">즉시구매</span>
+                              <span className="text-[9px] font-extrabold text-sky-700 bg-sky-100 px-2 py-0.5 rounded-md">바로 구매</span>
                             )}
                           </div>
                         </div>
@@ -443,7 +447,7 @@ export function Home() {
                           <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors truncate mb-0.5">{a.player}</p>
                           <p className="text-[10px] text-slate-400 mb-2">{bodyPartLabel(a.bodyPart)}</p>
                           <div className="mb-3">
-                            <p className="text-[10px] text-slate-400 mb-0.5">{isDirect ? '즉시구매가' : '현재 1위 입찰가'}</p>
+                            <p className="text-[10px] text-slate-400 mb-0.5">{isDirect ? '바로 구매가' : '현재 1위 입찰가'}</p>
                             <p className={`text-base font-black ${isDirect ? 'text-sky-600' : 'text-slate-900'}`}>₩{(a.price || 0).toLocaleString()}</p>
                           </div>
                           <div className="flex items-center justify-between">

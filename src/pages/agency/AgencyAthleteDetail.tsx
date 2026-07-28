@@ -306,7 +306,7 @@ export function AgencyAthleteDetail() {
 
     // 최소 하나는 활성화되어야 함
     if (!slotSettingsForm.enableAuction && !slotSettingsForm.enableDirectBuy) {
-      setError('경매 또는 즉시구매 중 하나는 활성화해야 합니다');
+      setError('경매 또는 바로 구매 중 하나는 활성화해야 합니다');
       return;
     }
 
@@ -803,7 +803,7 @@ export function AgencyAthleteDetail() {
                             )}
                             {slot.enableDirectBuy && (
                               <span className="px-2 py-0.5 bg-green-50 text-green-600 rounded">
-                                즉시구매 {slot.directBuyPrice ? formatCurrency(slot.directBuyPrice) : ''}
+                                바로 구매 {slot.directBuyPrice ? formatCurrency(slot.directBuyPrice) : ''}
                               </span>
                             )}
                           </div>
@@ -1167,7 +1167,7 @@ export function AgencyAthleteDetail() {
               {/* Direct Buy Toggle */}
               <label className="flex items-center justify-between p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50">
                 <div>
-                  <p className="font-medium text-slate-900">즉시구매 허용</p>
+                  <p className="font-medium text-slate-900">바로 구매 허용</p>
                   <p className="text-xs text-slate-500">정해진 가격으로 바로 구매</p>
                 </div>
                 <input
@@ -1180,11 +1180,11 @@ export function AgencyAthleteDetail() {
 
               {slotSettingsForm.enableDirectBuy && (
                 <div>
-                  <label className="label">즉시구매 가격 (원)</label>
+                  <label className="label">바로 구매 가격 (원)</label>
                   <input
                     type="number"
                     className="input"
-                    placeholder="즉시구매 가격"
+                    placeholder="바로 구매 가격"
                     value={slotSettingsForm.directBuyPrice}
                     onChange={(e) => setSlotSettingsForm({ ...slotSettingsForm, directBuyPrice: e.target.value })}
                   />

@@ -72,7 +72,7 @@ export default function PublicAthletes() {
         </div>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-6 pb-12 sm:pb-16">
           <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 inline-flex items-center gap-3">
-            <Users className="w-8 h-8" /> 선수 둘러보기
+            <Users className="w-8 h-8" /> 후원 가능한 선수 찾기
           </h1>
           <p className="text-sm sm:text-base opacity-90 max-w-xl">
             스폰픽에 등록된 프로 골퍼들을 만나보세요. 마음에 드는 선수의 슬롯을 직접 후원할 수 있습니다.

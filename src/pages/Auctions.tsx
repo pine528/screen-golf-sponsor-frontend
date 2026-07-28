@@ -13,6 +13,7 @@ import {
   cn,
 } from '../utils';
 import { getEventMonthLabel } from '../utils/eventMonth';
+import LegalNotice from '../components/LegalNotice';
 
 // 남은 시간 표시 (초 단위)
 function formatRemainingSeconds(seconds: number): string {
@@ -39,7 +40,7 @@ export function Auctions() {
   const [bidError, setBidError] = useState<string | null>(null);
   const [eventFilter, setEventFilter] = useState<string>('ALL'); // 대회 필터
 
-  // 즉시구매 모달 상태
+  // 바로 구매 모달 상태
   const [showBuyNowModal, setShowBuyNowModal] = useState(false);
   const [selectedSlotForBuyNow, setSelectedSlotForBuyNow] = useState<any>(null);
   const [buyNowError, setBuyNowError] = useState<string | null>(null);
@@ -81,14 +82,14 @@ export function Auctions() {
     });
   }, [auctions?.data, eventFilter]);
 
-  // 즉시구매 가능 슬롯 조회 (enableDirectBuy: true, 경매중 슬롯도 포함)
+  // 바로 구매 가능 슬롯 조회 (enableDirectBuy: true, 경매중 슬롯도 포함)
   const { data: directBuySlots } = useQuery({
     queryKey: ['slots', 'directBuy'],
     queryFn: () => api.getSlotInstances({ enableDirectBuy: true }),
     enabled: statusFilter === 'DIRECT_BUY',
   });
 
-  // 대회 필터 적용된 즉시구매 슬롯 목록
+  // 대회 필터 적용된 바로 구매 슬롯 목록
   const filteredDirectBuySlots = useMemo(() => {
     if (!directBuySlots?.data) return [];
     const filtered = directBuySlots.data.filter((slot: any) => slot.status !== 'RESERVED' && slot.status !== 'SOLD');
@@ -132,7 +133,7 @@ export function Auctions() {
     },
   });
 
-  // 즉시구매 뮤테이션
+  // 바로 구매 뮤테이션
   const buyNowMutation = useMutation({
     mutationFn: (slotId: string) => api.buySlotNow(slotId),
     onSuccess: (data) => {
@@ -150,7 +151,7 @@ export function Auctions() {
       const err = error.response?.data?.error;
       // 에러가 객체인 경우 message 추출, 문자열이면 그대로 사용
       const errorMessage = typeof err === 'object' ? err?.message : err;
-      setBuyNowError(errorMessage || '즉시구매에 실패했습니다');
+      setBuyNowError(errorMessage || '바로 구매에 실패했습니다');
     },
   });
 
@@ -230,7 +231,7 @@ export function Auctions() {
                 )}
               >
                 {status === 'LIVE' && '진행중'}
-                {status === 'DIRECT_BUY' && '즉시구매'}
+                {status === 'DIRECT_BUY' && '바로 구매'}
                 {status === 'MY_BIDS' && '내 입찰'}
                 {status === 'MY_RESERVATIONS' && '내 예약'}
                 {status === 'SCHEDULED' && '예정'}
@@ -319,10 +320,10 @@ export function Auctions() {
                             {auction.status === 'ENDED' && '종료'}
                             {auction.status === 'UNSOLD' && '유찰'}
                           </span>
-                          {/* 즉시구매 가능 표시 */}
+                          {/* 바로 구매 가능 표시 */}
                           {auction.slotInstance?.enableDirectBuy && auction.slotInstance?.directBuyPrice && (
                             <span className="badge bg-violet-100 text-violet-700 border-violet-200 text-xs">
-                              즉시구매
+                              바로 구매
                             </span>
                           )}
                         </div>
@@ -363,11 +364,11 @@ export function Auctions() {
                             </p>
                           </>
                         )}
-                        {/* 즉시구매 가격 표시 */}
+                        {/* 바로 구매 가격 표시 */}
                         {auction.slotInstance?.enableDirectBuy && auction.slotInstance?.directBuyPrice && (
                           <div className="flex items-center gap-1 text-xs text-violet-600">
                             <Tag className="w-3 h-3" />
-                            즉시구매: {formatCurrency(Number(auction.slotInstance.directBuyPrice))}
+                            바로 구매: {formatCurrency(Number(auction.slotInstance.directBuyPrice))}
                           </div>
                         )}
                       </div>
@@ -551,7 +552,7 @@ export function Auctions() {
                           reservation.type === 'AUCTION' ? 'badge-success' : 'badge-info'
                         )}
                       >
-                        {reservation.type === 'AUCTION' ? '경매 낙찰' : '즉시구매'}
+                        {reservation.type === 'AUCTION' ? '경매 낙찰' : '바로 구매'}
                       </span>
                     </div>
 
@@ -617,7 +618,7 @@ export function Auctions() {
               <div className="col-span-full text-center py-12 text-slate-500">로딩 중...</div>
             ) : filteredDirectBuySlots.length === 0 ? (
               <div className="col-span-full text-center py-12 text-slate-500">
-                {eventFilter !== 'ALL' ? '선택한 대회의 즉시구매 슬롯이 없습니다' : '즉시구매 가능한 슬롯이 없습니다'}
+                {eventFilter !== 'ALL' ? '선택한 대회의 바로 구매 슬롯이 없습니다' : '바로 구매 가능한 슬롯이 없습니다'}
               </div>
             ) : (
               filteredDirectBuySlots.map((slot: any) => (
@@ -635,7 +636,7 @@ export function Auctions() {
                         </div>
                         <span className="badge badge-info text-xs flex items-center gap-1">
                           <Tag className="w-3 h-3" />
-                          즉시구매
+                          바로 구매
                         </span>
                       </div>
 
@@ -657,7 +658,7 @@ export function Auctions() {
 
                       {/* Price */}
                       <div className="mb-3 sm:mb-4">
-                        <p className="text-xs sm:text-sm text-slate-600">즉시구매가</p>
+                        <p className="text-xs sm:text-sm text-slate-600">바로 구매가</p>
                         <p className="text-lg sm:text-xl font-bold text-blue-600">
                           {formatCurrency(Number(slot.directBuyPrice || slot.reservePrice || 0))}
                         </p>
@@ -674,7 +675,7 @@ export function Auctions() {
                           className="btn btn-primary w-full text-sm flex items-center justify-center gap-1"
                         >
                           <ShoppingCart className="w-4 h-4" />
-                          즉시구매
+                          바로 구매
                         </button>
                       )}
                     </div>
@@ -802,7 +803,7 @@ export function Auctions() {
             <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 border border-slate-200">
               <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <ShoppingCart className="w-5 h-5 text-blue-600" />
-                즉시구매 확인
+                바로 구매 확인
               </h2>
 
               <div className="mb-4">
@@ -814,7 +815,7 @@ export function Auctions() {
 
               <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-600">즉시구매가</span>
+                  <span className="text-slate-600">바로 구매가</span>
                   <span className="text-xl font-bold text-blue-600">
                     {formatCurrency(Number(selectedSlotForBuyNow.directBuyPrice))}
                   </span>
@@ -827,6 +828,9 @@ export function Auctions() {
                   잔액이 충분한지 확인해주세요.
                 </p>
               </div>
+
+              {/* 권리관계 고정 안내문 (개편 LEG-05 — 주문·계약 화면) */}
+              <LegalNotice className="mb-4" />
 
               {buyNowError && (
                 <div className="mb-4 p-3 bg-red-100 text-red-600 rounded-lg flex items-center gap-2 text-sm border border-red-200">
@@ -856,7 +860,7 @@ export function Auctions() {
                   ) : (
                     <>
                       <ShoppingCart className="w-4 h-4" />
-                      즉시구매
+                      바로 구매
                     </>
                   )}
                 </button>

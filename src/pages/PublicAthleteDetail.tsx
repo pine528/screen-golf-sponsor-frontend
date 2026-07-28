@@ -24,6 +24,7 @@ import {
 import { api } from '../services/api';
 import { useAuctionSocket } from '../hooks/useSocket';
 import { useAuth } from '../hooks/useAuth';
+import LegalNotice from '../components/LegalNotice';
 
 // 빈 값 → '-' 표기 헬퍼
 const dash = (v: any, suffix = ''): string => {
@@ -211,6 +212,9 @@ export default function PublicAthleteDetail() {
             </div>
           </div>
         )}
+
+        {/* 권리관계 고정 안내문 (개편 LEG-04) */}
+        <LegalNotice className="mt-4" />
       </section>
 
       {/* ROI 대시보드 풀 섹션 (docx §13 화면명: 선수 상세 > ROI 대시보드) */}
@@ -914,7 +918,7 @@ function SlotCard({ slot, selected, index, onClick }: { slot: any; selected: boo
       <div className="flex items-center gap-2 mb-1">
         <span className="text-[10px] font-bold text-slate-400">#{index}</span>
         {isLive && <span className="text-[9px] font-extrabold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded animate-pulse">LIVE</span>}
-        {!auction && isDirectBuy && <span className="text-[9px] font-extrabold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded">즉시구매</span>}
+        {!auction && isDirectBuy && <span className="text-[9px] font-extrabold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded">바로 구매</span>}
         {!auction && isInquiry && <span className="text-[9px] font-extrabold text-violet-700 bg-violet-50 px-1.5 py-0.5 rounded">협의</span>}
         <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">{slot.status}</span>
       </div>
@@ -922,7 +926,7 @@ function SlotCard({ slot, selected, index, onClick }: { slot: any; selected: boo
       <div className="text-sm font-extrabold text-slate-900">{dash(slot.slotName || tpl.name || tpl.code)}</div>
       <div className="text-[10px] text-slate-500 mb-2">{dash(tpl.bodyPart)}{tpl.grade && ` · ${fmtGrade(tpl.grade)}등급`}</div>
       <div className="flex items-center justify-between text-xs">
-        <span className="text-slate-500">{auction ? '현재가' : isDirectBuy ? '즉시구매가' : isInquiry ? '후원 조건' : '기준가'}</span>
+        <span className="text-slate-500">{auction ? '현재가' : isDirectBuy ? '바로 구매가' : isInquiry ? '후원 조건' : '기준가'}</span>
         <span className={`font-bold ${auction ? 'text-emerald-600' : isInquiry ? 'text-violet-600' : 'text-sky-600'}`}>
           {isInquiry && !auction ? '협의' : dashKRW(auction?.currentPrice ?? (isDirectBuy ? slot.directBuyPrice : slot.reservePrice))}
         </span>
@@ -937,7 +941,7 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
   const tpl = slot.slotTemplate || {};
   const navigate = useNavigate();
 
-  // 판매 방식: AUCTION 경매 / DIRECT 즉시구매 / INQUIRY 스폰픽 협의(카카오 상담)
+  // 판매 방식: AUCTION 경매 / DIRECT 바로 구매 / INQUIRY 스폰픽 협의(카카오 상담)
   const isInquiry = slot.saleMode === 'INQUIRY' || (!slot.enableAuction && !slot.enableDirectBuy);
   const isDirectBuy = !!slot.enableDirectBuy && slot.directBuyPrice != null;
   const openInquiry = () => {
@@ -960,13 +964,13 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
     },
     onError: (e: any) => {
       const err = e?.response?.data?.error;
-      setBuyError((typeof err === 'object' ? err?.message : err) || '즉시구매에 실패했습니다');
+      setBuyError((typeof err === 'object' ? err?.message : err) || '바로 구매에 실패했습니다');
     },
   });
   const handleBuyNow = () => {
     if (!isAuthenticated) return onLoginRedirect();
-    if (userRole !== 'BRAND') { setBuyError('즉시구매는 브랜드 계정만 가능합니다.'); return; }
-    if (!confirm(`${dashKRW(slot.directBuyPrice)}에 즉시구매하시겠습니까?\n구매 시 계약이 생성되며 선수 서명 후 확정됩니다.`)) return;
+    if (userRole !== 'BRAND') { setBuyError('바로 구매는 브랜드 계정만 가능합니다.'); return; }
+    if (!confirm(`${dashKRW(slot.directBuyPrice)}에 바로 구매하시겠습니까?\n구매 시 계약이 생성되며 선수 서명 후 확정됩니다.`)) return;
     setBuyError('');
     buyNowMut.mutate();
   };
@@ -1071,10 +1075,10 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
               <div className="text-[10px] text-slate-400 text-center mt-2">카카오톡 채널로 연결됩니다</div>
             </div>
           ) : isDirectBuy ? (
-            /* 즉시구매 슬롯 (경매 없이 고정가 판매) */
+            /* 바로 구매 슬롯 (경매 없이 고정가 판매) */
             <div>
               <div className="bg-sky-50 rounded-xl p-4 mb-3">
-                <div className="text-[10px] font-bold text-sky-700 mb-1">즉시구매가</div>
+                <div className="text-[10px] font-bold text-sky-700 mb-1">바로 구매가</div>
                 <div className="text-2xl font-extrabold text-sky-600">{dashKRW(slot.directBuyPrice)}</div>
                 <div className="text-[10px] text-slate-500 mt-1">경매 없이 바로 구매하며, 결제 후 계약이 생성됩니다.</div>
               </div>
@@ -1089,7 +1093,7 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
                     disabled={buyNowMut.isPending}
                     className="w-full h-11 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-extrabold shadow-md transition-colors disabled:opacity-50"
                   >
-                    {buyNowMut.isPending ? '처리 중...' : '🛒 즉시구매'}
+                    {buyNowMut.isPending ? '처리 중...' : '🛒 바로 구매'}
                   </button>
                   {buyError && <div className="text-xs text-rose-600 bg-rose-50 px-3 py-2 rounded mt-2">{buyError}</div>}
                   {!isAuthenticated && (
@@ -1102,7 +1106,7 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
               )}
             </div>
           ) : (
-            /* 경매 미생성 + 즉시구매도 아닌 슬롯 */
+            /* 경매 미생성 + 바로 구매도 아닌 슬롯 */
             <div className="text-center py-8 bg-slate-50 rounded-xl">
               <AlertCircle className="w-8 h-8 text-slate-300 mx-auto mb-2" />
               <div className="text-sm text-slate-500">아직 판매가 시작되지 않은 슬롯입니다.</div>
