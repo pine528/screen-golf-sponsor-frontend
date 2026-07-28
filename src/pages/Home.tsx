@@ -125,17 +125,9 @@ export function Home() {
     staleTime: 60_000,
   });
 
-  // 개편 §7.2 통합 검색 + LEG-06 실수치 API
+  // 개편 §7.2 통합 검색
   const navigate = useNavigate();
   const [heroSearch, setHeroSearch] = useState('');
-  const { data: publicStats } = useQuery({
-    queryKey: ['public-stats'],
-    queryFn: async () => {
-      const r = await fetch(`${(import.meta.env.VITE_API_URL as string) || '/api'}/athletes/public-stats`).then((x) => x.json());
-      return r?.data || null;
-    },
-    staleTime: 300_000,
-  });
 
   const r1 = useReveal();
   const r2 = useReveal();
@@ -328,19 +320,6 @@ export function Home() {
                 </button>
               </form>
 
-              {/* Stats — 검증 가능한 실데이터만 노출 (개편 LEG-06: 하드코딩 수치 금지) */}
-              <div className="flex gap-8 sm:gap-10">
-                {[
-                  { label: '등록 선수', value: publicStats?.athletes },
-                  { label: '진행 중 후원상품', value: publicStats?.activeSlots },
-                  { label: '파트너 브랜드', value: publicStats?.brands },
-                ].filter((s) => (s.value ?? 0) > 0).map((s) => (
-                  <div key={s.label}>
-                    <p className="text-2xl sm:text-3xl font-black text-slate-900">{Number(s.value).toLocaleString()}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{s.label}</p>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* Center - Hero Model Image (배진리 프로 — 누끼 PNG, 좌측하단 텍스트 포함) */}
