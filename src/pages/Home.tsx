@@ -75,13 +75,15 @@ export function Home() {
       return (r.data || [])
         // 메인은 추천 선수 경매만 노출 (운영 지정)
         .filter((a: any) => a.slotInstance?.athlete?.isRecommended)
-        .slice(0, 8)
         .map((a: any) => ({
           id: a.id,
+          kind: 'AUCTION' as const,
+          athleteId: a.slotInstance?.athlete?.id || '',
           slot: a.slotInstance?.slotTemplate?.code || 'SLOT',
           slotName: a.slotInstance?.slotTemplate?.nameKr || a.slotInstance?.slotTemplate?.name || '',
           bodyPart: a.slotInstance?.slotTemplate?.bodyPart || '',
           player: a.slotInstance?.athlete?.name || '선수',
+          playerTour: a.slotInstance?.athlete?.tour || '',
           playerImage: a.slotInstance?.athlete?.profileImageUrl || '',
           price: a.currentPrice || a.slotInstance?.reservePrice || 0,
           endAt: a.endAt,
@@ -92,23 +94,25 @@ export function Home() {
     refetchInterval: 30_000,
   });
 
-  // 바로 구매(고정가) 슬롯 — 경매와 함께 '진행중인 스폰서십 슬롯'에 노출
+  // 바로 구매 / 스폰픽 협의 슬롯 — 경매와 함께 '진행중인 스폰서십 슬롯'에 노출
   const { data: directBuySlots } = useQuery({
     queryKey: ['home-direct-slots'],
     queryFn: async () => {
-      const r = await api.getSlotInstances({ enableDirectBuy: true, limit: 60 });
+      const r = await api.getSlotInstances({ limit: 200 });
       return ((r as any)?.data || [])
         // 메인은 추천 선수 슬롯만 노출 (경매와 동일 정책)
         .filter((s: any) => s.status !== 'SOLD' && s.status !== 'RESERVED' && s.isActive && s.athlete?.isRecommended)
-        .slice(0, 12)
+        // 경매 슬롯은 위 liveAuctions에서 이미 다루므로 제외
+        .filter((s: any) => !s.enableAuction)
         .map((s: any) => ({
           id: s.id,
-          kind: 'DIRECT' as const,
+          kind: (s.enableDirectBuy ? 'DIRECT' : 'INQUIRY') as 'DIRECT' | 'INQUIRY',
           athleteId: s.athleteId,
           slot: s.slotTemplate?.code || 'SLOT',
           slotName: s.slotTemplate?.nameKr || s.slotTemplate?.name || '',
           bodyPart: s.slotTemplate?.bodyPart || '',
           player: s.athlete?.name || '선수',
+          playerTour: s.athlete?.tour || '',
           playerImage: s.athlete?.profileImageUrl || '',
           price: Number(s.directBuyPrice || s.reservePrice || 0),
           eventName: s.event?.name || '',
@@ -120,6 +124,8 @@ export function Home() {
   // 개편 §7.2 통합 검색
   const navigate = useNavigate();
   const [heroSearch, setHeroSearch] = useState('');
+  // 진행중인 스폰서십 슬롯 — 판매방식 필터
+  const [slotFilter, setSlotFilter] = useState<'ALL' | 'AUCTION' | 'DIRECT' | 'INQUIRY' | 'SOON'>('ALL');
 
   const r1 = useReveal();
   const r2 = useReveal();
@@ -370,12 +376,66 @@ export function Home() {
             </div>
           </div>
 
+          {/* 판매방식 필터 */}
+          <div className="flex flex-wrap gap-1.5 mb-6">
+            {([
+              ['ALL', '전체'],
+              ['AUCTION', '라이브 경매'],
+              ['DIRECT', '직접 구매'],
+              ['INQUIRY', '계약 가능'],
+              ['SOON', '마감 임박'],
+            ] as const).map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setSlotFilter(key)}
+                aria-pressed={slotFilter === key}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors ${
+                  slotFilter === key
+                    ? 'bg-slate-900 text-white border-slate-900'
+                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
           {(() => {
-            // SPONPIK 론칭 docx 2-1: 프론트 하드코딩 값 사용 지양
-            // → MOCK_GOLFERS 제거, 실데이터(liveAuctions)만 사용. 빈 경우 명시적 empty state.
-            // 경매(LIVE) + 바로 구매(고정가) 슬롯을 함께 노출
+            // 실데이터만 사용 (하드코딩 금지). 경매 + 바로구매 + 협의 슬롯을 함께 다룬다.
             const merged = [...(liveAuctions || []), ...(directBuySlots || [])];
-            const items = merged.length > 0 ? merged : null;
+
+            // 선수마다 카드 하나 — 같은 사진이 반복되지 않도록 대표 슬롯 하나만 보여주고
+            // 나머지는 '+N개 슬롯'으로 묶는다. 대표 슬롯 우선순위: 마감임박 > 경매 > 바로구매 > 협의
+            const RANK: Record<string, number> = { AUCTION: 1, DIRECT: 2, INQUIRY: 3 };
+            const isSoon = (x: any) => x.kind === 'AUCTION' && x.endAt && new Date(x.endAt).getTime() - Date.now() < 24 * 3600_000;
+            const byAthlete = new Map<string, { rep: any; count: number; kinds: Set<string>; soon: boolean }>();
+            for (const x of merged) {
+              const key = x.athleteId || x.player;
+              const cur = byAthlete.get(key);
+              if (!cur) {
+                byAthlete.set(key, { rep: x, count: 1, kinds: new Set([x.kind]), soon: isSoon(x) });
+                continue;
+              }
+              cur.count += 1;
+              cur.kinds.add(x.kind);
+              if (isSoon(x)) cur.soon = true;
+              const better = isSoon(x) && !isSoon(cur.rep) ? true : RANK[x.kind] < RANK[cur.rep.kind];
+              if (better) cur.rep = x;
+            }
+
+            const grouped = [...byAthlete.values()].sort((a, b) => {
+              if (a.soon !== b.soon) return a.soon ? -1 : 1;
+              return RANK[a.rep.kind] - RANK[b.rep.kind];
+            });
+
+            const filtered = grouped.filter((g) => {
+              if (slotFilter === 'ALL') return true;
+              if (slotFilter === 'SOON') return g.soon;
+              return g.kinds.has(slotFilter);
+            });
+
+            const items = grouped.length > 0 ? filtered : null;
 
             if (!items || items.length === 0) {
               return (
@@ -392,14 +452,23 @@ export function Home() {
 
             return items && items.length > 0 ? (
               <div ref={carouselRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 scrollbar-hide -mx-5 px-5">
-                {items.map((a: any) => {
-                  const isReal = true;
+                {items.map((g: any) => {
+                  const a = g.rep;
+                  const isAuction = a.kind === 'AUCTION';
                   const isDirect = a.kind === 'DIRECT';
-                  const linkTo = isDirect ? `/athletes/${a.athleteId}` : `/auctions/${a.id}`;
+                  // 카드는 선수 단위 — 여러 슬롯이 있으면 선수 상세로 보내 한 화면에서 고르게 한다
+                  const linkTo = isAuction && g.count === 1 ? `/auctions/${a.id}` : `/athletes/${a.athleteId}`;
+                  const badge = g.soon
+                    ? { text: '마감 임박', cls: 'bg-rose-500 text-white' }
+                    : isAuction
+                      ? { text: '라이브 경매', cls: 'bg-violet-500 text-white' }
+                      : isDirect
+                        ? { text: '직접 구매', cls: 'bg-sky-500 text-white' }
+                        : { text: '계약 가능', cls: 'bg-slate-700 text-white' };
                   return (
-                    <Link key={a.id} to={linkTo} className="flex-shrink-0 w-[200px] sm:w-[220px] snap-start group cursor-pointer">
+                    <Link key={a.athleteId || a.id} to={linkTo} className="flex-shrink-0 w-[200px] sm:w-[220px] snap-start group cursor-pointer">
                       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-lg transition-all duration-300">
-                        {/* Player photo */}
+                        {/* 선수 사진 */}
                         <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-100">
                           {a.playerImage ? (
                             <img src={a.playerImage} alt={a.player} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
@@ -411,36 +480,47 @@ export function Home() {
                               </div>
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-                          <div className="absolute top-3 left-3 flex flex-col items-start gap-1">
-                            <span className="text-[10px] font-bold tracking-wide text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md">
-                              {a.slot}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                          <span className={`absolute top-3 left-3 text-[10px] font-extrabold px-2 py-1 rounded-md shadow-sm ${badge.cls}`}>
+                            {badge.text}
+                          </span>
+                          {g.count > 1 && (
+                            <span className="absolute top-3 right-3 text-[10px] font-bold px-2 py-1 rounded-md bg-white/90 text-slate-700 shadow-sm">
+                              슬롯 {g.count}개
                             </span>
-                            {isDirect && (
-                              <span className="text-[9px] font-extrabold text-sky-700 bg-sky-100 px-2 py-0.5 rounded-md">바로 구매</span>
-                            )}
-                          </div>
+                          )}
                         </div>
 
-                        {/* Info */}
+                        {/* 정보 */}
                         <div className="p-4">
-                          <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors truncate mb-0.5">{a.player}</p>
-                          <p className="text-[10px] text-slate-400 mb-2">{bodyPartLabel(a.bodyPart)}</p>
-                          <div className="mb-3">
-                            <p className="text-[10px] text-slate-400 mb-0.5">{isDirect ? '바로 구매가' : '현재 1위 입찰가'}</p>
-                            <p className={`text-base font-black ${isDirect ? 'text-sky-600' : 'text-slate-900'}`}>₩{(a.price || 0).toLocaleString()}</p>
+                          <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors truncate">{a.player}</p>
+                          <p className="text-[10px] text-slate-400 mb-2 truncate">
+                            {a.playerTour ? `${a.playerTour} · ` : ''}{a.slotName || bodyPartLabel(a.bodyPart)}
+                          </p>
+
+                          <div className="mb-2.5">
+                            <p className="text-[10px] text-slate-400 mb-0.5">
+                              {isAuction ? (a.bids > 0 ? '현재 입찰가' : '경매 시작가') : isDirect ? '바로 구매가' : '기준가'}
+                            </p>
+                            <p className={`text-base font-black ${isDirect ? 'text-sky-600' : 'text-slate-900'}`}>
+                              ₩{(a.price || 0).toLocaleString()}
+                              {g.count > 1 && <span className="text-[10px] font-semibold text-slate-400 ml-1">부터</span>}
+                            </p>
                           </div>
-                          <div className="flex items-center justify-between">
-                            {isDirect ? (
-                              <div className="text-[11px] font-bold text-sky-600">바로 구매 가능</div>
+
+                          <div className="flex items-center justify-between gap-2">
+                            {isAuction ? (
+                              <span className={`flex items-center gap-1.5 font-bold text-xs ${g.soon ? 'text-rose-500' : 'text-slate-500'}`}>
+                                <Timer className="w-3.5 h-3.5" />
+                                <span className="font-mono">{formatTimeRemaining(a.endAt)}</span>
+                              </span>
+                            ) : isDirect ? (
+                              <span className="text-[11px] font-bold text-sky-600">바로 구매 가능</span>
                             ) : (
-                            <div className="flex items-center gap-1.5 text-rose-500 font-bold text-xs">
-                              <Timer className="w-3.5 h-3.5" />
-                              <span className="font-mono">{isReal ? formatTimeRemaining(a.endAt) : a.timeLeft}</span>
-                            </div>
+                              <span className="text-[11px] font-bold text-slate-600">문의 후 계약</span>
                             )}
                             {a.bids > 0 && (
-                              <span className="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded">{a.bids}건</span>
+                              <span className="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded shrink-0">{a.bids}건</span>
                             )}
                           </div>
                         </div>
