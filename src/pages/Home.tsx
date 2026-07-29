@@ -155,7 +155,7 @@ export function Home() {
   };
 
   const navLinks = [
-    { to: '/auctions', label: '경매' },
+    { to: '/auctions', label: '라이브 경매', live: true },
     { to: '/votes', label: '투표' },
     { to: '/athletes', label: '선수' },
     { to: '/how-it-works', label: '이용방법' },
@@ -176,8 +176,9 @@ export function Home() {
 
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((l) => (
-              <Link key={l.to} to={l.to} className="px-3.5 py-2 text-[13px] font-medium rounded-lg transition-colors text-slate-500 hover:text-slate-900 hover:bg-slate-50">
+              <Link key={l.to} to={l.to} className="px-3.5 py-2 text-[13px] font-medium rounded-lg transition-colors text-slate-500 hover:text-slate-900 hover:bg-slate-50 inline-flex items-center gap-1.5">
                 {l.label}
+                {l.live && <LiveBadge />}
               </Link>
             ))}
             {isAuthenticated && (
@@ -212,7 +213,10 @@ export function Home() {
         {mobileOpen && (
           <div className="md:hidden bg-white border-t border-slate-100 px-5 pb-4 pt-2 space-y-1">
             {navLinks.map((l) => (
-              <Link key={l.to} to={l.to} onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg">{l.label}</Link>
+              <Link key={l.to} to={l.to} onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 px-3 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg">
+                {l.label}
+                {l.live && <LiveBadge />}
+              </Link>
             ))}
             {isAuthenticated && (
               <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg">마이페이지</Link>
@@ -705,6 +709,16 @@ export function Home() {
 /* ── 2026-07 항목2: 메인 추천/신규 선수 롤링 섹션 ──
  * 좌: 추천(운영 지정, recommendOrder 순) / 우: 신규(가입 60일 이내, 최신순)
  * 각 3명씩 표시, 4.5초마다 다음 3명으로 자동 롤링 */
+/** 메뉴의 라이브 경매 표시 뱃지 */
+function LiveBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-rose-50 text-rose-600 text-[10px] font-extrabold leading-none tracking-wide">
+      <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+      LIVE
+    </span>
+  );
+}
+
 function RecommendedNewAthletes({ athletes }: { athletes: any[] }) {
   const rec = athletes
     .filter((a) => a.isRecommended)
