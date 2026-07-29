@@ -26,6 +26,7 @@ import { api } from '../services/api';
 import { formatTimeRemaining } from '../utils';
 import { ServiceAnnouncementModal } from '../components/ServiceAnnouncementModal';
 import LiveBadge from '../components/LiveBadge';
+import LiveAuctionBoard from '../components/LiveAuctionBoard';
 
 /* useCounter 제거 — 개편 LEG-06: 하드코딩 실적 수치 대신 public-stats API 실데이터 사용 */
 
@@ -354,6 +355,9 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      {/* ════════════════════════ 라이브 경매 현황판 ════════════════════════ */}
+      <LiveAuctionBoard />
 
       {/* ════════════════════════ 스폰픽 추천선수 및 신규등록선수 (2026-07 항목2) ════════════════════════ */}
       <RecommendedNewAthletes athletes={homeAthletes || []} />

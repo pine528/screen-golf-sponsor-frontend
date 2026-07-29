@@ -3102,6 +3102,12 @@ class ApiService {
     return r.data;
   }
 
+  // 메인 라이브 경매 현황판 (공개)
+  async getLiveAuctionBoard() {
+    const r = await this.client.get<ApiResponse<any>>('/auctions/live-board');
+    return r.data;
+  }
+
   // 개편 Phase 6 — 이행·증빙
   async listDeliverables(proposalId?: string) {
     const r = await this.client.get<ApiResponse<any[]>>('/deliverables', { params: proposalId ? { proposalId } : undefined });
