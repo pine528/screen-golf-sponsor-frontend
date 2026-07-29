@@ -166,10 +166,12 @@ export default function LiveAuctionBoard() {
             </div>
 
             <ul className="divide-y divide-slate-50">
-              {auctions.map((a) => {
+              {auctions.map((a, i) => {
                 const t = remain(a.endAt, now);
                 const st = statusOf(a, t.urgent);
                 const pct = progress(a, now);
+                // 서버가 rank를 주지 않아도 목록 순서로 표시한다 (배포 시차 대비)
+                const rank = a.rank ?? i + 1;
                 return (
                   <li key={a.id}>
                     <Link
@@ -177,8 +179,8 @@ export default function LiveAuctionBoard() {
                       className="grid grid-cols-[28px_1fr_auto] md:grid-cols-[36px_1.5fr_1.6fr_0.9fr_0.9fr] gap-x-3 gap-y-2 items-center px-3 py-3 rounded-xl hover:bg-slate-50 transition-colors"
                     >
                       {/* 순위 */}
-                      <span className={`w-6 h-6 rounded-lg inline-flex items-center justify-center text-[11px] font-extrabold tabular-nums ${RANK_STYLE[a.rank - 1] || 'bg-slate-100 text-slate-500'}`}>
-                        {a.rank}
+                      <span className={`w-6 h-6 rounded-lg inline-flex items-center justify-center text-[11px] font-extrabold tabular-nums ${RANK_STYLE[rank - 1] || 'bg-slate-100 text-slate-500'}`}>
+                        {rank}
                       </span>
 
                       {/* 선수 · 슬롯 */}
@@ -271,7 +273,7 @@ function SumRow({ label, value, danger }: { label: string; value: number; danger
   return (
     <div className="flex items-baseline justify-between gap-2">
       <dt className="text-[11px] text-slate-500 break-keep">{label}</dt>
-      <dd className={`text-sm font-bold tabular-nums shrink-0 ${danger ? 'text-rose-600' : 'text-slate-800'}`}>{value}</dd>
+      <dd className={`text-sm font-bold tabular-nums shrink-0 ${danger ? 'text-rose-600' : 'text-slate-800'}`}>{value ?? 0}</dd>
     </div>
   );
 }
