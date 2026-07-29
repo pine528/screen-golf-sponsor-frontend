@@ -21,7 +21,6 @@ import {
   WifiOff,
 } from 'lucide-react';
 import { Layout } from '../components/Layout';
-import { SlotVisualization } from '../components/SlotVisualization';
 import { useAuth } from '../hooks/useAuth';
 import { useAuctionSocket } from '../hooks/useSocket';
 import { api } from '../services/api';
@@ -29,7 +28,6 @@ import {
   formatCurrency,
   formatTimeRemaining,
   formatDate,
-  formatDateTime,
   getBodyPartLabel,
   cn,
 } from '../utils';
@@ -218,470 +216,242 @@ export function AuctionDetail() {
           </button>
         </nav>
 
-        {/* 히어로 패널 — 현재가·마감·CTA를 한눈에 */}
-        <div className="rounded-2xl bg-slate-900 text-white overflow-hidden">
-          <div className="p-5 sm:p-7 grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 items-center">
+        {/* ── 히어로 카드 (밝은 톤) ── */}
+        <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+          <div className="p-5 sm:p-7 grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 items-center bg-gradient-to-br from-emerald-50/70 via-white to-white">
             <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap mb-2">
+              <div className="flex items-center gap-2 flex-wrap mb-1.5">
                 {auctionData.status === 'LIVE' && (
-                  <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-rose-500/15 text-rose-400 text-[10px] font-extrabold tracking-wide">
+                  <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-rose-50 text-rose-600 text-[10px] font-extrabold tracking-wide">
                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" /> LIVE
                   </span>
                 )}
-                <h1 className="text-xl sm:text-2xl font-extrabold truncate">{template?.name}</h1>
-                <span className="px-2 py-0.5 rounded-md bg-white/10 text-[11px] font-bold">{statusInfo.label}</span>
-                <span className="px-2 py-0.5 rounded-md bg-white/10 text-[11px] font-semibold text-slate-300">
+                <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 truncate">{template?.name}</h1>
+                <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 text-[11px] font-bold">{statusInfo.label}</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[11px] font-semibold">
                   {isPublicAuction ? '공개 경매' : '비공개 경매'}
                 </span>
                 <span className={cn(
                   'ml-auto inline-flex items-center gap-1 text-[11px] font-semibold',
-                  isConnected ? 'text-emerald-400' : 'text-slate-500'
+                  isConnected ? 'text-emerald-600' : 'text-slate-400'
                 )}>
                   {isConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
                   {isConnected ? '실시간' : '연결 중...'}
-                  {auctionData.status === 'LIVE' && viewerCount > 0 && (
-                    <span className="ml-2 text-slate-400">· {viewerCount}명 보는 중</span>
-                  )}
+                  {auctionData.status === 'LIVE' && viewerCount > 0 && <span className="ml-1.5 text-slate-400">· {viewerCount}명</span>}
                 </span>
               </div>
 
-              <p className="text-sm text-slate-300 mb-4">
-                {athlete?.name} 프로 · {getEventMonthLabel(event)}
-              </p>
+              <p className="text-sm text-slate-500 mb-4">{athlete?.name} 프로 · {getEventMonthLabel(event)}</p>
 
-              <p className="text-[11px] text-slate-400 mb-1">{bidCount > 0 ? '현재가' : '경매 시작가'}</p>
-              <p className="text-3xl sm:text-4xl font-black tabular-nums mb-3">
+              <p className="text-[11px] text-slate-400 mb-0.5">{bidCount > 0 ? '현재가' : '경매 시작가'}</p>
+              <p className="text-3xl sm:text-4xl font-black text-slate-900 tabular-nums mb-3">
                 {formatCurrency(auctionData.currentPrice || slot?.reservePrice || 0)}
               </p>
 
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-semibold text-slate-200 tabular-nums">
+                <span className="px-2.5 py-1.5 rounded-lg bg-slate-100 text-[11px] font-bold text-slate-600 tabular-nums">
                   다음 최소 입찰가 {formatCurrency(nextMinBid)}
                 </span>
                 {auctionData.status === 'LIVE' && (
-                  <button
-                    onClick={() => { setShowBidModal(true); setBidError(null); }}
-                    className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm font-bold transition-colors"
-                  >
-                    <Gavel className="w-4 h-4" /> 입찰 참여하기
-                  </button>
+                  user?.role === 'BRAND' ? (
+                    <button
+                      onClick={() => { setShowBidModal(true); setBidError(null); }}
+                      className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold transition-colors shadow-sm shadow-emerald-500/20"
+                    >
+                      <Gavel className="w-4 h-4" /> 입찰 참여하기
+                    </button>
+                  ) : (
+                    <Link
+                      to="/login"
+                      className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold transition-colors"
+                    >
+                      <Gavel className="w-4 h-4" /> 브랜드 로그인 후 입찰
+                    </Link>
+                  )
                 )}
               </div>
             </div>
 
-            {/* 슬롯 위치 미리보기 */}
-            <div className="hidden lg:flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 p-4">
+            <div className="hidden lg:flex items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 p-4">
               <SlotShape code={template?.code} />
             </div>
           </div>
 
-          {/* 지표 스트립 — 모두 실제 값 */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 border-t border-white/10 divide-x divide-white/10">
-            <HeroStat
-              label="남은 시간"
+          {/* 지표 5종 — 모두 실제 값 */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 p-3 sm:p-4 border-t border-slate-100 bg-slate-50/60">
+            <HeroStat label="남은 시간" icon={<Clock className="w-3 h-3" />}
               value={auctionData.status === 'LIVE' ? formatTimeRemaining(auctionData.endAt) : '—'}
-              sub={auctionData.endAt ? `마감 ${new Date(auctionData.endAt).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' })}` : ''}
-              icon={<Clock className="w-3.5 h-3.5" />}
-            />
+              sub={auctionData.endAt ? `마감 ${new Date(auctionData.endAt).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' })}` : ''} />
             <HeroStat label="최소 단위" value={formatCurrency(minIncrement)} sub="입찰 단위" />
             <HeroStat label="입찰 횟수" value={`${bidCount}회`} sub="전체 누적" />
-            <HeroStat
-              label="경쟁 지수"
-              value={bidCount === 0 ? '낮음' : bidCount < 5 ? '보통' : '높음'}
-              sub={`입찰 ${bidCount}건 기준`}
-            />
+            <HeroStat label="경쟁 지수" value={bidCount === 0 ? '낮음' : bidCount < 5 ? '보통' : '높음'} sub={`입찰 ${bidCount}건 기준`} />
             <HeroStat label="노출 배수" value={`${event?.multiplier ?? 1}x`} sub="대회 가중치" />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Price & Timer Card */}
-            <div className="card p-4 sm:p-6">
-              <div className="grid grid-cols-2 gap-4 sm:gap-6">
-                <div>
-                  <p className="text-xs sm:text-sm text-slate-600 mb-1">시작가</p>
-                  <p className="text-2xl sm:text-3xl font-bold text-emerald-600">
-                    {formatCurrency(auctionData.currentPrice || slot?.reservePrice || 0)}
-                  </p>
-                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    {isPublicAuction ? '공개 입찰' : '비공개 입찰'}
-                  </p>
-                </div>
-                <div className="text-right">
-                  {auctionData.status === 'LIVE' ? (
-                    <>
-                      <p className="text-xs sm:text-sm text-slate-600 mb-1">남은 시간</p>
-                      <p className="text-2xl sm:text-3xl font-bold text-red-600 flex items-center justify-end gap-2">
-                        <Clock className="w-6 h-6 sm:w-7 sm:h-7" />
-                        {formatTimeRemaining(auctionData.endAt)}
-                      </p>
-                      <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                        마감: {formatDateTime(auctionData.endAt)}
-                      </p>
-                    </>
-                  ) : auctionData.status === 'SCHEDULED' ? (
-                    <>
-                      <p className="text-xs sm:text-sm text-slate-600 mb-1">시작까지</p>
-                      <p className="text-2xl sm:text-3xl font-bold text-blue-600 flex items-center justify-end gap-2">
-                        <Clock className="w-6 h-6 sm:w-7 sm:h-7" />
-                        {formatTimeRemaining(auctionData.startAt)}
-                      </p>
-                      <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                        시작: {formatDateTime(auctionData.startAt)}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-xs sm:text-sm text-slate-600 mb-1">종료일</p>
-                      <p className="text-lg sm:text-xl font-semibold text-slate-700">
-                        {formatDateTime(auctionData.endAt)}
-                      </p>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Bid Button */}
-              {user?.role === 'BRAND' && auctionData.status === 'LIVE' && (
-                <button
-                  onClick={() => {
-                    // 시작가를 초기값으로 설정
-                    setBidAmount(String(auctionData.currentPrice || slot?.reservePrice || 0));
-                    setBidError(null);
-                    setShowBidModal(true);
-                  }}
-                  className="btn btn-primary w-full mt-6 py-3 text-lg flex items-center justify-center gap-2"
-                >
-                  <Gavel className="w-5 h-5" />
-                  입찰하기
-                </button>
-              )}
-
-              {/* Auction Info */}
-              <div className="mt-6 pt-6 border-t border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <p className="text-xs text-slate-500">입찰 수</p>
-                  <p className="text-lg font-semibold text-slate-900">{bids.length}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-slate-500">최소 증분</p>
-                  <p className="text-lg font-semibold text-slate-900">
-                    {formatCurrency(auctionData.minBidIncrement)}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-slate-500">연장 횟수</p>
-                  <p className="text-lg font-semibold text-slate-900">{auctionData.totalExtended || 0}회</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-slate-500">배율</p>
-                  <p className="text-lg font-semibold text-slate-900">{event?.multiplier || 1.0}x</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Slot Specifications */}
-            <div className="card p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <Ruler className="w-5 h-5 text-emerald-600" />
-                슬롯 규격
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          {/* ══ 좌: 본문 ══ */}
+          <div className="lg:col-span-2 space-y-5">
+            {/* 슬롯 정보 */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <h2 className="text-base font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+                <Ruler className="w-4 h-4 text-emerald-500" /> 슬롯 정보
               </h2>
 
-              {/* 부착 위치 시각화 */}
-              <div className="mb-6 p-4 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200">
-                <p className="text-sm font-medium text-slate-700 mb-3 text-center">부착 위치 미리보기</p>
-                <SlotVisualization
-                  bodyPart={template?.bodyPart}
-                  brandName="LOGO"
-                  className="mx-auto"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-5">
+                <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 border border-slate-100 p-4">
+                  <SlotShape code={template?.code} />
+                  <span className="mt-2 text-[11px] text-slate-400">위치 미리보기</span>
+                </div>
+
+                <dl className="grid grid-cols-2 gap-2.5 content-start">
+                  <SpecBox label="위치 코드" value={template?.code || '—'} />
+                  <SpecBox label="최대 크기" value={template?.sizeMaxWMm ? `${template.sizeMaxWMm} × ${template.sizeMaxHMm} mm` : '—'} />
+                  <SpecBox label="권장 크기" value={template?.recommendedWMm ? `${template.recommendedWMm} × ${template.recommendedHMm} mm` : '—'} />
+                  <SpecBox label="최대 둘레" value={template?.perimeterMaxMm ? `${template.perimeterMaxMm} mm` : '—'} />
+                  <SpecBox label="소재 가이드" value={template?.materialRules === 'EMBROIDERY_OK' ? '자수 가능' : template?.materialRules === 'PRINTED_ONLY' ? '인쇄만 가능' : '—'} />
+                  <SpecBox label="부위" value={getBodyPartLabel(template?.bodyPart) || '—'} />
+                </dl>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <div className="p-3 bg-slate-50 rounded-lg">
-                  <p className="text-xs text-slate-500">부착 위치</p>
-                  <p className="font-medium text-slate-900">{getBodyPartLabel(template?.bodyPart)}</p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg">
-                  <p className="text-xs text-slate-500">최대 크기</p>
-                  <p className="font-medium text-slate-900">
-                    {template?.sizeMaxWMm} x {template?.sizeMaxHMm} mm
-                  </p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg">
-                  <p className="text-xs text-slate-500">권장 크기</p>
-                  <p className="font-medium text-slate-900">
-                    {template?.recommendedWMm} x {template?.recommendedHMm} mm
-                  </p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg">
-                  <p className="text-xs text-slate-500">최대 둘레</p>
-                  <p className="font-medium text-slate-900">{template?.perimeterMaxMm} mm</p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg">
-                  <p className="text-xs text-slate-500">재질 규칙</p>
-                  <p className="font-medium text-slate-900">
-                    {template?.materialRules === 'PRINTED_ONLY'
-                      ? '인쇄만 가능'
-                      : template?.materialRules === 'EMBROIDERY_OK'
-                      ? '자수 가능'
-                      : '제한 없음'}
-                  </p>
-                </div>
-                <div className="p-3 bg-slate-50 rounded-lg">
-                  <p className="text-xs text-slate-500">필수 촬영 각도</p>
-                  <p className="font-medium text-slate-900">
-                    {template?.requiredAngles?.join(', ') || 'front'}
-                  </p>
-                </div>
-              </div>
               {template?.forbiddenNotes && (
-                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-xs text-amber-700 font-medium mb-1">주의사항</p>
-                  <p className="text-sm text-amber-800">{template.forbiddenNotes}</p>
-                </div>
-              )}
-            </div>
-
-            {/* SPONPIK 론칭 docx 3-3 — 호가 리스트 (5단계) + 빠른 증액 버튼 */}
-            {auctionData.status === 'LIVE' && user?.role === 'BRAND' && (
-              <div className="card p-4 sm:p-6">
-                <h2 className="text-lg font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                  <Gavel className="w-5 h-5 text-emerald-600" />
-                  호가 리스트 · 빠른 입찰
-                </h2>
-                {(() => {
-                  const cur = Number(auctionData.currentPrice || slot?.reservePrice || 0);
-                  const inc = Number(auctionData.minBidIncrement || 500_000);
-                  const tiers = Array.from({ length: 5 }, (_, i) => ({
-                    step: i + 1,
-                    amount: cur + inc * (i + 1),
-                    delta: inc * (i + 1),
-                  }));
-                  const totalSum = tiers.reduce((s, t) => s + t.amount, 0);
-                  return (
-                    <>
-                      <div className="grid grid-cols-5 gap-1.5 mb-3">
-                        {tiers.map((t) => (
-                          <button
-                            key={t.step}
-                            onClick={() => {
-                              // docx 3-3 입찰 검증 (호가 단계 클릭)
-                              if (auctionData.status !== 'LIVE') return setBidError('진행 중인 경매가 아닙니다');
-                              if (auctionData.endAt && new Date(auctionData.endAt).getTime() <= Date.now()) return setBidError('경매가 종료되었습니다');
-                              if (slot && slot.isActive === false) return setBidError('비활성 상태인 슬롯입니다');
-                              setBidError(null);
-                              placeBidMutation.mutate({ auctionId: id!, maxBid: t.amount });
-                            }}
-                            disabled={placeBidMutation.isPending || auctionData.status !== 'LIVE'}
-                            className="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg px-1.5 py-2 text-center disabled:opacity-50 transition-colors"
-                            title={`${t.step}단계: ₩${t.amount.toLocaleString()}`}
-                          >
-                            <div className="text-[9px] font-bold text-emerald-700">{t.step}단계</div>
-                            <div className="text-[11px] font-extrabold text-slate-900 truncate">₩{t.amount.toLocaleString()}</div>
-                            <div className="text-[8px] text-slate-500">+₩{t.delta.toLocaleString()}</div>
-                          </button>
-                        ))}
-                      </div>
-                      <div className="flex items-center justify-between text-[11px] text-slate-500 mb-3">
-                        <span>5단계 누적: <span className="font-bold text-emerald-700">₩{totalSum.toLocaleString()}</span></span>
-                        <span>최소 단위: ₩{inc.toLocaleString()}</span>
-                      </div>
-                      {/* 직접 입력 (UX docx) */}
-                      <div className="flex gap-2">
-                        <input
-                          type="number"
-                          value={bidAmount}
-                          onChange={(e) => setBidAmount(e.target.value)}
-                          placeholder={`최소 ${(cur + inc).toLocaleString()} 이상`}
-                          className="input flex-1 text-sm"
-                        />
-                        <button
-                          onClick={handleBid}
-                          disabled={!bidAmount || placeBidMutation.isPending}
-                          className="btn btn-primary text-sm whitespace-nowrap"
-                        >
-                          직접 입찰
-                        </button>
-                      </div>
-                      {bidError && (
-                        <div className="text-xs text-rose-600 bg-rose-50 px-3 py-2 rounded mt-2">{bidError}</div>
-                      )}
-                    </>
-                  );
-                })()}
-              </div>
-            )}
-
-            {/* 입찰 현황 표시 + 최근 입찰 내역 (docx 3-4) */}
-            <div className="card p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-emerald-600" />
-                입찰 현황
-              </h2>
-              <div className="p-4 bg-slate-50 rounded-lg text-center mb-4">
-                <p className="text-sm text-slate-600 mb-2">
-                  {isPublicAuction ? '공개 경매' : '비공개 경매'}
-                </p>
-                <p className="text-3xl font-bold text-emerald-600">{bids.length}</p>
-                <p className="text-sm text-slate-500 mt-1">개의 입찰이 접수되었습니다</p>
-              </div>
-
-              {/* 최근 입찰 내역 (docx 3-4 — 닉네임/입찰가/시간 최신순) */}
-              {isPublicAuction && bids.length > 0 ? (
-                <div>
-                  <h3 className="text-sm font-bold text-slate-700 mb-2">최근 입찰 내역</h3>
-                  <div className="space-y-1.5 max-h-72 overflow-y-auto">
-                    {[...bids]
-                      .sort((a: any, b: any) => +new Date(b.createdAt) - +new Date(a.createdAt))
-                      .slice(0, 10)
-                      .map((b: any, i: number) => (
-                        <div
-                          key={b.id}
-                          className={`flex items-center justify-between py-2 px-3 rounded-lg text-sm ${
-                            i === 0 ? 'bg-emerald-50 border border-emerald-100' : 'bg-slate-50'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            {i === 0 && <span className="text-[9px] font-bold text-emerald-700 bg-white px-1.5 py-0.5 rounded">최고</span>}
-                            <span className="font-semibold truncate">
-                              {b.brand?.name ? b.brand.name.charAt(0) + '*'.repeat(Math.max(1, b.brand.name.length - 1)) : '익명'}
-                            </span>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-bold text-emerald-600">₩{Number(b.currentProxy || b.maxBid || 0).toLocaleString()}</div>
-                            <div className="text-[9px] text-slate-400">
-                              {b.createdAt ? new Date(b.createdAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                <div className="mt-4 rounded-xl bg-amber-50 border border-amber-100 px-3.5 py-3">
+                  <div className="text-[11px] font-bold text-amber-800 mb-0.5 flex items-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5" /> 주의사항
                   </div>
+                  <p className="text-[11px] text-amber-900/80 leading-relaxed break-keep">{template.forbiddenNotes}</p>
                 </div>
-              ) : !isPublicAuction ? (
-                <p className="text-xs text-slate-400 text-center">
-                  비공개 경매는 다른 입찰자의 입찰 금액을 확인할 수 없습니다
-                </p>
-              ) : (
-                <p className="text-xs text-slate-400 text-center">아직 입찰 내역이 없습니다</p>
               )}
             </div>
 
-            {/* 권리관계 고정 안내문 (개편 LEG-04/05) */}
-            <LegalNotice className="mt-4" />
+            {/* 입찰 현황 */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <div className="flex items-center justify-between gap-2 mb-4">
+                <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-emerald-500" /> 입찰 현황
+                </h2>
+                <span className={cn(
+                  'px-2 py-0.5 rounded-md text-[11px] font-bold',
+                  bidCount > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                )}>
+                  {bidCount > 0 ? '입찰 진행 중' : '입찰 시작 전'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-[1fr_150px_1.2fr] gap-4 items-center">
+                {/* 좌: 금액 지표 */}
+                <div className="space-y-2">
+                  <SpecBox label="현재 입찰가" value={formatCurrency(auctionData.currentPrice || slot?.reservePrice || 0)} strong />
+                  <SpecBox label="입찰 횟수" value={`${bidCount}회`} />
+                  <SpecBox label="다음 최소 입찰가" value={formatCurrency(nextMinBid)} />
+                </div>
+
+                {/* 중: 경쟁 지수 게이지 */}
+                <div className="flex flex-col items-center">
+                  <CompetitionGauge bidCount={bidCount} />
+                  <span className="mt-1.5 text-[11px] text-slate-400">경쟁 지수</span>
+                </div>
+
+                {/* 우: 최근 입찰 내역 */}
+                <div className="min-w-0">
+                  <div className="text-[11px] font-bold text-slate-700 mb-1.5">최근 입찰 내역</div>
+                  {bids.length === 0 ? (
+                    <div className="rounded-xl bg-slate-50 border border-slate-100 px-3.5 py-4 text-center">
+                      <p className="text-xs font-semibold text-slate-600">아직 입찰이 없습니다</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">첫 번째 입찰의 주인공이 되어보세요</p>
+                    </div>
+                  ) : (
+                    <ul className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+                      {bids.slice(0, 6).map((b: any, i: number) => (
+                        <li key={b.id || i} className="flex items-center justify-between gap-2 rounded-lg bg-slate-50 px-2.5 py-1.5">
+                          <span className="flex items-center gap-1.5 min-w-0">
+                            {i === 0 && <span className="text-[9px] font-extrabold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">최고</span>}
+                            <span className="text-[11px] font-semibold text-slate-700 truncate">
+                              {maskBrandName(b.brand?.name)}
+                            </span>
+                          </span>
+                          <span className="text-[11px] font-bold text-slate-900 tabular-nums shrink-0">
+                            {formatCurrency(b.currentProxy ?? b.maxBid ?? 0)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <p className="mt-2 text-[10px] text-slate-400 break-keep">
+                    {auctionData.status === 'LIVE'
+                      ? '입찰이 접수되면 실시간으로 현황이 갱신됩니다.'
+                      : '종료된 경매입니다.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <LegalNotice />
 
             {/* 운영 방식 안내 */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-              <TrustItem icon={<Shield className="w-4 h-4" />} title="투명한 경매 운영" desc="모든 입찰 내역은 서버 시간 기준으로 기록됩니다." />
-              <TrustItem icon={<FileText className="w-4 h-4" />} title="공식 계약 체결" desc="낙찰 후 계약서와 이행 조건이 함께 제공됩니다." />
-              <TrustItem icon={<CheckCircle className="w-4 h-4" />} title="안전한 정산" desc="대금은 에스크로에 보관된 뒤 이행 확인 후 지급됩니다." />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <TrustItem icon={<Shield className="w-4 h-4" />} title="투명한 경매 운영" desc="모든 입찰은 서버 시간 기준으로 기록됩니다." />
+              <TrustItem icon={<FileText className="w-4 h-4" />} title="공식 계약 체결" desc="낙찰 후 계약서와 이행 조건이 제공됩니다." />
+              <TrustItem icon={<CheckCircle className="w-4 h-4" />} title="안전한 정산" desc="대금은 에스크로 보관 후 이행 확인 시 지급됩니다." />
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Athlete Info */}
-            <div className="card p-4 sm:p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <User className="w-5 h-5 text-emerald-600" />
-                선수 정보
-              </h3>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                  {athlete?.name?.charAt(0)}
-                </div>
-                <div>
-                  <p className="font-semibold text-slate-900 text-lg">{athlete?.name}</p>
-                  <p className="text-sm text-slate-600">{athlete?.tour}</p>
-                </div>
-              </div>
-              {athlete?.bio && (
-                <p className="text-sm text-slate-600 mb-4">{athlete.bio}</p>
-              )}
-              <div className="flex items-center gap-2">
-                <span
-                  className={cn(
-                    'badge',
-                    athlete?.kycStatus === 'APPROVED' ? 'badge-success' : 'badge-warning'
-                  )}
-                >
-                  <Shield className="w-3 h-3 mr-1" />
-                  {athlete?.kycStatus === 'APPROVED' ? 'KYC 인증됨' : 'KYC 대기'}
-                </span>
-              </div>
-            </div>
-
-            {/* Event Info */}
-            <div className="card p-4 sm:p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-emerald-600" />
-                이벤트 정보
-              </h3>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-xs text-slate-500">대회명</p>
-                  <p className="font-medium text-slate-900">{getEventMonthLabel(event)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500">투어</p>
-                  <p className="font-medium text-slate-900">{event?.tour}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-slate-500">일정</p>
-                  <p className="font-medium text-slate-900">
-                    {formatDate(event?.dateStart)} ~ {formatDate(event?.dateEnd)}
-                  </p>
-                </div>
-                {event?.venue && (
-                  <div>
-                    <p className="text-xs text-slate-500">장소</p>
-                    <p className="font-medium text-slate-900 flex items-center gap-1">
-                      <MapPin className="w-4 h-4 text-slate-400" />
-                      {event.venue}
-                    </p>
-                  </div>
+          {/* ══ 우: 사이드바 ══ */}
+          <div className="space-y-5">
+            {/* 선수 정보 */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <h2 className="text-sm font-extrabold text-slate-900 mb-3 flex items-center gap-2">
+                <User className="w-4 h-4 text-emerald-500" /> 선수 정보
+              </h2>
+              <div className="flex items-center gap-3 mb-3">
+                {athlete?.profileImageUrl ? (
+                  <img src={athlete.profileImageUrl} alt="" className="w-14 h-14 rounded-full object-cover bg-slate-100" />
+                ) : (
+                  <span className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 text-lg font-extrabold inline-flex items-center justify-center">
+                    {athlete?.name?.charAt(0)}
+                  </span>
                 )}
-                {event?.broadcastEpisode && (
-                  <div>
-                    <p className="text-xs text-slate-500">방송 회차</p>
-                    <p className="font-medium text-slate-900">{event.broadcastEpisode}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="card p-4 sm:p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-emerald-600" />
-                관련 링크
-              </h3>
-              <div className="space-y-2">
-                {/* 경매 종료 후 계약 보러가기 버튼 */}
-                {auctionData.status === 'ENDED' && auctionData.contract?.id && (
-                  <Link
-                    to={`/contracts/${auctionData.contract.id}`}
-                    className="btn btn-primary w-full text-sm flex items-center justify-center gap-2"
-                  >
-                    <FileText className="w-4 h-4" />
-                    계약 보러가기
+                <div className="min-w-0">
+                  <Link to={`/athletes/${athlete?.id}`} className="block text-base font-extrabold text-slate-900 hover:text-emerald-600 truncate">
+                    {athlete?.name} 프로
                   </Link>
-                )}
-                <Link
-                  to="/auctions"
-                  className="btn btn-secondary w-full text-sm"
-                >
-                  다른 경매 보기
-                </Link>
-                <Link
-                  to="/inventory"
-                  className="btn btn-secondary w-full text-sm"
-                >
-                  슬롯 인벤토리
-                </Link>
+                  <span className="text-[11px] text-slate-400">{athlete?.tourQualification || athlete?.tour || ''}</span>
+                </div>
               </div>
+
+              {(athlete?.awards || athlete?.career || athlete?.affiliation) && (
+                <ul className="space-y-1.5 mb-3">
+                  {athlete?.awards && <AthleteFact icon="🏆" text={athlete.awards} />}
+                  {athlete?.career && <AthleteFact icon="⭐" text={athlete.career} />}
+                  {athlete?.affiliation && <AthleteFact icon="📍" text={athlete.affiliation} />}
+                </ul>
+              )}
+
+              {athlete?.kycStatus === 'APPROVED' && (
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold">
+                  <CheckCircle className="w-3 h-3" /> KYC 인증됨
+                </span>
+              )}
+            </div>
+
+            {/* 이벤트 정보 */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5">
+              <h2 className="text-sm font-extrabold text-slate-900 mb-3 flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-emerald-500" /> 이벤트 정보
+              </h2>
+              <dl className="space-y-2.5">
+                <SideRow label="이벤트" value={getEventMonthLabel(event)} />
+                <SideRow label="무대" value={event?.tour || '—'} />
+                <SideRow label="일정" value={event?.dateStart ? `${formatDate(event.dateStart)} ~ ${formatDate(event.dateEnd)}` : '—'} />
+                <SideRow label="경매 방식" value={isPublicAuction ? '공개 입찰' : '비공개 입찰'} />
+              </dl>
+            </div>
+
+            {/* 관련 정보 */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-2">
+              <SideLink to="/auctions" icon={<Gavel className="w-4 h-4" />} label="다른 경매 보기" />
+              <SideLink to={`/athletes/${athlete?.id}`} icon={<MapPin className="w-4 h-4" />} label="선수 인벤토리" />
+              <SideLink to="/athletes" icon={<User className="w-4 h-4" />} label="다른 선수 둘러보기" />
             </div>
           </div>
         </div>
@@ -876,4 +646,76 @@ function TrustItem({ icon, title, desc }: { icon: React.ReactNode; title: string
       </span>
     </div>
   );
+}
+
+/** 라벨 + 값 박스 (슬롯 규격·금액 지표 공용) */
+function SpecBox({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
+      <dt className="text-[10px] text-slate-400 mb-0.5">{label}</dt>
+      <dd className={`tabular-nums truncate ${strong ? 'text-base font-extrabold text-slate-900' : 'text-xs font-bold text-slate-800'}`}>
+        {value}
+      </dd>
+    </div>
+  );
+}
+
+/** 경쟁 지수 게이지 — 실제 입찰 수만으로 그린다 */
+function CompetitionGauge({ bidCount }: { bidCount: number }) {
+  const pct = Math.min(100, bidCount * 20); // 5건이면 가득
+  const label = bidCount === 0 ? '낮음' : bidCount < 5 ? '보통' : '높음';
+  const color = bidCount === 0 ? '#cbd5e1' : bidCount < 5 ? '#f59e0b' : '#ef4444';
+  const R = 38;
+  const C = 2 * Math.PI * R;
+  return (
+    <div className="relative w-[118px] h-[118px]">
+      <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+        <circle cx="50" cy="50" r={R} fill="none" stroke="#f1f5f9" strokeWidth="10" />
+        <circle cx="50" cy="50" r={R} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round"
+          strokeDasharray={`${(C * pct) / 100} ${C}`} />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-xl font-black text-slate-900 leading-none">{label}</span>
+        <span className="text-[10px] text-slate-400 mt-0.5">입찰 {bidCount}건</span>
+      </div>
+    </div>
+  );
+}
+
+/** 사이드바 라벨/값 행 */
+function SideRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <dt className="text-[11px] text-slate-400 shrink-0">{label}</dt>
+      <dd className="text-[11px] font-semibold text-slate-800 text-right break-keep">{value}</dd>
+    </div>
+  );
+}
+
+/** 사이드바 이동 링크 행 */
+function SideLink({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+  return (
+    <Link to={to} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
+      <span className="text-slate-400">{icon}</span>
+      <span className="text-xs font-semibold text-slate-700 flex-1">{label}</span>
+      <span className="text-slate-300">›</span>
+    </Link>
+  );
+}
+
+/** 선수 주요 정보 한 줄 (긴 문자열은 2줄까지) */
+function AthleteFact({ icon, text }: { icon: string; text: string }) {
+  return (
+    <li className="flex items-start gap-1.5">
+      <span className="text-[11px] shrink-0">{icon}</span>
+      <span className="text-[11px] text-slate-600 leading-relaxed break-keep line-clamp-2">{text}</span>
+    </li>
+  );
+}
+
+/** 입찰 브랜드명 마스킹 — 경매 중 신원 노출 방지 */
+function maskBrandName(name?: string) {
+  if (!name) return '브랜드';
+  if (name.length <= 2) return `${name.charAt(0)}*`;
+  return `${name.charAt(0)}${'*'.repeat(Math.max(1, name.length - 2))}${name.charAt(name.length - 1)}`;
 }
