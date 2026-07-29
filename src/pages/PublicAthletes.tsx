@@ -7,7 +7,7 @@
  * - 카드 클릭 → /athletes/:id 상세
  */
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Search, ChevronLeft, ChevronRight, Users, ExternalLink, Trophy } from 'lucide-react';
@@ -31,14 +31,34 @@ const SPORT_OPTIONS = [
 ];
 
 export default function PublicAthletes() {
-  const [q, setQ] = useState('');
-  const [tour, setTour] = useState('');
+  // 메인 히어로 검색창이 `/athletes?q=광주` 형태로 보내므로 주소의 검색어를 초기값으로 받는다
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [q, setQ] = useState(searchParams.get('q') || '');
+  const [tour, setTour] = useState(searchParams.get('tour') || '');
   const [sport, setSport] = useState('');
   const sliderRef = useRef<HTMLDivElement>(null);
   const newSliderRef = useRef<HTMLDivElement>(null);
   // 메인에서 '신규등록선수 > 전체보기'로 진입하면 추천 라인은 숨기고 신규부터 노출 (?filter=new)
-  const [searchParams] = useSearchParams();
   const onlyNew = searchParams.get('filter') === 'new';
+
+  // 뒤로가기·주소 직접 입력 등으로 주소의 검색어가 바뀌면 입력창도 따라간다
+  const urlQ = searchParams.get('q') || '';
+  useEffect(() => {
+    setQ((prev) => (prev === urlQ ? prev : urlQ));
+  }, [urlQ]);
+
+  // 입력한 검색어를 주소에도 남겨 새로고침·공유 시에도 결과가 유지되게 한다
+  useEffect(() => {
+    const cur = searchParams.get('q') || '';
+    if (cur === q) return;
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(searchParams);
+      if (q) next.set('q', q);
+      else next.delete('q');
+      setSearchParams(next, { replace: true });
+    }, 400);
+    return () => clearTimeout(t);
+  }, [q]);
 
   const { data: resp, isLoading } = useQuery({
     queryKey: ['public-athletes', q, tour, sport],
