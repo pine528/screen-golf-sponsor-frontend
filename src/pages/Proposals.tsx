@@ -10,6 +10,7 @@ import { api } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import LegalNotice from '../components/LegalNotice';
 import Breadcrumb from '../components/Breadcrumb';
+import PublicHeader from '../components/PublicHeader';
 
 const krw = (v: any) => (v == null ? '—' : `${Number(v).toLocaleString()}원`);
 const day = (d?: string) => (d ? new Date(d).toLocaleDateString('ko-KR') : '—');
@@ -47,6 +48,7 @@ function ProposalList() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <PublicHeader />
       <div className="max-w-4xl mx-auto px-5 sm:px-8 py-6">
         <Breadcrumb />
         <h1 className="text-2xl font-extrabold text-slate-900 mb-1 inline-flex items-center gap-2">

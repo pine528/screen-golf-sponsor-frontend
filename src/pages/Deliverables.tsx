@@ -13,6 +13,7 @@ import { ClipboardCheck, Upload, RefreshCw, AlertTriangle } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import Breadcrumb from '../components/Breadcrumb';
+import PublicHeader from '../components/PublicHeader';
 
 const STATUS: Record<string, { label: string; cls: string }> = {
   PENDING: { label: '예정', cls: 'bg-slate-100 text-slate-600' },
@@ -79,6 +80,7 @@ export default function Deliverables() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <PublicHeader />
       <div className="max-w-4xl mx-auto px-5 sm:px-8 py-6">
         <Breadcrumb />
         <h1 className="text-2xl font-extrabold text-slate-900 mb-1 inline-flex items-center gap-2">

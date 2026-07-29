@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import PublicHeader from '../components/PublicHeader';
+import Breadcrumb from '../components/Breadcrumb';
 import {
   Hexagon,
   ArrowRight,
@@ -137,36 +139,14 @@ export function HowItWorks() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/25">
-                <Hexagon className="w-5 h-5 text-white" strokeWidth={2.5} />
-              </div>
-              <span className="text-xl font-bold text-slate-900">SPONPIK</span>
-            </Link>
+      <PublicHeader fixed />
 
-            <div className="hidden md:flex items-center gap-8">
-              <Link to="/features" className="text-sm text-slate-600 hover:text-slate-900 transition-colors">기능</Link>
-              <Link to="/how-it-works" className="text-sm text-emerald-600 font-medium">이용방법</Link>
-              <Link to="/for-who" className="text-sm text-slate-600 hover:text-slate-900 transition-colors">대상</Link>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Link to="/login" className="px-5 py-2.5 text-slate-600 hover:text-slate-900 font-medium transition-colors">
-                로그인
-              </Link>
-              <Link to="/register" className="btn btn-primary">
-                시작하기
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <div className="max-w-7xl mx-auto px-6 pt-20">
+        <Breadcrumb className="mb-0" />
+      </div>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16 px-6">
+      <section className="pt-6 pb-16 px-6">
         <div className="max-w-7xl mx-auto text-center">
           <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium mb-6 border border-emerald-200">
             HOW IT WORKS

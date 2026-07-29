@@ -54,6 +54,7 @@ import { cn } from '../utils';
 import { api } from '../services/api';
 import LiveBadge from './LiveBadge';
 import Breadcrumb, { BreadcrumbProvider } from './Breadcrumb';
+import PublicHeader from './PublicHeader';
 
 interface LayoutProps {
   children: ReactNode;
@@ -510,33 +511,8 @@ export function Layout({ children }: LayoutProps) {
       </aside>
       )}
 
-      {/* Public Header - only show when not logged in */}
-      {!user && (
-        <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <Link to="/" className="flex items-center gap-3">
-                <img src="/logo-48.png" alt="SPONPIK" className="w-9 h-9 rounded-xl shadow-lg" />
-                <span className="font-bold text-slate-900 tracking-tight text-lg">SPONPIK</span>
-              </Link>
-              <div className="flex items-center gap-3">
-                <Link
-                  to="/login"
-                  className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
-                >
-                  로그인
-                </Link>
-                <Link
-                  to="/register"
-                  className="btn btn-primary text-sm px-4 py-2"
-                >
-                  시작하기
-                </Link>
-              </div>
-            </div>
-          </div>
-        </header>
-      )}
+      {/* 비로그인 상단 메뉴 — 메인과 동일한 메뉴바를 써서 어디서든 다른 메뉴로 이동할 수 있게 한다 */}
+      {!user && <PublicHeader />}
 
       {/* Main Content */}
       <main className={cn(

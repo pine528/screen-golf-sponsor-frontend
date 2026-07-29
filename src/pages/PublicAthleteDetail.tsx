@@ -27,6 +27,7 @@ import { useAuth } from '../hooks/useAuth';
 import LegalNotice from '../components/LegalNotice';
 import UnifiedPurchase from '../components/purchase/UnifiedPurchase';
 import Breadcrumb from '../components/Breadcrumb';
+import PublicHeader from '../components/PublicHeader';
 
 // 빈 값 → '-' 표기 헬퍼
 const dash = (v: any, suffix = ''): string => {
@@ -171,6 +172,7 @@ export default function PublicAthleteDetail() {
   return (
     /* pb-24: 모바일 하단 고정 구매바가 최하단 콘텐츠를 가리지 않도록 */
     <div className="min-h-screen bg-slate-50 pb-24 lg:pb-0">
+      <PublicHeader />
       <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-4">
         <Breadcrumb title={athlete?.name} className="mb-0" />
       </div>

@@ -10,6 +10,7 @@ import { api } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import LegalNotice from '../components/LegalNotice';
 import Breadcrumb from '../components/Breadcrumb';
+import PublicHeader from '../components/PublicHeader';
 
 const krw = (v: any) => (v ? `${Number(v).toLocaleString()}원` : '—');
 
@@ -109,6 +110,7 @@ export default function ProposalNew() {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-28">
+      <PublicHeader />
       <div className="max-w-3xl mx-auto px-5 sm:px-8 py-6">
         <Breadcrumb />
 

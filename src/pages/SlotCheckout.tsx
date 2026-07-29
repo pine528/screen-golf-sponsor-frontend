@@ -12,6 +12,7 @@ import { api } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import LegalNotice from '../components/LegalNotice';
 import Breadcrumb from '../components/Breadcrumb';
+import PublicHeader from '../components/PublicHeader';
 
 const krw = (v: any) => (v == null ? '—' : `${Number(v).toLocaleString()}원`);
 const fmtDate = (d?: string) => (d ? new Date(d).toLocaleDateString('ko-KR') : '—');
@@ -121,6 +122,7 @@ export default function SlotCheckout() {
 
   return (
     <div className="min-h-screen bg-slate-50 pb-16">
+      <PublicHeader />
       <div className="max-w-3xl mx-auto px-5 sm:px-8 py-6">
         <Breadcrumb />
         <button type="button" onClick={cancel} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 mb-4">

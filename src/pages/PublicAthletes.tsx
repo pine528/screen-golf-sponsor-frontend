@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Search, ChevronLeft, ChevronRight, Users, ExternalLink, Trophy } from 'lucide-react';
 import { api } from '../services/api';
 import Breadcrumb from '../components/Breadcrumb';
+import PublicHeader from '../components/PublicHeader';
 
 const TOUR_OPTIONS = [
   { value: '', label: '전체' },
@@ -63,6 +64,7 @@ export default function PublicAthletes() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <PublicHeader />
       {/* 헤더 */}
       <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white">
         {/* 상단 경로 표시 */}

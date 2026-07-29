@@ -3,8 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   ArrowRight,
-  Menu,
-  X,
   Users,
   Zap,
   Timer,
@@ -23,9 +21,9 @@ import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
 import { formatTimeRemaining } from '../utils';
 import { ServiceAnnouncementModal } from '../components/ServiceAnnouncementModal';
-import LiveBadge from '../components/LiveBadge';
 import LiveAuctionBoard from '../components/LiveAuctionBoard';
 import HomeVoteSection from '../components/HomeVoteSection';
+import PublicHeader from '../components/PublicHeader';
 
 /* useCounter 제거 — 개편 LEG-06: 하드코딩 실적 수치 대신 public-stats API 실데이터 사용 */
 
@@ -48,7 +46,6 @@ function useReveal() {
 /* ════════════════════════════════════════════════════════ */
 export function Home() {
   const { isAuthenticated } = useAuth();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   /* ── Data ── */
   const { data: liveAuctions } = useQuery({
@@ -135,86 +132,12 @@ export function Home() {
     return map[bp] || bp;
   };
 
-  const navLinks = [
-    { to: '/auctions', label: '라이브 경매', live: true },
-    { to: '/votes', label: '투표' },
-    { to: '/athletes', label: '선수' },
-    { to: '/how-it-works', label: '이용방법' },
-  ];
-
   return (
     <div className="min-h-screen bg-white text-slate-900 overflow-x-hidden">
       {/* SPONPIK 서비스 오픈 안내 모달 (홈 진입 시 자동 표시) */}
       <ServiceAnnouncementModal />
 
-      {/* ════════════════════════ NAV ════════════════════════ */}
-      <nav className="fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5">
-            <img src="/logo-48.png" alt="" className="w-8 h-8 rounded-xl" />
-            <span className="text-lg font-extrabold tracking-tight text-slate-900">SPONPIK</span>
-          </Link>
-
-          <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((l) => (
-              <Link key={l.to} to={l.to} className="px-3.5 py-2 text-[13px] font-medium rounded-lg transition-colors text-slate-500 hover:text-slate-900 hover:bg-slate-50 inline-flex items-center gap-1.5">
-                {l.label}
-                {l.live && <LiveBadge />}
-              </Link>
-            ))}
-            {isAuthenticated && (
-              <Link to="/dashboard" className="px-3.5 py-2 text-[13px] font-medium rounded-lg transition-colors text-slate-500 hover:text-slate-900 hover:bg-slate-50">
-                마이페이지
-              </Link>
-            )}
-          </div>
-
-          <div className="hidden sm:flex items-center gap-2">
-            {isAuthenticated ? (
-              <Link to="/dashboard" className="h-9 px-5 inline-flex items-center gap-2 rounded-lg bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors">
-                시작하기
-              </Link>
-            ) : (
-              <>
-                <Link to="/login" className="h-9 px-4 inline-flex items-center rounded-lg text-slate-600 text-sm font-medium hover:text-slate-900 hover:bg-slate-50 transition-colors">
-                  로그인
-                </Link>
-                <Link to="/register" className="h-9 px-5 inline-flex items-center rounded-lg bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors">
-                  시작하기
-                </Link>
-              </>
-            )}
-          </div>
-
-          <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 rounded-lg text-slate-500">
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-
-        {mobileOpen && (
-          <div className="md:hidden bg-white border-t border-slate-100 px-5 pb-4 pt-2 space-y-1">
-            {navLinks.map((l) => (
-              <Link key={l.to} to={l.to} onClick={() => setMobileOpen(false)} className="flex items-center gap-1.5 px-3 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg">
-                {l.label}
-                {l.live && <LiveBadge />}
-              </Link>
-            ))}
-            {isAuthenticated && (
-              <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="block px-3 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg">마이페이지</Link>
-            )}
-            <div className="pt-3 mt-2 border-t border-slate-100 flex gap-2">
-              {isAuthenticated ? (
-                <Link to="/dashboard" className="flex-1 h-10 inline-flex items-center justify-center rounded-lg bg-emerald-500 text-white text-sm font-semibold" onClick={() => setMobileOpen(false)}>시작하기</Link>
-              ) : (
-                <>
-                  <Link to="/login" className="flex-1 h-10 inline-flex items-center justify-center rounded-lg border border-slate-200 text-slate-700 text-sm font-semibold" onClick={() => setMobileOpen(false)}>로그인</Link>
-                  <Link to="/register" className="flex-1 h-10 inline-flex items-center justify-center rounded-lg bg-emerald-500 text-white text-sm font-semibold" onClick={() => setMobileOpen(false)}>시작하기</Link>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </nav>
+      <PublicHeader fixed />
 
       {/* ════════════════════════ HERO ════════════════════════ */}
       <section className="relative pt-32 sm:pt-36 pb-4 sm:pb-5 px-5 bg-gradient-to-b from-slate-50 to-white overflow-hidden">

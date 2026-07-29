@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { BookOpen, Users, Gavel, FileText, Wallet, Vote, Gift } from 'lucide-react';
 import Breadcrumb from '../components/Breadcrumb';
+import PublicHeader from '../components/PublicHeader';
 
 export default function Guide() {
   const sections = [
@@ -67,6 +68,7 @@ export default function Guide() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <PublicHeader />
       <div className="max-w-4xl mx-auto px-4 py-12">
         <Breadcrumb />
 
