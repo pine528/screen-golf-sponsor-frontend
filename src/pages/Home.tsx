@@ -51,7 +51,8 @@ export function Home() {
   const { data: liveAuctions } = useQuery({
     queryKey: ['home-auctions'],
     queryFn: async () => {
-      const r = await api.getAuctions({ status: 'LIVE', pageSize: 30 });
+      // 파라미터 이름은 limit (pageSize는 무시되어 기본 20건에서 잘렸었다)
+      const r = await api.getAuctions({ status: 'LIVE', limit: 100 });
       return (r.data || [])
         // 메인은 추천 선수 경매만 노출 (운영 지정)
         .filter((a: any) => a.slotInstance?.athlete?.isRecommended)
@@ -277,7 +278,8 @@ export function Home() {
               <button onClick={() => scrollCarousel('right')} className="hidden sm:flex w-9 h-9 items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50 transition-colors text-slate-400">
                 <ChevronRight className="w-4 h-4" />
               </button>
-              <Link to="/auctions" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1 transition-colors ml-2">
+              {/* 경매뿐 아니라 바로구매·협의 슬롯까지 함께 보는 목록으로 이동 */}
+              <Link to="/slots" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1 transition-colors ml-2">
                 전체보기 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>

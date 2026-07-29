@@ -102,6 +102,7 @@ import MiniStoreProduct from './pages/store/MiniStoreProduct';
 import MiniStoreCheckout from './pages/store/MiniStoreCheckout';
 import { ShortLinkRedirect } from './pages/ShortLinkRedirect';
 import PublicAthletes from './pages/PublicAthletes';
+import SponsorshipSlots from './pages/SponsorshipSlots';
 import PublicAthleteDetail from './pages/PublicAthleteDetail';
 import SlotCheckout from './pages/SlotCheckout';
 import ProposalNew from './pages/ProposalNew';
@@ -238,6 +239,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/slots" element={<SponsorshipSlots />} />
       <Route path="/auctions" element={<Auctions />} />
       <Route path="/auctions/:id" element={<AuctionDetail />} />
       <Route path="/inventory" element={<Inventory />} />

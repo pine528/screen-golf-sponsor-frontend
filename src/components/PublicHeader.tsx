@@ -12,6 +12,7 @@ import LiveBadge from './LiveBadge';
 
 const NAV_LINKS = [
   { to: '/auctions', label: '라이브 경매', live: true },
+  { to: '/slots', label: '스폰서십 슬롯' },
   { to: '/votes', label: '투표' },
   { to: '/athletes', label: '선수' },
   { to: '/how-it-works', label: '이용방법' },
