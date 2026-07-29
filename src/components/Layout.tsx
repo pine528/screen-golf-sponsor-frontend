@@ -52,6 +52,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { cn } from '../utils';
 import { api } from '../services/api';
+import LiveBadge from './LiveBadge';
 
 interface LayoutProps {
   children: ReactNode;
@@ -177,7 +178,7 @@ export function Layout({ children }: LayoutProps) {
   const brandNavItems = [
     { path: '/dashboard', label: '대시보드', icon: Home },
     { path: '/inventory', label: '인벤토리', icon: Calendar },
-    { path: '/auctions', label: '경매', icon: Gavel },
+    { path: '/auctions', label: '라이브 경매', icon: Gavel, live: true },
     { path: '/contracts', label: '계약 관리', icon: FileText },
     { path: '/brand/wallet', label: '지갑', icon: Wallet },
     { path: '/brand/billing', label: '청구/명세서', icon: Receipt },
@@ -581,6 +582,7 @@ function NavSections({ items, isActive, onClick }: {
       >
         <Icon className={cn('w-5 h-5', active ? 'text-emerald-600' : 'text-slate-400 group-hover:text-slate-600')} />
         {item.label.replace(/^🔥\s*/, '')}
+        {item.live && <LiveBadge />}
         {active && <ChevronRight className="w-4 h-4 ml-auto text-emerald-600" />}
       </Link>
     );

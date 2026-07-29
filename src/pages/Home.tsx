@@ -25,6 +25,7 @@ import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
 import { formatTimeRemaining } from '../utils';
 import { ServiceAnnouncementModal } from '../components/ServiceAnnouncementModal';
+import LiveBadge from '../components/LiveBadge';
 
 /* useCounter 제거 — 개편 LEG-06: 하드코딩 실적 수치 대신 public-stats API 실데이터 사용 */
 
@@ -709,16 +710,6 @@ export function Home() {
 /* ── 2026-07 항목2: 메인 추천/신규 선수 롤링 섹션 ──
  * 좌: 추천(운영 지정, recommendOrder 순) / 우: 신규(가입 60일 이내, 최신순)
  * 각 3명씩 표시, 4.5초마다 다음 3명으로 자동 롤링 */
-/** 메뉴의 라이브 경매 표시 뱃지 */
-function LiveBadge() {
-  return (
-    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-rose-50 text-rose-600 text-[10px] font-extrabold leading-none tracking-wide">
-      <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-      LIVE
-    </span>
-  );
-}
-
 function RecommendedNewAthletes({ athletes }: { athletes: any[] }) {
   const rec = athletes
     .filter((a) => a.isRecommended)

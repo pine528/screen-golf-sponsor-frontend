@@ -14,6 +14,7 @@ import {
 } from '../utils';
 import { getEventMonthLabel } from '../utils/eventMonth';
 import LegalNotice from '../components/LegalNotice';
+import LiveBadge from '../components/LiveBadge';
 
 // 남은 시간 표시 (초 단위)
 function formatRemainingSeconds(seconds: number): string {
@@ -203,7 +204,9 @@ export function Auctions() {
       <div className="space-y-4 sm:space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900">경매</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 inline-flex items-center gap-2">
+              라이브 경매 <LiveBadge />
+            </h1>
             <p className="text-sm sm:text-base text-slate-600 mt-1">
               {statusFilter === 'LIVE'
                 ? '실시간 경매에 참여하세요 (3초 간격 자동 갱신)'
