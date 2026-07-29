@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   ArrowRight,
-  Clock,
   Menu,
   X,
   Users,
@@ -19,7 +18,6 @@ import {
   FileCheck,
   Upload,
   Diamond,
-  CheckCircle2,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
@@ -27,6 +25,7 @@ import { formatTimeRemaining } from '../utils';
 import { ServiceAnnouncementModal } from '../components/ServiceAnnouncementModal';
 import LiveBadge from '../components/LiveBadge';
 import LiveAuctionBoard from '../components/LiveAuctionBoard';
+import HomeVoteSection from '../components/HomeVoteSection';
 
 /* useCounter 제거 — 개편 LEG-06: 하드코딩 실적 수치 대신 public-stats API 실데이터 사용 */
 
@@ -52,22 +51,6 @@ export function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   /* ── Data ── */
-  const { data: activeVotes } = useQuery({
-    queryKey: ['home-votes'],
-    queryFn: async () => {
-      const r = await api.getVotes({ status: 'OPEN', pageSize: 4 });
-      return (r.data || []).map((v: any) => ({
-        id: v.id,
-        title: v.title,
-        creatorRole: v.creatorRole as string,
-        participants: v._count?.participations ?? 0,
-        endAt: v.closeAt,
-        rewardBudgetEp: v.rewardBudgetEp,
-      })).sort((a: any, b: any) => +new Date(a.endAt) - +new Date(b.endAt));
-    },
-    staleTime: 60_000,
-  });
-
   const { data: liveAuctions } = useQuery({
     queryKey: ['home-auctions'],
     queryFn: async () => {
@@ -535,40 +518,7 @@ export function Home() {
       </section>
 
       {/* ════════════════════════ 진행 중인 투표 ════════════════════════ */}
-      <section className="py-12 sm:py-16 px-5 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-              <span className="text-emerald-500">*</span> 진행 중인 투표
-            </h2>
-            <Link to="/votes" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1 transition-colors">
-              전체보기 <ChevronRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          {activeVotes && activeVotes.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {activeVotes.slice(0, 4).map((v: any) => (
-                <Link key={v.id} to={`/votes/${v.id}`} className="group">
-                  <div className="bg-white border border-slate-200 rounded-2xl p-5 hover:border-emerald-300 hover:shadow-lg transition-all duration-300">
-                    <p className="text-sm font-bold text-slate-900 mb-3 truncate">{v.title}</p>
-                    <div className="flex items-center gap-3 text-xs text-slate-400">
-                      <span className="flex items-center gap-1"><Users className="w-3 h-3" />{v.participants}명</span>
-                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{formatTimeRemaining(v.endAt)}</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16 bg-slate-50 rounded-2xl border border-slate-200">
-              <CheckCircle2 className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-500 font-medium">현재 진행 중인 투표가 없습니다</p>
-              <p className="text-slate-400 text-sm mt-1">곧 새로운 투표가 시작됩니다</p>
-            </div>
-          )}
-        </div>
-      </section>
+      <HomeVoteSection />
 
       {/* ════════════════════════ 왜 SPONPIK인가요? ════════════════════════ */}
       <section ref={r1.ref} className={`py-16 sm:py-24 px-5 bg-white transition-all duration-700 ${r1.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
