@@ -81,12 +81,13 @@ export default function HomeVoteSection() {
   if (open.length === 0 && settled.length === 0) return null;
 
   return (
-    /* 폭은 히어로·다른 섹션과 동일하게 px-5(바깥) → max-w-7xl(안쪽) 순서 */
+    /* 폭·들여쓰기를 슬롯 섹션과 동일하게 — 바깥 테두리 카드로 감싸지 않고 내용이 바로 놓인다.
+       (감싸면 안쪽 padding만큼 제목·카드가 더 들어가 위 섹션과 끝선이 어긋난다) */
     <section className="px-5 pt-2 pb-10">
-      <div className="max-w-7xl mx-auto rounded-3xl border border-slate-200 bg-white p-5 sm:p-7">
+      <div className="max-w-7xl mx-auto">
         {/* 헤더 */}
         <div className="flex items-start justify-between gap-3 mb-1">
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 inline-flex items-center gap-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 inline-flex items-center gap-2">
             진행 중인 투표
             <span title="팬 투표는 선수의 노출 기회와 후원 논의에 참고 자료로 활용됩니다.">
               <Info className="w-4 h-4 text-slate-300" />
