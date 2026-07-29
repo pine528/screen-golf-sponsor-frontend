@@ -605,16 +605,47 @@ function HeroStat({ label, value, sub, icon }: { label: string; value: string; s
  * 이미지가 없으면 아래 벡터 도형으로 자동 대체되므로 순서대로 채워 넣어도 된다.
  */
 const SLOT_IMAGES: Record<string, string> = {
-  // 예: CAP_FRONT: '/slots/cap-front.png',
+  CAP_FRONT: '/slots/cap-front.png',
+  CAP_BRIM_TOP: '/slots/cap-front.png',
+  CAP_SIDE_L: '/slots/cap-side.png',
+  CAP_SIDE_R: '/slots/cap-side.png',
+  CAP_BACK: '/slots/cap-back.png',
+  COLLAR_L: '/slots/top-front.png',
+  COLLAR_R: '/slots/top-front.png',
+  CHEST_L: '/slots/top-front.png',
+  CHEST_R: '/slots/top-front.png',
+  SLEEVE_L: '/slots/top-front.png',
+  SLEEVE_R: '/slots/top-front.png',
+  SHOULDER_LINE_L: '/slots/top-front.png',
+  SHOULDER_LINE_R: '/slots/top-front.png',
+  BACK_SHOULDER_L: '/slots/top-back.png',
+  BACK_SHOULDER_R: '/slots/top-back.png',
+  PANTS_HIP_SIDE_FACING: '/slots/pants-side.png',
+  PANTS_THIGH_SIDE_FACING: '/slots/pants-side.png',
 };
 
-/** 이미지를 쓸 때 슬롯 표시 위치 (이미지 기준 %, [left, top, width, height]) */
+/**
+ * 이미지 위 슬롯 표시 위치 (이미지 기준 %, [중심 left, 중심 top, 너비, 높이])
+ * 좌/우는 보는 사람 기준으로 배치한다.
+ */
 const SLOT_IMAGE_MARKS: Record<string, [number, number, number, number]> = {
-  CAP_FRONT: [50, 46, 26, 14],
-  CAP_BRIM_TOP: [50, 74, 30, 8],
-  CAP_SIDE_L: [30, 50, 16, 12],
-  CAP_SIDE_R: [70, 50, 16, 12],
-  CAP_BACK: [50, 40, 22, 12],
+  CAP_FRONT: [50, 42, 26, 15],
+  CAP_BRIM_TOP: [50, 68, 34, 9],
+  CAP_SIDE_L: [58, 40, 20, 14],
+  CAP_SIDE_R: [58, 40, 20, 14],
+  CAP_BACK: [50, 40, 24, 14],
+  COLLAR_L: [43, 12, 9, 6],
+  COLLAR_R: [57, 12, 9, 6],
+  SHOULDER_LINE_L: [30, 20, 16, 6],
+  SHOULDER_LINE_R: [70, 20, 16, 6],
+  CHEST_L: [35, 33, 16, 11],
+  CHEST_R: [65, 33, 16, 11],
+  SLEEVE_L: [17, 33, 12, 9],
+  SLEEVE_R: [83, 33, 12, 9],
+  BACK_SHOULDER_L: [36, 22, 15, 8],
+  BACK_SHOULDER_R: [64, 22, 15, 8],
+  PANTS_HIP_SIDE_FACING: [52, 30, 18, 11],
+  PANTS_THIGH_SIDE_FACING: [52, 52, 16, 13],
 };
 
 /**
@@ -625,9 +656,14 @@ function SlotShape({ code }: { code?: string }) {
   const isCap = c.startsWith('CAP');
   const isPants = c.startsWith('PANTS');
 
-  const img = SLOT_IMAGES[c];
+  // 구버전·미등록 코드도 부위로 판별해 해당 착장 이미지를 쓴다 (예: CAP_F → 모자 정면)
+  const img =
+    SLOT_IMAGES[c] ||
+    (isCap ? '/slots/cap-front.png' : isPants ? '/slots/pants-side.png' : '/slots/top-front.png');
   if (img) {
-    const [left, top, w, h] = SLOT_IMAGE_MARKS[c] || [50, 50, 24, 14];
+    const [left, top, w, h] =
+      SLOT_IMAGE_MARKS[c] ||
+      (isCap ? SLOT_IMAGE_MARKS.CAP_FRONT : isPants ? SLOT_IMAGE_MARKS.PANTS_THIGH_SIDE_FACING : SLOT_IMAGE_MARKS.CHEST_L);
     return (
       <div className="relative w-full max-w-[190px]">
         <img src={img} alt="착장 위치" className="w-full h-auto select-none" draggable={false} />
