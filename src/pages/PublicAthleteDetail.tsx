@@ -112,14 +112,22 @@ export default function PublicAthleteDetail() {
     });
   }, [slotInstances]);
 
+  // 아래 '진행 중인 경매' 섹션은 경매 슬롯만 다룬다.
+  // 바로 구매·협의 슬롯은 위 통합 구매화면에서 처리하므로 여기서 반복하지 않는다
+  // (슬롯이 많은 선수에서 같은 목록이 두 번 나와 페이지가 과하게 길어지던 문제)
+  const auctionSlots = useMemo(
+    () => orderedSlots.filter((s) => s.auction && ['LIVE', 'SCHEDULED'].includes(s.auction.status)),
+    [orderedSlots]
+  );
+
   const [selectedSlotId, setSelectedSlotId] = useState<string | undefined>(undefined);
 
-  // 슬롯 로드되면 첫 슬롯 자동 선택
+  // 경매 슬롯이 로드되면 첫 슬롯 자동 선택
   useEffect(() => {
-    if (orderedSlots.length > 0 && !selectedSlotId) {
-      setSelectedSlotId(orderedSlots[0].id);
+    if (auctionSlots.length > 0 && !auctionSlots.some((s) => s.id === selectedSlotId)) {
+      setSelectedSlotId(auctionSlots[0].id);
     }
-  }, [orderedSlots, selectedSlotId]);
+  }, [auctionSlots, selectedSlotId]);
 
   // docx §13 화면명 'selectedAthlete? > ROI 대시보드' — 브라우저 페이지 타이틀 동기화
   const athleteName = (resp?.data as any)?.athlete?.name;
@@ -133,7 +141,7 @@ export default function PublicAthleteDetail() {
     };
   }, [athleteName]);
 
-  const selectedSlot = orderedSlots.find((s) => s.id === selectedSlotId) || orderedSlots[0];
+  const selectedSlot = auctionSlots.find((s) => s.id === selectedSlotId) || auctionSlots[0];
   const auction = selectedSlot?.auction;
 
   // WebSocket 실시간 (3-3)
@@ -187,27 +195,22 @@ export default function PublicAthleteDetail() {
         onLogin={() => navigate('/login')}
       />
 
+      {auctionSlots.length > 0 && (
       <section data-section="slots" className="max-w-6xl mx-auto px-5 sm:px-8 py-8">
-        <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
+        <h2 className="text-xl font-extrabold text-slate-900 mb-1 inline-flex items-center gap-2">
           <Gavel className="w-5 h-5 text-emerald-500" />
-          슬롯별 경매 현황
-          {orderedSlots.length > 0 && (
-            <span className="text-sm font-semibold text-slate-500">({orderedSlots.length}개)</span>
-          )}
+          진행 중인 경매
+          <span className="text-sm font-semibold text-slate-500">({auctionSlots.length}개)</span>
         </h2>
+        <p className="text-sm text-slate-500 mb-4 break-keep">
+          바로 구매·협의 슬롯은 위 “진행중인 스폰서십 슬롯”에서 확인하실 수 있습니다.
+        </p>
 
-        {orderedSlots.length === 0 ? (
-          /* 슬롯 0개 케이스 (3-2 예외 처리) */
-          <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center">
-            <Gavel className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-base font-bold text-slate-900 mb-1">현재 진행 중인 슬롯이 없습니다</h3>
-            <p className="text-sm text-slate-500">{athlete.name} 선수의 슬롯이 등록되면 여기에 표시됩니다.</p>
-          </div>
-        ) : (
+        {(
           <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4">
-            {/* 좌측: 슬롯 목록 (동적 생성, 클릭 변경) */}
-            <div className="space-y-2">
-              {orderedSlots.map((s, i) => (
+            {/* 좌측: 경매 슬롯 목록 — 많아지면 이 영역만 스크롤되어 페이지가 길어지지 않는다 */}
+            <div className="space-y-2 lg:max-h-[520px] lg:overflow-y-auto lg:pr-1">
+              {auctionSlots.map((s, i) => (
                 <SlotCard
                   key={s.id}
                   slot={s}
@@ -237,6 +240,7 @@ export default function PublicAthleteDetail() {
         {/* 권리관계 고정 안내문 (개편 LEG-04) */}
         <LegalNotice className="mt-4" />
       </section>
+      )}
 
       {/* ROI 대시보드 풀 섹션 (docx §13 화면명: 선수 상세 > ROI 대시보드) */}
       <section data-section="roi" className="max-w-6xl mx-auto px-5 sm:px-8 pb-6">
