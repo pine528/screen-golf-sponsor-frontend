@@ -527,12 +527,14 @@ function SlotCard({ row, slotCount }: { row: SlotRow; slotCount: number }) {
       to={row.athleteId ? `/athletes/${row.athleteId}` : to}
       className="group flex flex-col rounded-2xl border border-slate-200 bg-white overflow-hidden hover:border-emerald-300 hover:shadow-sm transition-all"
     >
-      <div className="relative h-44 bg-slate-100 overflow-hidden">
+      {/* 세로로 긴 인물 사진이라 가운데를 기준으로 자르면 얼굴이 잘린다.
+          카드 폭 대비 7:5 비율에 위에서 8% 지점을 기준으로 잡아야 얼굴이 온전히 들어온다. */}
+      <div className="relative aspect-[7/5] bg-slate-100 overflow-hidden">
         {row.photo ? (
           <img
             src={row.photo}
             alt={row.athleteName}
-            className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+            className="w-full h-full object-cover object-[50%_8%] group-hover:scale-[1.03] transition-transform duration-300"
             loading="lazy"
           />
         ) : (
