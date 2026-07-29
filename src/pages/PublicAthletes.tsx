@@ -48,8 +48,12 @@ export default function PublicAthletes() {
   const total = resp?.data?.total || 0;
 
   const scrollBy = (ref: React.RefObject<HTMLDivElement>, dir: 'left' | 'right') => {
-    if (!ref.current) return;
-    ref.current.scrollBy({ left: dir === 'left' ? -400 : 400, behavior: 'smooth' });
+    const el = ref.current;
+    if (!el) return;
+    // 카드 폭이 화면 폭에 따라 달라지므로 실제 카드 하나 + 간격(gap-4 = 16px)만큼 이동한다
+    const card = el.firstElementChild as HTMLElement | null;
+    const step = card ? card.getBoundingClientRect().width + 16 : 400;
+    el.scrollBy({ left: dir === 'left' ? -step : step, behavior: 'smooth' });
   };
   const scroll = (dir: 'left' | 'right') => scrollBy(sliderRef, dir);
 
@@ -254,7 +258,9 @@ function FeaturedCard({ athlete }: { athlete: any }) {
   return (
     <Link
       to={`/athletes/${athlete.id}`}
-      className="group flex-shrink-0 w-[260px] sm:w-[280px] snap-start bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-300 hover:shadow-xl transition-all"
+      /* 카드 폭을 컨테이너 폭에서 나눠 잡아 화면 크기와 무관하게 정해진 개수(lg 4개)만 보이게 한다.
+         고정 폭이면 화면 폭에 따라 마지막 카드가 잘려 보인다. gap-4 = 16px */
+      className="group flex-shrink-0 snap-start bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-300 hover:shadow-xl transition-all w-[calc((100%-16px)/2)] sm:w-[calc((100%-32px)/3)] lg:w-[calc((100%-48px)/4)]"
     >
       <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
         {athlete.profileImageUrl ? (

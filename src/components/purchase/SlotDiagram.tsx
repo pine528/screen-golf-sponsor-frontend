@@ -49,37 +49,9 @@ export default function SlotDiagram({
     <div>
       <div className="relative w-full max-w-[320px] mx-auto aspect-[3/4] rounded-2xl bg-white border border-slate-200 overflow-hidden">
         <svg viewBox="0 0 75 100" className="w-full h-full" role="img" aria-label="선수 착장 슬롯 도식">
-          <defs>
-            <linearGradient id="sp-body" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#f8fafc" />
-              <stop offset="100%" stopColor="#e8edf3" />
-            </linearGradient>
-          </defs>
-
-          {/* 모자 크라운 / 챙 */}
-          <path d="M28.5 14 Q37.5 -4 46.5 14 Z" fill="#cbd5e1" />
-          <rect x="24.75" y="13.5" width="25.5" height="3.5" rx="1.75" fill="#94a3b8" />
-          {/* 머리 · 목 */}
-          <ellipse cx="37.5" cy="19" rx="6.75" ry="8.5" fill="#e2e8f0" />
-          <rect x="34.875" y="25" width="5.25" height="4.5" fill="#dbe2ea" />
-          {/* 상의(소매 포함) */}
-          <path
-            d="M37.5 27 L27 29 L20.25 31 L14.25 44 L21.75 46 L24 36 L23.25 57 L51.75 57 L51 36 L53.25 46 L60.75 44 L54.75 31 L48 29 Z"
-            fill="url(#sp-body)"
-            stroke="#cbd5e1"
-            strokeWidth="0.5"
-            strokeLinejoin="round"
-          />
-          {/* 카라 */}
-          <path d="M34.875 27 L37.5 33 L40.125 27 Z" fill="#cbd5e1" />
-          {/* 하의 */}
-          <path
-            d="M23.25 57 L23.25 96 L32.5 96 L36 72 L39 72 L42.5 96 L51.75 96 L51.75 57 Z"
-            fill="#e8edf3"
-            stroke="#cbd5e1"
-            strokeWidth="0.5"
-            strokeLinejoin="round"
-          />
+          {/* 착장 도식 — 3:4 비율 이미지라 viewBox를 그대로 채운다.
+              마커 좌표는 이 이미지 기준으로 측정한 값(slot-display-coords.ts)과 짝을 이룬다. */}
+          <image href="/slots/figure-front.png" x="0" y="0" width="75" height="100" preserveAspectRatio="xMidYMid meet" />
 
           {/* 슬롯 마커 */}
           {placed.map((s) => {

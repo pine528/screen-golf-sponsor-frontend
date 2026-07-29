@@ -173,7 +173,7 @@ export default function PublicAthleteDetail() {
     /* pb-24: 모바일 하단 고정 구매바가 최하단 콘텐츠를 가리지 않도록 */
     <div className="min-h-screen bg-slate-50 pb-24 lg:pb-0">
       <PublicHeader />
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4">
         <Breadcrumb title={athlete?.name} className="mb-0" />
       </div>
       {/* === A. 선수 프로필 상단 (2026-07 개편: 좌 프로필/온도 · 중 기본정보/활동/성적 · 우 지수/SNS) === */}
@@ -202,14 +202,14 @@ export default function PublicAthleteDetail() {
       />
 
       {auctionSlots.length > 0 && (
-      <section data-section="slots" className="max-w-6xl mx-auto px-5 sm:px-8 py-8">
+      <section data-section="slots" className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <h2 className="text-xl font-extrabold text-slate-900 mb-1 inline-flex items-center gap-2">
           <Gavel className="w-5 h-5 text-emerald-500" />
           진행 중인 경매
           <span className="text-sm font-semibold text-slate-500">({auctionSlots.length}개)</span>
         </h2>
         <p className="text-sm text-slate-500 mb-4 break-keep">
-          바로 구매·협의 슬롯은 위 “진행중인 스폰서십 슬롯”에서 확인하실 수 있습니다.
+          바로 구매·협의 슬롯은 위 “{athlete?.name ? `${athlete.name}'s 스폰서십 슬롯` : '진행중인 스폰서십 슬롯'}”에서 확인하실 수 있습니다.
         </p>
 
         {(
@@ -249,7 +249,7 @@ export default function PublicAthleteDetail() {
       )}
 
       {/* ROI 대시보드 풀 섹션 (docx §13 화면명: 선수 상세 > ROI 대시보드) */}
-      <section data-section="roi" className="max-w-6xl mx-auto px-5 sm:px-8 pb-6">
+      <section data-section="roi" className="max-w-7xl mx-auto px-4 sm:px-6 pb-6">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xl font-extrabold text-slate-900 inline-flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-emerald-500" /> ROI 대시보드
@@ -264,7 +264,7 @@ export default function PublicAthleteDetail() {
       </section>
 
       {/* === E. 운영 현황 (docx §8 — 슬롯 / 최근 대회 / 예정 대회) === */}
-      <section data-section="profile-detail" className="max-w-6xl mx-auto px-5 sm:px-8 pb-12">
+      <section data-section="profile-detail" className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
         <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
           <Gavel className="w-5 h-5 text-emerald-500" />
           운영 현황
@@ -389,7 +389,7 @@ export default function PublicAthleteDetail() {
       </section>
 
       {/* 경기결과 + 메인 스폰서 (별도 행) */}
-      <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* === F. 경기결과 / 분석 (docx §9) === */}
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5">
@@ -1650,7 +1650,7 @@ function _ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC'
   if (!roi) return null;
   const isExtended = viewMode === 'EXTENDED';
   return (
-    <section className="max-w-6xl mx-auto px-5 sm:px-8 pb-12">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
       {/* docx §10 G. '점수 산정 기준 안내' 정확 영역명 + G-3 '데이터 출처' */}
       <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
         <Trophy className="w-5 h-5 text-emerald-500" />

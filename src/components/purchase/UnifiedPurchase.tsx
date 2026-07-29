@@ -168,10 +168,11 @@ export default function UnifiedPurchase({
   const ctaDisabled = !selected || !selectable(selected) || buyNowMut.isPending;
 
   return (
-    <section data-section="purchase" className="max-w-6xl mx-auto px-5 sm:px-8 py-8">
+    /* 폭·좌우 여백은 선수 상세의 히어로 및 다른 섹션과 동일하게 맞춘다 */
+    <section data-section="purchase" className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
       <h2 className="text-xl font-extrabold text-slate-900 mb-1 inline-flex items-center gap-2">
         <Gavel className="w-5 h-5 text-emerald-500" />
-        진행중인 스폰서십 슬롯
+        {athlete?.name ? `${athlete.name}'s 스폰서십 슬롯` : '진행중인 스폰서십 슬롯'}
         {periodSlots.length > 0 && <span className="text-sm font-semibold text-slate-500">({periodSlots.length}개)</span>}
       </h2>
       <p className="text-sm text-slate-500 mb-4 break-keep">
