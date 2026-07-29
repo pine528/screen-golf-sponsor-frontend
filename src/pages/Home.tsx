@@ -280,45 +280,49 @@ export function Home() {
                 한 화면에서 비교하고 계약하는 스포츠 후원 플랫폼.
               </p>
 
-              {/* 주요 CTA (개편 §7.1 — 경매 둘러보기는 메인 버튼에서 제외) */}
-              <div className="flex flex-wrap gap-2.5 sm:gap-3 mt-10 lg:mt-0 mb-4">
-                <Link to="/athletes"
-                  className="h-11 px-6 inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20">
-                  후원 가능한 선수 찾기 <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link to={isAuthenticated ? '/dashboard' : '/register'}
-                  className="h-11 px-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors">
-                  {isAuthenticated ? '내 대시보드' : '브랜드로 시작하기'}
-                </Link>
-              </div>
-              {/* 보조 CTA */}
-              {!isAuthenticated && (
-                <div className="flex flex-wrap gap-x-4 gap-y-1 mb-8 lg:mb-10">
-                  <Link to="/register" className="text-xs font-semibold text-slate-500 hover:text-emerald-600 underline-offset-2 hover:underline">
-                    선수로 등록하기
+              {/* CTA + 검색 (개편 §7.1/§7.2)
+                  버튼 4개를 같은 크기 2열 그리드로 두고, 검색창도 같은 폭에 맞춘다 */}
+              <div className="mt-10 lg:mt-0 mb-10 lg:mb-12 w-full max-w-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
+                  <Link to="/athletes"
+                    className="h-11 px-4 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20">
+                    후원 가능한 선수 찾기 <ArrowRight className="w-4 h-4 shrink-0" />
                   </Link>
-                  <Link to="/register" className="text-xs font-semibold text-slate-500 hover:text-emerald-600 underline-offset-2 hover:underline">
-                    팬으로 가입하기
+                  <Link to={isAuthenticated ? '/dashboard' : '/register'}
+                    className="h-11 px-4 inline-flex items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors">
+                    {isAuthenticated ? '내 대시보드' : '브랜드로 시작하기'}
                   </Link>
-                </div>
-              )}
 
-              {/* 통합 검색 (개편 §7.2 — 선수명·예산·목적 → 맞춤 선수 찾기) */}
-              <form
-                onSubmit={(e) => { e.preventDefault(); const q = heroSearch.trim(); navigate(`/athletes${q ? `?q=${encodeURIComponent(q)}` : ''}`); }}
-                className="hidden sm:flex items-center gap-2 mb-10 lg:mb-12 max-w-lg bg-white border border-slate-200 rounded-2xl p-1.5 shadow-sm"
-              >
-                <input
-                  type="text"
-                  value={heroSearch}
-                  onChange={(e) => setHeroSearch(e.target.value)}
-                  placeholder="선수명·투어·지역으로 검색"
-                  className="flex-1 min-w-0 px-3 py-2 text-sm bg-transparent focus:outline-none"
-                />
-                <button type="submit" className="h-9 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold whitespace-nowrap transition-colors">
-                  맞춤 선수 찾기
-                </button>
-              </form>
+                  {!isAuthenticated && (
+                    <>
+                      <Link to="/register"
+                        className="h-11 px-4 inline-flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:border-slate-400 hover:text-slate-900 transition-colors">
+                        선수로 등록하기
+                      </Link>
+                      <Link to="/register"
+                        className="h-11 px-4 inline-flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:border-slate-400 hover:text-slate-900 transition-colors">
+                        팬으로 가입하기
+                      </Link>
+                    </>
+                  )}
+                </div>
+
+                <form
+                  onSubmit={(e) => { e.preventDefault(); const q = heroSearch.trim(); navigate(`/athletes${q ? `?q=${encodeURIComponent(q)}` : ''}`); }}
+                  className="hidden sm:flex items-center gap-2 mt-3 w-full bg-white border border-slate-200 rounded-2xl p-1.5 shadow-sm"
+                >
+                  <input
+                    type="text"
+                    value={heroSearch}
+                    onChange={(e) => setHeroSearch(e.target.value)}
+                    placeholder="선수명·투어·지역으로 검색"
+                    className="flex-1 min-w-0 px-3 py-2 text-sm bg-transparent focus:outline-none"
+                  />
+                  <button type="submit" className="h-9 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold whitespace-nowrap transition-colors">
+                    맞춤 선수 찾기
+                  </button>
+                </form>
+              </div>
 
             </div>
 
