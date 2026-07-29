@@ -745,27 +745,3 @@ function HeroLiveAuctionCard({ hot }: { hot: any | null }) {
     </div>
   );
 }
-
-/**
- * 파트너 브랜드 로고 한 칸
- * 로고 파일이 아직 없으면 깨진 이미지 대신 브랜드명을 글자로 보여준다.
- */
-function BrandLogo({ src, name }: { src: string; name: string }) {
-  const [failed, setFailed] = useState(false);
-  return (
-    <div className="flex items-center justify-center h-20 sm:h-24 bg-white rounded-2xl border border-slate-200 px-4 hover:shadow-md hover:border-emerald-200 transition-all">
-      {failed ? (
-        <span className="text-sm font-bold text-slate-600 text-center break-keep">{name}</span>
-      ) : (
-        <img
-          src={src}
-          alt={name}
-          title={name}
-          className="max-h-12 sm:max-h-14 max-w-full object-contain"
-          loading="lazy"
-          onError={() => setFailed(true)}
-        />
-      )}
-    </div>
-  );
-}
