@@ -282,7 +282,7 @@ export function Home() {
 
               {/* CTA + 검색 (개편 §7.1/§7.2)
                   버튼 4개를 같은 크기 2열 그리드로 두고, 검색창도 같은 폭에 맞춘다 */}
-              <div className="mt-10 lg:mt-0 mb-10 lg:mb-12 w-full max-w-lg">
+              <div className="mt-10 lg:mt-0 mb-10 lg:mb-12 w-full max-w-sm">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                   <Link to="/athletes"
                     className="h-11 px-4 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20">
