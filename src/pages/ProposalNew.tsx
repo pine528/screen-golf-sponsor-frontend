@@ -5,10 +5,11 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Save, Send, Eye, ArrowLeft } from 'lucide-react';
+import { Save, Send, Eye } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import LegalNotice from '../components/LegalNotice';
+import Breadcrumb from '../components/Breadcrumb';
 
 const krw = (v: any) => (v ? `${Number(v).toLocaleString()}원` : '—');
 
@@ -109,9 +110,7 @@ export default function ProposalNew() {
   return (
     <div className="min-h-screen bg-slate-50 pb-28">
       <div className="max-w-3xl mx-auto px-5 sm:px-8 py-6">
-        <button type="button" onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 mb-4">
-          <ArrowLeft className="w-4 h-4" /> 돌아가기
-        </button>
+        <Breadcrumb />
 
         <h1 className="text-2xl font-extrabold text-slate-900 mb-1">장기 파트너십 제안</h1>
         <p className="text-sm text-slate-500 mb-5 break-keep">

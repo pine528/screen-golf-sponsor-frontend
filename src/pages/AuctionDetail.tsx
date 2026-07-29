@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Clock,
@@ -7,7 +7,7 @@ import {
   Calendar,
   Gavel,
   AlertCircle,
-  ArrowLeft,
+
   Info,
   TrendingUp,
   Shield,
@@ -33,10 +33,11 @@ import {
 } from '../utils';
 import { getEventMonthLabel } from '../utils/eventMonth';
 import LegalNotice from '../components/LegalNotice';
+import { useBreadcrumbTitle } from '../components/Breadcrumb';
 
 export function AuctionDetail() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [bidAmount, setBidAmount] = useState('');
@@ -77,6 +78,9 @@ export function AuctionDetail() {
       return auctionData?.status === 'LIVE' ? 3000 : false;
     },
   });
+
+  // 전역 브레드크럼의 마지막 항목을 슬롯명으로 (홈 > 라이브 경매 > 모자 정면)
+  useBreadcrumbTitle(auction?.data?.slotInstance?.slotTemplate?.name);
 
   const placeBidMutation = useMutation({
     mutationFn: ({ auctionId, maxBid }: { auctionId: string; maxBid: number }) =>
@@ -204,18 +208,7 @@ export function AuctionDetail() {
           </div>
         )}
 
-        {/* 경로 */}
-        <nav className="flex items-center gap-1.5 text-xs text-slate-400">
-          <Link to="/" className="hover:text-slate-700">홈</Link>
-          <span>›</span>
-          <Link to="/auctions" className="hover:text-slate-700">라이브 경매</Link>
-          <span>›</span>
-          <span className="text-slate-700 font-semibold">{template?.name}</span>
-          <button onClick={() => navigate(-1)} className="ml-auto inline-flex items-center gap-1 hover:text-slate-700">
-            <ArrowLeft className="w-3.5 h-3.5" /> 뒤로
-          </button>
-        </nav>
-
+        {/* 경로 표시는 Layout의 전역 브레드크럼이 담당 (마지막 항목 이름만 슬롯명으로 지정) */}
         {/* ── 히어로 카드 (밝은 톤) ── */}
         <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-sm">
           <div className="p-5 sm:p-7 grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6 items-center bg-gradient-to-br from-emerald-50/70 via-white to-white">

@@ -53,6 +53,7 @@ import { useAuth } from '../hooks/useAuth';
 import { cn } from '../utils';
 import { api } from '../services/api';
 import LiveBadge from './LiveBadge';
+import Breadcrumb, { BreadcrumbProvider } from './Breadcrumb';
 
 interface LayoutProps {
   children: ReactNode;
@@ -542,7 +543,12 @@ export function Layout({ children }: LayoutProps) {
         "min-h-screen",
         user ? "lg:ml-64 pt-14 lg:pt-0" : "pt-0"
       )}>
-        <div className={user ? "p-4 lg:p-8" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"}>{children}</div>
+        <div className={user ? "p-4 lg:p-8" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"}>
+          <BreadcrumbProvider>
+            <Breadcrumb />
+            {children}
+          </BreadcrumbProvider>
+        </div>
       </main>
     </div>
   );

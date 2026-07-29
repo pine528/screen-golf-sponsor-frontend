@@ -10,8 +10,9 @@
 import { useState, useRef } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, ChevronLeft, ChevronRight, Users, ExternalLink, Trophy, ArrowLeft } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Users, ExternalLink, Trophy } from 'lucide-react';
 import { api } from '../services/api';
+import Breadcrumb from '../components/Breadcrumb';
 
 const TOUR_OPTIONS = [
   { value: '', label: '전체' },
@@ -64,11 +65,9 @@ export default function PublicAthletes() {
     <div className="min-h-screen bg-slate-50">
       {/* 헤더 */}
       <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white">
-        {/* 상단 nav: 홈으로 버튼 별도 줄로 분리 */}
+        {/* 상단 경로 표시 */}
         <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-5">
-          <Link to="/" className="inline-flex items-center gap-1 text-xs opacity-90 hover:opacity-100 font-semibold">
-            <ArrowLeft className="w-3.5 h-3.5" /> 홈으로
-          </Link>
+          <Breadcrumb tone="onDark" className="mb-0" />
         </div>
         <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-6 pb-12 sm:pb-16">
           <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 inline-flex items-center gap-3">

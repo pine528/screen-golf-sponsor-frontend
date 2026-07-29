@@ -1,17 +1,12 @@
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Headphones, Mail, Phone, Clock, MessageCircle } from 'lucide-react';
+import { Headphones, Mail, Phone, Clock, MessageCircle } from 'lucide-react';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function Contact() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 mb-8"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          홈으로 돌아가기
-        </Link>
+        <Breadcrumb />
 
         <div className="flex items-center gap-3 mb-8">
           <Headphones className="w-10 h-10 text-emerald-600" />

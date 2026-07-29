@@ -9,6 +9,7 @@ import { Handshake, ArrowLeft, Clock } from 'lucide-react';
 import { api } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import LegalNotice from '../components/LegalNotice';
+import Breadcrumb from '../components/Breadcrumb';
 
 const krw = (v: any) => (v == null ? '—' : `${Number(v).toLocaleString()}원`);
 const day = (d?: string) => (d ? new Date(d).toLocaleDateString('ko-KR') : '—');
@@ -47,6 +48,7 @@ function ProposalList() {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-4xl mx-auto px-5 sm:px-8 py-6">
+        <Breadcrumb />
         <h1 className="text-2xl font-extrabold text-slate-900 mb-1 inline-flex items-center gap-2">
           <Handshake className="w-6 h-6 text-emerald-500" /> {title}
         </h1>
