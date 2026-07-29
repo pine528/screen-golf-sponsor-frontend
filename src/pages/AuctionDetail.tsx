@@ -629,23 +629,28 @@ const SLOT_IMAGES: Record<string, string> = {
  * 좌/우는 보는 사람 기준으로 배치한다.
  */
 const SLOT_IMAGE_MARKS: Record<string, [number, number, number, number]> = {
-  CAP_FRONT: [50, 42, 26, 15],
-  CAP_BRIM_TOP: [50, 68, 34, 9],
-  CAP_SIDE_L: [58, 40, 20, 14],
-  CAP_SIDE_R: [58, 40, 20, 14],
-  CAP_BACK: [50, 40, 24, 14],
-  COLLAR_L: [43, 12, 9, 6],
-  COLLAR_R: [57, 12, 9, 6],
-  SHOULDER_LINE_L: [30, 20, 16, 6],
-  SHOULDER_LINE_R: [70, 20, 16, 6],
-  CHEST_L: [35, 33, 16, 11],
-  CHEST_R: [65, 33, 16, 11],
-  SLEEVE_L: [17, 33, 12, 9],
-  SLEEVE_R: [83, 33, 12, 9],
-  BACK_SHOULDER_L: [36, 22, 15, 8],
-  BACK_SHOULDER_R: [64, 22, 15, 8],
-  PANTS_HIP_SIDE_FACING: [52, 30, 18, 11],
-  PANTS_THIGH_SIDE_FACING: [52, 52, 16, 13],
+  // 모자 정면: 크라운 앞판 가운데 (챙 이음선 위)
+  CAP_FRONT: [50, 45, 30, 15],
+  CAP_BRIM_TOP: [50, 71, 34, 8],
+  // 모자 측면: 옆 패널 (같은 측면 이미지를 좌/우 모두 사용)
+  CAP_SIDE_L: [55, 38, 22, 14],
+  CAP_SIDE_R: [55, 38, 22, 14],
+  CAP_BACK: [50, 41, 26, 14],
+  // 상의 앞면
+  COLLAR_L: [44, 11, 9, 5],
+  COLLAR_R: [56, 11, 9, 5],
+  SHOULDER_LINE_L: [31, 20, 15, 6],
+  SHOULDER_LINE_R: [69, 20, 15, 6],
+  CHEST_L: [38, 34, 15, 11],
+  CHEST_R: [62, 34, 15, 11],
+  SLEEVE_L: [17, 37, 11, 8],
+  SLEEVE_R: [83, 37, 11, 8],
+  // 상의 뒷면
+  BACK_SHOULDER_L: [37, 22, 14, 7],
+  BACK_SHOULDER_R: [63, 22, 14, 7],
+  // 하의 측면 (제품 폭이 좁아 표시도 작게)
+  PANTS_HIP_SIDE_FACING: [50, 26, 11, 9],
+  PANTS_THIGH_SIDE_FACING: [50, 46, 10, 11],
 };
 
 /**
