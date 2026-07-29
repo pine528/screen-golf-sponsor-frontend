@@ -117,8 +117,12 @@ export function Home() {
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const scrollCarousel = useCallback((dir: 'left' | 'right') => {
-    if (!carouselRef.current) return;
-    carouselRef.current.scrollBy({ left: dir === 'left' ? -300 : 300, behavior: 'smooth' });
+    const el = carouselRef.current;
+    if (!el) return;
+    // 카드 폭이 화면 폭에 따라 달라지므로 실제 카드 하나 + 간격만큼 이동한다
+    const card = el.firstElementChild as HTMLElement | null;
+    const step = card ? card.getBoundingClientRect().width + 16 : 300;
+    el.scrollBy({ left: dir === 'left' ? -step : step, behavior: 'smooth' });
   }, []);
 
   const bodyPartLabel = (bp: string) => {
@@ -359,8 +363,10 @@ export function Home() {
               );
             }
 
+            // -mx-5 px-5를 두면 좌우 padding 영역으로 다음 카드가 조금 삐져나와 잘려 보인다.
+            // 컨테이너를 콘텐츠 폭에 딱 맞춰 정해진 개수에서 정확히 끊기게 한다.
             return items && items.length > 0 ? (
-              <div ref={carouselRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 scrollbar-hide -mx-5 px-5">
+              <div ref={carouselRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 scrollbar-hide">
                 {items.map((g: any) => {
                   const a = g.rep;
                   const isAuction = a.kind === 'AUCTION';
@@ -375,7 +381,13 @@ export function Home() {
                         ? { text: '직접 구매', cls: 'bg-sky-500 text-white' }
                         : { text: '계약 가능', cls: 'bg-slate-700 text-white' };
                   return (
-                    <Link key={a.athleteId || a.id} to={linkTo} className="flex-shrink-0 w-[200px] sm:w-[220px] snap-start group cursor-pointer">
+                    /* 카드 폭을 화면 폭에서 나눠 잡아 항상 정해진 개수(lg 5개)만 보이게 한다.
+                       고정 폭이면 화면 폭에 따라 마지막 카드가 잘려 보인다. gap-4 = 16px */
+                    <Link
+                      key={a.athleteId || a.id}
+                      to={linkTo}
+                      className="flex-shrink-0 snap-start group cursor-pointer w-[calc((100%-16px)/2)] sm:w-[calc((100%-32px)/3)] md:w-[calc((100%-48px)/4)] lg:w-[calc((100%-64px)/5)]"
+                    >
                       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-lg transition-all duration-300">
                         {/* 선수 사진 */}
                         <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-100">
