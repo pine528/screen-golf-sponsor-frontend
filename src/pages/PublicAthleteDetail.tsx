@@ -143,6 +143,24 @@ export default function PublicAthleteDetail() {
     };
   }, [athleteName]);
 
+  // 슬롯 카드에서 `/athletes/<id>#slots`로 들어오면 해당 선수의 스폰서십 슬롯 섹션으로 바로 이동.
+  // 슬롯 데이터가 따로 로드돼 섹션이 늦게 그려지므로 나타날 때까지 잠깐 기다린다.
+  useEffect(() => {
+    if (window.location.hash !== '#slots') return;
+    let tries = 0;
+    const timer = setInterval(() => {
+      const el = document.querySelector('[data-section="purchase"]');
+      if (el) {
+        clearInterval(timer);
+        // 링크로 바로 들어온 경우이므로 애니메이션 없이 즉시 이동한다
+        el.scrollIntoView({ behavior: 'auto', block: 'start' });
+      } else if (++tries > 40) {
+        clearInterval(timer); // 4초 안에 안 나오면 포기
+      }
+    }, 100);
+    return () => clearInterval(timer);
+  }, [id]);
+
   const selectedSlot = auctionSlots.find((s) => s.id === selectedSlotId) || auctionSlots[0];
   const auction = selectedSlot?.auction;
 

@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { Hexagon } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 import BrandInquiryButton from './components/BrandInquiryButton';
+import ScrollToTop from './components/ScrollToTop';
 import { useAuth } from './hooks/useAuth';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
@@ -1042,6 +1043,7 @@ function App() {
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
     <BrandInquiryButton />
+    <ScrollToTop />
     <Analytics />
     </>
   );

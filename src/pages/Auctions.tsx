@@ -50,6 +50,15 @@ export function Auctions() {
   const validAuctionStatuses = ['LIVE', 'SCHEDULED', 'ENDED', 'UNSOLD'];
   const isValidAuctionStatus = validAuctionStatuses.includes(statusFilter);
 
+  // 상단 현황표 — 전체 기준 집계 (목록 필터와 무관)
+  const { data: boardRes } = useQuery({
+    queryKey: ['auction-board-summary'],
+    queryFn: () => api.getLiveAuctionBoard(),
+    staleTime: 30_000,
+    refetchInterval: 60_000,
+  });
+  const board = (boardRes as any)?.data?.summary;
+
   // LIVE: 모든 진행중 경매 (공개+비공개 통합)
   const { data: auctions, isLoading } = useQuery({
     queryKey: ['auctions', statusFilter],
@@ -202,7 +211,8 @@ export function Auctions() {
   return (
     <Layout>
       <div className="space-y-4 sm:space-y-6">
-        <div className="flex items-center justify-between">
+        {/* 헤더 + 상단 현황표 — 수치는 모두 서버 집계 실값 (개편 LEG-06) */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4 items-center">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold text-slate-900 inline-flex items-center gap-2">
               라이브 경매 <LiveBadge />
@@ -213,18 +223,33 @@ export function Auctions() {
                 : '스폰서 슬롯 경매에 참여하세요'}
             </p>
           </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+            <AuctionStat icon={Gavel} tone="emerald" label="진행 중 경매" value={board?.liveCount} unit="건" />
+            <AuctionStat icon={Timer} tone="amber" label="마감 임박" value={board?.endingSoonCount} unit="건" />
+            <AuctionStat icon={Calendar} tone="sky" label="예정" value={board?.scheduledCount} unit="건" />
+            <AuctionStat icon={Trophy} tone="violet" label="누적 입찰" value={board?.totalBids} unit="회" />
+          </div>
         </div>
 
         {/* Filters */}
         <div className="space-y-3">
           {/* 상태 필터 */}
           <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible">
-            {['LIVE', 'DIRECT_BUY', ...(user?.role === 'BRAND' ? ['MY_BIDS', 'MY_RESERVATIONS'] : []), 'SCHEDULED', 'ENDED', 'UNSOLD'].map((status) => (
+            {['LIVE', 'DIRECT_BUY', ...(user?.role === 'BRAND' ? ['MY_BIDS', 'MY_RESERVATIONS'] : []), 'SCHEDULED', 'ENDED', 'UNSOLD'].map((status) => {
+              // 탭 옆 개수도 서버 집계값만 쓴다 (모르는 값은 표시하지 않음)
+              const count =
+                status === 'LIVE' ? board?.liveCount
+                : status === 'SCHEDULED' ? board?.scheduledCount
+                : status === 'ENDED' ? board?.endedCount
+                : status === 'UNSOLD' ? board?.unsoldCount
+                : undefined;
+              return (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
                 className={cn(
-                  'px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0',
+                  'px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 inline-flex items-center gap-1.5',
                   statusFilter === status
                     ? status === 'DIRECT_BUY' ? 'bg-blue-600 text-white'
                     : status === 'MY_BIDS' ? 'bg-purple-600 text-white'
@@ -240,8 +265,17 @@ export function Auctions() {
                 {status === 'SCHEDULED' && '예정'}
                 {status === 'ENDED' && '종료'}
                 {status === 'UNSOLD' && '유찰'}
+                {count !== undefined && (
+                  <span className={cn(
+                    'px-1.5 py-0.5 rounded-md text-[10px] font-bold tabular-nums',
+                    statusFilter === status ? 'bg-white/25' : 'bg-white text-slate-500'
+                  )}>
+                    {count}
+                  </span>
+                )}
               </button>
-            ))}
+              );
+            })}
           </div>
 
           {/* 대회 필터 */}
@@ -873,5 +907,42 @@ export function Auctions() {
         )}
       </div>
     </Layout>
+  );
+}
+
+/** 상단 현황표 한 칸 — 값이 없으면 '-'로 두고 임의 수치를 만들지 않는다 (LEG-06) */
+const STAT_TONES: Record<string, string> = {
+  emerald: 'bg-emerald-50 text-emerald-600',
+  amber: 'bg-amber-50 text-amber-600',
+  sky: 'bg-sky-50 text-sky-600',
+  violet: 'bg-violet-50 text-violet-600',
+};
+
+function AuctionStat({
+  icon: Icon,
+  tone,
+  label,
+  value,
+  unit,
+}: {
+  icon: any;
+  tone: string;
+  label: string;
+  value?: number;
+  unit: string;
+}) {
+  return (
+    <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+      <span className={cn('w-8 h-8 shrink-0 rounded-lg inline-flex items-center justify-center', STAT_TONES[tone])}>
+        <Icon className="w-4 h-4" />
+      </span>
+      <div className="min-w-0">
+        <div className="text-[10px] text-slate-500 truncate">{label}</div>
+        <div className="text-base font-black text-slate-900 tabular-nums leading-tight">
+          {value === undefined || value === null ? '-' : value.toLocaleString()}
+          <span className="text-[10px] font-bold text-slate-400 ml-0.5">{unit}</span>
+        </div>
+      </div>
+    </div>
   );
 }

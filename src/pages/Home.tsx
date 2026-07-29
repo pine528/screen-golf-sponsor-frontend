@@ -371,8 +371,8 @@ export function Home() {
                   const a = g.rep;
                   const isAuction = a.kind === 'AUCTION';
                   const isDirect = a.kind === 'DIRECT';
-                  // 카드는 선수 단위 — 여러 슬롯이 있으면 선수 상세로 보내 한 화면에서 고르게 한다
-                  const linkTo = isAuction && g.count === 1 ? `/auctions/${a.id}` : `/athletes/${a.athleteId}`;
+                  // 카드는 선수 단위 — 해당 선수의 '○○'s 스폰서십 슬롯' 섹션으로 바로 보낸다
+                  const linkTo = `/athletes/${a.athleteId}#slots`;
                   const badge = g.soon
                     ? { text: '마감 임박', cls: 'bg-rose-500 text-white' }
                     : isAuction

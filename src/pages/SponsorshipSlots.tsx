@@ -520,11 +520,12 @@ function Select({
 function SlotCard({ row, slotCount }: { row: SlotRow; slotCount: number }) {
   const meta = KIND_META[row.kind];
   const soon = isSoon(row);
-  const to = row.kind === 'AUCTION' ? `/auctions` : `/athletes/${row.athleteId}`;
+  // 해당 선수의 '○○'s 스폰서십 슬롯' 섹션으로 바로 보낸다
+  const to = row.athleteId ? `/athletes/${row.athleteId}#slots` : '/auctions';
 
   return (
     <Link
-      to={row.athleteId ? `/athletes/${row.athleteId}` : to}
+      to={to}
       className="group flex flex-col rounded-2xl border border-slate-200 bg-white overflow-hidden hover:border-emerald-300 hover:shadow-sm transition-all"
     >
       {/* 세로로 긴 인물 사진이라 가운데를 기준으로 자르면 얼굴이 잘린다.
