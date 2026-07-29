@@ -217,7 +217,7 @@ export function Home() {
       </nav>
 
       {/* ════════════════════════ HERO ════════════════════════ */}
-      <section className="relative pt-32 sm:pt-36 pb-8 sm:pb-10 px-5 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
+      <section className="relative pt-32 sm:pt-36 pb-4 sm:pb-5 px-5 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
         {/* 소프트 블롭 (장식 점 제거) */}
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -top-10 right-0 w-72 h-72 rounded-full bg-emerald-200/30 blur-3xl" />

@@ -77,9 +77,10 @@ export default function LiveAuctionBoard() {
   const C = 2 * Math.PI * R;
 
   return (
-    /* 폭·좌우 여백을 히어로 섹션(max-w-7xl px-5)과 맞추고 위 간격은 좁게 */
-    <section className="max-w-7xl mx-auto px-5 pt-2 pb-10">
-      <div className="rounded-3xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+    /* 히어로와 동일하게 px-5 바깥쪽 → max-w-7xl 안쪽 순서로 감싸야 좌우 끝선이 맞는다.
+       (max-w-7xl에 px-5를 겹치면 좌우가 20px씩 더 좁아짐) */
+    <section className="px-5 pt-0 pb-10">
+      <div className="max-w-7xl mx-auto rounded-3xl bg-white border border-slate-200 shadow-sm overflow-hidden">
         {/* 헤더 */}
         <div className="flex items-center justify-between gap-3 px-5 sm:px-6 py-3.5 border-b border-slate-100">
           <div className="flex items-center gap-2.5 min-w-0">
