@@ -598,39 +598,67 @@ function HeroStat({ label, value, sub, icon }: { label: string; value: string; s
 }
 
 /**
- * 슬롯 위치 도형 — 착장 부위별 간단한 실루엣 위에 해당 슬롯을 표시한다.
- * (실사 이미지가 없으므로 부위를 알아볼 수 있는 최소한의 도형만 그린다)
+ * 슬롯 위치 도형 — 착장 부위별 실루엣 위에 해당 슬롯 영역을 표시한다.
+ * 모자는 크라운·챙·솔기·버튼을 갖춘 정면 형태로 그려 한눈에 알아볼 수 있게 한다.
  */
 function SlotShape({ code }: { code?: string }) {
-  const isCap = (code || '').startsWith('CAP');
-  const isPants = (code || '').startsWith('PANTS');
-  const mark = (x: number, y: number, w = 22, h = 12) => (
-    <g>
-      <rect x={x} y={y} width={w} height={h} rx="2" fill="#10b981" fillOpacity="0.25" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 2" />
-    </g>
-  );
-  const POS: Record<string, [number, number]> = {
-    CAP_FRONT: [39, 40], CAP_BRIM_TOP: [39, 58], CAP_SIDE_L: [18, 44], CAP_SIDE_R: [60, 44], CAP_BACK: [39, 30],
-    CHEST_L: [26, 44], CHEST_R: [52, 44], COLLAR_L: [34, 28], COLLAR_R: [44, 28],
-    SLEEVE_L: [8, 46], SLEEVE_R: [70, 46], SHOULDER_LINE_L: [20, 32], SHOULDER_LINE_R: [58, 32],
-    BACK_SHOULDER_L: [28, 34], BACK_SHOULDER_R: [50, 34],
-    PANTS_HIP_SIDE_FACING: [52, 40], PANTS_THIGH_SIDE_FACING: [52, 62],
+  const c = code || '';
+  const isCap = c.startsWith('CAP');
+  const isPants = c.startsWith('PANTS');
+
+  // [x, y, w, h] — 부위마다 표시 영역 크기가 다르다
+  const POS: Record<string, [number, number, number, number]> = {
+    CAP_FRONT: [39, 44, 22, 13],
+    CAP_BRIM_TOP: [40, 65, 20, 6],
+    CAP_SIDE_L: [30, 48, 11, 9],
+    CAP_SIDE_R: [59, 48, 11, 9],
+    CAP_BACK: [42, 34, 16, 8],
+    COLLAR_L: [33, 27, 10, 7], COLLAR_R: [57, 27, 10, 7],
+    SHOULDER_LINE_L: [20, 31, 16, 7], SHOULDER_LINE_R: [64, 31, 16, 7],
+    BACK_SHOULDER_L: [27, 36, 14, 8], BACK_SHOULDER_R: [59, 36, 14, 8],
+    CHEST_L: [26, 45, 18, 12], CHEST_R: [56, 45, 18, 12],
+    SLEEVE_L: [15, 45, 12, 10], SLEEVE_R: [73, 45, 12, 10],
+    PANTS_HIP_SIDE_FACING: [54, 30, 14, 10],
+    PANTS_THIGH_SIDE_FACING: [54, 55, 14, 12],
   };
-  const [mx, my] = POS[code || ''] || [39, 44];
+  // 구버전·미등록 코드는 부위 기본 위치로 표시한다 (모자인데 가슴에 찍히는 일 방지)
+  const FALLBACK: [number, number, number, number] = isCap
+    ? [39, 44, 22, 13]
+    : isPants
+      ? [54, 55, 14, 12]
+      : [41, 45, 18, 12];
+  const [mx, my, mw, mh] = POS[c] || FALLBACK;
 
   return (
     <svg viewBox="0 0 100 100" className="w-full max-w-[190px]" role="img" aria-label="슬롯 위치">
       {isCap ? (
-        <>
-          <path d="M25 58 Q50 18 75 58 Z" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
-          <rect x="18" y="57" width="64" height="7" rx="3.5" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="1.2" />
-        </>
+        <g>
+          {/* 챙 */}
+          <path d="M24 64 Q50 82 76 64 Q50 71 24 64 Z" fill="#dfe5ec" stroke="#c2cbd6" strokeWidth="1.2" strokeLinejoin="round" />
+          {/* 크라운 */}
+          <path d="M28 65 C28 40 72 40 72 65 Z" fill="#f1f5f9" stroke="#c2cbd6" strokeWidth="1.4" strokeLinejoin="round" />
+          {/* 패널 솔기 */}
+          <path d="M50 41 C44 49 41 57 40.5 65" fill="none" stroke="#cbd5e1" strokeWidth="1" />
+          <path d="M50 41 C56 49 59 57 59.5 65" fill="none" stroke="#cbd5e1" strokeWidth="1" />
+          {/* 버튼 */}
+          <circle cx="50" cy="41" r="2.2" fill="#c2cbd6" />
+        </g>
       ) : isPants ? (
-        <path d="M30 20 L70 20 L66 92 L54 92 L50 46 L46 92 L34 92 Z" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
+        <g>
+          <path d="M31 18 L69 18 L67 92 L55 92 L50 48 L45 92 L33 92 Z" fill="#f1f5f9" stroke="#c2cbd6" strokeWidth="1.4" strokeLinejoin="round" />
+          <rect x="31" y="18" width="38" height="6" fill="#dfe5ec" stroke="#c2cbd6" strokeWidth="1" />
+        </g>
       ) : (
-        <path d="M50 20 L34 25 Q24 29 21 38 L16 52 L26 56 L30 44 L30 84 L70 84 L70 44 L74 56 L84 52 L79 38 Q76 29 66 25 Z" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" strokeLinejoin="round" />
+        <g>
+          <path d="M50 22 L34 26 Q24 30 21 39 L16 53 L26 57 L30 45 L30 84 L70 84 L70 45 L74 57 L84 53 L79 39 Q76 30 66 26 Z"
+            fill="#f1f5f9" stroke="#c2cbd6" strokeWidth="1.4" strokeLinejoin="round" />
+          <path d="M43 24 L50 32 L57 24" fill="#dfe5ec" stroke="#c2cbd6" strokeWidth="1.2" strokeLinejoin="round" />
+        </g>
       )}
-      {mark(mx, my)}
+
+      {/* 슬롯 영역 */}
+      <rect x={mx} y={my} width={mw} height={mh} rx="2"
+        fill="#10b981" fillOpacity="0.25" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 2" />
     </svg>
   );
 }
