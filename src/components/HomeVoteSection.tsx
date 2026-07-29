@@ -81,8 +81,9 @@ export default function HomeVoteSection() {
   if (open.length === 0 && settled.length === 0) return null;
 
   return (
-    <section className="max-w-7xl mx-auto px-5 py-10">
-      <div className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-7">
+    /* 폭은 히어로·다른 섹션과 동일하게 px-5(바깥) → max-w-7xl(안쪽) 순서 */
+    <section className="px-5 pt-2 pb-10">
+      <div className="max-w-7xl mx-auto rounded-3xl border border-slate-200 bg-white p-5 sm:p-7">
         {/* 헤더 */}
         <div className="flex items-start justify-between gap-3 mb-1">
           <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 inline-flex items-center gap-2">

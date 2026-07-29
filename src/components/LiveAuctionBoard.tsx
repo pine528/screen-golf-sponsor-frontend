@@ -79,7 +79,7 @@ export default function LiveAuctionBoard() {
   return (
     /* 히어로와 동일하게 px-5 바깥쪽 → max-w-7xl 안쪽 순서로 감싸야 좌우 끝선이 맞는다.
        (max-w-7xl에 px-5를 겹치면 좌우가 20px씩 더 좁아짐) */
-    <section className="px-5 pt-0 pb-10">
+    <section className="px-5 pt-0 pb-4">
       <div className="max-w-7xl mx-auto rounded-3xl bg-white border border-slate-200 shadow-sm overflow-hidden">
         {/* 헤더 */}
         <div className="flex items-center justify-between gap-3 px-5 sm:px-6 py-3.5 border-b border-slate-100">

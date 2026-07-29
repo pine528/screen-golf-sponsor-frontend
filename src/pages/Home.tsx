@@ -263,8 +263,9 @@ export function Home() {
 
 
       {/* ════════════════════════ 진행중인 스폰서십 슬롯 (캐러셀) ════════════════════════ */}
-      <section className="py-12 sm:py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-5">
+      {/* 폭은 히어로·다른 섹션과 동일하게 px-5(바깥) → max-w-7xl(안쪽) 순서 */}
+      <section className="pt-6 pb-8 sm:pt-8 sm:pb-10 px-5 bg-white">
+        <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
               <span className="text-emerald-500">*</span> 진행중인 스폰서십 슬롯
