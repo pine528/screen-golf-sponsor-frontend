@@ -17,7 +17,6 @@ import {
   MapPin,
   Ruler,
   FileText,
-  Users,
   Wifi,
   WifiOff,
 } from 'lucide-react';
@@ -193,7 +192,6 @@ export function AuctionDetail() {
   };
 
   const statusInfo = getStatusInfo();
-  const StatusIcon = statusInfo.icon;
 
   return (
     <Layout>
@@ -208,59 +206,91 @@ export function AuctionDetail() {
           </div>
         )}
 
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors w-fit"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">뒤로 가기</span>
+        {/* 경로 */}
+        <nav className="flex items-center gap-1.5 text-xs text-slate-400">
+          <Link to="/" className="hover:text-slate-700">홈</Link>
+          <span>›</span>
+          <Link to="/auctions" className="hover:text-slate-700">라이브 경매</Link>
+          <span>›</span>
+          <span className="text-slate-700 font-semibold">{template?.name}</span>
+          <button onClick={() => navigate(-1)} className="ml-auto inline-flex items-center gap-1 hover:text-slate-700">
+            <ArrowLeft className="w-3.5 h-3.5" /> 뒤로
           </button>
-          <div className="flex-1">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
-                {template?.name}
-              </h1>
-              <span
-                className={cn(
-                  'px-3 py-1 rounded-full text-white text-xs font-medium flex items-center gap-1',
-                  statusInfo.color
+        </nav>
+
+        {/* 히어로 패널 — 현재가·마감·CTA를 한눈에 */}
+        <div className="rounded-2xl bg-slate-900 text-white overflow-hidden">
+          <div className="p-5 sm:p-7 grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 items-center">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap mb-2">
+                {auctionData.status === 'LIVE' && (
+                  <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-rose-500/15 text-rose-400 text-[10px] font-extrabold tracking-wide">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" /> LIVE
+                  </span>
                 )}
-              >
-                <StatusIcon className="w-3 h-3" />
-                {statusInfo.label}
-              </span>
-              <span
-                className={cn(
-                  'px-3 py-1 rounded-full text-xs font-medium',
-                  isPublicAuction
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-slate-100 text-slate-700'
-                )}
-              >
-                {isPublicAuction ? '공개 경매' : '비공개 경매'}
-              </span>
-              {/* Real-time indicators */}
-              <div className="flex items-center gap-2 ml-auto">
+                <h1 className="text-xl sm:text-2xl font-extrabold truncate">{template?.name}</h1>
+                <span className="px-2 py-0.5 rounded-md bg-white/10 text-[11px] font-bold">{statusInfo.label}</span>
+                <span className="px-2 py-0.5 rounded-md bg-white/10 text-[11px] font-semibold text-slate-300">
+                  {isPublicAuction ? '공개 경매' : '비공개 경매'}
+                </span>
                 <span className={cn(
-                  'px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1',
-                  isConnected ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                  'ml-auto inline-flex items-center gap-1 text-[11px] font-semibold',
+                  isConnected ? 'text-emerald-400' : 'text-slate-500'
                 )}>
                   {isConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
                   {isConnected ? '실시간' : '연결 중...'}
+                  {auctionData.status === 'LIVE' && viewerCount > 0 && (
+                    <span className="ml-2 text-slate-400">· {viewerCount}명 보는 중</span>
+                  )}
                 </span>
-                {auctionData.status === 'LIVE' && viewerCount > 0 && (
-                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 flex items-center gap-1">
-                    <Users className="w-3 h-3" />
-                    {viewerCount}명 시청
-                  </span>
+              </div>
+
+              <p className="text-sm text-slate-300 mb-4">
+                {athlete?.name} 프로 · {getEventMonthLabel(event)}
+              </p>
+
+              <p className="text-[11px] text-slate-400 mb-1">{bidCount > 0 ? '현재가' : '경매 시작가'}</p>
+              <p className="text-3xl sm:text-4xl font-black tabular-nums mb-3">
+                {formatCurrency(auctionData.currentPrice || slot?.reservePrice || 0)}
+              </p>
+
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-semibold text-slate-200 tabular-nums">
+                  다음 최소 입찰가 {formatCurrency(nextMinBid)}
+                </span>
+                {auctionData.status === 'LIVE' && (
+                  <button
+                    onClick={() => { setShowBidModal(true); setBidError(null); }}
+                    className="inline-flex items-center gap-1.5 h-10 px-5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm font-bold transition-colors"
+                  >
+                    <Gavel className="w-4 h-4" /> 입찰 참여하기
+                  </button>
                 )}
               </div>
             </div>
-            <p className="text-slate-600 mt-1 text-sm sm:text-base">
-              {athlete?.name} · {getEventMonthLabel(event)}
-            </p>
+
+            {/* 슬롯 위치 미리보기 */}
+            <div className="hidden lg:flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 p-4">
+              <SlotShape code={template?.code} />
+            </div>
+          </div>
+
+          {/* 지표 스트립 — 모두 실제 값 */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 border-t border-white/10 divide-x divide-white/10">
+            <HeroStat
+              label="남은 시간"
+              value={auctionData.status === 'LIVE' ? formatTimeRemaining(auctionData.endAt) : '—'}
+              sub={auctionData.endAt ? `마감 ${new Date(auctionData.endAt).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' })}` : ''}
+              icon={<Clock className="w-3.5 h-3.5" />}
+            />
+            <HeroStat label="최소 단위" value={formatCurrency(minIncrement)} sub="입찰 단위" />
+            <HeroStat label="입찰 횟수" value={`${bidCount}회`} sub="전체 누적" />
+            <HeroStat
+              label="경쟁 지수"
+              value={bidCount === 0 ? '낮음' : bidCount < 5 ? '보통' : '높음'}
+              sub={`입찰 ${bidCount}건 기준`}
+            />
+            <HeroStat label="노출 배수" value={`${event?.multiplier ?? 1}x`} sub="대회 가중치" />
           </div>
         </div>
 
@@ -541,6 +571,13 @@ export function AuctionDetail() {
 
             {/* 권리관계 고정 안내문 (개편 LEG-04/05) */}
             <LegalNotice className="mt-4" />
+
+            {/* 운영 방식 안내 */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+              <TrustItem icon={<Shield className="w-4 h-4" />} title="투명한 경매 운영" desc="모든 입찰 내역은 서버 시간 기준으로 기록됩니다." />
+              <TrustItem icon={<FileText className="w-4 h-4" />} title="공식 계약 체결" desc="낙찰 후 계약서와 이행 조건이 함께 제공됩니다." />
+              <TrustItem icon={<CheckCircle className="w-4 h-4" />} title="안전한 정산" desc="대금은 에스크로에 보관된 뒤 이행 확인 후 지급됩니다." />
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -773,5 +810,70 @@ export function AuctionDetail() {
         )}
       </div>
     </Layout>
+  );
+}
+
+/** 히어로 지표 스트립 한 칸 */
+function HeroStat({ label, value, sub, icon }: { label: string; value: string; sub?: string; icon?: React.ReactNode }) {
+  return (
+    <div className="px-4 py-3">
+      <div className="flex items-center gap-1 text-[10px] text-slate-400 mb-1">
+        {icon}
+        {label}
+      </div>
+      <div className="text-sm font-extrabold tabular-nums truncate">{value}</div>
+      {sub && <div className="text-[10px] text-slate-500 truncate">{sub}</div>}
+    </div>
+  );
+}
+
+/**
+ * 슬롯 위치 도형 — 착장 부위별 간단한 실루엣 위에 해당 슬롯을 표시한다.
+ * (실사 이미지가 없으므로 부위를 알아볼 수 있는 최소한의 도형만 그린다)
+ */
+function SlotShape({ code }: { code?: string }) {
+  const isCap = (code || '').startsWith('CAP');
+  const isPants = (code || '').startsWith('PANTS');
+  const mark = (x: number, y: number, w = 22, h = 12) => (
+    <g>
+      <rect x={x} y={y} width={w} height={h} rx="2" fill="#10b981" fillOpacity="0.25" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 2" />
+    </g>
+  );
+  const POS: Record<string, [number, number]> = {
+    CAP_FRONT: [39, 40], CAP_BRIM_TOP: [39, 58], CAP_SIDE_L: [18, 44], CAP_SIDE_R: [60, 44], CAP_BACK: [39, 30],
+    CHEST_L: [26, 44], CHEST_R: [52, 44], COLLAR_L: [34, 28], COLLAR_R: [44, 28],
+    SLEEVE_L: [8, 46], SLEEVE_R: [70, 46], SHOULDER_LINE_L: [20, 32], SHOULDER_LINE_R: [58, 32],
+    BACK_SHOULDER_L: [28, 34], BACK_SHOULDER_R: [50, 34],
+    PANTS_HIP_SIDE_FACING: [52, 40], PANTS_THIGH_SIDE_FACING: [52, 62],
+  };
+  const [mx, my] = POS[code || ''] || [39, 44];
+
+  return (
+    <svg viewBox="0 0 100 100" className="w-full max-w-[190px]" role="img" aria-label="슬롯 위치">
+      {isCap ? (
+        <>
+          <path d="M25 58 Q50 18 75 58 Z" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
+          <rect x="18" y="57" width="64" height="7" rx="3.5" fill="#e2e8f0" stroke="#cbd5e1" strokeWidth="1.2" />
+        </>
+      ) : isPants ? (
+        <path d="M30 20 L70 20 L66 92 L54 92 L50 46 L46 92 L34 92 Z" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" />
+      ) : (
+        <path d="M50 20 L34 25 Q24 29 21 38 L16 52 L26 56 L30 44 L30 84 L70 84 L70 44 L74 56 L84 52 L79 38 Q76 29 66 25 Z" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1.5" strokeLinejoin="round" />
+      )}
+      {mark(mx, my)}
+    </svg>
+  );
+}
+
+/** 하단 운영 방식 안내 항목 */
+function TrustItem({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+  return (
+    <div className="flex items-start gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-3">
+      <span className="mt-0.5 text-emerald-600 shrink-0">{icon}</span>
+      <span className="min-w-0">
+        <span className="block text-xs font-bold text-slate-800">{title}</span>
+        <span className="block text-[11px] text-slate-500 break-keep">{desc}</span>
+      </span>
+    </div>
   );
 }
