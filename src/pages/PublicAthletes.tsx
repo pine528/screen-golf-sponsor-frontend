@@ -208,10 +208,23 @@ function isNewAthlete(a: any): boolean {
   return !!a?.createdAt && Date.now() - new Date(a.createdAt).getTime() < 60 * 86400000;
 }
 
-/** 반짝이는 추천/신규 뱃지 (우측 상단) */
+/**
+ * 업데이트 기준: 선수가 직접 프로필·경기결과를 고친 지 14일 이내.
+ * 운영 일괄 작업은 profileUpdatedAt을 건드리지 않으므로 여기 잡히지 않는다.
+ * 신규 등록 직후에는 NEW와 겹치므로 UPDATE를 표시하지 않는다.
+ */
+function isUpdatedAthlete(a: any): boolean {
+  if (!a?.profileUpdatedAt) return false;
+  if (isNewAthlete(a)) return false;
+  return Date.now() - new Date(a.profileUpdatedAt).getTime() < 14 * 86400000;
+}
+
+/** 카드 우측 상단 상태 뱃지 (추천 / 신규 / 업데이트) */
 function AthleteBadges({ athlete, size = 'md' }: { athlete: any; size?: 'sm' | 'md' }) {
   const cls = size === 'sm' ? 'text-[8px] px-1.5 py-0.5' : 'text-[9px] px-2 py-0.5';
-  if (!athlete.isRecommended && !isNewAthlete(athlete)) return null;
+  const isNew = isNewAthlete(athlete);
+  const isUpdated = isUpdatedAthlete(athlete);
+  if (!athlete.isRecommended && !isNew && !isUpdated) return null;
   return (
     <div className="absolute top-2.5 right-2.5 flex flex-col items-end gap-1">
       {athlete.isRecommended && (
@@ -219,9 +232,17 @@ function AthleteBadges({ athlete, size = 'md' }: { athlete: any; size?: 'sm' | '
           ✨ 추천
         </span>
       )}
-      {isNewAthlete(athlete) && (
+      {isNew && (
         <span className={`inline-flex items-center gap-0.5 bg-rose-500 text-white font-extrabold rounded-full shadow-md animate-pulse ${cls}`}>
           NEW
+        </span>
+      )}
+      {isUpdated && (
+        <span
+          title="선수가 최근 프로필을 업데이트했습니다"
+          className={`inline-flex items-center gap-0.5 bg-sky-500 text-white font-extrabold rounded-full shadow-md ${cls}`}
+        >
+          UPDATE
         </span>
       )}
     </div>
