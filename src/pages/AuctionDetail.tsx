@@ -598,13 +598,47 @@ function HeroStat({ label, value, sub, icon }: { label: string; value: string; s
 }
 
 /**
- * 슬롯 위치 도형 — 착장 부위별 실루엣 위에 해당 슬롯 영역을 표시한다.
- * 모자는 크라운·챙·솔기·버튼을 갖춘 정면 형태로 그려 한눈에 알아볼 수 있게 한다.
+ * 착장 이미지 매핑 — public/slots/ 에 파일을 넣으면 벡터 도형 대신 그 이미지를 쓴다.
+ *
+ * 파일을 추가할 위치: src/frontend/public/slots/
+ *   cap-front.png / cap-side.png / cap-back.png / top-front.png / top-back.png / pants.png
+ * 이미지가 없으면 아래 벡터 도형으로 자동 대체되므로 순서대로 채워 넣어도 된다.
+ */
+const SLOT_IMAGES: Record<string, string> = {
+  // 예: CAP_FRONT: '/slots/cap-front.png',
+};
+
+/** 이미지를 쓸 때 슬롯 표시 위치 (이미지 기준 %, [left, top, width, height]) */
+const SLOT_IMAGE_MARKS: Record<string, [number, number, number, number]> = {
+  CAP_FRONT: [50, 46, 26, 14],
+  CAP_BRIM_TOP: [50, 74, 30, 8],
+  CAP_SIDE_L: [30, 50, 16, 12],
+  CAP_SIDE_R: [70, 50, 16, 12],
+  CAP_BACK: [50, 40, 22, 12],
+};
+
+/**
+ * 슬롯 위치 표시 — 등록된 착장 이미지가 있으면 이미지 위에, 없으면 벡터 도형 위에 표시한다.
  */
 function SlotShape({ code }: { code?: string }) {
   const c = code || '';
   const isCap = c.startsWith('CAP');
   const isPants = c.startsWith('PANTS');
+
+  const img = SLOT_IMAGES[c];
+  if (img) {
+    const [left, top, w, h] = SLOT_IMAGE_MARKS[c] || [50, 50, 24, 14];
+    return (
+      <div className="relative w-full max-w-[190px]">
+        <img src={img} alt="착장 위치" className="w-full h-auto select-none" draggable={false} />
+        <span
+          aria-hidden
+          className="absolute -translate-x-1/2 -translate-y-1/2 rounded-md border-2 border-dashed border-emerald-500 bg-emerald-500/20"
+          style={{ left: `${left}%`, top: `${top}%`, width: `${w}%`, height: `${h}%` }}
+        />
+      </div>
+    );
+  }
 
   // [x, y, w, h] — 부위마다 표시 영역 크기가 다르다
   const POS: Record<string, [number, number, number, number]> = {
