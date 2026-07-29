@@ -47,7 +47,8 @@ export default function SlotDiagram({
 
   return (
     <div>
-      <div className="relative w-full max-w-[320px] mx-auto aspect-[3/4] rounded-2xl bg-white border border-slate-200 overflow-hidden">
+      {/* 도식을 조금 키워 마커가 작아져도 누르기 쉽게 한다 */}
+      <div className="relative w-full max-w-[360px] mx-auto aspect-[3/4] rounded-2xl bg-white border border-slate-200 overflow-hidden">
         <svg viewBox="0 0 75 100" className="w-full h-full" role="img" aria-label="선수 착장 슬롯 도식">
           {/* 착장 도식 — 3:4 비율 이미지라 viewBox를 그대로 채운다.
               마커 좌표는 이 이미지 기준으로 측정한 값(slot-display-coords.ts)과 짝을 이룬다. */}
@@ -73,14 +74,17 @@ export default function SlotDiagram({
                 }}
                 className="cursor-pointer focus:outline-none"
               >
-                {active && <circle cx={sx(s.x!)} cy={s.y!} r={4.4} fill="#0f172a" opacity={0.12} />}
+                {active && <circle cx={sx(s.x!)} cy={s.y!} r={2.8} fill="#0f172a" opacity={0.12} />}
+                {/* 마커는 작게 그리되 누르는 범위는 넓게 둔다.
+                    모자처럼 슬롯이 몰린 곳에서 서로 겹치거나 얼굴까지 덮지 않도록 한 것. */}
+                <circle cx={sx(s.x!)} cy={s.y!} r={2.6} fill="transparent" />
                 <circle
                   cx={sx(s.x!)}
                   cy={s.y!}
-                  r={active ? 2.8 : 2.1}
+                  r={active ? 1.7 : 1.2}
                   fill={meta.fill}
                   stroke="#ffffff"
-                  strokeWidth={active ? 1 : 0.8}
+                  strokeWidth={active ? 0.6 : 0.45}
                 />
               </g>
             );
