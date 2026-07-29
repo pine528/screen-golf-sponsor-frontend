@@ -102,6 +102,11 @@ export default function SlotDiagram({
         ))}
       </div>
 
+      {/* 좌·우 기준 안내 — 정면 도식이라 선수의 왼쪽이 화면에서는 오른쪽에 온다 */}
+      <p className="mt-1.5 text-center text-[10px] text-slate-400">
+        슬롯명의 좌·우는 선수가 착용한 기준입니다 (정면에서 보면 좌우가 바뀝니다)
+      </p>
+
       {unplaced.length > 0 && (
         <p className="mt-2 text-center text-[11px] text-slate-400">
           도식 미표기 슬롯 {unplaced.length}개는 아래 목록에서 선택할 수 있습니다.
