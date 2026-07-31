@@ -10,9 +10,9 @@
  *  - 페이지 이동 없이 기간·슬롯·추가활동 변경 가능
  *  - 동일 슬롯 중복판매 차단 (서버 SlotInventory 상태 기준)
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Gavel, ShoppingCart, MessageCircle, Info } from 'lucide-react';
 import { api } from '../../services/api';
 import LegalNotice from '../LegalNotice';
@@ -66,6 +66,7 @@ export default function UnifiedPurchase({
   onLogin: () => void;
 }) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [period, setPeriod] = useState<PeriodKey>('SINGLE_EVENT');
   const [productType, setProductType] = useState<ProductType>('APPAREL');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -110,6 +111,15 @@ export default function UnifiedPurchase({
   const selected = periodSlots.find((s) => s.id === selectedId) || null;
   const drawerSlot = periodSlots.find((s) => s.id === drawerId) || null;
   const selectable = (s: any) => STATUS_META[s.status]?.selectable;
+
+  // 슬롯 목록에서 `/athletes/<id>?slot=CAP_BRIM_TOP#slots`로 들어오면 그 슬롯을 골라 둔다.
+  // 슬롯이 늦게 로드되므로 목록이 채워진 뒤 한 번만 반영한다.
+  const wantedCode = searchParams.get('slot');
+  useEffect(() => {
+    if (!wantedCode || selectedId || periodSlots.length === 0) return;
+    const hit = periodSlots.find((s) => s.code === wantedCode);
+    if (hit) setSelectedId(hit.id);
+  }, [wantedCode, selectedId, periodSlots]);
 
   const alternatives = useMemo(
     () =>

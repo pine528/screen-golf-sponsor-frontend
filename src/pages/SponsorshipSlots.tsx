@@ -520,8 +520,10 @@ function Select({
 function SlotCard({ row, slotCount }: { row: SlotRow; slotCount: number }) {
   const meta = KIND_META[row.kind];
   const soon = isSoon(row);
-  // 해당 선수의 '○○'s 스폰서십 슬롯' 섹션으로 바로 보낸다
-  const to = row.athleteId ? `/athletes/${row.athleteId}#slots` : '/auctions';
+  // 해당 선수의 '○○'s 스폰서십 슬롯' 섹션으로 보내고, 카드에서 고른 슬롯을 선택 상태로 넘긴다
+  const to = row.athleteId
+    ? `/athletes/${row.athleteId}${row.slotCode ? `?slot=${encodeURIComponent(row.slotCode)}` : ''}#slots`
+    : '/auctions';
 
   return (
     <Link
