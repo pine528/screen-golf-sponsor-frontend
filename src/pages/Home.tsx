@@ -23,6 +23,7 @@ import { formatTimeRemaining } from '../utils';
 import { ServiceAnnouncementModal } from '../components/ServiceAnnouncementModal';
 import LiveAuctionBoard from '../components/LiveAuctionBoard';
 import HomeVoteSection from '../components/HomeVoteSection';
+import HomeGrowthMarket from '../components/HomeGrowthMarket';
 import PublicHeader from '../components/PublicHeader';
 
 /* useCounter 제거 — 개편 LEG-06: 하드코딩 실적 수치 대신 public-stats API 실데이터 사용 */
@@ -457,6 +458,8 @@ export function Home() {
       </section>
 
       {/* ════════════════════════ 진행 중인 투표 ════════════════════════ */}
+      <HomeGrowthMarket />
+
       <HomeVoteSection />
 
       {/* ════════════════════════ 왜 SPONPIK인가요? ════════════════════════ */}

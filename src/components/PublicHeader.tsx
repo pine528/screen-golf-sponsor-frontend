@@ -13,6 +13,7 @@ import LiveBadge from './LiveBadge';
 const NAV_LINKS = [
   { to: '/auctions', label: '라이브 경매', live: true },
   { to: '/slots', label: '스폰서십 슬롯' },
+  { to: '/growth-market', label: '성장마켓', badge: 'NEW' },
   { to: '/votes', label: '투표' },
   { to: '/athletes', label: '선수' },
   { to: '/how-it-works', label: '이용방법' },
@@ -51,6 +52,9 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
             >
               {l.label}
               {l.live && <LiveBadge />}
+              {l.badge && (
+                <span className="px-1 py-0.5 rounded bg-emerald-500 text-white text-[9px] font-black leading-none">{l.badge}</span>
+              )}
             </Link>
           ))}
           {isAuthenticated && (
@@ -107,6 +111,9 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
             >
               {l.label}
               {l.live && <LiveBadge />}
+              {l.badge && (
+                <span className="px-1 py-0.5 rounded bg-emerald-500 text-white text-[9px] font-black leading-none">{l.badge}</span>
+              )}
             </Link>
           ))}
           {isAuthenticated && (
