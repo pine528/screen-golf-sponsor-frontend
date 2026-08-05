@@ -16,6 +16,10 @@ const PATH_LABELS: Record<string, string> = {
   '/auctions': '라이브 경매',
   '/slots': '스폰서십 슬롯',
   '/growth-market': '성장마켓',
+  '/fan-store': '성장마켓',
+  '/fan-store/orex': 'OREX 팬스토어',
+  '/fan-store/orex/ar': '선수 AR 보기',
+  '/fan-store/orex/ar/download': 'AR 이미지 다운로드',
   '/votes': '무료 투표',
   '/votes/create': '투표 만들기',
   '/votes/my-created': '내가 만든 투표',
@@ -162,6 +166,7 @@ const PATH_LABELS: Record<string, string> = {
 
 /** 실제 라우트가 없는 묶음용 경로 — 링크가 아니라 글자로만 표시한다. */
 const GROUP_ONLY = new Set([
+  '/fan-store', // 라우트 없음 — 성장마켓 묶음 표기용
   '/brand',
   '/brand/reports',
   '/brand/funnel',

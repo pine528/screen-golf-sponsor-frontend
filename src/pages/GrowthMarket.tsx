@@ -181,14 +181,15 @@ export default function GrowthMarket() {
  *  - 기본(메인 페이지): [텍스트(이름 ×·로고 크게·설명·칩·CTA) | 선수 사진] + 하단 상품 스트립 2개
  */
 export function StoreCard({ store, products, wide = false }: { store: FanStore; products: any[]; wide?: boolean }) {
+  const to = store.storePath || (store.slug ? `/store/brand/${store.slug}` : undefined);
   const cta = (
     <span
       className={`mt-auto inline-flex items-center justify-center gap-1 h-9 rounded-lg text-[13px] font-bold ${
-        store.slug ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'
+        to ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'
       }`}
     >
-      {store.slug ? '스토어 보기' : '오픈 준비 중'}
-      {store.slug && <ArrowRight className="w-4 h-4" />}
+      {to ? '스토어 보기' : '오픈 준비 중'}
+      {to && <ArrowRight className="w-4 h-4" />}
     </span>
   );
 
@@ -269,8 +270,8 @@ export function StoreCard({ store, products, wide = false }: { store: FanStore; 
   );
 
   const cls = 'flex flex-col rounded-2xl border border-slate-200 bg-white overflow-hidden transition-all';
-  return store.slug ? (
-    <Link to={`/store/brand/${store.slug}`} className={`${cls} hover:border-emerald-300 hover:shadow-md`}>
+  return to ? (
+    <Link to={to} className={`${cls} hover:border-emerald-300 hover:shadow-md`}>
       {body}
     </Link>
   ) : (
@@ -332,6 +333,8 @@ function StripProduct({ product }: { product: any }) {
 function ProductCard({ product }: { product: any }) {
   const { price, list, off } = discountOf(product);
   const purchasable = !product.curated && product.store?.slug;
+  // 큐레이션 상품이라도 상세 경로(href)가 있으면 그쪽으로 연결한다
+  const href = purchasable ? `/store/brand/${product.store.slug}/product/${product.id}` : product.href;
   const inner = (
     <>
       <div className="relative aspect-square bg-slate-50">
@@ -361,8 +364,8 @@ function ProductCard({ product }: { product: any }) {
     </>
   );
   const cls = 'rounded-2xl border border-slate-200 bg-white overflow-hidden';
-  return purchasable ? (
-    <Link to={`/store/brand/${product.store.slug}/product/${product.id}`} className={`${cls} hover:border-emerald-300 transition-colors`}>
+  return href ? (
+    <Link to={href} className={`${cls} hover:border-emerald-300 transition-colors`}>
       {inner}
     </Link>
   ) : (

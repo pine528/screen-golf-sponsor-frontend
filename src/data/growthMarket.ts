@@ -15,11 +15,15 @@ export interface DisplayProduct {
   /** 판매가 */
   price: number;
   imageUrl?: string;
+  /** 상세 페이지 경로 (있을 때만 링크) */
+  href?: string;
 }
 
 export interface FanStore {
   /** 미니스토어 slug — 있으면 스토어로 연결, 없으면 준비중으로 표시 */
   slug?: string;
+  /** 큐레이션 스토어 경로 — slug보다 우선 (예: /fan-store/orex) */
+  storePath?: string;
   athleteName: string;
   /** 선수 상세로 연결할 id (있을 때) */
   athleteId?: string;
@@ -45,10 +49,11 @@ export const FAN_STORES: FanStore[] = [
     heroImage: '/growth-market/youm-donwoong.jpg',
     description: '강력한 에너지처럼 응원하는 퍼포먼스. OREX와 염돈웅 프로가 함께합니다.',
     benefit: '10% 팬 할인',
+    storePath: '/fan-store/orex',
     displayProducts: [
-      { name: '오렉스 슈퍼플렉스 알카라인 건전지 AA (12입)', listPrice: 4390, price: 3900 },
-      { name: '오렉스 슈퍼플렉스 알카라인 건전지 AAA (18입)', listPrice: 20000, price: 17400 },
-      { name: '오렉스 슈퍼플렉스 알카라인 건전지 AAA (8입)', listPrice: 11900, price: 10500 },
+      { name: '오렉스 슈퍼플러스 알카라인 건전지 AA (2입)', listPrice: 4390, price: 3900, href: '/fan-store/orex/orex-alkaline-aa-2p' },
+      { name: '오렉스 슈퍼플러스 알카라인 건전지 AAA (18입)', listPrice: 20000, price: 17400, href: '/fan-store/orex/orex-alkaline-aaa-18p' },
+      { name: '오렉스 슈퍼플러스 알카라인 건전지 AAA (8입)', listPrice: 11900, price: 10500, href: '/fan-store/orex/orex-alkaline-aaa-8p' },
     ],
   },
   {
