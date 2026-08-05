@@ -48,7 +48,8 @@ export const FAN_STORES: FanStore[] = [
     athleteName: '배진리',
     athleteId: '754e9c27-0000-0000-0000-000000000000',
     brandName: '호이베이커리',
-    brandLogo: '/brands/hoi-bakery.png',
+    /* 원본은 정사각 간판 사진이라 로고 자리(높이 24px)에서 글자가 뭉갠다. 가로형 워드마크를 쓴다 */
+    brandLogo: '/brands/hoi-bakery-wordmark.png',
     heroImage: '/growth-market/bae-jinri-hoibakery.jpg',
     description: '좋은 기운을 굽는 빵집, 호이베이커리와 배진리 프로가 함께 만든 홀리데이 제품.',
     benefit: '팬 전용 할인',

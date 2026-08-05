@@ -109,8 +109,7 @@ export default function GrowthMarket() {
       <section className="px-5 sm:px-8 pb-10">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mb-4">지금 만나볼 팬스토어</h2>
-          {/* 시안처럼 가로로 넉넉한 카드를 세로로 쌓는다 */}
-          <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {FAN_STORES.map((s, i) => (
               <StoreCard key={s.athleteName + s.brandName} store={s} products={productsOf(i)} wide />
             ))}
@@ -118,24 +117,19 @@ export default function GrowthMarket() {
         </div>
       </section>
 
-      {/* ── 인기 상품 ── */}
-      <section className="px-5 sm:px-8 pb-10">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mb-4">인기 상품 미리보기</h2>
-          {allProducts.length > 0 ? (
+      {/* ── 인기 상품 (등록된 상품이 있을 때만) ── */}
+      {allProducts.length > 0 && (
+        <section className="px-5 sm:px-8 pb-10">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 mb-4">인기 상품 미리보기</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
               {allProducts.slice(0, 12).map((p: any) => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>
-          ) : (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
-              <ShoppingCart className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-              <p className="text-sm text-slate-500">상품이 등록되면 이곳에 표시됩니다.</p>
-            </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       {/* ── 이용 방법 ── */}
       <section className="px-5 sm:px-8 pb-16">
@@ -173,39 +167,70 @@ export default function GrowthMarket() {
   );
 }
 
-/** 팬스토어 카드 — 좌: 선수 사진 / 우: 브랜드·설명·혜택·CTA, 하단: 상품 스트립 */
+/**
+ * 팬스토어 카드 — 위: 선수 원본 사진(가슴에 브랜드 패치), 아래: 브랜드·설명·혜택·CTA
+ *
+ * 상품 스트립은 실제로 등록된 상품이 있을 때만 붙인다. 빈 자리를 점선으로 잡아두면
+ * 카드가 비어 보여서 오히려 완성도가 떨어진다.
+ */
 export function StoreCard({ store, products, wide = false }: { store: FanStore; products: any[]; wide?: boolean }) {
   const body = (
-    <div className={wide ? "flex gap-6 p-5" : "flex gap-3 p-4"}>
-      {/* 좌: 선수 원본 사진 (가슴에 브랜드 패치) */}
-      <div className={(wide ? "w-[26%] max-w-[260px] min-h-[240px] " : "w-[34%] ") + "shrink-0 rounded-2xl overflow-hidden bg-gradient-to-b from-slate-50 to-slate-100"}>
-        <img
-          src={store.heroImage}
-          alt={`${store.athleteName} 프로 × ${store.brandName}`}
-          className="w-full h-full object-cover object-[50%_16%]"
-          loading="lazy"
-        />
+    <>
+      {/* 선수 원본 사진 + 브랜드 로고 뱃지 */}
+      <div className="relative">
+        <div className={`${wide ? 'aspect-[5/6]' : 'aspect-[4/5]'} overflow-hidden bg-gradient-to-b from-slate-100 to-slate-50`}>
+          <img
+            src={store.heroImage}
+            alt={`${store.athleteName} 프로 × ${store.brandName}`}
+            className="w-full h-full object-cover object-top"
+            loading="lazy"
+          />
+        </div>
+        <div className="absolute top-3 left-3 h-10 px-3 rounded-2xl bg-white/95 backdrop-blur shadow-sm border border-slate-100 flex items-center">
+          <img src={store.brandLogo} alt={store.brandName} className="max-h-6 max-w-[92px] object-contain" />
+        </div>
+        {store.benefit && (
+          <span className="absolute top-3 right-3 px-2.5 py-1.5 rounded-xl bg-emerald-500 text-white text-[11px] font-bold shadow-sm">
+            {store.benefit}
+          </span>
+        )}
       </div>
 
-      {/* 중: 브랜드·설명·혜택·CTA */}
-      <div className="min-w-0 flex flex-col flex-1">
-        <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
-          <span className={(wide ? "text-base " : "text-[13px] ") + "font-extrabold text-slate-900"}>{store.athleteName} 프로</span>
-          <span className="text-slate-300 font-bold">×</span>
-          <img src={store.brandLogo} alt={store.brandName} className={(wide ? "max-h-8 max-w-[120px]" : "max-h-[22px] max-w-[84px]") + " object-contain"} />
+      {/* 브랜드·설명·혜택·CTA */}
+      <div className={`flex flex-col flex-1 ${wide ? 'p-5' : 'p-4'}`}>
+        <div className="flex items-baseline gap-1.5 mb-1">
+          <span className={`${wide ? 'text-[17px]' : 'text-[15px]'} font-extrabold text-slate-900`}>
+            {store.athleteName} 프로
+          </span>
+          <span className="text-slate-300 font-bold text-sm">×</span>
+          <span className={`${wide ? 'text-[17px]' : 'text-[15px]'} font-extrabold text-slate-900 truncate`}>
+            {store.brandName}
+          </span>
         </div>
-        <div className={(wide ? "text-lg " : "text-[13px] ") + "font-extrabold text-slate-900 mb-1.5"}>팬 스토어</div>
-        <p className={(wide ? "text-[13px] " : "text-[11px] ") + "text-slate-500 break-keep leading-relaxed line-clamp-3 mb-2.5"}>{store.description}</p>
+        <div className="text-[13px] font-bold text-emerald-600 mb-2">팬 스토어</div>
+        <p className={`${wide ? 'text-[13px]' : 'text-xs'} text-slate-500 break-keep leading-relaxed line-clamp-3 mb-3`}>
+          {store.description}
+        </p>
 
         <div className="flex flex-wrap items-center gap-1.5 mb-3">
-          {store.benefit && (
-            <span className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold">{store.benefit}</span>
-          )}
-          <span className="px-2 py-1 rounded-lg border border-slate-200 text-slate-500 text-[11px] font-bold">AR 보기</span>
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-50 text-slate-500 text-[11px] font-bold">
+            <Box className="w-3 h-3" /> AR 보기
+          </span>
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-50 text-slate-500 text-[11px] font-bold">
+            <CreditCard className="w-3 h-3" /> SPON Pay
+          </span>
         </div>
 
+        {products.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 mb-3">
+            {products.slice(0, 3).map((p: any) => (
+              <MiniProduct key={p.id} product={p} />
+            ))}
+          </div>
+        )}
+
         <span
-          className={`mt-auto inline-flex items-center justify-center gap-1 h-9 rounded-xl text-[13px] font-bold ${
+          className={`mt-auto inline-flex items-center justify-center gap-1 h-10 rounded-xl text-[13px] font-bold ${
             store.slug ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'
           }`}
         >
@@ -213,23 +238,12 @@ export function StoreCard({ store, products, wide = false }: { store: FanStore; 
           {store.slug && <ArrowRight className="w-4 h-4" />}
         </span>
       </div>
-
-      {/* 우: 상품 미리보기 */}
-      <div className={(wide ? "w-[32%] grid grid-cols-3 gap-2 content-start" : "w-[22%] flex flex-col gap-2") + " shrink-0"}>
-        {products.length > 0
-          ? products.slice(0, 3).map((p: any) => <MiniProduct key={p.id} product={p} />)
-          : [0, 1, 2].map((i) => (
-              <div key={i} className={(wide ? "aspect-square " : "flex-1 min-h-[52px] ") + "rounded-xl border border-dashed border-slate-200 bg-slate-50/60 flex items-center justify-center"}>
-                <span className="text-[9px] text-slate-400">상품 준비중</span>
-              </div>
-            ))}
-      </div>
-    </div>
+    </>
   );
 
   const cls = 'flex flex-col rounded-2xl border border-slate-200 bg-white overflow-hidden transition-all';
   return store.slug ? (
-    <Link to={`/store/brand/${store.slug}`} className={`${cls} hover:border-emerald-300 hover:shadow-sm`}>
+    <Link to={`/store/brand/${store.slug}`} className={`${cls} hover:border-emerald-300 hover:shadow-md`}>
       {body}
     </Link>
   ) : (
