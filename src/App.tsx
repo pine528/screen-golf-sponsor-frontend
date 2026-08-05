@@ -104,6 +104,10 @@ import FanStoreOrexAr, { FanStoreOrexArDownload } from './pages/store/FanStoreOr
 import FanStoreGuys from './pages/store/FanStoreGuys';
 import FanStoreGuysProduct from './pages/store/FanStoreGuysProduct';
 import FanStoreGuysAr, { FanStoreGuysArDownload } from './pages/store/FanStoreGuysAr';
+import FanStoreHoi from './pages/store/FanStoreHoi';
+import FanStoreHoiProducts from './pages/store/FanStoreHoiProducts';
+import FanStoreHoiProduct from './pages/store/FanStoreHoiProduct';
+import FanStoreHoiAr, { FanStoreHoiArDownload } from './pages/store/FanStoreHoiAr';
 import MiniStoreLanding from './pages/store/MiniStoreLanding';
 import MiniStoreProduct from './pages/store/MiniStoreProduct';
 import MiniStoreCheckout from './pages/store/MiniStoreCheckout';
@@ -1033,6 +1037,12 @@ function App() {
       <Route path="/fan-store/the-guys/ar" element={<FanStoreGuysAr />} />
       <Route path="/fan-store/the-guys/ar/download" element={<FanStoreGuysArDownload />} />
       <Route path="/fan-store/the-guys/:productId" element={<FanStoreGuysProduct />} />
+      {/* 호이베이커리 팬스토어 (성장마켓 큐레이션 — 전시용) */}
+      <Route path="/fan-store/hoi-bakery" element={<FanStoreHoi />} />
+      <Route path="/fan-store/hoi-bakery/products" element={<FanStoreHoiProducts />} />
+      <Route path="/fan-store/hoi-bakery/ar" element={<FanStoreHoiAr />} />
+      <Route path="/fan-store/hoi-bakery/ar/download" element={<FanStoreHoiArDownload />} />
+      <Route path="/fan-store/hoi-bakery/:productId" element={<FanStoreHoiProduct />} />
       {/* STO-01~03 (Public Mini Store) - api_spec TABLE 13: /store/brand/:slug */}
       <Route path="/store/brand/:slug" element={<MiniStoreLanding />} />
       <Route path="/store/brand/:slug/product/:productId" element={<MiniStoreProduct />} />

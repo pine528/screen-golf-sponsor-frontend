@@ -78,12 +78,13 @@ export const FAN_STORES: FanStore[] = [
     /* 원본은 정사각 간판 사진이라 로고 자리에서 글자가 뭉갠다. 가로형 워드마크를 쓴다 */
     brandLogo: '/brands/hoi-bakery-wordmark.png',
     heroImage: '/growth-market/bae-jinri.jpg',
-    description: '좋은 기운을 굽는 빵집, 호이베이커리와 배진리 프로가 함께 만든 홀리데이 제품.',
+    description: '좋은 기운을 굽는 빵집, 호이베이커리와 배진리 프로가 함께 만든 콜라보 제품과 팬 전용 베이커리 세트.',
     benefit: '10% 팬 할인',
+    storePath: '/fan-store/hoi-bakery',
     displayProducts: [
-      { name: '시그니처 구움과자 선물세트 12구', listPrice: 36000, price: 32400 },
-      { name: '버터쿠키 틴', listPrice: 19000, price: 16720 },
-      { name: '마카롱 & 마들렌 세트', listPrice: 26000, price: 23400 },
+      { name: '호이 시그니처 구움과자 선물세트 12구', listPrice: 36000, price: 32400, href: '/fan-store/hoi-bakery/hoi-signature-baked-12' },
+      { name: '버터쿠키 틴', listPrice: 19000, price: 16720, href: '/fan-store/hoi-bakery/hoi-butter-cookie-tin' },
+      { name: '피낭시에 & 마들렌 세트', listPrice: 26000, price: 23400, href: '/fan-store/hoi-bakery/hoi-financier-madeleine' },
     ],
   },
 ];
