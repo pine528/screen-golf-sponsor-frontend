@@ -64,10 +64,11 @@ export const FAN_STORES: FanStore[] = [
     heroImage: '/growth-market/youm-donwoong.jpg',
     description: '진정한 스타일을 완성하는 골프웨어. 염돈웅 프로가 함께하는 the GUYS.',
     benefit: '10% 팬 할인',
+    storePath: '/fan-store/the-guys',
     displayProducts: [
-      { name: '콜라보 폴로 셔츠 (화이트)', listPrice: 79000, price: 71100 },
-      { name: '콜라보 퍼포먼스 티셔츠 (블랙)', listPrice: 39000, price: 35100 },
-      { name: 'the GUYS 로고 캡 (블랙)', listPrice: 39000, price: 35100 },
+      { name: 'the GUYS × 염돈웅 프로 콜라보 폴로 셔츠 (화이트)', listPrice: 79000, price: 67150, href: '/fan-store/the-guys/guys-collab-polo-white' },
+      { name: '쿨링 퍼포먼스 티셔츠 (블랙)', listPrice: 43000, price: 39000, href: '/fan-store/the-guys/guys-cooling-tee-black' },
+      { name: 'the GUYS 로고 캡 (블랙)', listPrice: 43000, price: 39000, href: '/fan-store/the-guys/guys-logo-cap-black' },
     ],
   },
   {

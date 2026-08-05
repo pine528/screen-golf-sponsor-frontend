@@ -101,6 +101,9 @@ import AthleteFunnelDashboard from './pages/athlete/AthleteFunnelDashboard';
 import FanStoreOrex from './pages/store/FanStoreOrex';
 import FanStoreOrexProduct from './pages/store/FanStoreOrexProduct';
 import FanStoreOrexAr, { FanStoreOrexArDownload } from './pages/store/FanStoreOrexAr';
+import FanStoreGuys from './pages/store/FanStoreGuys';
+import FanStoreGuysProduct from './pages/store/FanStoreGuysProduct';
+import FanStoreGuysAr, { FanStoreGuysArDownload } from './pages/store/FanStoreGuysAr';
 import MiniStoreLanding from './pages/store/MiniStoreLanding';
 import MiniStoreProduct from './pages/store/MiniStoreProduct';
 import MiniStoreCheckout from './pages/store/MiniStoreCheckout';
@@ -1025,6 +1028,11 @@ function App() {
       <Route path="/fan-store/orex/ar" element={<FanStoreOrexAr />} />
       <Route path="/fan-store/orex/ar/download" element={<FanStoreOrexArDownload />} />
       <Route path="/fan-store/orex/:productId" element={<FanStoreOrexProduct />} />
+      {/* the GUYS 팬스토어 (성장마켓 큐레이션 — 전시용) */}
+      <Route path="/fan-store/the-guys" element={<FanStoreGuys />} />
+      <Route path="/fan-store/the-guys/ar" element={<FanStoreGuysAr />} />
+      <Route path="/fan-store/the-guys/ar/download" element={<FanStoreGuysArDownload />} />
+      <Route path="/fan-store/the-guys/:productId" element={<FanStoreGuysProduct />} />
       {/* STO-01~03 (Public Mini Store) - api_spec TABLE 13: /store/brand/:slug */}
       <Route path="/store/brand/:slug" element={<MiniStoreLanding />} />
       <Route path="/store/brand/:slug/product/:productId" element={<MiniStoreProduct />} />
