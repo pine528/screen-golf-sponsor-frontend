@@ -209,12 +209,14 @@ export function StoreCard({ store, products, wide = false }: { store: FanStore; 
 
   const body = wide ? (
     /* 성장마켓 페이지: 사진 좌 / 정보 중 / 상품 우 */
-    <div className="flex items-stretch min-h-[210px]">
-      <div className="w-[34%] max-w-[190px] shrink-0 bg-slate-50">
+    /* flex-1: 내용이 적은 카드도 그리드가 맞춘 카드 높이를 꽉 채운다 (사진 아래 빈 공간 방지) */
+    <div className="flex items-stretch min-h-[210px] flex-1">
+      {/* 사진은 절대배치로 컬럼을 꽉 채운다 — flex stretch 안의 h-full은 브라우저에 따라 짧게 계산됨 */}
+      <div className="relative w-[34%] max-w-[190px] shrink-0 bg-slate-50 overflow-hidden">
         <img
           src={store.heroImage}
           alt={`${store.athleteName} 프로 × ${store.brandName}`}
-          className="w-full h-full object-cover object-top"
+          className="absolute inset-0 w-full h-full object-cover object-top"
           loading="lazy"
         />
       </div>
@@ -247,11 +249,11 @@ export function StoreCard({ store, products, wide = false }: { store: FanStore; 
           {chips}
           {cta}
         </div>
-        <div className="w-[42%] shrink-0 bg-slate-50">
+        <div className="relative w-[42%] shrink-0 bg-slate-50 overflow-hidden">
           <img
             src={store.heroImage}
             alt={`${store.athleteName} 프로 × ${store.brandName}`}
-            className="w-full h-full object-cover object-top"
+            className="absolute inset-0 w-full h-full object-cover object-top"
             loading="lazy"
           />
         </div>
