@@ -181,6 +181,81 @@ export default function AiMatchProposal() {
               </div>
             </div>
 
+            {/* 채널 적합도 + 리스크 (SIE §14.3) */}
+            {(rec.subScores || rec.risks?.length > 0) && (
+              <div className="rounded-2xl border border-slate-200 p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                {rec.subScores && (
+                  <div>
+                    <h3 className="text-[14px] font-extrabold text-slate-900 mb-1">채널 적합도</h3>
+                    <p className="text-[11px] text-slate-400 mb-3.5">
+                      후보군 내 상대 평가 · 전략 역할 <b className="text-slate-700">{rec.roleLabel}</b>
+                    </p>
+                    <div className="space-y-2.5">
+                      {[
+                        ['패치·대회 노출', rec.subScores.patch],
+                        ['SNS 콘텐츠', rec.subScores.sns],
+                        ['언론·PR', rec.subScores.pr],
+                        ['커머스·팬스토어', rec.subScores.commerce],
+                        ['팬 반응', rec.subScores.fan],
+                        ['장기 계약', rec.subScores.longTerm],
+                      ].map(([label, v]) => (
+                        <div key={label as string} className="flex items-center gap-3">
+                          <span className="w-24 shrink-0 text-[11px] text-slate-500">{label}</span>
+                          <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
+                            <div className="h-full rounded-full bg-emerald-500" style={{ width: `${v}%` }} />
+                          </div>
+                          <span className="w-8 text-right text-[11px] font-black text-slate-800 tabular-nums">{v}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div>
+                  {rec.risks?.length > 0 && (
+                    <>
+                      <h3 className="text-[14px] font-extrabold text-slate-900 mb-3.5">확인이 필요한 점</h3>
+                      <ul className="space-y-1.5 mb-4">
+                        {rec.risks.map((rk: string) => (
+                          <li key={rk} className="flex items-start gap-2 text-[12px] text-slate-500 break-keep">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 mt-1.5 shrink-0" /> {rk}
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                  {rec.alternative && (
+                    <div className="rounded-xl bg-slate-50 border border-slate-100 px-4 py-3">
+                      <div className="text-[11px] font-bold text-slate-500 mb-1">대안 플랜</div>
+                      <Link
+                        to={`/ai-match/${requestId}/proposal/${rec.alternative.athleteId}`}
+                        className="text-[12px] font-bold text-emerald-700 hover:underline break-keep"
+                      >
+                        다른 전략이 필요하면 {rec.alternative.name} 프로 ({rec.alternative.roleLabel} · {rec.alternative.matchScore}점) 제안 보기 ›
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* 근거 보기 (SIE §13.1 — 모든 근거는 실측 evidence, AC-04) */}
+            {rec.evidence?.length > 0 && (
+              <div className="rounded-2xl border border-slate-200 p-5">
+                <h3 className="text-[14px] font-extrabold text-slate-900 mb-1">근거 보기</h3>
+                <p className="text-[11px] text-slate-400 mb-3.5">
+                  추천에 사용된 실측 데이터 · 출처 SPONPIK 내부(S등급) · 기준일 {data.dataAsOf ? new Date(data.dataAsOf).toLocaleDateString('ko-KR') : '-'}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                  {rec.evidence.map((e: any) => (
+                    <div key={e.evidenceId} className="flex items-baseline gap-2 text-[12px] border-b border-slate-50 pb-1.5">
+                      <span className="text-slate-400 shrink-0">{e.label}</span>
+                      <span className="ml-auto font-bold text-slate-800 text-right break-keep">{e.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* 추가 추천 옵션 */}
             {others.length > 0 && (
               <div className="rounded-2xl border border-slate-200 p-5 print:hidden">
@@ -228,6 +303,9 @@ export default function AiMatchProposal() {
                 <div className="min-w-0 flex-1">
                   <div className="text-[14px] font-extrabold text-slate-900">{rec.name} 프로</div>
                   <div className="text-[11px] text-slate-400">{rec.tour}</div>
+                  {rec.roleLabel && (
+                    <span className="inline-flex mt-1 px-1.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-bold">{rec.roleLabel}</span>
+                  )}
                 </div>
                 <ScoreGauge score={rec.matchScore} size={56} />
               </div>

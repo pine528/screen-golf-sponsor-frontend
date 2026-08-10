@@ -78,6 +78,21 @@ export default function AiMatch() {
   const [athleteQuery, setAthleteQuery] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [stageIdx, setStageIdx] = useState(0);
+
+  /* 분석 단계 문구 (SIE §14.1) */
+  const STAGES = [
+    'SPONPIK 선수 데이터로 1차 후보를 찾고 있습니다…',
+    '선수별 패치·SNS·팬·커머스 적합도를 계산하고 있습니다…',
+    '예산 안에서 가장 효과적인 후원 조합을 설계하고 있습니다…',
+  ];
+  useEffect(() => {
+    if (!submitting) { setStageIdx(0); return; }
+    const t = setInterval(() => setStageIdx((i) => Math.min(i + 1, STAGES.length - 1)), 1300);
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [submitting]);
+  const submitLabel = submitting ? STAGES[stageIdx] : null;
 
   /* 선수 검색/추천 칩 */
   const { data: athleteResp } = useQuery({
@@ -323,7 +338,7 @@ export default function AiMatch() {
                 valid ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
               }`}
             >
-              <Sparkles className="w-4 h-4" /> {submitting ? '분석 중…' : 'AI 추천 받기'}
+              <Sparkles className="w-4 h-4 shrink-0" /> <span className="truncate">{submitLabel || 'AI 추천 받기'}</span>
             </button>
             <p className="hidden lg:block text-center text-[11px] text-slate-400 mt-2">평균 30초 내 결과 확인</p>
           </div>
@@ -339,7 +354,8 @@ export default function AiMatch() {
             valid ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'
           }`}
         >
-          <Sparkles className="w-4 h-4" /> {submitting ? '분석 중…' : `AI 추천 받기${preview !== null ? ` · 후보 ${preview}명` : ''}`}
+          <Sparkles className="w-4 h-4 shrink-0" />{' '}
+          <span className="truncate">{submitLabel || `AI 추천 받기${preview !== null ? ` · 후보 ${preview}명` : ''}`}</span>
         </button>
       </div>
     </div>

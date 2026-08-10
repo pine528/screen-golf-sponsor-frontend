@@ -177,9 +177,14 @@ export default function AiMatchResults() {
                         <div className="min-w-0 flex-1">
                           <div className="text-[15px] font-extrabold text-slate-900 mb-0.5">{r.name} 프로</div>
                           <div className="text-[11px] text-slate-400 mb-2">{r.tour}</div>
-                          <span className="inline-flex px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold">
-                            {METHOD_LABEL[r.package?.method] || r.package?.method}
-                          </span>
+                          <div className="flex flex-wrap gap-1">
+                            {r.roleLabel && (
+                              <span className="inline-flex px-2 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-bold">{r.roleLabel}</span>
+                            )}
+                            <span className="inline-flex px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold">
+                              {METHOD_LABEL[r.package?.method] || r.package?.method}
+                            </span>
+                          </div>
                         </div>
                         <ScoreGauge score={r.matchScore} size={64} />
                       </div>
@@ -197,7 +202,10 @@ export default function AiMatchResults() {
                         <MetricRow label="가용 슬롯" value={`${r.metrics?.availableSlots}개`} />
                         <MetricRow label="SNS 팔로워" value={r.metrics?.followers ? `${r.metrics.followers.toLocaleString()}명` : '데이터 준비 중'} />
                         <MetricRow label="팬 관심 등록" value={`${r.metrics?.favoriteCount ?? 0}명`} />
-                        <MetricRow label="데이터 신뢰도" value={CONFIDENCE_LABEL[r.confidence] || r.confidence} />
+                        <MetricRow
+                          label="데이터 신뢰도"
+                          value={`${CONFIDENCE_LABEL[r.confidence] || r.confidence}${typeof r.confidenceValue === 'number' ? ` ${Math.round(r.confidenceValue * 100)}%` : ''}`}
+                        />
                       </dl>
 
                       <div className="grid grid-cols-2 gap-2">
@@ -262,6 +270,18 @@ export default function AiMatchResults() {
                   </div>
                 )}
 
+                {/* 조사 소스 상태 (SIE §15.2 — 미연동 소스 정직 표기) */}
+                {data.sourceStatus && (
+                  <div className="rounded-2xl border border-slate-200 p-4">
+                    <h3 className="text-[13px] font-extrabold text-slate-900 mb-2.5">조사 소스</h3>
+                    <ul className="space-y-1.5 text-[11px]">
+                      <SourceRow label="SPONPIK 선수·슬롯·계약 데이터" ok />
+                      <SourceRow label="SPONPIK 팬·대회 성적 데이터" ok />
+                      <SourceRow label="뉴스·YouTube 공개 자료" ok={false} note="연동 예정" />
+                      <SourceRow label="Instagram 선수 계정 연동" ok={false} note="선수 동의 시" />
+                    </ul>
+                  </div>
+                )}
                 <div className="rounded-2xl bg-slate-50 border border-slate-100 px-4 py-3 text-[10px] text-slate-400 break-keep">
                   기준일 {data.dataAsOf ? new Date(data.dataAsOf).toLocaleDateString('ko-KR') : '-'} · 규칙 {data.ruleVersion} · 후보 {data.candidateCount}명 중 상위 추천
                 </div>
@@ -351,6 +371,16 @@ function Cond({ label, value }: { label: string; value: string }) {
       <span className="text-slate-400">{label} :</span>
       <span className="font-bold text-emerald-700">{value}</span>
     </span>
+  );
+}
+
+function SourceRow({ label, ok, note }: { label: string; ok: boolean; note?: string }) {
+  return (
+    <li className="flex items-center gap-1.5">
+      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ok ? 'bg-emerald-500' : 'bg-slate-300'}`} />
+      <span className={ok ? 'text-slate-600' : 'text-slate-400'}>{label}</span>
+      {note && <span className="ml-auto text-[10px] text-slate-300">{note}</span>}
+    </li>
   );
 }
 
