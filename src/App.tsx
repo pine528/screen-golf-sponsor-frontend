@@ -98,6 +98,10 @@ import BrandOrders from './pages/brand/BrandOrders';
 import BrandPixelInstall from './pages/brand/BrandPixelInstall';
 import BrandAttribution from './pages/brand/BrandAttribution';
 import AthleteFunnelDashboard from './pages/athlete/AthleteFunnelDashboard';
+import AiMatch from './pages/aimatch/AiMatch';
+import AiMatchResults from './pages/aimatch/AiMatchResults';
+import AiMatchCompare from './pages/aimatch/AiMatchCompare';
+import AiMatchProposal from './pages/aimatch/AiMatchProposal';
 import FanStoreOrex from './pages/store/FanStoreOrex';
 import FanStoreOrexProduct from './pages/store/FanStoreOrexProduct';
 import FanStoreOrexAr, { FanStoreOrexArDownload } from './pages/store/FanStoreOrexAr';
@@ -1027,6 +1031,11 @@ function App() {
       {/* ATH-01 (Athlete) */}
       <Route path="/athlete/funnel/dashboard" element={<ProtectedRoute><AthleteFunnelDashboard /></ProtectedRoute>} />
 
+      {/* AI 간편 매칭 (핸드오프 v1.0 §1.3) */}
+      <Route path="/ai-match" element={<AiMatch />} />
+      <Route path="/ai-match/:requestId" element={<AiMatchResults />} />
+      <Route path="/ai-match/:requestId/compare" element={<AiMatchCompare />} />
+      <Route path="/ai-match/:requestId/proposal/:athleteId" element={<AiMatchProposal />} />
       {/* OREX 팬스토어 (성장마켓 큐레이션 — 전시용) */}
       <Route path="/fan-store/orex" element={<FanStoreOrex />} />
       <Route path="/fan-store/orex/ar" element={<FanStoreOrexAr />} />
