@@ -8,9 +8,17 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Check, Sparkles } from 'lucide-react';
 import PublicHeader from '../../components/PublicHeader';
 import Breadcrumb from '../../components/Breadcrumb';
+import { useAuth } from '../../hooks/useAuth';
+import { AiMatchBrandGate } from './AiMatch';
 import { CONFIDENCE_LABEL, METHOD_LABEL, useAiMatchRequest } from './AiMatchResults';
 
 export default function AiMatchCompare() {
+  const { isAuthenticated, user } = useAuth();
+  if (!(isAuthenticated && (user as any)?.role === 'BRAND')) return <AiMatchBrandGate />;
+  return <AiMatchCompareInner />;
+}
+
+function AiMatchCompareInner() {
   const { requestId } = useParams();
   const [searchParams] = useSearchParams();
   const { data, isLoading } = useAiMatchRequest(requestId);

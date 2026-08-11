@@ -27,6 +27,7 @@ import {
 import PublicHeader from '../../components/PublicHeader';
 import Breadcrumb from '../../components/Breadcrumb';
 import { api } from '../../services/api';
+import { useAuth } from '../../hooks/useAuth';
 
 export const BRAND_TYPES = [
   { key: 'BEAUTY', label: '화장품' },
@@ -64,7 +65,45 @@ const fmtMan = (v: number) => (v >= 10000000 ? '1,000만원+' : `${Math.round(v 
 export const labelOf = (list: { key: string; label: string }[], key?: string) =>
   list.find((x) => x.key === key)?.label || key || '-';
 
+/** 브랜드 전용 게이트 (2026-08-12 사용자 결정) — 결과/비교/제안 페이지에서도 재사용 */
+export function AiMatchBrandGate() {
+  return (
+    <div className="min-h-screen bg-white">
+      <PublicHeader />
+      <div className="max-w-lg mx-auto px-5 py-20 text-center">
+        <span className="inline-flex w-16 h-16 rounded-3xl bg-emerald-50 items-center justify-center mb-5">
+          <Sparkles className="w-7 h-7 text-emerald-600" />
+        </span>
+        <h1 className="text-2xl font-black text-slate-900 mb-2">
+          AI 간편 매칭은 <span className="text-emerald-600">브랜드 회원 전용</span>입니다
+        </h1>
+        <p className="text-sm text-slate-500 break-keep leading-relaxed mb-8">
+          브랜드로 로그인하시면 귀사의 업종과 협업 이력을 반영한
+          <br className="hidden sm:block" />
+          맞춤 선수·후원방식 추천을 받을 수 있어요.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2 justify-center">
+          <a href="/login" className="h-12 px-6 inline-flex items-center justify-center rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700">
+            브랜드 로그인
+          </a>
+          <a href="/brand-register" className="h-12 px-6 inline-flex items-center justify-center rounded-xl border border-emerald-600 text-emerald-700 text-sm font-bold hover:bg-emerald-50">
+            브랜드 등록하기
+          </a>
+        </div>
+        <p className="text-[11px] text-slate-400 mt-6">선수·팬 회원은 라이브 경매와 성장마켓을 이용해보세요.</p>
+      </div>
+    </div>
+  );
+}
+
 export default function AiMatch() {
+  const { isAuthenticated, user } = useAuth();
+  const isBrand = isAuthenticated && (user as any)?.role === 'BRAND';
+  if (!isBrand) return <AiMatchBrandGate />;
+  return <AiMatchForm />;
+}
+
+function AiMatchForm() {
   const navigate = useNavigate();
   const [brandType, setBrandType] = useState<string | null>(null);
   const [goals, setGoals] = useState<Set<string>>(new Set());
@@ -93,6 +132,32 @@ export default function AiMatch() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitting]);
   const submitLabel = submitting ? STAGES[stageIdx] : null;
+
+  /* 브랜드 컨텍스트 — 업종·최근 조건 프리필 (§2.1 브랜드 프로필 기본값) */
+  const { data: ctxResp } = useQuery({
+    queryKey: ['ai-match-brand-context'],
+    queryFn: () => api.aiMatchBrandContext(),
+    staleTime: 300_000,
+  });
+  const brandCtx = (ctxResp as any)?.data;
+  const [prefilled, setPrefilled] = useState(false);
+  useEffect(() => {
+    if (!brandCtx || prefilled) return;
+    setPrefilled(true);
+    const li = brandCtx.lastInput;
+    if (li) {
+      setBrandType(li.brandType);
+      setGoals(new Set(li.goals || []));
+      setMethod(li.preferredMethod);
+      if (li.budget?.min && li.budget?.max) { setBudget(li.budget); setPresetIdx(null); }
+      setIncludeSns(!!li.options?.includeSns);
+      setIncludeGrowthMarket(!!li.options?.includeGrowthMarket);
+      setGuarantee(!!li.options?.performanceGuarantee50);
+    } else if (brandCtx.suggestedBrandType && brandCtx.suggestedBrandType !== 'ETC') {
+      setBrandType(brandCtx.suggestedBrandType);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [brandCtx, prefilled]);
 
   /* 선수 검색/추천 칩 */
   const { data: athleteResp } = useQuery({
@@ -183,6 +248,13 @@ export default function AiMatch() {
           <p className="text-sm text-slate-500 break-keep">
             브랜드 유형, 목표, 선호 방식, 선수, 예산만 입력하면 SPONPIK AI가 최적의 선수와 스폰서십 방식을 추천해드려요.
           </p>
+          {brandCtx && (
+            <span className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-[12px] font-bold text-emerald-800 break-keep">
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              「{brandCtx.brandName}」 맞춤 — {brandCtx.lastInput ? '최근 매칭 조건을 불러왔어요' : `업종(${brandCtx.category}) 기준 자동 설정`}
+              {brandCtx.collaboratedAthleteCount > 0 && ` · 협업 이력 ${brandCtx.collaboratedAthleteCount}명 가점`}
+            </span>
+          )}
 
           {/* 단계 표시 (§6.1) */}
           <div className="mt-5 rounded-2xl border border-slate-200 bg-white px-4 py-3 flex items-center gap-2 overflow-x-auto">

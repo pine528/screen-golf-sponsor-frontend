@@ -23,10 +23,17 @@ import {
 } from 'lucide-react';
 import PublicHeader from '../../components/PublicHeader';
 import Breadcrumb from '../../components/Breadcrumb';
-import { BRAND_TYPES, GOALS, METHODS, labelOf } from './AiMatch';
+import { useAuth } from '../../hooks/useAuth';
+import { AiMatchBrandGate, BRAND_TYPES, GOALS, METHODS, labelOf } from './AiMatch';
 import { CONFIDENCE_LABEL, METHOD_LABEL, ScoreGauge, useAiMatchRequest } from './AiMatchResults';
 
 export default function AiMatchProposal() {
+  const { isAuthenticated, user } = useAuth();
+  if (!(isAuthenticated && (user as any)?.role === 'BRAND')) return <AiMatchBrandGate />;
+  return <AiMatchProposalInner />;
+}
+
+function AiMatchProposalInner() {
   const { requestId, athleteId } = useParams();
   const { data, isLoading } = useAiMatchRequest(requestId);
 

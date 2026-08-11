@@ -3093,7 +3093,11 @@ class ApiService {
     const r = await this.client.get<ApiResponse<{ items: any[]; total: number; page: number; limit: number }>>(`/athletes/public`, { params });
     return r.data;
   }
-  /* ── AI 간편 매칭 (핸드오프 v1.0 §9.1) ── */
+  /* ── AI 간편 매칭 (핸드오프 v1.0 §9.1 · 브랜드 전용) ── */
+  async aiMatchBrandContext() {
+    const r = await this.client.get<ApiResponse<any>>('/ai-match/brand-context');
+    return r.data;
+  }
   async aiMatchPreview(input: any) {
     const r = await this.client.post<ApiResponse<{ candidateCount: number; excludedPreferred: any[] }>>('/ai-match/preview', input);
     return r.data;

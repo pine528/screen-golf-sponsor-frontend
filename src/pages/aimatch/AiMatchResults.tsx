@@ -22,7 +22,8 @@ import {
 import PublicHeader from '../../components/PublicHeader';
 import Breadcrumb from '../../components/Breadcrumb';
 import { api } from '../../services/api';
-import { BRAND_TYPES, GOALS, METHODS, labelOf } from './AiMatch';
+import { useAuth } from '../../hooks/useAuth';
+import { AiMatchBrandGate, BRAND_TYPES, GOALS, METHODS, labelOf } from './AiMatch';
 
 export const METHOD_LABEL: Record<string, string> = {
   AUCTION: '라이브 경매',
@@ -67,6 +68,12 @@ export function ScoreGauge({ score, size = 72 }: { score: number; size?: number 
 }
 
 export default function AiMatchResults() {
+  const { isAuthenticated, user } = useAuth();
+  if (!(isAuthenticated && (user as any)?.role === 'BRAND')) return <AiMatchBrandGate />;
+  return <AiMatchResultsInner />;
+}
+
+function AiMatchResultsInner() {
   const { requestId } = useParams();
   const navigate = useNavigate();
   const { data, isLoading, isError } = useAiMatchRequest(requestId);
