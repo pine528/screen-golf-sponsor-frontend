@@ -244,7 +244,7 @@ export default function ProposalNew() {
       </div>
 
       {/* 하단 고정 영역 (§13.3) */}
-      <div className="fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 px-5 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+      <div className="fixed bottom-14 lg:bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 px-5 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
         <div className="max-w-3xl mx-auto flex items-center gap-2">
           <button type="button" onClick={() => saveMut.mutate()} disabled={saveMut.isPending} className="px-3 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 inline-flex items-center gap-1.5">
             <Save className="w-4 h-4" /> {saveMut.isPending ? '저장 중...' : draftId ? '임시저장됨' : '임시저장'}

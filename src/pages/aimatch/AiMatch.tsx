@@ -346,7 +346,7 @@ export default function AiMatch() {
       </section>
 
       {/* 모바일 하단 고정 CTA (§7.1) */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-slate-100 px-5 py-3">
+      <div className="lg:hidden fixed bottom-14 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-slate-100 px-5 py-3">
         <button
           onClick={submit}
           disabled={!valid || submitting}

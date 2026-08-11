@@ -32,9 +32,12 @@ export default function HomeGrowthMarket() {
           후원으로 연결된 프로와 브랜드가 팬과 함께 성장하는 특별한 마켓
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* 모바일: 세로 스택 대신 가로 스와이프 (모바일 전면 개편 2026-08-11) */}
+        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory -mx-5 px-5 sm:mx-0 sm:px-0 pb-1 sm:pb-0">
           {FAN_STORES.slice(0, 3).map((s, i) => (
-            <StoreCard key={s.athleteName + s.brandName} store={s} products={productsOf(i)} />
+            <div key={s.athleteName + s.brandName} className="snap-start shrink-0 w-[82%] sm:w-auto sm:shrink">
+              <StoreCard store={s} products={productsOf(i)} />
+            </div>
           ))}
         </div>
       </div>

@@ -283,3 +283,10 @@
 ::-webkit-scrollbar-thumb {
   @apply bg-slate-300 rounded-full hover:bg-slate-400;
 }
+
+/* 모바일 하단 탭 바(MobileTabBar)가 콘텐츠를 가리지 않도록 여백 확보 */
+@media (max-width: 1023.98px) {
+  body.has-mobile-tabbar {
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom));
+  }
+}

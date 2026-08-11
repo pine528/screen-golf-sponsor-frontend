@@ -13,7 +13,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Gavel, ShoppingCart, MessageCircle, Info } from 'lucide-react';
+import { Gavel, ShoppingCart, MessageCircle, Info, SlidersHorizontal, X } from 'lucide-react';
 import { api } from '../../services/api';
 import LegalNotice from '../LegalNotice';
 import SlotDiagram, { STATUS_META, type DiagramSlot } from './SlotDiagram';
@@ -73,6 +73,8 @@ export default function UnifiedPurchase({
   const [addons, setAddons] = useState<string[]>([]);
   const [drawerId, setDrawerId] = useState<string | null>(null);
   const [error, setError] = useState('');
+  /** 모바일 — 후원상품 구성 바텀시트 (하단 바에서 열림) */
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   /** 인벤토리(재고·상태) + 기존 슬롯 인스턴스(가격·거래방식·경매)를 병합 */
   const slots = useMemo(() => {
@@ -177,9 +179,122 @@ export default function UnifiedPurchase({
           : '바로 구매';
   const ctaDisabled = !selected || !selectable(selected) || buyNowMut.isPending;
 
+  /* 후원상품 구성 패널 본문 — 데스크톱 우측 컬럼과 모바일 바텀시트에서 함께 쓴다 */
+  const panelBody = (
+    <>
+      <Step n={1} label="기간">
+        <div className="grid grid-cols-2 gap-1.5">
+          {PERIODS.map((p) => (
+            <Chip key={p.key} on={period === p.key} onClick={() => { setPeriod(p.key); setSelectedId(null); }}>
+              {p.label}
+            </Chip>
+          ))}
+        </div>
+      </Step>
+
+      <Step n={2} label="상품유형">
+        <div className="grid grid-cols-3 gap-1.5">
+          {PRODUCT_TYPES.map((t) => (
+            <Chip key={t.key} on={productType === t.key} onClick={() => setProductType(t.key)}>
+              {t.label}
+            </Chip>
+          ))}
+        </div>
+        {productType !== 'APPAREL' && (
+          <p className="mt-2 text-[11px] text-violet-700 bg-violet-50 border border-violet-100 rounded-lg px-2.5 py-2 break-keep">
+            {productType === 'SNS' ? 'SNS' : '매장'} 상품은 선수별 조건이 달라 상담으로 구성합니다.
+          </p>
+        )}
+      </Step>
+
+      <Step n={3} label="슬롯">
+        {selected ? (
+          <div className="rounded-xl border border-slate-200 px-3 py-2.5">
+            <div className="text-xs font-bold text-slate-900">{selected.name}</div>
+            <div className="text-[11px] text-slate-500 mt-0.5">
+              {selected.saleModeLabel} · {periodLabel}
+            </div>
+          </div>
+        ) : (
+          <p className="text-[11px] text-slate-400">도식이나 목록에서 슬롯을 선택해 주세요.</p>
+        )}
+      </Step>
+
+      <Step n={4} label="추가활동">
+        <div className="flex flex-wrap gap-1.5">
+          {ADDONS.map((a) => {
+            const on = addons.includes(a.key);
+            return (
+              <Chip
+                key={a.key}
+                on={on}
+                onClick={() => setAddons((prev) => (on ? prev.filter((k) => k !== a.key) : [...prev, a.key]))}
+              >
+                {a.label}
+              </Chip>
+            );
+          })}
+        </div>
+        {addons.length > 0 && (
+          <p className="mt-2 text-[11px] text-slate-500 break-keep">
+            추가활동은 협의 항목으로, 아래 금액에 포함되지 않습니다.
+          </p>
+        )}
+      </Step>
+
+      {/* 가격 구성 — 표시 금액과 실제 결제 금액은 반드시 일치해야 한다 (우선순위표 §15) */}
+      <div className="mt-4 border-t border-slate-100 pt-3 space-y-1.5">
+        <PriceRow label="슬롯 기본가격" value={selected ? krw(selected.price) : '—'} />
+        {addons.length > 0 && <PriceRow label={`추가활동 ${addons.length}건`} value="협의" muted />}
+        <div className="flex items-center justify-between pt-2 mt-1 border-t border-slate-100">
+          <span className="text-xs font-bold text-slate-700">
+            {selected?.saleMode === 'AUCTION'
+              ? '현재 입찰 시작가'
+              : selected?.saleMode === 'INQUIRY'
+                ? '협의 기준가'
+                : '총 결제 예정금액'}
+          </span>
+          <span className="text-lg font-extrabold text-slate-900">{selected ? krw(selected.price) : '—'}</span>
+        </div>
+        <p className="text-[10px] text-slate-400 leading-relaxed break-keep flex items-start gap-1">
+          <Info className="w-3 h-3 mt-0.5 shrink-0" />
+          {selected?.saleMode === 'INQUIRY'
+            ? '협의 슬롯은 상담을 통해 조건과 금액을 확정합니다.'
+            : '부가세·플랫폼 이용료 정책 확정 전으로, 표시 금액이 실제 결제 금액입니다.'}
+        </p>
+      </div>
+
+      {error && <div className="mt-3 text-xs text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-2.5 py-2">{error}</div>}
+
+      <button
+        type="button"
+        onClick={handleCta}
+        disabled={ctaDisabled}
+        className="mt-4 w-full py-3 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 inline-flex items-center justify-center gap-2"
+      >
+        {selected?.saleMode === 'AUCTION' ? <Gavel className="w-4 h-4" /> : selected?.saleMode === 'INQUIRY' ? <MessageCircle className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
+        {buyNowMut.isPending ? '처리 중...' : ctaLabel}
+      </button>
+
+      {/* 개편 Phase 5 — 6·12개월은 경매가 금지되어 제안이 유일한 계약 경로 */}
+      <button
+        type="button"
+        onClick={() =>
+          isAuthenticated && userRole === 'BRAND'
+            ? navigate(`/proposals/new?athleteId=${athlete?.id}`)
+            : openKakaoConsult()
+        }
+        className="mt-2 w-full py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50"
+      >
+        장기 파트너십 제안하기
+      </button>
+    </>
+  );
+
   return (
-    /* 폭·좌우 여백은 선수 상세의 히어로 및 다른 섹션과 동일하게 맞춘다 */
-    <section data-section="purchase" className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    /* 폭·좌우 여백은 선수 상세의 히어로 및 다른 섹션과 동일하게 맞춘다.
+       모바일은 하단 고정 바 높이만큼 여백 확보 */
+    <section data-section="purchase" className="max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-28 lg:pb-8">
       <h2 className="text-xl font-extrabold text-slate-900 mb-1 inline-flex items-center gap-2">
         <Gavel className="w-5 h-5 text-emerald-500" />
         {athlete?.name ? `${athlete.name}'s 스폰서십 슬롯` : '진행중인 스폰서십 슬롯'}
@@ -190,12 +305,32 @@ export default function UnifiedPurchase({
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr_320px] gap-5 items-start">
-        {/* ── 좌: 선수정보 요약 ── */}
-        <AthleteSummaryColumn athlete={athlete} />
+        {/* ── 좌: 선수정보 요약 — 모바일은 위 히어로와 중복이라 숨겨 스크롤을 줄인다 ── */}
+        <div className="hidden lg:block">
+          <AthleteSummaryColumn athlete={athlete} />
+        </div>
 
         {/* ── 중: 슬롯 인벤토리 ── */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5">
           <div className="text-sm font-bold text-slate-900 mb-3">슬롯 인벤토리</div>
+
+          {/* 모바일 — 기간·상품유형 퀵 선택 (구성 시트까지 안 내려가도 되도록 상단 배치) */}
+          <div className="lg:hidden mb-4 space-y-2">
+            <div className="flex gap-1.5 overflow-x-auto pb-0.5">
+              {PERIODS.map((p) => (
+                <Chip key={p.key} on={period === p.key} onClick={() => { setPeriod(p.key); setSelectedId(null); }}>
+                  {p.label}
+                </Chip>
+              ))}
+            </div>
+            <div className="flex gap-1.5">
+              {PRODUCT_TYPES.map((t) => (
+                <Chip key={t.key} on={productType === t.key} onClick={() => setProductType(t.key)}>
+                  {t.label}
+                </Chip>
+              ))}
+            </div>
+          </div>
 
           {inventoryLoading ? (
             <div className="py-16 text-center text-sm text-slate-400">슬롯 정보를 불러오는 중...</div>
@@ -240,138 +375,65 @@ export default function UnifiedPurchase({
           )}
         </div>
 
-        {/* ── 우: 후원상품 구성 ── */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 lg:sticky lg:top-4">
+        {/* ── 우: 후원상품 구성 (데스크톱 고정 컬럼 — 모바일은 하단 바텀시트) ── */}
+        <div className="hidden lg:block bg-white border border-slate-200 rounded-2xl p-5 lg:sticky lg:top-4">
           <div className="text-sm font-bold text-slate-900 mb-4">후원상품 구성</div>
-
-          <Step n={1} label="기간">
-            <div className="grid grid-cols-2 gap-1.5">
-              {PERIODS.map((p) => (
-                <Chip key={p.key} on={period === p.key} onClick={() => { setPeriod(p.key); setSelectedId(null); }}>
-                  {p.label}
-                </Chip>
-              ))}
-            </div>
-          </Step>
-
-          <Step n={2} label="상품유형">
-            <div className="grid grid-cols-3 gap-1.5">
-              {PRODUCT_TYPES.map((t) => (
-                <Chip key={t.key} on={productType === t.key} onClick={() => setProductType(t.key)}>
-                  {t.label}
-                </Chip>
-              ))}
-            </div>
-            {productType !== 'APPAREL' && (
-              <p className="mt-2 text-[11px] text-violet-700 bg-violet-50 border border-violet-100 rounded-lg px-2.5 py-2 break-keep">
-                {productType === 'SNS' ? 'SNS' : '매장'} 상품은 선수별 조건이 달라 상담으로 구성합니다.
-              </p>
-            )}
-          </Step>
-
-          <Step n={3} label="슬롯">
-            {selected ? (
-              <div className="rounded-xl border border-slate-200 px-3 py-2.5">
-                <div className="text-xs font-bold text-slate-900">{selected.name}</div>
-                <div className="text-[11px] text-slate-500 mt-0.5">
-                  {selected.saleModeLabel} · {periodLabel}
-                </div>
-              </div>
-            ) : (
-              <p className="text-[11px] text-slate-400">도식이나 목록에서 슬롯을 선택해 주세요.</p>
-            )}
-          </Step>
-
-          <Step n={4} label="추가활동">
-            <div className="flex flex-wrap gap-1.5">
-              {ADDONS.map((a) => {
-                const on = addons.includes(a.key);
-                return (
-                  <Chip
-                    key={a.key}
-                    on={on}
-                    onClick={() => setAddons((prev) => (on ? prev.filter((k) => k !== a.key) : [...prev, a.key]))}
-                  >
-                    {a.label}
-                  </Chip>
-                );
-              })}
-            </div>
-            {addons.length > 0 && (
-              <p className="mt-2 text-[11px] text-slate-500 break-keep">
-                추가활동은 협의 항목으로, 아래 금액에 포함되지 않습니다.
-              </p>
-            )}
-          </Step>
-
-          {/* 가격 구성 — 표시 금액과 실제 결제 금액은 반드시 일치해야 한다 (우선순위표 §15) */}
-          <div className="mt-4 border-t border-slate-100 pt-3 space-y-1.5">
-            <PriceRow label="슬롯 기본가격" value={selected ? krw(selected.price) : '—'} />
-            {addons.length > 0 && <PriceRow label={`추가활동 ${addons.length}건`} value="협의" muted />}
-            <div className="flex items-center justify-between pt-2 mt-1 border-t border-slate-100">
-              <span className="text-xs font-bold text-slate-700">
-                {selected?.saleMode === 'AUCTION'
-                  ? '현재 입찰 시작가'
-                  : selected?.saleMode === 'INQUIRY'
-                    ? '협의 기준가'
-                    : '총 결제 예정금액'}
-              </span>
-              <span className="text-lg font-extrabold text-slate-900">{selected ? krw(selected.price) : '—'}</span>
-            </div>
-            <p className="text-[10px] text-slate-400 leading-relaxed break-keep flex items-start gap-1">
-              <Info className="w-3 h-3 mt-0.5 shrink-0" />
-              {selected?.saleMode === 'INQUIRY'
-                ? '협의 슬롯은 상담을 통해 조건과 금액을 확정합니다.'
-                : '부가세·플랫폼 이용료 정책 확정 전으로, 표시 금액이 실제 결제 금액입니다.'}
-            </p>
-          </div>
-
-          {error && <div className="mt-3 text-xs text-rose-600 bg-rose-50 border border-rose-100 rounded-lg px-2.5 py-2">{error}</div>}
-
-          <button
-            type="button"
-            onClick={handleCta}
-            disabled={ctaDisabled}
-            className="mt-4 w-full py-3 rounded-xl bg-slate-900 text-white text-sm font-bold hover:bg-slate-800 disabled:bg-slate-200 disabled:text-slate-400 inline-flex items-center justify-center gap-2"
-          >
-            {selected?.saleMode === 'AUCTION' ? <Gavel className="w-4 h-4" /> : selected?.saleMode === 'INQUIRY' ? <MessageCircle className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
-            {buyNowMut.isPending ? '처리 중...' : ctaLabel}
-          </button>
-
-          {/* 개편 Phase 5 — 6·12개월은 경매가 금지되어 제안이 유일한 계약 경로 */}
-          <button
-            type="button"
-            onClick={() =>
-              isAuthenticated && userRole === 'BRAND'
-                ? navigate(`/proposals/new?athleteId=${athlete?.id}`)
-                : openKakaoConsult()
-            }
-            className="mt-2 w-full py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-50"
-          >
-            장기 파트너십 제안하기
-          </button>
+          {panelBody}
         </div>
       </div>
 
       <LegalNotice className="mt-4" />
 
-      {/* 모바일 하단 고정 구매바 (§26 — 모바일에서도 구매 CTA가 항상 확인되어야 한다) */}
-      {selected && (
-        <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 px-4 py-3 flex items-center gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
-          <div className="min-w-0 flex-1">
-            <div className="text-[11px] text-slate-500 truncate">
-              {selected.name} · {periodLabel}
-            </div>
-            <div className="text-sm font-extrabold text-slate-900">{krw(selected.price)}</div>
-          </div>
+      {/* ── 모바일 하단 고정 요약 바 — 슬롯 선택 즉시 여기 반영된다 (탭 바 위에 얹힘) ── */}
+      {periodSlots.length > 0 && (
+        <div className="lg:hidden fixed bottom-14 inset-x-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex items-center gap-2.5 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+          <button type="button" onClick={() => setSheetOpen(true)} className="min-w-0 flex-1 text-left">
+            {selected ? (
+              <>
+                <div className="text-[11px] text-slate-500 truncate">{selected.name} · {periodLabel}</div>
+                <div className="text-sm font-extrabold text-slate-900">{krw(selected.price)}</div>
+              </>
+            ) : (
+              <>
+                <div className="text-[11px] text-slate-500">담긴 슬롯 없음</div>
+                <div className="text-sm font-bold text-slate-400">슬롯을 선택해 주세요</div>
+              </>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => setSheetOpen(true)}
+            className="shrink-0 h-10 px-3 inline-flex items-center gap-1 rounded-xl border border-slate-200 text-xs font-bold text-slate-700"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" /> 구성
+          </button>
           <button
             type="button"
             onClick={handleCta}
             disabled={ctaDisabled}
-            className="shrink-0 px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-bold disabled:bg-slate-200 disabled:text-slate-400"
+            className="shrink-0 h-10 px-4 rounded-xl bg-slate-900 text-white text-sm font-bold disabled:bg-slate-200 disabled:text-slate-400"
           >
             {buyNowMut.isPending ? '처리 중...' : ctaLabel}
           </button>
+        </div>
+      )}
+
+      {/* ── 모바일 후원상품 구성 바텀시트 ── */}
+      {sheetOpen && (
+        <div className="lg:hidden fixed inset-0 z-50" role="dialog" aria-modal="true">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setSheetOpen(false)} />
+          <div className="absolute inset-x-0 bottom-0 bg-white rounded-t-2xl max-h-[80vh] overflow-y-auto px-5 pt-3 pb-8">
+            <div className="sticky top-0 bg-white pb-2 -mx-5 px-5 border-b border-slate-100 mb-3 z-10">
+              <div className="w-10 h-1 rounded-full bg-slate-200 mx-auto mb-2.5" />
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold text-slate-900">후원상품 구성</span>
+                <button type="button" onClick={() => setSheetOpen(false)} className="p-1.5 text-slate-400" aria-label="닫기">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            {panelBody}
+          </div>
         </div>
       )}
 

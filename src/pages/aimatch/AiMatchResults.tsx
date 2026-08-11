@@ -347,6 +347,26 @@ export default function AiMatchResults() {
               </div>
             </div>
           </section>
+          {/* 모바일 — 비교 담기 즉시 피드백 바 (탭 바 위) */}
+          {compareIds.size > 0 && (
+            <div className="lg:hidden fixed bottom-14 inset-x-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex items-center gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+              <div className="min-w-0 flex-1">
+                <div className="text-[11px] text-slate-500">비교함에 담김</div>
+                <div className="text-sm font-extrabold text-slate-900 truncate">
+                  {recs.filter((r) => compareIds.has(r.athleteId)).map((r) => r.name).join(' · ')} ({compareIds.size}/3)
+                </div>
+              </div>
+              <button
+                onClick={() => compareIds.size >= 2 && navigate(`/ai-match/${requestId}/compare?ids=${[...compareIds].join(',')}`)}
+                disabled={compareIds.size < 2}
+                className={`shrink-0 h-10 px-4 rounded-xl text-sm font-bold ${
+                  compareIds.size >= 2 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'
+                }`}
+              >
+                {compareIds.size >= 2 ? '비교하기' : '2명 이상 담기'}
+              </button>
+            </div>
+          )}
         </>
       )}
     </Shell>

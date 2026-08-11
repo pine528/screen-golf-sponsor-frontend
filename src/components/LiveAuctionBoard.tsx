@@ -130,8 +130,8 @@ export default function LiveAuctionBoard() {
               </dl>
             </div>
 
-            {/* 참여 지표 */}
-            <div className="grid grid-cols-2 gap-2 mt-5">
+            {/* 참여 지표 — 모바일은 세로 길이를 줄이기 위해 숨긴다 (상세는 /auctions) */}
+            <div className="hidden sm:grid grid-cols-2 gap-2 mt-5">
               <Metric label="참여 브랜드" value={s.participatingBrands} unit="곳" />
               <Metric label="누적 입찰" value={s.totalBids} unit="건" />
             </div>

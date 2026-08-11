@@ -120,12 +120,16 @@ export default function HomeVoteSection() {
           ))}
         </div>
 
-        {/* 카드 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* 카드 — 모바일은 세로 스택 대신 가로 스와이프 (모바일 전면 개편 2026-08-11) */}
+        <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto sm:overflow-visible snap-x snap-mandatory -mx-5 px-5 sm:mx-0 sm:px-0 pb-1 sm:pb-0">
           {cards.slice(0, 3).map((v: any) => (
-            <VoteCard key={v.id} vote={v} />
+            <div key={v.id} className="snap-start shrink-0 w-[82%] sm:w-auto sm:shrink">
+              <VoteCard vote={v} />
+            </div>
           ))}
-          <GuideCard />
+          <div className="snap-start shrink-0 w-[82%] sm:w-auto sm:shrink">
+            <GuideCard />
+          </div>
         </div>
 
         {cards.length === 0 && (

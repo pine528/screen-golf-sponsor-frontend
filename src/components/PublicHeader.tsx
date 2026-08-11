@@ -9,6 +9,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import LiveBadge from './LiveBadge';
+import MobileTabBar from './MobileTabBar';
 
 const NAV_LINKS = [
   { to: '/auctions', label: '라이브 경매', live: true },
@@ -28,6 +29,7 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
   const isActive = (to: string) => pathname === to || pathname.startsWith(`${to}/`);
 
   return (
+    <>
     <nav
       className={`${
         fixed ? 'fixed inset-x-0 top-0' : 'sticky top-0'
@@ -157,5 +159,8 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
         </div>
       )}
     </nav>
+    {/* 모바일 전면 개편 — 앱형 하단 탭 바 (공개 페이지 공용) */}
+    <MobileTabBar />
+    </>
   );
 }
