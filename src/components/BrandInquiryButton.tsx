@@ -32,12 +32,13 @@ export default function BrandInquiryButton() {
       <button
         onClick={() => setOpen(true)}
         aria-label="카카오톡 상담하기"
-        className="fixed bottom-5 right-5 z-[60] flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-3 text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700 hover:shadow-xl sm:px-5"
+        /* 모바일: 하단 탭 바·구매 요약 바를 가리지 않도록 위로 올리고 아이콘만 표시 (모바일 전면 개편) */
+        className="fixed bottom-32 right-4 lg:bottom-5 lg:right-5 z-[35] flex items-center gap-2 rounded-full bg-emerald-600 p-3.5 lg:px-5 lg:py-3 text-white shadow-lg shadow-emerald-600/30 transition hover:bg-emerald-700 hover:shadow-xl"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
           <path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.1.2 5.5 0 10-3.6 10-8S17.5 3 12 3z" />
         </svg>
-        <span className="text-sm font-bold whitespace-nowrap">카카오톡 상담하기</span>
+        <span className="hidden lg:inline text-sm font-bold whitespace-nowrap">카카오톡 상담하기</span>
       </button>
 
       {/* 팝업 */}

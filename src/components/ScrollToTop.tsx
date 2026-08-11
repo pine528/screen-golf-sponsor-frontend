@@ -41,9 +41,9 @@ export default function ScrollToTop() {
       onClick={toTop}
       aria-label="맨 위로 이동"
       title="맨 위로"
-      /* 우측 하단에는 브랜드 문의 버튼(bottom-5)이 이미 있어 그 위에 놓는다.
-         모바일 선수상세의 하단 고정 구매바와도 겹치지 않는 높이. */
-      className={`fixed right-5 bottom-24 z-40 inline-flex flex-col items-center justify-center gap-0.5
+      /* 우측 하단 스택: (모바일) 탭 바 → 요약 바 → 카카오 문의(bottom-32) → 이 버튼.
+         데스크톱은 카카오 문의(bottom-5) 위 bottom-24. */
+      className={`fixed right-4 bottom-48 lg:right-5 lg:bottom-24 z-40 inline-flex flex-col items-center justify-center gap-0.5
         w-12 h-12 rounded-full bg-white/95 backdrop-blur border border-slate-200 shadow-lg
         text-slate-600 hover:text-slate-900 hover:border-slate-400 transition-all duration-200
         focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400
