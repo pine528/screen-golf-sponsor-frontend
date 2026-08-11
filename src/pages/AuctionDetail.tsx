@@ -197,7 +197,7 @@ export function AuctionDetail() {
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="space-y-6 pb-16 lg:pb-0">
         {/* Real-time Bid Alert */}
         {newBidAlert && (
           <div className="fixed top-4 right-4 z-50 animate-pulse">
@@ -448,6 +448,35 @@ export function AuctionDetail() {
             </div>
           </div>
         </div>
+
+        {/* 모바일 하단 고정 입찰 바 — 현재가·남은시간·CTA가 항상 보인다 (모바일 전면 개편) */}
+        {auctionData.status === 'LIVE' && (
+          <div className="lg:hidden fixed bottom-14 inset-x-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex items-center gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+            <div className="min-w-0 flex-1">
+              <div className="text-[11px] text-slate-500 truncate tabular-nums">
+                {bidCount > 0 ? '현재가' : '시작가'} · 남은 시간 {formatTimeRemaining(auctionData.endAt)}
+              </div>
+              <div className="text-sm font-extrabold text-slate-900 tabular-nums">
+                {formatCurrency(auctionData.currentPrice || slot?.reservePrice || 0)}
+              </div>
+            </div>
+            {user?.role === 'BRAND' ? (
+              <button
+                onClick={() => { setShowBidModal(true); setBidError(null); }}
+                className="shrink-0 h-10 px-4 rounded-xl bg-emerald-500 text-white text-sm font-bold inline-flex items-center gap-1.5"
+              >
+                <Gavel className="w-4 h-4" /> 입찰 참여
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="shrink-0 h-10 px-4 rounded-xl bg-slate-900 text-white text-sm font-bold inline-flex items-center gap-1.5"
+              >
+                <Gavel className="w-4 h-4" /> 로그인 후 입찰
+              </Link>
+            )}
+          </div>
+        )}
 
         {/* Bid Modal */}
         {showBidModal && (

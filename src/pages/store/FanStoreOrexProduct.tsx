@@ -54,7 +54,7 @@ export default function FanStoreOrexProduct() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-16 lg:pb-0">
       <PublicHeader />
       <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-5">
         <Breadcrumb className="mb-0" title={product.name} />
@@ -265,6 +265,17 @@ export default function FanStoreOrexProduct() {
           </div>
         </div>
       </section>
+
+      {/* 모바일 하단 고정 구매 바 (모바일 전면 개편) */}
+      <div className="lg:hidden fixed bottom-14 inset-x-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex items-center gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+        <div className="min-w-0 flex-1">
+          <div className="text-[11px] text-slate-500 truncate">{product.name}</div>
+          <div className="text-sm font-extrabold text-slate-900 tabular-nums">{product.price.toLocaleString()}원</div>
+        </div>
+        <button onClick={comingSoon} className="shrink-0 h-10 px-4 rounded-xl bg-emerald-600 text-white text-sm font-bold">
+          팬 할인가로 구매
+        </button>
+      </div>
     </div>
   );
 }
