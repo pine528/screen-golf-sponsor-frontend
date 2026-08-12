@@ -66,6 +66,11 @@ const STYLES = [
   { key: 'BALANCED', label: '균형 있게', desc: '품질+다양성' },
   { key: 'DISCOVERY', label: '새로운 선수도 발견', desc: '디스커버리 확대' },
 ];
+const PORTFOLIO_MODES = [
+  { key: 'AUTO', label: 'AI가 판단' },
+  { key: 'SINGLE', label: '1명 집중' },
+  { key: 'MULTI', label: '2~3명 조합' },
+];
 const BUDGET_PRESETS = [
   { label: '50만원 이하', min: 100000, max: 500000 },
   { label: '50~100만원', min: 500000, max: 1000000 },
@@ -149,6 +154,7 @@ function AiMatchForm() {
   const [ages, setAges] = useState<Set<string>>(new Set());
   const [gender, setGender] = useState<string | null>(null);
   const [style, setStyle] = useState<string>('BALANCED');
+  const [portfolioMode, setPortfolioMode] = useState<string>('AUTO');
 
   /* 선호 선수 + 옵션 (기존 유지) */
   const [preferred, setPreferred] = useState<{ id: string; name: string; profileImageUrl?: string }[]>([]);
@@ -204,6 +210,7 @@ function AiMatchForm() {
       if (li.audience?.ages) setAges(new Set(li.audience.ages));
       if (li.audience?.gender) setGender(li.audience.gender);
       if (li.recommendationStyle) setStyle(li.recommendationStyle);
+      if (li.portfolioMode) setPortfolioMode(li.portfolioMode);
       setIncludeSns(!!li.options?.includeSns);
       setIncludeGrowthMarket(!!li.options?.includeGrowthMarket);
       setGuarantee(!!li.options?.performanceGuarantee50);
@@ -305,8 +312,9 @@ function AiMatchForm() {
     audience: ages.size || gender ? { ages: [...ages], gender: gender || undefined } : undefined,
     desiredActions: actions.size ? [...actions] : undefined,
     recommendationStyle: style,
+    portfolioMode,
     brandProfile: approvedProfile,
-  }), [brandType, goals, method, preferred, budget, includeSns, includeGrowthMarket, guarantee, brandName, description, channels, ages, gender, actions, style, approvedProfile]);
+  }), [brandType, goals, method, preferred, budget, includeSns, includeGrowthMarket, guarantee, brandName, description, channels, ages, gender, actions, style, portfolioMode, approvedProfile]);
 
   /* 예상 후보 수 preview */
   const [preview, setPreview] = useState<number | null>(null);
@@ -536,6 +544,11 @@ function AiMatchForm() {
                   </div>
                 </Field>
               </div>
+              <Field label="선수 구성" hint="예산 안에서 한 선수에 집중할지, 역할이 다른 2~3명에 나눌지 선택합니다">
+                <div className="flex flex-wrap gap-2">
+                  {PORTFOLIO_MODES.map((m) => <Chip key={m.key} label={m.label} on={portfolioMode === m.key} onClick={() => setPortfolioMode(m.key)} />)}
+                </div>
+              </Field>
             </Card>
 
             {/* 선호 선수 + 옵션 */}
@@ -602,6 +615,7 @@ function AiMatchForm() {
               <SummaryRow icon={Users} label="주 고객" value={[...ages].map((a) => labelOf(AGES, a)).concat(gender ? [gender === 'FEMALE' ? '여성' : '남성'] : []).join(' ') || '미선택'} />
               <SummaryRow icon={Link2} label="현재 채널" value={channels.size ? [...channels].map((c) => labelOf(CHANNELS, c)).join(' · ') : '미선택'} />
               <SummaryRow icon={Box} label="추천 스타일" value={labelOf(STYLES, style)} />
+              <SummaryRow icon={Users} label="선수 구성" value={labelOf(PORTFOLIO_MODES, portfolioMode)} />
             </dl>
 
             <div className="rounded-xl bg-slate-900 text-white px-4 py-3.5 mb-4">

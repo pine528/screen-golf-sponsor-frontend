@@ -57,8 +57,10 @@ function AiMatchProposalInner() {
   const others = recs.filter((r) => r.athleteId !== athleteId).slice(0, 3);
   const alloc = pkg.allocation || { slot: 0.6, sns: 0.2, growthMarket: 0.1, ops: 0.1 };
 
+  // 판매방식은 패키지 단위가 아니라 슬롯별 실제 방식(saleModeLabel)으로 표기 — 직접구매 슬롯이 '라이브 경매'로 오표기되지 않도록
+  const methodLabel = pkg.methodLabel || METHOD_LABEL[pkg.method] || '후원';
   const deliverables: string[] = [
-    ...(pkg.slots || []).map((s: any) => `${METHOD_LABEL[pkg.method] || '후원'} — ${s.name} 슬롯 (${s.price.toLocaleString()}원)`),
+    ...(pkg.slots || []).map((s: any) => `${s.saleModeLabel || methodLabel} — ${s.name} 슬롯 (${s.price.toLocaleString()}원)`),
     ...(pkg.sns ? [`전용 SNS 콘텐츠 ${pkg.sns.feedPosts}건 + 스토리 ${pkg.sns.storyPosts}건 (인스타그램)`] : []),
     ...(pkg.growthMarket ? [`성장마켓 팬스토어 연계 (${pkg.growthMarket.brands.join(' · ')})`] : []),
     '브랜드 로고 노출 (스폰픽 선수 페이지)',
@@ -93,7 +95,7 @@ function AiMatchProposalInner() {
                     <Row label="목표" value={(input?.goals || []).map((g: string) => labelOf(GOALS, g)).join(' · ')} />
                     <Row label="예산" value={`${Math.round(input.budget.min / 10000)}~${Math.round(input.budget.max / 10000)}만원`} />
                     <Row label="추천 선수" value={`${rec.name} 프로`} />
-                    <Row label="추천 방식" value={`${METHOD_LABEL[pkg.method]}${pkg.sns ? ' + SNS' : ''}${pkg.growthMarket ? ' + 팬스토어 연계' : ''}`} />
+                    <Row label="추천 방식" value={`${methodLabel}${pkg.sns ? ' + SNS' : ''}${pkg.growthMarket ? ' + 팬스토어 연계' : ''}`} />
                     <Row label="선호 방식" value={labelOf(METHODS, input?.preferredMethod)} />
                   </dl>
                   <div className="mt-4 rounded-xl bg-slate-50 border border-slate-100 px-3.5 py-3">
@@ -113,7 +115,7 @@ function AiMatchProposalInner() {
                     ♥ 최종 추천 조합
                   </span>
                   <h3 className="text-lg font-black text-slate-900 mb-4 break-keep">
-                    {rec.name} 프로 · {METHOD_LABEL[pkg.method]}
+                    {rec.name} 프로 · {methodLabel}
                     {pkg.sns ? ` + SNS ${pkg.sns.feedPosts + pkg.sns.storyPosts}건` : ''}
                     {pkg.growthMarket ? ' + 팬스토어 연계' : ''}
                   </h3>
@@ -122,7 +124,7 @@ function AiMatchProposalInner() {
                       <div className="text-[12px] font-extrabold text-slate-900 mb-2">계약 개요</div>
                       <ul className="space-y-1.5 text-[12px] text-slate-600">
                         <li>· 계약 기간 — {pkg.duration}</li>
-                        <li>· 후원 방식 — {METHOD_LABEL[pkg.method]}</li>
+                        <li>· 후원 방식 — {methodLabel}</li>
                         <li>· 슬롯 — {(pkg.slots || []).map((s: any) => s.name).join(', ')}</li>
                         {pkg.sns && <li>· SNS 콘텐츠 — {pkg.sns.feedPosts + pkg.sns.storyPosts}건 (인스타그램)</li>}
                         {pkg.growthMarket && <li>· 팬스토어 — {pkg.growthMarket.brands.join(' · ')} 연계</li>}
@@ -281,7 +283,7 @@ function AiMatchProposalInner() {
                           {o.name} 프로 <span className="ml-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-black">{o.matchScore}점</span>
                         </div>
                         <div className="text-[11px] text-slate-400 truncate">
-                          {METHOD_LABEL[o.package?.method]} · ₩{o.package?.priceConfirmed?.toLocaleString()}~
+                          {o.package?.methodLabel || METHOD_LABEL[o.package?.method]} · ₩{o.package?.priceConfirmed?.toLocaleString()}~
                         </div>
                       </div>
                       <Link
@@ -320,7 +322,7 @@ function AiMatchProposalInner() {
               <ul className="space-y-2 mb-4">
                 {[
                   ['추천 선수 확정', `${rec.name} 프로`],
-                  ['후원 방식 선택', METHOD_LABEL[pkg.method]],
+                  ['후원 방식 선택', methodLabel],
                   ['예산 확정', `${Math.round(input.budget.min / 10000)}~${Math.round(input.budget.max / 10000)}만원`],
                   ['구성 확인', `슬롯 ${pkg.slots?.length || 0}개${pkg.sns ? ' + SNS' : ''}${pkg.growthMarket ? ' + 팬스토어' : ''}`],
                 ].map(([t, v]) => (

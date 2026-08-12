@@ -260,6 +260,76 @@ function AiMatchResultsInner() {
                   </>
                 )}
 
+                {/* ── §12.3 선수 구성 제안 — 1명 집중 vs 2~3명 역할 분산 (같은 예산) ── */}
+                {data.portfolio && (
+                  <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 mb-8">
+                    <div className="flex items-baseline justify-between mb-1">
+                      <h2 className="text-[15px] font-extrabold text-slate-900">선수 구성 제안</h2>
+                      <span className="text-[11px] font-bold text-slate-400">
+                        {data.portfolio.mode === 'SINGLE' ? '1명 집중 기준' : data.portfolio.mode === 'MULTI' ? '2~3명 조합 우선' : 'AI 판단'}
+                      </span>
+                    </div>
+                    <p className="text-[12px] text-slate-400 mb-4 break-keep">같은 예산으로 한 선수에 집중할지, 역할이 다른 선수 2~3명에 나눌지 비교해보세요.</p>
+                    <div className={`grid grid-cols-1 ${data.portfolio.multi && data.portfolio.mode !== 'MULTI' ? 'md:grid-cols-2' : ''} gap-3`}>
+                      {data.portfolio.mode !== 'MULTI' && data.portfolio.single && (
+                        <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
+                          <div className="text-[11px] font-black text-slate-500 tracking-wide mb-2.5">A안 · 1명 집중</div>
+                          <div className="flex items-center gap-2.5 mb-3">
+                            <span className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 shrink-0">
+                              {data.portfolio.single.profileImageUrl && <img src={data.portfolio.single.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
+                            </span>
+                            <div className="min-w-0">
+                              <div className="text-[13px] font-extrabold text-slate-900">{data.portfolio.single.name} 프로</div>
+                              <div className="text-[11px] text-slate-400">슬롯 {data.portfolio.single.slots?.length || 0}개 구성</div>
+                            </div>
+                            <span className="ml-auto text-[14px] font-black text-slate-900 tabular-nums">₩{Number(data.portfolio.single.total).toLocaleString()}~</span>
+                          </div>
+                          <ul className="space-y-1">
+                            {(data.portfolio.single.slots || []).map((sl: any) => (
+                              <li key={sl.name} className="flex items-center gap-1.5 text-[11px] text-slate-600">
+                                <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-500 shrink-0">{sl.saleModeLabel}</span>
+                                <span className="truncate">{sl.name}</span>
+                                <span className="ml-auto tabular-nums font-bold text-slate-700 shrink-0">{Number(sl.price).toLocaleString()}원</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {data.portfolio.multi && (
+                        <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-4">
+                          <div className="text-[11px] font-black text-emerald-700 tracking-wide mb-2.5">
+                            {data.portfolio.mode === 'MULTI' ? '추천 조합' : 'B안'} · {data.portfolio.multi.members.length}명 역할 분산
+                          </div>
+                          <ul className="space-y-2 mb-2.5">
+                            {data.portfolio.multi.members.map((m: any) => (
+                              <li key={m.athleteId} className="flex items-center gap-2.5">
+                                <span className="w-9 h-9 rounded-full overflow-hidden bg-slate-100 shrink-0">
+                                  {m.profileImageUrl && <img src={m.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-[12px] font-extrabold text-slate-900 truncate">{m.name} 프로 <span className="ml-1 text-[10px] font-bold text-emerald-700">{m.role}</span></div>
+                                  <div className="text-[10px] text-slate-500 truncate">{m.slot.saleModeLabel} · {m.slot.name}</div>
+                                </div>
+                                <span className="shrink-0 text-[11px] font-bold text-slate-700 tabular-nums">{Number(m.slot.price).toLocaleString()}원</span>
+                              </li>
+                            ))}
+                          </ul>
+                          <div className="flex items-center justify-between border-t border-emerald-100 pt-2">
+                            <span className="text-[11px] text-slate-500">합계 (예산 내)</span>
+                            <span className="text-[14px] font-black text-emerald-700 tabular-nums">₩{Number(data.portfolio.multi.total).toLocaleString()}~</span>
+                          </div>
+                          {data.portfolio.multi.note && <p className="mt-1.5 text-[10px] text-slate-400 break-keep">ⓘ {data.portfolio.multi.note}</p>}
+                        </div>
+                      )}
+                      {data.portfolio.mode === 'MULTI' && !data.portfolio.multi && (
+                        <div className="rounded-xl border border-dashed border-slate-200 p-5 text-center">
+                          <p className="text-[12px] text-slate-500 break-keep">현재 예산으로는 2명 이상 조합이 어렵습니다. 예산 상한을 넓히거나 1명 집중 구성을 확인해보세요.</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <h2 className="text-lg font-extrabold text-slate-900 mb-4">
                   <span className="underline decoration-emerald-400 decoration-2 underline-offset-4">TOP {top3.length}</span> 추천 선수
                 </h2>
@@ -279,7 +349,7 @@ function AiMatchResultsInner() {
                               <span className="inline-flex px-2 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-bold">{r.roleLabel}</span>
                             )}
                             <span className="inline-flex px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold">
-                              {METHOD_LABEL[r.package?.method] || r.package?.method}
+                              {r.package?.methodLabel || METHOD_LABEL[r.package?.method] || r.package?.method}
                             </span>
                           </div>
                         </div>
@@ -452,7 +522,7 @@ function AiMatchResultsInner() {
                         <td className="px-3 py-2.5 tabular-nums">{r.metrics?.favoriteCount ?? 0}</td>
                         <td className="px-3 py-2.5">
                           <span className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold whitespace-nowrap">
-                            {METHOD_LABEL[r.package?.method] || '-'}
+                            {r.package?.methodLabel || METHOD_LABEL[r.package?.method] || '-'}
                           </span>
                         </td>
                       </tr>
