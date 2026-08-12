@@ -3098,6 +3098,18 @@ class ApiService {
     const r = await this.client.get<ApiResponse<any>>('/ai-match/brand-context');
     return r.data;
   }
+  async aiMatchBrandAnalyze(urls: { url: string; type: string }[]) {
+    const r = await this.client.post<ApiResponse<any>>('/ai-match/brand-analyze', { urls });
+    return r.data;
+  }
+  async aiMatchBrandProfile(profile: any) {
+    const r = await this.client.post<ApiResponse<any>>('/ai-match/brand-profile', { profile });
+    return r.data;
+  }
+  async aiMatchFeedback(athleteId: string, action: 'PREFER' | 'EXCLUDE' | 'CLEAR', reason?: string) {
+    const r = await this.client.post<ApiResponse<any>>('/ai-match/feedback', { athleteId, action, reason });
+    return r.data;
+  }
   async aiMatchPreview(input: any) {
     const r = await this.client.post<ApiResponse<{ candidateCount: number; excludedPreferred: any[] }>>('/ai-match/preview', input);
     return r.data;

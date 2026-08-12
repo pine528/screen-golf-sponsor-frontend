@@ -67,6 +67,15 @@ export function ScoreGauge({ score, size = 72 }: { score: number; size?: number 
   );
 }
 
+/** 역할 배지 색 (심층매칭 v3 §6) */
+const ROLE_STYLE: Record<string, string> = {
+  BEST_MATCH: 'bg-slate-900 text-white',
+  PATCH_PICK: 'bg-emerald-600 text-white',
+  SOCIAL_PICK: 'bg-violet-600 text-white',
+  HYBRID_PICK: 'bg-sky-600 text-white',
+  DISCOVERY_PICK: 'bg-amber-500 text-white',
+};
+
 export default function AiMatchResults() {
   const { isAuthenticated, user } = useAuth();
   if (!(isAuthenticated && (user as any)?.role === 'BRAND')) return <AiMatchBrandGate />;
@@ -78,6 +87,35 @@ function AiMatchResultsInner() {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useAiMatchRequest(requestId);
   const [compareIds, setCompareIds] = useState<Set<string>>(new Set());
+  const [rerunning, setRerunning] = useState<string | null>(null);
+
+  /* v3 §8 — 피드백 기반 재추천: 입력을 덮어써 새 request 생성 (revision) */
+  const rerun = async (overrides: any, label: string) => {
+    if (!data?.input || rerunning) return;
+    setRerunning(label);
+    try {
+      const r = await api.aiMatchCreate({ ...data.input, ...overrides });
+      const d = (r as any)?.data;
+      if (d?.requestId) navigate(`/ai-match/${d.requestId}`, { state: { result: { ...d, input: { ...data.input, ...overrides } } } });
+    } finally {
+      setRerunning(null);
+    }
+  };
+
+  /* '이 선수 제외' — 브랜드 프로필에 저장(AC-06) 후 즉시 재추천 */
+  const excludeAthlete = async (athleteId: string) => {
+    if (rerunning) return;
+    setRerunning(`exclude-${athleteId}`);
+    try {
+      await api.aiMatchFeedback(athleteId, 'EXCLUDE');
+      const prevEx = data?.input?.excludedAthleteIds || [];
+      const r = await api.aiMatchCreate({ ...data.input, excludedAthleteIds: [...prevEx, athleteId] });
+      const d = (r as any)?.data;
+      if (d?.requestId) navigate(`/ai-match/${d.requestId}`, { state: { result: { ...d, input: data.input } } });
+    } finally {
+      setRerunning(null);
+    }
+  };
 
   const recs: any[] = data?.recommendations || [];
   const top3 = recs.slice(0, 3);
@@ -170,6 +208,58 @@ function AiMatchResultsInner() {
           <section className="px-5 sm:px-8 pb-8">
             <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(0,280px)] gap-5 items-start">
               <div>
+                {/* ── v3 §6 역할별 추천 선수 — '순위'가 아니라 이 브랜드에서 맡을 역할 ── */}
+                {(data.roleSlots || []).length > 0 && (
+                  <>
+                    <h2 className="text-lg font-extrabold text-slate-900 mb-1">역할별 추천 선수</h2>
+                    <p className="text-[12px] text-slate-400 mb-4">각 슬롯은 '순위'가 아니라 이번 브랜드에서 맡을 역할을 뜻합니다.</p>
+                    <div className="flex gap-3 overflow-x-auto snap-x pb-2 -mx-5 px-5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 xl:grid-cols-5 sm:overflow-visible mb-8">
+                      {data.roleSlots.map((s: any) => (
+                        <div key={s.role} className="snap-start shrink-0 w-[78%] sm:w-auto sm:shrink rounded-2xl border border-slate-200 bg-white overflow-hidden flex flex-col">
+                          <div className={`px-3 py-1.5 text-[10px] font-black tracking-wide ${ROLE_STYLE[s.role] || 'bg-slate-100 text-slate-600'}`}>
+                            {s.label}
+                          </div>
+                          {s.athleteId ? (
+                            <div className="p-3 flex flex-col flex-1">
+                              <div className="flex items-center gap-2.5 mb-2">
+                                <span className="w-11 h-11 rounded-full overflow-hidden bg-slate-100 shrink-0">
+                                  {s.profileImageUrl && <img src={s.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-[13px] font-extrabold text-slate-900 truncate">{s.name} 프로</div>
+                                  <div className="text-[10px] text-slate-400">{s.desc}</div>
+                                </div>
+                                <span className="shrink-0 text-[17px] font-black text-emerald-700 tabular-nums">{s.roleScore}</span>
+                              </div>
+                              {s.reasonSummary && (
+                                <p className="text-[11px] text-slate-500 break-keep leading-snug line-clamp-2 mb-2">{s.reasonSummary}</p>
+                              )}
+                              <div className="flex items-center justify-between text-[10px] text-slate-400 mb-2.5">
+                                <span>근거 {s.evidenceCount}건 · 신뢰도 {CONFIDENCE_LABEL[s.confidence] || s.confidence}</span>
+                                {s.budget != null && <span className="font-bold text-slate-600 tabular-nums">{Number(s.budget).toLocaleString()}원~</span>}
+                              </div>
+                              <div className="mt-auto grid grid-cols-2 gap-1.5">
+                                <Link to={`/ai-match/${requestId}/proposal/${s.athleteId}`}
+                                  className="h-8 inline-flex items-center justify-center rounded-lg bg-emerald-600 text-white text-[11px] font-bold">
+                                  상세 분석
+                                </Link>
+                                <button onClick={() => excludeAthlete(s.athleteId)} disabled={!!rerunning}
+                                  className="h-8 inline-flex items-center justify-center rounded-lg border border-slate-200 text-[11px] font-bold text-slate-500 hover:bg-slate-50 disabled:opacity-50">
+                                  {rerunning === `exclude-${s.athleteId}` ? '반영 중…' : '이 선수 제외'}
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="p-3 flex-1 flex flex-col items-center justify-center text-center py-8">
+                              <p className="text-[11px] text-slate-400 break-keep">{s.emptyReason || '기준을 충족하는 후보가 부족합니다'}</p>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
                 <h2 className="text-lg font-extrabold text-slate-900 mb-4">
                   <span className="underline decoration-emerald-400 decoration-2 underline-offset-4">TOP {top3.length}</span> 추천 선수
                 </h2>
@@ -246,6 +336,24 @@ function AiMatchResultsInner() {
 
               {/* 인사이트 사이드바 */}
               <div className="space-y-4">
+                {/* v3 §8 — 재추천 피드백 */}
+                <div className="rounded-2xl border border-slate-200 p-5">
+                  <h3 className="text-[14px] font-extrabold text-slate-900 mb-3">추천을 더 잘 맞춰주세요</h3>
+                  <div className="space-y-2">
+                    <FeedbackBtn dark label="새로운 선수 중심으로 다시 추천" busy={rerunning === 'discovery'}
+                      onClick={() => rerun({ recommendationStyle: 'DISCOVERY' }, 'discovery')} />
+                    <FeedbackBtn label="SNS에 강한 선수 중심으로" busy={rerunning === 'sns'}
+                      onClick={() => rerun({ goals: ['SNS_CONTENT'], desiredActions: ['SNS_ENGAGE'] }, 'sns')} />
+                    <FeedbackBtn label="패치 노출에 강한 선수 중심으로" busy={rerunning === 'patch'}
+                      onClick={() => rerun({ goals: ['BRAND_AWARENESS'], desiredActions: ['SEARCH'] }, 'patch')} />
+                    <FeedbackBtn label="최적 매칭(점수 우선)으로 변경" busy={rerunning === 'best'}
+                      onClick={() => rerun({ recommendationStyle: 'BEST' }, 'best')} />
+                  </div>
+                  {data.diversityMode && (
+                    <p className="mt-2.5 text-[10px] text-slate-400">현재 추천 스타일: {data.diversityMode === 'DISCOVERY' ? '새로운 선수 발견' : data.diversityMode === 'BEST' ? '최적 매칭' : '균형 있게'}</p>
+                  )}
+                </div>
+
                 <div className="rounded-2xl border border-slate-200 p-5">
                   <h3 className="text-[14px] font-extrabold text-slate-900 mb-3">AI 매칭 인사이트</h3>
                   <div className="space-y-3.5">
@@ -398,6 +506,20 @@ function Cond({ label, value }: { label: string; value: string }) {
       <span className="text-slate-400">{label} :</span>
       <span className="font-bold text-emerald-700">{value}</span>
     </span>
+  );
+}
+
+function FeedbackBtn({ label, onClick, busy, dark = false }: { label: string; onClick: () => void; busy?: boolean; dark?: boolean }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={!!busy}
+      className={`w-full h-10 px-3 rounded-xl text-[12px] font-bold text-left transition-colors disabled:opacity-60 ${
+        dark ? 'bg-slate-900 text-white hover:bg-slate-800' : 'border border-slate-200 text-slate-600 hover:border-emerald-300 hover:text-slate-900'
+      }`}
+    >
+      {busy ? '다시 추천 중…' : label}
+    </button>
   );
 }
 
