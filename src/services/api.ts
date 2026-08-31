@@ -3093,6 +3093,32 @@ class ApiService {
     const r = await this.client.get<ApiResponse<{ items: any[]; total: number; page: number; limit: number }>>(`/athletes/public`, { params });
     return r.data;
   }
+  /* ── 후원 신청·승인·결제 (핸드오프 v1.0 §14.3) ── */
+  async submitApplication(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/applications', body);
+    return r.data;
+  }
+  async getApplication(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/applications/${id}`);
+    return r.data;
+  }
+  async listApplications() {
+    const r = await this.client.get<ApiResponse<any>>('/applications');
+    return r.data;
+  }
+  async getAthleteRequests() {
+    const r = await this.client.get<ApiResponse<any>>('/applications/athlete/requests');
+    return r.data;
+  }
+  async reviewApplicationItem(applicationId: string, itemId: string, body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/applications/${applicationId}/items/${itemId}/review`, body);
+    return r.data;
+  }
+  async checkoutApplication(id: string, body?: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/applications/${id}/checkout`, body || {});
+    return r.data;
+  }
+
   /* ── 스폰픽 추천 PICK (핸드오프 v1.0 §14.3) ── */
   async createRecommendPick(body: any) {
     const r = await this.client.post<ApiResponse<any>>('/recommend-pick', body);

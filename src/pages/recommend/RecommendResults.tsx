@@ -7,7 +7,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
-  BadgeCheck, Check, ChevronRight, Download, Eye, Info, RefreshCw,
+  AlertTriangle, BadgeCheck, Check, ChevronRight, Download, Eye, Info, RefreshCw,
   Sparkles, Users, Wallet,
 } from 'lucide-react';
 import PublicHeader from '../../components/PublicHeader';
@@ -28,6 +28,41 @@ export default function RecommendResults() {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(state?.data || null);
   const [selected, setSelected] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitErr, setSubmitErr] = useState<string | null>(null);
+
+  /* 추천안으로 신청 — 브랜드 로그인 필요(§16.1), 비로그인은 로그인 후 복귀 */
+  const submitPlan = async (plan: any) => {
+    setSubmitting(true);
+    setSubmitErr(null);
+    try {
+      const r: any = await api.submitApplication({
+        sourceId: data.requestId,
+        planKey: plan.key,
+        planName: plan.name,
+        durationMonths: 1,
+        items: plan.members.map((m: any) => ({
+          athleteId: m.athleteId,
+          slotCode: m.slot?.code,
+          slotName: m.slot?.name,
+          role: m.role,
+        })),
+        snapshot: { brief: data.brief, plan, engineVersion: data.engineVersion, dataAsOf: data.dataAsOf },
+      });
+      navigate(`/sponsor/applications/${r.data.id}`);
+    } catch (e: any) {
+      const status = e?.response?.status;
+      if (status === 401) {
+        navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+        return;
+      }
+      setSubmitErr(
+        status === 403
+          ? '브랜드 계정으로 로그인하면 신청할 수 있어요.'
+          : e?.response?.data?.error?.message || '신청에 실패했습니다. 잠시 후 다시 시도해주세요.',
+      );
+    } finally { setSubmitting(false); }
+  };
 
   useEffect(() => {
     if (data) return;
@@ -112,6 +147,34 @@ export default function RecommendResults() {
             <span className="ml-auto text-[11.5px] text-slate-400">
               후보 {data.candidateCount}명 검토 · 기준일 {data.dataAsOf ? new Date(data.dataAsOf).toLocaleDateString('ko-KR') : '-'}
             </span>
+          </div>
+        )}
+
+        {/* 예산 부족 — 빈 결과 대신 최소 금액과 완화안 (§2.4) */}
+        {data.budgetGap && (
+          <div className="mt-6 rounded-2xl bg-white border border-amber-200 p-6 sm:p-8 text-center">
+            <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto" />
+            <h2 className="mt-4 text-[18px] font-black break-keep">{data.budgetGap.message}</h2>
+            <p className="mt-2 text-[13.5px] text-slate-500 break-keep">
+              아래 방법으로 지금 바로 시작할 수 있어요.
+            </p>
+            <div className="mt-6 flex flex-col sm:flex-row gap-2.5 justify-center">
+              <Link
+                to="/sponsor/recommended/brief"
+                className="h-12 px-6 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 text-white text-[13.5px] font-bold hover:bg-emerald-700"
+              >
+                예산 조건 다시 입력 <ChevronRight className="w-4 h-4" />
+              </Link>
+              <Link
+                to="/digital-partner"
+                className="h-12 px-6 inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-600 text-emerald-700 text-[13.5px] font-bold hover:bg-emerald-50"
+              >
+                디지털 파트너 월 구독 보기
+              </Link>
+            </div>
+            <p className="mt-4 text-[11.5px] text-slate-400">
+              최소 필요 금액은 현재 판매 중인 슬롯 실거래가 기준입니다.
+            </p>
           </div>
         )}
 
@@ -247,6 +310,9 @@ export default function RecommendResults() {
       {/* 선택 시 하단 고정 바 */}
       {selected && (
         <div className="fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 px-5 py-3">
+          {submitErr && (
+            <p className="max-w-7xl mx-auto mb-2 text-[12.5px] font-bold text-rose-600">{submitErr}</p>
+          )}
           <div className="max-w-7xl mx-auto flex items-center gap-4">
             <div className="min-w-0 flex-1">
               <p className="text-[11.5px] text-slate-400 font-bold">선택한 추천안</p>
@@ -261,12 +327,13 @@ export default function RecommendResults() {
                 ₩{plans.find((p) => p.key === selected)?.total.toLocaleString()}
               </p>
             </div>
-            <Link
-              to={`/contact?subject=${encodeURIComponent(`[추천 PICK] ${plans.find((p) => p.key === selected)?.name} 신청 상담`)}`}
-              className="shrink-0 h-12 px-7 inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white text-[14px] font-bold hover:bg-emerald-700"
+            <button
+              onClick={() => submitPlan(plans.find((p) => p.key === selected))}
+              disabled={submitting}
+              className="shrink-0 h-12 px-7 inline-flex items-center gap-2 rounded-xl bg-emerald-600 text-white text-[14px] font-bold hover:bg-emerald-700 disabled:opacity-50"
             >
-              <Wallet className="w-4 h-4" /> 이 안으로 신청 <ChevronRight className="w-4 h-4" />
-            </Link>
+              <Wallet className="w-4 h-4" /> {submitting ? '신청 중…' : '이 안으로 신청'} <ChevronRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}

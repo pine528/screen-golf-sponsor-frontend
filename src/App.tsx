@@ -16,6 +16,9 @@ import RecommendLanding from './pages/recommend/RecommendLanding';
 import RecommendBrief from './pages/recommend/RecommendBrief';
 import RecommendAnalyzing from './pages/recommend/RecommendAnalyzing';
 import RecommendResults from './pages/recommend/RecommendResults';
+import ApplicationStatus from './pages/recommend/ApplicationStatus';
+import ApplicationCheckout from './pages/recommend/ApplicationCheckout';
+import AthleteRequests from './pages/athlete/AthleteRequests';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
@@ -279,6 +282,9 @@ function App() {
       <Route path="/sponsor/recommended/brief" element={<RecommendBrief />} />
       <Route path="/sponsor/recommended/analyzing" element={<RecommendAnalyzing />} />
       <Route path="/sponsor/recommended/results/:requestId" element={<RecommendResults />} />
+      <Route path="/sponsor/applications/:id" element={<ProtectedRoute><ApplicationStatus /></ProtectedRoute>} />
+      <Route path="/sponsor/applications/:id/checkout" element={<ProtectedRoute><ApplicationCheckout /></ProtectedRoute>} />
+      <Route path="/athlete/requests" element={<ProtectedRoute><AthleteRequests /></ProtectedRoute>} />
       <Route path="/auctions" element={<Auctions />} />
       <Route path="/auctions/:id" element={<AuctionDetail />} />
       <Route path="/inventory" element={<Inventory />} />
