@@ -3133,6 +3133,52 @@ class ApiService {
     return r.data;
   }
 
+  /* ── 팬 참여 — 커뮤니티 · 팬온도 · 브랜드 추천 (리디자인 v2.0 시안 img_05~08) ── */
+  async getFanEngageRules() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-engage/rules');
+    return r.data;
+  }
+  async getCommunityAthletes(params?: { q?: string; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/fan-engage/athletes', { params });
+    return r.data;
+  }
+  async getFanTemperature(athleteId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-engage/athletes/${athleteId}/temperature`);
+    return r.data;
+  }
+  async getCommunityPosts(athleteId: string, tab?: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-engage/athletes/${athleteId}/posts`, { params: { tab } });
+    return r.data;
+  }
+  async createCommunityPost(athleteId: string, body: { type?: string; content: string; imageUrl?: string }) {
+    const r = await this.client.post<ApiResponse<any>>(`/fan-engage/athletes/${athleteId}/posts`, body);
+    return r.data;
+  }
+  async likeCommunityPost(postId: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/fan-engage/posts/${postId}/like`, {});
+    return r.data;
+  }
+  async getCommunityComments(postId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-engage/posts/${postId}/comments`);
+    return r.data;
+  }
+  async addCommunityComment(postId: string, content: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/fan-engage/posts/${postId}/comments`, { content });
+    return r.data;
+  }
+  async getBrandSuggestions(athleteId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-engage/athletes/${athleteId}/brand-suggestions`);
+    return r.data;
+  }
+  async suggestBrand(athleteId: string, body: { category: string; brandName?: string; reason?: string }) {
+    const r = await this.client.post<ApiResponse<any>>(`/fan-engage/athletes/${athleteId}/brand-suggestions`, body);
+    return r.data;
+  }
+  async getMyEngagement() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-engage/me');
+    return r.data;
+  }
+
   /* ── 직접 PICK (리디자인 v2.0 시안 img_12~14) ── */
   async getPickOptions() {
     const r = await this.client.get<ApiResponse<any>>('/direct-pick/options');

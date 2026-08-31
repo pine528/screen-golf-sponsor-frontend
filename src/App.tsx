@@ -24,6 +24,10 @@ import DigitalApplicationStatus from './pages/digital/DigitalApplicationStatus';
 import PickAthletes from './pages/pick/PickAthletes';
 import PickSlots from './pages/pick/PickSlots';
 import PickConfigure from './pages/pick/PickConfigure';
+import FanStore from './pages/fanhub/FanStore';
+import FanCommunity from './pages/fanhub/FanCommunity';
+import FanVote from './pages/fanhub/FanVote';
+import FanPoints from './pages/fanhub/FanPoints';
 import AthleteRequests from './pages/athlete/AthleteRequests';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -291,6 +295,12 @@ function App() {
       <Route path="/sponsor/applications/:id" element={<ProtectedRoute><ApplicationStatus /></ProtectedRoute>} />
       <Route path="/sponsor/applications/:id/checkout" element={<ProtectedRoute><ApplicationCheckout /></ProtectedRoute>} />
       <Route path="/athlete/requests" element={<ProtectedRoute><AthleteRequests /></ProtectedRoute>} />
+      {/* 팬 참여 — 리디자인 v2.0 시안 img_05~08 */}
+      <Route path="/fan/store" element={<FanStore />} />
+      <Route path="/fan/community" element={<FanCommunity />} />
+      <Route path="/fan/community/:athleteId" element={<FanCommunity />} />
+      <Route path="/fan/vote" element={<FanVote />} />
+      <Route path="/fan/points" element={<FanPoints />} />
       {/* 직접 PICK — 리디자인 v2.0 시안 img_12~14 */}
       <Route path="/sponsor/pick" element={<PickAthletes />} />
       <Route path="/sponsor/pick/:athleteId/slots" element={<PickSlots />} />

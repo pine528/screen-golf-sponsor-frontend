@@ -22,6 +22,7 @@ import {
   Info,
   LineChart,
   Menu,
+  MessageCircle,
   ShieldCheck,
   Sparkles,
   Star,
@@ -70,9 +71,10 @@ const MENUS: { key: string; label: string; items: MegaItem[]; note?: string }[] 
     key: 'fan',
     label: '팬 참여',
     items: [
-      { icon: Vote, title: '팬 VOTE', desc: '예측하고 응원에 참여하세요', to: '/votes' },
-      { icon: Store, title: '팬스토어·성장마켓', desc: '선수와 브랜드 협업 스토어', to: '/growth-market' },
-      { icon: Wallet, title: '팬포인트', desc: '참여가 포인트와 혜택으로', to: '/fan' },
+      { icon: Vote, title: '팬 VOTE', desc: '예측하고 응원에 참여하세요', to: '/fan/vote' },
+      { icon: MessageCircle, title: '선수 커뮤니티', desc: '응원 글 · 팬레터 · 브랜드 추천', to: '/fan/community', badge: 'NEW' },
+      { icon: Store, title: '팬스토어', desc: '선수와 브랜드 협업 스토어', to: '/fan/store' },
+      { icon: Wallet, title: '팬포인트', desc: '참여가 포인트와 혜택으로', to: '/fan/points' },
     ],
   },
   {
