@@ -216,7 +216,7 @@ export function Home() {
               </Link>
 
               <Link
-                to="/ai-match"
+                to="/sponsor/recommended"
                 className="group flex items-center gap-5 rounded-[40px] bg-gradient-to-r from-rose-500 to-red-500 pl-4 pr-6 py-4 lg:py-5 shadow-[0_16px_40px_-12px_rgba(244,63,94,0.5)] hover:shadow-[0_20px_48px_-12px_rgba(244,63,94,0.65)] hover:-translate-y-0.5 transition-all"
               >
                 <span className="w-[64px] h-[64px] lg:w-[72px] lg:h-[72px] rounded-full bg-white flex items-center justify-center shrink-0">
@@ -411,7 +411,7 @@ export function Home() {
               <Crosshair className="w-4 h-4" /> 직접 PICK
             </Link>
             <Link
-              to="/ai-match"
+              to="/sponsor/recommended"
               className="h-12 px-7 inline-flex items-center gap-2 rounded-xl border border-white/40 text-white text-sm font-bold hover:bg-white/10 transition-colors"
             >
               <Sparkles className="w-4 h-4" /> 추천받기
@@ -439,7 +439,7 @@ export function Home() {
               </p>
             </div>
             {[
-              { title: '후원하기', links: [{ to: '/athletes', t: '직접 PICK' }, { to: '/ai-match', t: '추천 PICK' }, { to: '/auctions', t: '진행 중 후원기회' }, { to: '/digital-partner', t: '월 구독' }] },
+              { title: '후원하기', links: [{ to: '/athletes', t: '직접 PICK' }, { to: '/sponsor/recommended', t: '추천 PICK' }, { to: '/auctions', t: '진행 중 후원기회' }, { to: '/digital-partner', t: '월 구독' }] },
               { title: '지원', links: [{ to: '/guide', t: '이용가이드' }, { to: '/faq', t: 'FAQ' }, { to: '/contact', t: '고객센터' }] },
               { title: '법적 고지', links: [{ to: '/terms', t: '이용약관' }, { to: '/privacy', t: '개인정보처리방침' }] },
             ].map((col) => (

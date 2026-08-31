@@ -50,7 +50,7 @@ const MENUS: { key: string; label: string; items: MegaItem[]; note?: string }[] 
     label: '후원하기',
     items: [
       { icon: Crosshair, title: '선수·후원슬롯 직접 PICK', desc: '경기 착장 위치를 직접 선택', to: '/athletes' },
-      { icon: Sparkles, title: '스폰픽 추천 PICK', desc: '목표와 예산에 맞는 조합 추천', to: '/ai-match' },
+      { icon: Sparkles, title: '스폰픽 추천 PICK', desc: '목표와 예산에 맞는 조합 추천', to: '/sponsor/recommended' },
       { icon: BarChart3, title: '진행 중 후원기회', desc: '직접구매·경매·장기계약 비교', to: '/auctions' },
       { icon: CalendarCheck, title: '디지털 파트너 월 구독', desc: '월 부담으로 1년간 온라인·등록매장 파트너', to: '/digital-partner', badge: 'NEW', highlight: true },
     ],
@@ -269,7 +269,7 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
                 <span className="text-[11px] text-emerald-100">선수·방식 직접 선택</span>
               </Link>
               <Link
-                to="/ai-match"
+                to="/sponsor/recommended"
                 onClick={() => setMobileOpen(false)}
                 className="rounded-2xl bg-rose-500 text-white px-4 py-4 flex flex-col gap-1"
               >
