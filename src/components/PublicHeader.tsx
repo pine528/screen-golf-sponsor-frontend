@@ -1,139 +1,230 @@
 /**
- * 공개 페이지 공용 상단 메뉴바
+ * 공개 페이지 공용 상단 메뉴바 — 리디자인 v2.0 (핸드오프 §1.1)
  *
- * 메인에만 있던 메뉴를 공용으로 뺀 것. 라이브 경매·투표·선수 페이지처럼 메뉴에서 바로 들어가는
- * 화면에도 같은 메뉴를 띄워 다른 곳으로 빠져나갈 수 있게 한다.
+ * 4개 1차 메뉴(후원하기/선수/팬 참여/스폰픽 소개) + 메가메뉴.
+ *  - hover/focus 120ms 후 표시, 마우스 이탈 250ms 후 닫기, Esc·바깥 클릭 닫기
+ *  - 각 항목 아이콘+명칭+한 줄 설명, NEW 배지는 텍스트로도 제공
+ *  - 모바일: 전체화면 드로어 + 아코디언, 상단에 직접/추천 PICK 바로가기
+ * 아직 전용 페이지가 없는 항목(성과보장·매칭 사례 등)은 가장 근접한 기존
+ * 페이지로 연결하고, 세부 핸드오프 수령 시 라우트를 교체한다.
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import {
+  BarChart3,
+  BookOpen,
+  CalendarCheck,
+  ChevronDown,
+  ChevronRight,
+  Crosshair,
+  Handshake,
+  Heart,
+  Info,
+  LineChart,
+  Menu,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Store,
+  UserPlus,
+  Users,
+  Vote,
+  Wallet,
+  X,
+} from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import LiveBadge from './LiveBadge';
 import MobileTabBar from './MobileTabBar';
 
-const NAV_LINKS = [
-  { to: '/auctions', label: '라이브 경매', live: true },
-  { to: '/slots', label: '스폰서십 슬롯' },
-  { to: '/ai-match', label: 'AI 간편 매칭', badge: 'AI' },
-  { to: '/growth-market', label: '성장마켓', badge: 'NEW' },
-  { to: '/votes', label: '투표' },
-  { to: '/athletes', label: '선수' },
-  { to: '/how-it-works', label: '이용방법' },
+type MegaItem = {
+  icon: any;
+  title: string;
+  desc: string;
+  to: string;
+  badge?: string;
+  highlight?: boolean;
+};
+
+const MENUS: { key: string; label: string; items: MegaItem[]; note?: string }[] = [
+  {
+    key: 'sponsor',
+    label: '후원하기',
+    items: [
+      { icon: Crosshair, title: '선수·후원슬롯 직접 PICK', desc: '경기 착장 위치를 직접 선택', to: '/athletes' },
+      { icon: Sparkles, title: '스폰픽 추천 PICK', desc: '목표와 예산에 맞는 조합 추천', to: '/ai-match' },
+      { icon: BarChart3, title: '진행 중 후원기회', desc: '직접구매·경매·장기계약 비교', to: '/auctions' },
+      { icon: CalendarCheck, title: '디지털 파트너 월 구독', desc: '월 부담으로 1년간 온라인·등록매장 파트너', to: '/digital-partner', badge: 'NEW', highlight: true },
+    ],
+    note: '경기복 부착 없이 디지털 채널과 등록매장 홍보물에 활용하는 상품입니다.',
+  },
+  {
+    key: 'athletes',
+    label: '선수',
+    items: [
+      { icon: Users, title: '전체 선수', desc: '투어·지역·활동으로 탐색', to: '/athletes' },
+      { icon: Star, title: '추천 선수', desc: '스폰픽 추천 기준 선별', to: '/athletes?recommended=1' },
+      { icon: Heart, title: '관심 선수', desc: '로그인 후 저장한 선수', to: '/fan' },
+      { icon: UserPlus, title: '선수 등록', desc: '선수·매니저 온보딩', to: '/register' },
+    ],
+  },
+  {
+    key: 'fan',
+    label: '팬 참여',
+    items: [
+      { icon: Vote, title: '팬 VOTE', desc: '예측하고 응원에 참여하세요', to: '/votes' },
+      { icon: Store, title: '팬스토어·성장마켓', desc: '선수와 브랜드 협업 스토어', to: '/growth-market' },
+      { icon: Wallet, title: '팬포인트', desc: '참여가 포인트와 혜택으로', to: '/fan' },
+    ],
+  },
+  {
+    key: 'about',
+    label: '스폰픽 소개',
+    items: [
+      { icon: Info, title: '서비스 소개', desc: '스폰픽이 해결하는 후원 문제', to: '/features' },
+      { icon: BookOpen, title: '이용방법', desc: '선택부터 성과 확인까지', to: '/how-it-works' },
+      { icon: ShieldCheck, title: '성과보장 프로그램', desc: '기준 미달 시 보정 지원', to: '/guide' },
+      { icon: Handshake, title: '함께하는 브랜드', desc: '스폰픽과 성장하는 파트너', to: '/for-who' },
+      { icon: LineChart, title: '매칭 사례', desc: '실제 후원과 성과', to: '/growth-market' },
+    ],
+  },
 ];
 
+/** 1차 메뉴가 현재 경로를 포함하는지 (활성 표시용) */
+function menuActive(menu: (typeof MENUS)[number], pathname: string) {
+  return menu.items.some((it) => {
+    const base = it.to.split('?')[0];
+    return base !== '/' && (pathname === base || pathname.startsWith(`${base}/`));
+  });
+}
+
 export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
+  const [open, setOpen] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileAccordion, setMobileAccordion] = useState<string | null>('sponsor');
   const { isAuthenticated } = useAuth();
   const { pathname } = useLocation();
+  const openTimer = useRef<ReturnType<typeof setTimeout>>();
+  const closeTimer = useRef<ReturnType<typeof setTimeout>>();
+  const navRef = useRef<HTMLElement>(null);
 
-  const isActive = (to: string) => pathname === to || pathname.startsWith(`${to}/`);
+  const scheduleOpen = (key: string) => {
+    clearTimeout(closeTimer.current);
+    clearTimeout(openTimer.current);
+    openTimer.current = setTimeout(() => setOpen(key), 120);
+  };
+  const scheduleClose = () => {
+    clearTimeout(openTimer.current);
+    clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpen(null), 250);
+  };
+  const cancelClose = () => clearTimeout(closeTimer.current);
+
+  /* Esc·바깥 클릭 닫기 */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(null); };
+    const onClick = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) setOpen(null);
+    };
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('mousedown', onClick);
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('mousedown', onClick); };
+  }, []);
+
+  /* 경로 이동 시 메뉴 닫기 */
+  useEffect(() => { setOpen(null); setMobileOpen(false); }, [pathname]);
 
   return (
     <>
-    <nav
-      className={`${
-        fixed ? 'fixed inset-x-0 top-0' : 'sticky top-0'
-      } z-50 bg-white/90 backdrop-blur-xl border-b border-slate-100`}
-    >
-      <div className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5">
-          <img src="/logo-48.png" alt="" className="w-8 h-8 rounded-xl" />
-          <span className="text-lg font-extrabold tracking-tight text-slate-900">SPONPIK</span>
-        </Link>
+      <nav
+        ref={navRef}
+        className={`${fixed ? 'fixed inset-x-0 top-0' : 'sticky top-0'} z-50 bg-white/95 backdrop-blur-xl border-b border-slate-100`}
+      >
+        <div className="max-w-7xl mx-auto px-5 h-16 lg:h-[72px] flex items-center">
+          <Link to="/" className="flex items-center gap-2.5 shrink-0">
+            <img src="/logo-48.png" alt="" className="w-8 h-8 rounded-xl" />
+            <span className="text-lg font-extrabold tracking-tight text-slate-900">SPONPIK</span>
+          </Link>
 
-        <div className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              aria-current={isActive(l.to) ? 'page' : undefined}
-              className={`px-3.5 py-2 text-[13px] font-medium rounded-lg transition-colors inline-flex items-center gap-1.5 ${
-                isActive(l.to)
-                  ? 'text-slate-900 bg-slate-100'
-                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-              }`}
-            >
-              {l.label}
-              {l.live && <LiveBadge />}
-              {l.badge && (
-                <span className="px-1 py-0.5 rounded bg-emerald-500 text-white text-[9px] font-black leading-none">{l.badge}</span>
-              )}
-            </Link>
-          ))}
-          {isAuthenticated && (
-            <Link
-              to="/dashboard"
-              className="px-3.5 py-2 text-[13px] font-medium rounded-lg transition-colors text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-            >
-              마이페이지
-            </Link>
-          )}
-        </div>
+          {/* 데스크톱 메가메뉴 */}
+          <div className="hidden md:flex items-center gap-2 lg:gap-7 mx-auto">
+            {MENUS.map((m) => {
+              const active = open === m.key || menuActive(m, pathname);
+              return (
+                <div
+                  key={m.key}
+                  className="relative"
+                  onMouseEnter={() => scheduleOpen(m.key)}
+                  onMouseLeave={scheduleClose}
+                >
+                  <button
+                    onFocus={() => scheduleOpen(m.key)}
+                    onClick={() => setOpen(open === m.key ? null : m.key)}
+                    aria-expanded={open === m.key}
+                    aria-haspopup="true"
+                    className={`relative px-2 py-2 text-[15px] font-bold transition-colors ${
+                      active ? 'text-emerald-600' : 'text-slate-800 hover:text-emerald-600'
+                    }`}
+                  >
+                    {m.label}
+                    <span
+                      className={`absolute left-1 right-1 -bottom-[3px] h-[2.5px] rounded-full bg-emerald-500 transition-opacity ${
+                        active ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  </button>
 
-        <div className="hidden sm:flex items-center gap-2">
-          {isAuthenticated ? (
-            <Link
-              to="/dashboard"
-              className="h-9 px-5 inline-flex items-center gap-2 rounded-lg bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors"
-            >
-              시작하기
-            </Link>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="h-9 px-4 inline-flex items-center rounded-lg text-slate-600 text-sm font-medium hover:text-slate-900 hover:bg-slate-50 transition-colors"
-              >
-                로그인
-              </Link>
-              <Link
-                to="/register"
-                className="h-9 px-5 inline-flex items-center rounded-lg bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors"
-              >
-                시작하기
-              </Link>
-            </>
-          )}
-        </div>
+                  {open === m.key && (
+                    <div
+                      onMouseEnter={cancelClose}
+                      onMouseLeave={scheduleClose}
+                      className="absolute left-1/2 -translate-x-1/2 top-full pt-4 w-[340px]"
+                    >
+                      <div className="rounded-2xl bg-white border border-slate-100 shadow-[0_18px_50px_-12px_rgba(15,23,42,0.18)] p-2.5">
+                        {m.items.map((it) => (
+                          <Link
+                            key={it.title}
+                            to={it.to}
+                            onClick={() => setOpen(null)}
+                            className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl transition-colors group ${
+                              it.highlight ? 'bg-emerald-50/70 hover:bg-emerald-50' : 'hover:bg-slate-50'
+                            }`}
+                          >
+                            <span className="w-11 h-11 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                              <it.icon className="w-5 h-5 text-emerald-600" strokeWidth={2.2} />
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="flex items-center gap-1.5 text-[15px] font-bold text-slate-900">
+                                {it.title}
+                                {it.badge && (
+                                  <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-black leading-none">
+                                    {it.badge}
+                                  </span>
+                                )}
+                              </span>
+                              <span className="block text-[12px] text-slate-400 mt-0.5 truncate">{it.desc}</span>
+                            </span>
+                            <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 shrink-0" />
+                          </Link>
+                        ))}
+                        {m.note && (
+                          <p className="flex items-start gap-1.5 px-3.5 pt-2.5 pb-1.5 mt-1 border-t border-slate-100 text-[11px] text-slate-400 leading-relaxed">
+                            <Info className="w-3.5 h-3.5 shrink-0 mt-[1px]" />
+                            {m.note}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
 
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden p-2 rounded-lg text-slate-500">
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-      </div>
-
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 px-5 pb-4 pt-2 space-y-1">
-          {NAV_LINKS.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-1.5 px-3 py-2.5 text-sm rounded-lg ${
-                isActive(l.to) ? 'text-slate-900 bg-slate-100 font-semibold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-              }`}
-            >
-              {l.label}
-              {l.live && <LiveBadge />}
-              {l.badge && (
-                <span className="px-1 py-0.5 rounded bg-emerald-500 text-white text-[9px] font-black leading-none">{l.badge}</span>
-              )}
-            </Link>
-          ))}
-          {isAuthenticated && (
-            <Link
-              to="/dashboard"
-              onClick={() => setMobileOpen(false)}
-              className="block px-3 py-2.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg"
-            >
-              마이페이지
-            </Link>
-          )}
-          <div className="pt-3 mt-2 border-t border-slate-100 flex gap-2">
+          {/* 우측 액션 */}
+          <div className="hidden sm:flex items-center gap-2 shrink-0 ml-auto md:ml-0">
             {isAuthenticated ? (
               <Link
                 to="/dashboard"
-                className="flex-1 h-10 inline-flex items-center justify-center rounded-lg bg-emerald-500 text-white text-sm font-semibold"
-                onClick={() => setMobileOpen(false)}
+                className="h-10 px-6 inline-flex items-center rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors"
               >
                 시작하기
               </Link>
@@ -141,26 +232,128 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
               <>
                 <Link
                   to="/login"
-                  className="flex-1 h-10 inline-flex items-center justify-center rounded-lg border border-slate-200 text-slate-700 text-sm font-semibold"
-                  onClick={() => setMobileOpen(false)}
+                  className="h-10 px-4 inline-flex items-center rounded-xl text-slate-700 text-sm font-semibold hover:text-slate-900 hover:bg-slate-50 transition-colors"
                 >
                   로그인
                 </Link>
                 <Link
                   to="/register"
-                  className="flex-1 h-10 inline-flex items-center justify-center rounded-lg bg-emerald-500 text-white text-sm font-semibold"
-                  onClick={() => setMobileOpen(false)}
+                  className="h-10 px-6 inline-flex items-center rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors"
                 >
                   시작하기
                 </Link>
               </>
             )}
           </div>
+
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="메뉴 열기"
+            className="md:hidden p-2 rounded-lg text-slate-500 ml-auto"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
-      )}
-    </nav>
-    {/* 모바일 전면 개편 — 앱형 하단 탭 바 (공개 페이지 공용) */}
-    <MobileTabBar />
+
+        {/* 모바일 전체화면 드로어 — 상단 두 PICK 바로가기 + 아코디언 */}
+        {mobileOpen && (
+          <div className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-white overflow-y-auto px-5 pb-28 pt-4 border-t border-slate-100">
+            <div className="grid grid-cols-2 gap-2.5 mb-5">
+              <Link
+                to="/athletes"
+                onClick={() => setMobileOpen(false)}
+                className="rounded-2xl bg-emerald-500 text-white px-4 py-4 flex flex-col gap-1"
+              >
+                <Crosshair className="w-5 h-5" />
+                <span className="text-[15px] font-extrabold">직접 PICK</span>
+                <span className="text-[11px] text-emerald-100">선수·방식 직접 선택</span>
+              </Link>
+              <Link
+                to="/ai-match"
+                onClick={() => setMobileOpen(false)}
+                className="rounded-2xl bg-rose-500 text-white px-4 py-4 flex flex-col gap-1"
+              >
+                <Sparkles className="w-5 h-5" />
+                <span className="text-[15px] font-extrabold">추천 PICK</span>
+                <span className="text-[11px] text-rose-100">목표·예산 기반 추천</span>
+              </Link>
+            </div>
+
+            {MENUS.map((m) => (
+              <div key={m.key} className="border-b border-slate-100">
+                <button
+                  onClick={() => setMobileAccordion(mobileAccordion === m.key ? null : m.key)}
+                  aria-expanded={mobileAccordion === m.key}
+                  className="w-full flex items-center justify-between py-3.5 text-[15px] font-bold text-slate-900"
+                >
+                  {m.label}
+                  <ChevronDown
+                    className={`w-4 h-4 text-slate-400 transition-transform ${mobileAccordion === m.key ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                {mobileAccordion === m.key && (
+                  <div className="pb-3 space-y-0.5">
+                    {m.items.map((it) => (
+                      <Link
+                        key={it.title}
+                        to={it.to}
+                        onClick={() => setMobileOpen(false)}
+                        className={`flex items-center gap-3 px-2 py-2.5 rounded-xl ${it.highlight ? 'bg-emerald-50/70' : ''}`}
+                      >
+                        <span className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                          <it.icon className="w-4 h-4 text-emerald-600" />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="flex items-center gap-1.5 text-[14px] font-semibold text-slate-800">
+                            {it.title}
+                            {it.badge && (
+                              <span className="px-1.5 py-0.5 rounded-full bg-emerald-500 text-white text-[9px] font-black leading-none">
+                                {it.badge}
+                              </span>
+                            )}
+                          </span>
+                          <span className="block text-[11px] text-slate-400">{it.desc}</span>
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+
+            <div className="pt-4 mt-2 flex gap-2">
+              {isAuthenticated ? (
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex-1 h-11 inline-flex items-center justify-center rounded-xl bg-emerald-500 text-white text-sm font-bold"
+                >
+                  시작하기
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 h-11 inline-flex items-center justify-center rounded-xl border border-slate-200 text-slate-700 text-sm font-bold"
+                  >
+                    로그인
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 h-11 inline-flex items-center justify-center rounded-xl bg-emerald-500 text-white text-sm font-bold"
+                  >
+                    시작하기
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </nav>
+      {/* 모바일 하단 탭 바 (공개 페이지 공용) */}
+      <MobileTabBar />
     </>
   );
 }

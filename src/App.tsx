@@ -6,6 +6,7 @@ import BrandInquiryButton from './components/BrandInquiryButton';
 import ScrollToTop from './components/ScrollToTop';
 import { useAuth } from './hooks/useAuth';
 import { Home } from './pages/Home';
+import DigitalPartner from './pages/DigitalPartner';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
@@ -257,6 +258,7 @@ function App() {
       />
       <Route path="/slots" element={<SponsorshipSlots />} />
       <Route path="/growth-market" element={<GrowthMarket />} />
+      <Route path="/digital-partner" element={<DigitalPartner />} />
       <Route path="/auctions" element={<Auctions />} />
       <Route path="/auctions/:id" element={<AuctionDetail />} />
       <Route path="/inventory" element={<Inventory />} />

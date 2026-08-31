@@ -1,602 +1,381 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+/**
+ * 메인 — 리디자인 v2.0 (핸드오프 §2, 시안 2026-08-31)
+ *
+ * 첫 화면은 "직접 PICK / 추천 PICK" 두 경로만 주 CTA로 제시한다 (P-01).
+ * 기존 경매 현황판·성장마켓·VOTE 장문 섹션·01~04 단계는 메인에서 제거하고
+ * 전용 목록(/auctions 등)과 소개 페이지로 이동 (§2.1 삭제/이동).
+ * 스크롤 구성은 §2.2: 히어로 → 지금 후원 가능한 선수 → 진행 중 후원기회
+ * → 한 줄 소개 → 브랜드 로고 → 최종 CTA. 데이터 없는 섹션은 자동 숨김.
+ */
+import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
   ArrowRight,
-  Users,
-  Zap,
-  Timer,
   ChevronRight,
-  ChevronLeft,
-  Shield,
-  BarChart3,
-  Vote,
-  Search,
+  Crosshair,
   Gavel,
-  FileCheck,
-  Upload,
-  Diamond,
+  Sparkles,
+  Tag,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { api } from '../services/api';
-import { formatTimeRemaining } from '../utils';
 import { ServiceAnnouncementModal } from '../components/ServiceAnnouncementModal';
-import LiveAuctionBoard from '../components/LiveAuctionBoard';
-import HomeVoteSection from '../components/HomeVoteSection';
-import HomeGrowthMarket from '../components/HomeGrowthMarket';
 import PublicHeader from '../components/PublicHeader';
 
-/* useCounter 제거 — 개편 LEG-06: 하드코딩 실적 수치 대신 public-stats API 실데이터 사용 */
+const BODY_PART_LABEL: Record<string, string> = {
+  CAP_FRONT: '모자 정면', CAP_SIDE_R: '모자 우측', CAP_SIDE_L: '모자 좌측', CAP_BACK: '모자 뒷면',
+  CAP_BRIM_TOP: '모자챙 상단',
+  CHEST_CENTER: '상의 중앙', CHEST_L: '상의 좌측', CHEST_R: '상의 우측',
+  COLLAR_L: '카라 좌측', COLLAR_R: '카라 우측',
+  SLEEVE_L: '소매 좌측', SLEEVE_R: '소매 우측',
+  SHOULDER_L: '어깨 좌측', SHOULDER_R: '어깨 우측',
+  WAIST_BACK: '허리 뒷면', PANTS_SIDE: '바지 측면',
+};
 
-/* ── Scroll-reveal hook ── */
-function useReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.15 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return { ref, visible };
-}
+/* 히어로 핫스폿 — 실사 위 후원 위치 안내 (클릭은 직접 PICK 예고 툴팁, §2.1) */
+const HOTSPOTS: { key: string; label: string; x: number; y: number; side: 'left' | 'right'; mobile?: boolean }[] = [
+  { key: 'visor', label: '바이저', x: 47, y: 12, side: 'left', mobile: true },
+  { key: 'collar', label: '카라', x: 47.5, y: 27, side: 'left' },
+  { key: 'sleeve', label: '소매', x: 76, y: 19.5, side: 'right', mobile: true },
+  { key: 'top', label: '상의', x: 46, y: 43, side: 'left', mobile: true },
+];
 
-/* ════════════════════════════════════════════════════════ */
-/*                      HOME COMPONENT                     */
-/* ════════════════════════════════════════════════════════ */
 export function Home() {
   const { isAuthenticated } = useAuth();
+  const [tipKey, setTipKey] = useState<string | null>(null);
 
-  /* ── Data ── */
+  /* ── 데이터 (기존 자산 재사용, P-07) ── */
   const { data: liveAuctions } = useQuery({
     queryKey: ['home-auctions'],
     queryFn: async () => {
-      // 파라미터 이름은 limit (pageSize는 무시되어 기본 20건에서 잘렸었다)
       const r = await api.getAuctions({ status: 'LIVE', limit: 100 });
       return (r.data || [])
-        // 메인은 추천 선수 경매만 노출 (운영 지정)
         .filter((a: any) => a.slotInstance?.athlete?.isRecommended)
         .map((a: any) => ({
           id: a.id,
           kind: 'AUCTION' as const,
-          athleteId: a.slotInstance?.athlete?.id || '',
-          slot: a.slotInstance?.slotTemplate?.code || 'SLOT',
-          slotName: a.slotInstance?.slotTemplate?.nameKr || a.slotInstance?.slotTemplate?.name || '',
-          bodyPart: a.slotInstance?.slotTemplate?.bodyPart || '',
+          athleteId: a.slotInstance?.athleteId,
           player: a.slotInstance?.athlete?.name || '선수',
-          playerTour: a.slotInstance?.athlete?.tour || '',
           playerImage: a.slotInstance?.athlete?.profileImageUrl || '',
-          price: a.currentPrice || a.slotInstance?.reservePrice || 0,
-          endAt: a.endAt,
-          bids: a._count?.bids ?? 0,
-        }));
-    },
-    staleTime: 30_000,
-    refetchInterval: 30_000,
-  });
-
-  // 바로 구매 / 스폰픽 협의 슬롯 — 경매와 함께 '진행중인 스폰서십 슬롯'에 노출
-  const { data: directBuySlots } = useQuery({
-    queryKey: ['home-direct-slots'],
-    queryFn: async () => {
-      const r = await api.getSlotInstances({ limit: 200 });
-      return ((r as any)?.data || [])
-        // 메인은 추천 선수 슬롯만 노출 (경매와 동일 정책)
-        .filter((s: any) => s.status !== 'SOLD' && s.status !== 'RESERVED' && s.isActive && s.athlete?.isRecommended)
-        // 경매 슬롯은 위 liveAuctions에서 이미 다루므로 제외
-        .filter((s: any) => !s.enableAuction)
-        .map((s: any) => ({
-          id: s.id,
-          kind: (s.enableDirectBuy ? 'DIRECT' : 'INQUIRY') as 'DIRECT' | 'INQUIRY',
-          athleteId: s.athleteId,
-          slot: s.slotTemplate?.code || 'SLOT',
-          slotName: s.slotTemplate?.nameKr || s.slotTemplate?.name || '',
-          bodyPart: s.slotTemplate?.bodyPart || '',
-          player: s.athlete?.name || '선수',
-          playerTour: s.athlete?.tour || '',
-          playerImage: s.athlete?.profileImageUrl || '',
-          price: Number(s.directBuyPrice || s.reservePrice || 0),
-          eventName: s.event?.name || '',
+          playerTour: a.slotInstance?.athlete?.tour || '',
+          slotName:
+            a.slotInstance?.slotTemplate?.nameKr ||
+            a.slotInstance?.slotTemplate?.name ||
+            BODY_PART_LABEL[a.slotInstance?.slotTemplate?.bodyPart] || '슬롯',
+          price: Number(a.currentPrice || a.startPrice || 0),
+          to: `/auctions/${a.id}`,
         }));
     },
     staleTime: 60_000,
   });
 
-  // 개편 §7.2 통합 검색
-  const navigate = useNavigate();
-  const [heroSearch, setHeroSearch] = useState('');
-  // 진행중인 스폰서십 슬롯 — 판매방식 필터
-  const [slotFilter, setSlotFilter] = useState<'ALL' | 'AUCTION' | 'DIRECT' | 'INQUIRY' | 'SOON'>('ALL');
+  const { data: directSlots } = useQuery({
+    queryKey: ['home-direct-slots'],
+    queryFn: async () => {
+      const r = await api.getSlotInstances({ limit: 200 });
+      return ((r as any)?.data || [])
+        .filter((s: any) => s.status !== 'SOLD' && s.status !== 'RESERVED' && s.isActive && s.athlete?.isRecommended)
+        .filter((s: any) => !s.enableAuction)
+        .map((s: any) => ({
+          id: s.id,
+          kind: (s.enableDirectBuy ? 'DIRECT' : 'INQUIRY') as 'DIRECT' | 'INQUIRY',
+          athleteId: s.athleteId,
+          player: s.athlete?.name || '선수',
+          playerImage: s.athlete?.profileImageUrl || '',
+          playerTour: s.athlete?.tour || '',
+          slotName: s.slotTemplate?.nameKr || s.slotTemplate?.name || BODY_PART_LABEL[s.slotTemplate?.bodyPart] || '슬롯',
+          price: Number(s.directBuyPrice || s.reservePrice || 0),
+          to: `/athletes/${s.athleteId}`,
+        }));
+    },
+    staleTime: 60_000,
+  });
 
-  const r1 = useReveal();
-  const r2 = useReveal();
-  const r3 = useReveal();
-  const r4 = useReveal();
-  const r5 = useReveal();
+  const { data: athleteItems } = useQuery({
+    queryKey: ['home-athletes'],
+    queryFn: async () => {
+      const r = await api.listPublicAthletes({ limit: 60 });
+      return ((r as any)?.data?.items || []) as any[];
+    },
+    staleTime: 120_000,
+  });
 
-  const carouselRef = useRef<HTMLDivElement>(null);
+  /* §2.2-2 지금 후원 가능한 선수 — 추천 선수 중 슬롯 보유자 최대 4명 */
+  const availableAthletes = useMemo(() => {
+    const all = [...(liveAuctions || []), ...(directSlots || [])];
+    const byAthlete = new Map<string, { count: number; min: number }>();
+    for (const s of all) {
+      if (!s.athleteId) continue;
+      const d = byAthlete.get(s.athleteId) || { count: 0, min: Infinity };
+      d.count += 1;
+      if (s.price > 0) d.min = Math.min(d.min, s.price);
+      byAthlete.set(s.athleteId, d);
+    }
+    return (athleteItems || [])
+      .filter((a) => a.isRecommended && byAthlete.has(a.id))
+      .slice(0, 4)
+      .map((a) => ({ ...a, slots: byAthlete.get(a.id)! }));
+  }, [athleteItems, liveAuctions, directSlots]);
 
-  const scrollCarousel = useCallback((dir: 'left' | 'right') => {
-    const el = carouselRef.current;
-    if (!el) return;
-    // 카드 폭이 화면 폭에 따라 달라지므로 실제 카드 하나 + 간격만큼 이동한다
-    const card = el.firstElementChild as HTMLElement | null;
-    const step = card ? card.getBoundingClientRect().width + 16 : 300;
-    el.scrollBy({ left: dir === 'left' ? -step : step, behavior: 'smooth' });
-  }, []);
+  /* §2.2-3 진행 중 후원기회 — 경매 우선 혼합 최대 3개 */
+  const opportunities = useMemo(
+    () => [...(liveAuctions || []), ...(directSlots || [])].slice(0, 3),
+    [liveAuctions, directSlots],
+  );
 
-  const bodyPartLabel = (bp: string) => {
-    const map: Record<string, string> = {
-      CAP_FRONT: '모자 정면', CAP_SIDE_R: '모자 우측', CAP_SIDE_L: '모자 좌측', CAP_BACK: '모자 뒷면',
-      CHEST_CENTER: '상의 중앙', CHEST_L: '상의 좌측', CHEST_R: '상의 우측',
-      COLLAR_L: '카라 좌측', COLLAR_R: '카라 우측',
-      SLEEVE_L: '소매 좌측', SLEEVE_R: '소매 우측',
-      SHOULDER_L: '어깨 좌측', SHOULDER_R: '어깨 우측',
-      WAIST_BACK: '허리 뒷면', PANTS_SIDE: '바지 측면',
-    };
-    return map[bp] || bp;
+  const showTip = (key: string) => {
+    setTipKey(key);
+    window.setTimeout(() => setTipKey((k) => (k === key ? null : k)), 2200);
   };
 
   return (
     <div className="min-h-screen bg-white text-slate-900 overflow-x-hidden">
-      {/* SPONPIK 서비스 오픈 안내 모달 (홈 진입 시 자동 표시) */}
       <ServiceAnnouncementModal />
-
       <PublicHeader fixed />
 
-      {/* ════════════════════════ HERO ════════════════════════ */}
-      <section className="relative pt-32 sm:pt-36 pb-4 sm:pb-5 px-5 bg-gradient-to-b from-slate-50 to-white overflow-hidden">
-        {/* 소프트 블롭 (장식 점 제거) */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -top-10 right-0 w-72 h-72 rounded-full bg-emerald-200/30 blur-3xl" />
+      {/* ════════════════ HERO — 두 개의 PICK (§2.1) ════════════════ */}
+      <section className="relative pt-16 lg:pt-[72px] bg-[#f2faf5] overflow-hidden">
+        {/* 소프트 배경 */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute -right-40 bottom-[-30%] w-[720px] h-[720px] rounded-full bg-emerald-100/50" />
+          <div className="absolute left-[-10%] top-[-20%] w-[420px] h-[420px] rounded-full bg-emerald-100/30 blur-2xl" />
         </div>
-        <div className="max-w-7xl mx-auto relative">
-          {/* Top badge */}
-          <div className="mb-10 max-w-xl mx-auto lg:max-w-none lg:mx-0">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-semibold">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              KPGA · KLPGA 남녀 프로골프 선수
-            </span>
-          </div>
 
-          <div className="grid lg:grid-cols-[1fr_auto_340px] gap-6 lg:gap-8 items-center max-w-xl mx-auto lg:max-w-none lg:mx-0">
-            {/* Left - Text */}
-            <div className="relative z-10">
-              {/* 모바일 골퍼 누끼 (우측, lg에서는 중앙 이미지 사용) */}
-              <img
-                src="/golfers/bae-jinri-hero.png"
-                alt="배진리 프로 — SPONPIK Founder No.1"
-                className="lg:hidden absolute right-2 top-0 w-[48%] max-w-[242px] object-contain pointer-events-none select-none"
-                style={{ filter: 'drop-shadow(0 12px 22px rgba(15,23,42,0.10))' }}
-              />
-
-              <h1 className="text-[26px] sm:text-4xl lg:text-[42px] font-black tracking-tight lg:tracking-wide text-slate-900 leading-[1.25] lg:leading-[1.18] mb-0 lg:mb-8 space-y-0.5 lg:space-y-1.5 max-w-[56%] lg:max-w-none break-keep">
-                <div>선수를 선택하고,</div>
-                <div><span className="text-emerald-500">후원방식</span>을 고르고,</div>
-                <div>바로 시작하세요.</div>
+        <div className="max-w-7xl mx-auto px-5 relative">
+          <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,470px)_minmax(0,410px)] items-center gap-4 lg:gap-6 py-8 lg:py-0 lg:min-h-[620px]">
+            {/* 좌: 카피 */}
+            <div className="relative z-10 lg:pr-2">
+              <h1 className="text-[30px] sm:text-4xl lg:text-[40px] xl:text-[44px] font-black tracking-tight leading-[1.32]">
+                <span className="block whitespace-nowrap">선수를 선택하고,</span>
+                <span className="block whitespace-nowrap">후원방식을 <span className="text-emerald-500">PICK</span>하고,</span>
+                <span className="block whitespace-nowrap">바로 시작하세요.</span>
               </h1>
-
-              {/* 모바일 파운더 라벨 */}
-              <div className="lg:hidden mt-7 max-w-[56%]">
-                <p className="text-[10px] font-extrabold tracking-[0.12em] text-slate-400">
-                  <span className="text-emerald-500">SPONPIK</span> FOUNDER PRO NO1
-                </p>
-                <p className="mt-1.5 text-[22px] font-black text-slate-900 leading-none">
-                  배진리 <span className="text-sm font-bold text-slate-400">프로</span>
-                </p>
-                <img src="/golfers/bae-jinri-sign.png" alt="Bae Jinri" className="mt-2 h-9 w-auto select-none pointer-events-none" />
-              </div>
-
-              {/* 데스크톱 설명 문구 (개편 §7.1 서브 카피) */}
-              <p className="hidden lg:block text-base sm:text-lg text-slate-500 leading-relaxed mb-10 max-w-lg break-keep">
-                프로 골퍼의 착장 슬롯부터 SNS 콘텐츠, 매장 홍보, 장기 파트너십까지
-                한 화면에서 비교하고 계약하는 스포츠 후원 플랫폼.
+              <p className="mt-6 text-[14px] lg:text-[15px] text-slate-500 leading-relaxed break-keep">
+                <span className="block">선수 후원슬롯부터 SNS 콘텐츠와</span>
+                <span className="block">장기 파트너십까지, 원하는 방식으로</span>
+                <span className="block">바로 시작하는 스포츠 후원 플랫폼.</span>
               </p>
-
-              {/* CTA + 검색 (개편 §7.1/§7.2)
-                  버튼 4개를 같은 크기 2열 그리드로 두고, 검색창도 같은 폭에 맞춘다 */}
-              <div className="mt-10 lg:mt-0 mb-10 lg:mb-12 w-full max-w-sm">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
-                  <Link to="/athletes"
-                    className="h-11 px-4 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20">
-                    후원 가능한 선수 찾기 <ArrowRight className="w-4 h-4 shrink-0" />
-                  </Link>
-                  <Link to={isAuthenticated ? '/dashboard' : '/register'}
-                    className="h-11 px-4 inline-flex items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors">
-                    {isAuthenticated ? '내 대시보드' : '브랜드로 시작하기'}
-                  </Link>
-
-                  {!isAuthenticated && (
-                    <>
-                      <Link to="/register"
-                        className="h-11 px-4 inline-flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:border-slate-400 hover:text-slate-900 transition-colors">
-                        선수로 등록하기
-                      </Link>
-                      <Link to="/register"
-                        className="h-11 px-4 inline-flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-semibold hover:border-slate-400 hover:text-slate-900 transition-colors">
-                        팬으로 가입하기
-                      </Link>
-                    </>
-                  )}
-                </div>
-
-                <form
-                  onSubmit={(e) => { e.preventDefault(); const q = heroSearch.trim(); navigate(`/athletes${q ? `?q=${encodeURIComponent(q)}` : ''}`); }}
-                  className="hidden sm:flex items-center gap-2 mt-3 w-full bg-white border border-slate-200 rounded-2xl p-1.5 shadow-sm"
-                >
-                  <input
-                    type="text"
-                    value={heroSearch}
-                    onChange={(e) => setHeroSearch(e.target.value)}
-                    placeholder="선수명·투어·지역으로 검색"
-                    className="flex-1 min-w-0 px-3 py-2 text-sm bg-transparent focus:outline-none"
-                  />
-                  <button type="submit" className="h-9 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold whitespace-nowrap transition-colors">
-                    맞춤 선수 찾기
-                  </button>
-                </form>
-              </div>
-
             </div>
 
-            {/* Center - Hero Model Image (배진리 프로 — 누끼 PNG, 좌측하단 텍스트 포함) */}
-            <div className="hidden lg:flex relative justify-center items-end z-[5] -ml-16 -mt-12">
-              {/* Soft glow behind model */}
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-emerald-400/10 rounded-full blur-[100px] pointer-events-none" />
-              <div className="relative">
-                <img
-                  src="/golfers/bae-jinri-cutout.png"
-                  alt="배진리 프로 — SPONPIK Founder No.1"
-                  className="relative h-[600px] w-auto object-contain object-bottom"
-                />
-                {/* 하단 페이드 효과 — 우측(발) 영역만, 좌측 텍스트/사인 영역은 제외 */}
+            {/* 중: 선수 실사 + 핫스폿 */}
+            <div className="relative mx-auto w-full max-w-[340px] sm:max-w-[420px] lg:max-w-[520px] lg:self-end">
+              <img
+                src="/golfers/bae-jinri-cutout.png"
+                alt="배진리 프로 — SPONPIK Founder Pro No.1"
+                className="w-full h-auto select-none pointer-events-none"
+                style={{ filter: 'drop-shadow(0 18px 30px rgba(15,23,42,0.10))' }}
+              />
+              {HOTSPOTS.map((h) => (
                 <div
-                  className="absolute bottom-0 right-0 h-32 bg-gradient-to-t from-[#f8fafc] via-[#f8fafc]/80 to-transparent pointer-events-none"
-                  style={{ left: '33%' }}
-                />
-              </div>
+                  key={h.key}
+                  className={`absolute ${h.mobile ? '' : 'hidden sm:flex'} flex items-center`}
+                  style={{
+                    top: `${h.y}%`,
+                    ...(h.side === 'left'
+                      ? { right: `${100 - h.x}%`, flexDirection: 'row' as const }
+                      : { left: `${h.x}%`, flexDirection: 'row-reverse' as const }),
+                  }}
+                >
+                  <span className="text-[12px] lg:text-[13px] font-bold text-slate-700 whitespace-nowrap px-1.5 py-0.5 rounded-md bg-white/75 backdrop-blur-[2px]">
+                    {h.label}
+                  </span>
+                  <span
+                    aria-hidden
+                    className="w-7 lg:w-14 border-t border-dashed border-emerald-400/80"
+                  />
+                  <button
+                    onClick={() => showTip(h.key)}
+                    aria-label={`${h.label} — 직접 PICK에서 선택 가능한 위치`}
+                    className="relative w-[18px] h-[18px] rounded-full bg-emerald-500 border-[3px] border-white shadow-md shrink-0 hover:scale-110 transition-transform"
+                  >
+                    {tipKey === h.key && (
+                      <span className="absolute left-1/2 -translate-x-1/2 -top-9 px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-[11px] font-semibold whitespace-nowrap shadow-lg">
+                        직접 PICK에서 선택할 수 있어요
+                      </span>
+                    )}
+                  </button>
+                </div>
+              ))}
             </div>
 
-            {/* Right - Hot Auction Card (실데이터 바인딩, docx 2-1) */}
-            <HeroLiveAuctionCard hot={liveAuctions && liveAuctions.length > 0 ? liveAuctions[0] : null} />
+            {/* 우: 두 개의 PICK CTA */}
+            <div className="relative z-10 space-y-4 pb-8 lg:pb-0">
+              <Link
+                to="/athletes"
+                className="group flex items-center gap-5 rounded-[40px] bg-gradient-to-r from-emerald-500 to-emerald-600 pl-4 pr-6 py-4 lg:py-5 shadow-[0_16px_40px_-12px_rgba(16,185,129,0.55)] hover:shadow-[0_20px_48px_-12px_rgba(16,185,129,0.7)] hover:-translate-y-0.5 transition-all"
+              >
+                <span className="w-[64px] h-[64px] lg:w-[72px] lg:h-[72px] rounded-full bg-white flex items-center justify-center shrink-0">
+                  <Crosshair className="w-7 h-7 lg:w-8 lg:h-8 text-emerald-500" strokeWidth={2.2} />
+                </span>
+                <span className="min-w-0 flex-1 text-white">
+                  <span className="block text-[22px] lg:text-[25px] font-black leading-tight">직접 PICK</span>
+                  <span className="block text-[12.5px] lg:text-[13px] text-emerald-50/95 mt-1">선수와 후원방식을 직접 선택</span>
+                </span>
+                <ChevronRight className="w-6 h-6 text-white/85 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+
+              <Link
+                to="/ai-match"
+                className="group flex items-center gap-5 rounded-[40px] bg-gradient-to-r from-rose-500 to-red-500 pl-4 pr-6 py-4 lg:py-5 shadow-[0_16px_40px_-12px_rgba(244,63,94,0.5)] hover:shadow-[0_20px_48px_-12px_rgba(244,63,94,0.65)] hover:-translate-y-0.5 transition-all"
+              >
+                <span className="w-[64px] h-[64px] lg:w-[72px] lg:h-[72px] rounded-full bg-white flex items-center justify-center shrink-0">
+                  <Sparkles className="w-7 h-7 lg:w-8 lg:h-8 text-rose-500" strokeWidth={2.2} />
+                </span>
+                <span className="min-w-0 flex-1 text-white">
+                  <span className="inline-block px-2.5 py-[3px] rounded-full bg-white text-rose-500 text-[10px] font-black tracking-wide mb-1.5">
+                    SPONPIK RECOMMENDED
+                  </span>
+                  <span className="block text-[22px] lg:text-[25px] font-black leading-tight">스폰픽 추천 PICK</span>
+                  <span className="block text-[12.5px] lg:text-[13px] text-rose-50/95 mt-1">목표와 예산에 맞는 후원 조합 추천</span>
+                </span>
+                <ChevronRight className="w-6 h-6 text-white/85 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+
+              {/* 보조 링크 — 핵심 CTA와 시각 경쟁 금지 (§2.1) */}
+              <div className="flex items-center justify-center gap-5 pt-1 text-[13px] font-semibold text-slate-500">
+                <Link to="/auctions" className="hover:text-emerald-600 transition-colors">진행 중 후원기회</Link>
+                <span className="w-px h-3 bg-slate-300" />
+                <Link to="/digital-partner" className="hover:text-emerald-600 transition-colors">디지털 파트너 월 구독</Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════ 라이브 경매 현황판 ════════════════════════ */}
-      <LiveAuctionBoard />
-
-
-      {/* ════════════════════════ 진행중인 스폰서십 슬롯 (캐러셀) ════════════════════════ */}
-      {/* 폭은 히어로·다른 섹션과 동일하게 px-5(바깥) → max-w-7xl(안쪽) 순서 */}
-      <section className="pt-6 pb-8 sm:pt-8 sm:pb-10 px-5 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-              <span className="text-emerald-500">*</span> 진행중인 스폰서십 슬롯
-            </h2>
-            <div className="flex items-center gap-2">
-              <button onClick={() => scrollCarousel('left')} className="hidden sm:flex w-9 h-9 items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50 transition-colors text-slate-400">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button onClick={() => scrollCarousel('right')} className="hidden sm:flex w-9 h-9 items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50 transition-colors text-slate-400">
-                <ChevronRight className="w-4 h-4" />
-              </button>
-              {/* 경매뿐 아니라 바로구매·협의 슬롯까지 함께 보는 목록으로 이동 */}
-              <Link to="/slots" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 inline-flex items-center gap-1 transition-colors ml-2">
-                전체보기 <ChevronRight className="w-4 h-4" />
+      {/* ════════════════ §2.2-2 지금 후원 가능한 선수 ════════════════ */}
+      {availableAthletes.length > 0 && (
+        <section className="py-14 sm:py-20 px-5">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-end justify-between mb-7">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight">지금 후원 가능한 선수</h2>
+                <p className="text-[13px] text-slate-400 mt-1.5">판매 중인 후원슬롯이 있는 추천 선수입니다.</p>
+              </div>
+              <Link to="/athletes" className="inline-flex items-center gap-1 text-[13px] font-bold text-slate-500 hover:text-emerald-600 shrink-0">
+                전체 선수 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
-          </div>
-
-          {/* 판매방식 필터 */}
-          <div className="flex flex-wrap gap-1.5 mb-6">
-            {([
-              ['ALL', '전체'],
-              ['AUCTION', '라이브 경매'],
-              ['DIRECT', '직접 구매'],
-              ['INQUIRY', '계약 가능'],
-              ['SOON', '마감 임박'],
-            ] as const).map(([key, label]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setSlotFilter(key)}
-                aria-pressed={slotFilter === key}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-colors ${
-                  slotFilter === key
-                    ? 'bg-slate-900 text-white border-slate-900'
-                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {(() => {
-            // 실데이터만 사용 (하드코딩 금지). 경매 + 바로구매 + 협의 슬롯을 함께 다룬다.
-            const merged = [...(liveAuctions || []), ...(directBuySlots || [])];
-
-            // 선수마다 카드 하나 — 같은 사진이 반복되지 않도록 대표 슬롯 하나만 보여주고
-            // 나머지는 '+N개 슬롯'으로 묶는다. 대표 슬롯 우선순위: 마감임박 > 경매 > 바로구매 > 협의
-            const RANK: Record<string, number> = { AUCTION: 1, DIRECT: 2, INQUIRY: 3 };
-            const isSoon = (x: any) => x.kind === 'AUCTION' && x.endAt && new Date(x.endAt).getTime() - Date.now() < 24 * 3600_000;
-            const byAthlete = new Map<string, { rep: any; count: number; kinds: Set<string>; soon: boolean }>();
-            for (const x of merged) {
-              const key = x.athleteId || x.player;
-              const cur = byAthlete.get(key);
-              if (!cur) {
-                byAthlete.set(key, { rep: x, count: 1, kinds: new Set([x.kind]), soon: isSoon(x) });
-                continue;
-              }
-              cur.count += 1;
-              cur.kinds.add(x.kind);
-              if (isSoon(x)) cur.soon = true;
-              const better = isSoon(x) && !isSoon(cur.rep) ? true : RANK[x.kind] < RANK[cur.rep.kind];
-              if (better) cur.rep = x;
-            }
-
-            const grouped = [...byAthlete.values()].sort((a, b) => {
-              if (a.soon !== b.soon) return a.soon ? -1 : 1;
-              return RANK[a.rep.kind] - RANK[b.rep.kind];
-            });
-
-            const filtered = grouped.filter((g) => {
-              if (slotFilter === 'ALL') return true;
-              if (slotFilter === 'SOON') return g.soon;
-              return g.kinds.has(slotFilter);
-            });
-
-            const items = grouped.length > 0 ? filtered : null;
-
-            if (!items || items.length === 0) {
-              return (
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl p-12 text-center">
-                  <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <h3 className="text-base font-bold text-slate-700 mb-1">현재 진행 중인 슬롯이 없습니다</h3>
-                  <p className="text-sm text-slate-500 mb-4">새로운 스폰서십 슬롯이 등록되면 여기에 표시됩니다.</p>
-                  <Link to="/athletes" className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600 hover:text-emerald-700">
-                    선수 둘러보기 <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              );
-            }
-
-            // -mx-5 px-5를 두면 좌우 padding 영역으로 다음 카드가 조금 삐져나와 잘려 보인다.
-            // 컨테이너를 콘텐츠 폭에 딱 맞춰 정해진 개수에서 정확히 끊기게 한다.
-            return items && items.length > 0 ? (
-              <div ref={carouselRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 scrollbar-hide">
-                {items.map((g: any) => {
-                  const a = g.rep;
-                  const isAuction = a.kind === 'AUCTION';
-                  const isDirect = a.kind === 'DIRECT';
-                  // 카드는 선수 단위 — 해당 선수의 '○○'s 스폰서십 슬롯' 섹션으로 보내고
-                  // 카드에 보인 대표 슬롯을 선택 상태로 넘긴다
-                  const linkTo = `/athletes/${a.athleteId}${a.slot ? `?slot=${encodeURIComponent(a.slot)}` : ''}#slots`;
-                  const badge = g.soon
-                    ? { text: '마감 임박', cls: 'bg-rose-500 text-white' }
-                    : isAuction
-                      ? { text: '라이브 경매', cls: 'bg-violet-500 text-white' }
-                      : isDirect
-                        ? { text: '직접 구매', cls: 'bg-sky-500 text-white' }
-                        : { text: '계약 가능', cls: 'bg-slate-700 text-white' };
-                  return (
-                    /* 카드 폭을 화면 폭에서 나눠 잡아 항상 정해진 개수(lg 5개)만 보이게 한다.
-                       고정 폭이면 화면 폭에 따라 마지막 카드가 잘려 보인다. gap-4 = 16px */
-                    <Link
-                      key={a.athleteId || a.id}
-                      to={linkTo}
-                      className="flex-shrink-0 snap-start group cursor-pointer w-[calc((100%-16px)/2)] sm:w-[calc((100%-32px)/3)] md:w-[calc((100%-48px)/4)] lg:w-[calc((100%-64px)/5)]"
-                    >
-                      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-lg transition-all duration-300">
-                        {/* 선수 사진 */}
-                        <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-100">
-                          {a.playerImage ? (
-                            <img src={a.playerImage} alt={a.player} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-50 to-slate-100">
-                              <div className="text-center">
-                                <Users className="w-12 h-12 text-slate-300 mx-auto mb-2" />
-                                <p className="text-[10px] text-slate-400">{a.player}</p>
-                              </div>
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-                          <span className={`absolute top-3 left-3 text-[10px] font-extrabold px-2 py-1 rounded-md shadow-sm ${badge.cls}`}>
-                            {badge.text}
-                          </span>
-                          {g.count > 1 && (
-                            <span className="absolute top-3 right-3 text-[10px] font-bold px-2 py-1 rounded-md bg-white/90 text-slate-700 shadow-sm">
-                              슬롯 {g.count}개
-                            </span>
-                          )}
-                        </div>
-
-                        {/* 정보 */}
-                        <div className="p-4">
-                          <p className="text-sm font-bold text-slate-900 group-hover:text-emerald-600 transition-colors truncate">{a.player}</p>
-                          <p className="text-[10px] text-slate-400 mb-2 truncate">
-                            {a.playerTour ? `${a.playerTour} · ` : ''}{a.slotName || bodyPartLabel(a.bodyPart)}
-                          </p>
-
-                          <div className="mb-2.5">
-                            <p className="text-[10px] text-slate-400 mb-0.5">
-                              {isAuction ? (a.bids > 0 ? '현재 입찰가' : '경매 시작가') : isDirect ? '바로 구매가' : '기준가'}
-                            </p>
-                            <p className={`text-base font-black ${isDirect ? 'text-sky-600' : 'text-slate-900'}`}>
-                              ₩{(a.price || 0).toLocaleString()}
-                              {g.count > 1 && <span className="text-[10px] font-semibold text-slate-400 ml-1">부터</span>}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center justify-between gap-2">
-                            {isAuction ? (
-                              <span className={`flex items-center gap-1.5 font-bold text-xs ${g.soon ? 'text-rose-500' : 'text-slate-500'}`}>
-                                <Timer className="w-3.5 h-3.5" />
-                                <span className="font-mono">{formatTimeRemaining(a.endAt)}</span>
-                              </span>
-                            ) : isDirect ? (
-                              <span className="text-[11px] font-bold text-sky-600">바로 구매 가능</span>
-                            ) : (
-                              <span className="text-[11px] font-bold text-slate-600">문의 후 계약</span>
-                            )}
-                            {a.bids > 0 && (
-                              <span className="text-[10px] text-slate-400 bg-slate-100 px-2 py-0.5 rounded shrink-0">{a.bids}건</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            ) : null;
-          })()}
-        </div>
-      </section>
-
-      {/* ════════════════════════ 진행 중인 투표 ════════════════════════ */}
-      <HomeGrowthMarket />
-
-      <HomeVoteSection />
-
-      {/* ════════════════════════ 왜 SPONPIK인가요? ════════════════════════ */}
-      <section ref={r1.ref} className={`py-16 sm:py-24 px-5 bg-white transition-all duration-700 ${r1.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-3">왜 SPONPIK인가요?</h2>
-            <p className="text-slate-500 text-sm sm:text-base">스크린골프 스폰서십 시장을 위해 설계된 올인원 플랫폼</p>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: <Zap className="w-5 h-5" />, color: 'text-emerald-600 bg-emerald-100', title: '실시간 경매', desc: '등록된 입찰과 자동 연장으로 공정한 가격 발견' },
-              { icon: <Shield className="w-5 h-5" />, color: 'text-sky-600 bg-sky-100', title: '안전한 계약', desc: '에스크로 시스템과 KYC 검증으로 안전한 거래 보장' },
-              { icon: <BarChart3 className="w-5 h-5" />, color: 'text-violet-600 bg-violet-100', title: 'AI ROI 분석', desc: 'AI 기반 로고 노출 분석과 실시간 ROI 리포트' },
-              { icon: <Vote className="w-5 h-5" />, color: 'text-pink-600 bg-pink-100', title: '팬 투표', desc: '경기 예측 투표에 참여하고 포인트를 획득하세요' },
-            ].map((f) => (
-              <div key={f.title} className="text-center">
-                <div className={`w-12 h-12 rounded-xl ${f.color} flex items-center justify-center mx-auto mb-4`}>
-                  {f.icon}
-                </div>
-                <h3 className="text-sm font-bold text-slate-900 mb-2">{f.title}</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════ 간단한 4단계 ════════════════════════ */}
-      <section ref={r2.ref} className={`py-16 sm:py-24 px-5 bg-slate-50 transition-all duration-700 ${r2.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-3">간단한 4단계</h2>
-            <p className="text-slate-500 text-sm sm:text-base">누구나 쉽게 시작할 수 있습니다</p>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { step: '01', icon: <Search className="w-5 h-5" />, title: '슬롯 탐색', desc: '관심있는 선수와 이벤트의 광고 슬롯을 탐색하세요' },
-              { step: '02', icon: <Gavel className="w-5 h-5" />, title: '입찰 참여', desc: '원하는 슬롯에 원하는 가격으로 쉽게 입찰 참여' },
-              { step: '03', icon: <FileCheck className="w-5 h-5" />, title: '계약 체결', desc: '낙찰 후 전자서명으로 계약을 체결하세요' },
-              { step: '04', icon: <Upload className="w-5 h-5" />, title: '소재 등록', desc: '광고 소재를 업로드하고 노출을 확인하세요' },
-            ].map((s) => (
-              <div key={s.step} className="bg-white rounded-2xl border border-slate-200 p-6 text-center hover:border-emerald-300 hover:shadow-lg transition-all duration-300">
-                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">{s.step}</span>
-                <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mx-auto my-4 text-slate-600">
-                  {s.icon}
-                </div>
-                <h3 className="text-sm font-bold text-slate-900 mb-2">{s.title}</h3>
-                <p className="text-xs text-slate-500 leading-relaxed">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════ 누구를 위한 서비스인가요? ════════════════════════ */}
-      <section ref={r3.ref} className={`py-16 sm:py-24 px-5 bg-white transition-all duration-700 ${r3.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-12">
-            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mb-3">누구를 위한 서비스인가요?</h2>
-            <p className="text-slate-500 text-sm sm:text-base">각 역할에 최적화된 경험을 제공합니다</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                title: '브랜드 · 광고주',
-                desc: '합리적 예산으로 프로스포츠 노출시키세요',
-                items: ['원하는 예산과 시간에 맞춰 입찰', '실시간 경쟁 입찰/시간', 'AI ROI 리포트 제공'],
-                link: { to: isAuthenticated ? '/dashboard' : '/register', label: '브랜드로 시작' },
-                accent: 'emerald',
-              },
-              {
-                title: '선수 · 매니지먼트',
-                desc: '투명한 수익을 창출하세요',
-                items: ['슬롯별 가능한 자원 설정 공유', '계약 조건 결정 및 승인', 'D+7 정상입금 보장'],
-                link: { to: isAuthenticated ? '/dashboard' : '/register', label: '선수등록 시작' },
-                accent: 'sky',
-              },
-              {
-                title: '팬 · 일반회원',
-                desc: '투표하고 응원하고 즐기세요',
-                items: ['경기 결과 예측 투표', '매주 참여에 포인트 획득', '시즌 랭킹 및 보상'],
-                link: { to: '/fan', label: '팬으로 참여' },
-                accent: 'pink',
-                highlighted: true,
-              },
-            ].map((card) => (
-              <div key={card.title}
-                className={`rounded-2xl border p-6 transition-all duration-300 hover:shadow-lg ${
-                  card.highlighted
-                    ? 'border-pink-200 bg-pink-50/50 hover:border-pink-300'
-                    : 'border-slate-200 bg-white hover:border-emerald-300'
-                }`}
-              >
-                <h3 className="text-lg font-bold text-slate-900 mb-1">{card.title}</h3>
-                <p className="text-sm text-slate-500 mb-5">{card.desc}</p>
-                <ul className="space-y-2.5 mb-6">
-                  {card.items.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm text-slate-600">
-                      <Diamond className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Link to={card.link.to}
-                  className={`text-sm font-semibold inline-flex items-center gap-1 transition-colors ${
-                    card.accent === 'pink' ? 'text-pink-600 hover:text-pink-700' :
-                    card.accent === 'sky' ? 'text-sky-600 hover:text-sky-700' :
-                    'text-emerald-600 hover:text-emerald-700'
-                  }`}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-5">
+              {availableAthletes.map((a) => (
+                <Link
+                  key={a.id}
+                  to={`/athletes/${a.id}`}
+                  className="group rounded-2xl border border-slate-100 bg-white overflow-hidden hover:border-emerald-200 hover:shadow-[0_12px_32px_-12px_rgba(15,23,42,0.14)] transition-all"
                 >
-                  {card.link.label} <ArrowRight className="w-4 h-4" />
+                  <div className="aspect-[4/5] bg-slate-50 overflow-hidden">
+                    {a.profileImageUrl && (
+                      <img
+                        src={a.profileImageUrl}
+                        alt={a.name}
+                        loading="lazy"
+                        className="w-full h-full object-cover object-top group-hover:scale-[1.03] transition-transform duration-300"
+                      />
+                    )}
+                  </div>
+                  <div className="p-3.5 sm:p-4">
+                    <p className="text-[11px] font-semibold text-emerald-600 mb-0.5">{a.tour || 'PRO'}</p>
+                    <h3 className="text-[15px] font-extrabold text-slate-900">{a.name} <span className="text-[12px] font-bold text-slate-400">프로</span></h3>
+                    <div className="mt-2.5 flex items-center justify-between text-[12px]">
+                      <span className="text-slate-400">슬롯 {a.slots.count}개</span>
+                      {Number.isFinite(a.slots.min) && (
+                        <span className="font-bold text-slate-700">{(a.slots.min / 10000).toLocaleString()}만원~</span>
+                      )}
+                    </div>
+                  </div>
                 </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ════════════════ §2.2-3 진행 중 후원기회 ════════════════ */}
+      {opportunities.length > 0 && (
+        <section className="py-14 sm:py-20 px-5 bg-slate-50/70">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-end justify-between mb-7">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight">진행 중 후원기회</h2>
+                <p className="text-[13px] text-slate-400 mt-1.5">직접구매 · 경매 · 협의 방식의 모집 중 후원 상품입니다.</p>
+              </div>
+              <Link to="/auctions" className="inline-flex items-center gap-1 text-[13px] font-bold text-slate-500 hover:text-emerald-600 shrink-0">
+                전체 보기 <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-3.5 sm:gap-5">
+              {opportunities.map((o) => (
+                <Link
+                  key={`${o.kind}-${o.id}`}
+                  to={o.to}
+                  className="group rounded-2xl border border-slate-100 bg-white p-5 hover:border-emerald-200 hover:shadow-[0_12px_32px_-12px_rgba(15,23,42,0.14)] transition-all"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="w-11 h-11 rounded-full overflow-hidden bg-slate-100 shrink-0">
+                      {o.playerImage && <img src={o.playerImage} alt="" className="w-full h-full object-cover object-top" />}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[14px] font-extrabold text-slate-900 truncate">{o.player} 프로</p>
+                      <p className="text-[11px] text-slate-400">{o.playerTour}</p>
+                    </div>
+                    <span
+                      className={`ml-auto shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${
+                        o.kind === 'AUCTION'
+                          ? 'bg-rose-50 text-rose-600'
+                          : o.kind === 'DIRECT'
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'bg-slate-100 text-slate-500'
+                      }`}
+                    >
+                      {o.kind === 'AUCTION' ? <Gavel className="w-3 h-3" /> : <Tag className="w-3 h-3" />}
+                      {o.kind === 'AUCTION' ? '라이브 경매' : o.kind === 'DIRECT' ? '직접구매' : '협의'}
+                    </span>
+                  </div>
+                  <p className="text-[15px] font-bold text-slate-800">{o.slotName}</p>
+                  <div className="mt-2 flex items-baseline justify-between">
+                    <span className="text-[12px] text-slate-400">{o.kind === 'AUCTION' ? '현재가' : '판매가'}</span>
+                    <span className="text-lg font-black text-slate-900">
+                      {o.price > 0 ? `₩${o.price.toLocaleString()}` : '협의'}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ════════════════ §2.2-5 한 줄 소개 ════════════════ */}
+      <section className="py-14 sm:py-20 px-5">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-xl sm:text-2xl font-black tracking-tight mb-8">
+            선택부터 성과 확인까지, 한 흐름으로
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {['선수 탐색', '상품 PICK', '계약 · 실행', '성과 리포트'].map((t, i) => (
+              <div key={t} className="rounded-2xl bg-slate-50 border border-slate-100 px-4 py-5">
+                <span className="inline-flex w-7 h-7 rounded-full bg-emerald-500 text-white text-[13px] font-black items-center justify-center mb-2.5">
+                  {i + 1}
+                </span>
+                <p className="text-[14px] font-bold text-slate-800">{t}</p>
               </div>
             ))}
           </div>
+          <Link
+            to="/how-it-works"
+            className="mt-7 inline-flex items-center gap-1.5 text-[13px] font-bold text-emerald-600 hover:text-emerald-700"
+          >
+            이용방법 자세히 보기 <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 
-      {/* ════════════════════════ 함께하는 브랜드 ════════════════════════ */}
-      <section ref={r5.ref} className={`py-12 sm:py-16 px-5 transition-all duration-700 ${r5.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8 sm:mb-10">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">스폰픽과 함께하는 브랜드</h2>
-            <p className="text-sm sm:text-base text-slate-500">스크린골프 스폰서십을 함께 만들어가는 파트너 브랜드입니다.</p>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+      {/* ════════════════ §2.2-6 함께하는 브랜드 ════════════════ */}
+      <section className="py-14 sm:py-20 px-5 bg-slate-50/70">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-center mb-8">함께하는 브랜드</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             {[
-              { src: '/brands/elgrim.png', name: '엘그림' },
-              { src: '/brands/hoi-bakery.png', name: '호이베이커리' },
-              { src: '/brands/the-guys.png', name: 'the GUYS' },
-              { src: '/brands/sinus-holdings.jpg', name: 'SINUS HOLDINGS' },
-              { src: '/brands/andante.png', name: '스파리조트 안단테' },
-              { src: '/brands/animal-forest.png', name: '애니포레' },
               { src: '/brands/orex.png', name: 'OREX' },
               { src: '/brands/fau.png', name: 'FAU' },
               { src: '/brands/elensilia.png', name: 'ELENSILIA' },
@@ -606,7 +385,10 @@ export function Home() {
               { src: '/brands/nlt1.png', name: '(주)엔엘티원 NLT1 COMPANY' },
               { src: '/brands/ahnguk-health.png', name: '안국건강' },
             ].map((b) => (
-              <div key={b.name} className="flex items-center justify-center h-20 sm:h-24 bg-white rounded-2xl border border-slate-200 px-4 hover:shadow-md hover:border-emerald-200 transition-all">
+              <div
+                key={b.name}
+                className="flex items-center justify-center h-20 sm:h-24 bg-white rounded-2xl border border-slate-200 px-4 hover:shadow-md hover:border-emerald-200 transition-all"
+              >
                 <img src={b.src} alt={b.name} title={b.name} className="max-h-12 sm:max-h-14 max-w-full object-contain" loading="lazy" />
               </div>
             ))}
@@ -614,25 +396,36 @@ export function Home() {
         </div>
       </section>
 
-      {/* ════════════════════════ CTA BANNER ════════════════════════ */}
-      <section ref={r4.ref} className={`py-12 sm:py-16 px-5 transition-all duration-700 ${r4.visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-        <div className="max-w-5xl mx-auto bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl px-8 sm:px-16 py-12 sm:py-16 text-center">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">스폰서십의 새로운 기준</h2>
-          <p className="text-emerald-100 text-sm sm:text-base mb-8">스크린골프 프로선수와 함께하는 마이크로 스폰서십 플랫폼</p>
+      {/* ════════════════ §2.2-7 최종 CTA ════════════════ */}
+      <section className="py-14 sm:py-20 px-5">
+        <div className="max-w-5xl mx-auto bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl px-8 sm:px-16 py-12 sm:py-14 text-center">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">지금, 선수를 PICK하세요</h2>
+          <p className="text-emerald-50/90 text-sm sm:text-base mb-8">
+            직접 고르거나, 스폰픽이 목표와 예산에 맞게 추천해 드립니다.
+          </p>
           <div className="flex flex-wrap gap-3 justify-center">
-            <Link to={isAuthenticated ? '/dashboard' : '/register'}
-              className="h-11 px-6 inline-flex items-center gap-2 rounded-xl bg-white text-emerald-700 text-sm font-semibold hover:bg-emerald-50 transition-colors">
-              지금 시작하기 <ArrowRight className="w-4 h-4" />
+            <Link
+              to="/athletes"
+              className="h-12 px-7 inline-flex items-center gap-2 rounded-xl bg-white text-emerald-700 text-sm font-bold hover:bg-emerald-50 transition-colors"
+            >
+              <Crosshair className="w-4 h-4" /> 직접 PICK
             </Link>
-            <Link to="/login"
-              className="h-11 px-6 inline-flex items-center gap-2 rounded-xl border border-white/30 text-white text-sm font-semibold hover:bg-white/10 transition-colors">
-              로그인
+            <Link
+              to="/ai-match"
+              className="h-12 px-7 inline-flex items-center gap-2 rounded-xl border border-white/40 text-white text-sm font-bold hover:bg-white/10 transition-colors"
+            >
+              <Sparkles className="w-4 h-4" /> 추천받기
             </Link>
           </div>
+          {!isAuthenticated && (
+            <p className="mt-6 text-[12px] text-emerald-50/70">
+              가격과 선수 정보는 로그인 없이 확인할 수 있어요.
+            </p>
+          )}
         </div>
       </section>
 
-      {/* ════════════════════════ FOOTER ════════════════════════ */}
+      {/* ════════════════ FOOTER ════════════════ */}
       <footer className="border-t border-slate-200 bg-slate-50">
         <div className="max-w-7xl mx-auto px-5 py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
@@ -641,10 +434,12 @@ export function Home() {
                 <img src="/logo-48.png" alt="" className="w-7 h-7 rounded-lg" />
                 <span className="text-sm font-extrabold text-slate-900">SPONPIK</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">스크린골프 프로선수<br />마이크로 스폰서 마켓플레이스</p>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                스크린골프 프로선수<br />마이크로 스폰서 마켓플레이스
+              </p>
             </div>
             {[
-              { title: '서비스', links: [{ to: '/auctions', t: '경매 참여' }, { to: '/inventory', t: '슬롯 탐색' }, { to: '/votes', t: '투표 참여' }] },
+              { title: '후원하기', links: [{ to: '/athletes', t: '직접 PICK' }, { to: '/ai-match', t: '추천 PICK' }, { to: '/auctions', t: '진행 중 후원기회' }, { to: '/digital-partner', t: '월 구독' }] },
               { title: '지원', links: [{ to: '/guide', t: '이용가이드' }, { to: '/faq', t: 'FAQ' }, { to: '/contact', t: '고객센터' }] },
               { title: '법적 고지', links: [{ to: '/terms', t: '이용약관' }, { to: '/privacy', t: '개인정보처리방침' }] },
             ].map((col) => (
@@ -652,7 +447,9 @@ export function Home() {
                 <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">{col.title}</h4>
                 <ul className="space-y-2">
                   {col.links.map((l) => (
-                    <li key={l.to}><Link to={l.to} className="text-sm text-slate-500 hover:text-slate-900 transition-colors">{l.t}</Link></li>
+                    <li key={l.to}>
+                      <Link to={l.to} className="text-sm text-slate-500 hover:text-slate-900 transition-colors">{l.t}</Link>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -663,103 +460,6 @@ export function Home() {
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
-
-/**
- * Hero LIVE 경매 카드 — docx 2-1: 실데이터 바인딩 (하드코딩 제거)
- * - hot: liveAuctions 응답의 첫 항목 (가장 임박한 LIVE 경매)
- * - 데이터 없을 때: "LIVE 경매 준비 중" 안내 (- 처리, docx 2-2)
- */
-function HeroLiveAuctionCard({ hot }: { hot: any | null }) {
-  if (!hot) {
-    return (
-      <div className="relative z-10">
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-300/30 overflow-hidden p-8 text-center">
-          <Zap className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-          <h3 className="text-base font-bold text-slate-700 mb-1">LIVE 경매 준비 중</h3>
-          <p className="text-sm text-slate-500 mb-4">곧 새로운 경매가 시작됩니다.</p>
-          <Link to="/auctions" className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600 hover:text-emerald-700">
-            전체 경매 보기 <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const tour = hot.slot || '-';
-  const playerName = hot.player || '-';
-  // bodyPart 한글 라벨 (Home 내 동일 매핑 일치)
-  const partLabels: Record<string, string> = {
-    CAP_FRONT: '모자 정면', CAP_SIDE_R: '모자 우측', CAP_SIDE_L: '모자 좌측', CAP_BACK: '모자 뒷면',
-    CHEST_CENTER: '상의 중앙', CHEST_L: '상의 좌측', CHEST_R: '상의 우측',
-    COLLAR_L: '카라 좌측', COLLAR_R: '카라 우측',
-    SLEEVE_L: '소매 좌측', SLEEVE_R: '소매 우측',
-    SHOULDER_L: '어깨 좌측', SHOULDER_R: '어깨 우측',
-    WAIST_BACK: '허리 뒷면', PANTS_SIDE: '바지 측면',
-  };
-  const slotName = hot.slotName || partLabels[hot.bodyPart] || hot.bodyPart || '-';
-  const price = hot.price || 0;
-  const bids = hot.bids ?? 0;
-
-  return (
-    <div className="relative z-10">
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-300/30 overflow-hidden">
-        {/* LIVE badge */}
-        <div className="px-5 pt-5 pb-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100">
-            <Zap className="w-3 h-3 text-emerald-500" />
-            <span className="text-xs font-bold text-emerald-700">LIVE 경매</span>
-          </span>
-        </div>
-
-        {/* Title — 실데이터 */}
-        <div className="px-5 pb-4">
-          <h3 className="text-lg font-black text-slate-900 leading-snug mb-1">
-            [{tour}] {playerName} - {slotName}
-          </h3>
-        </div>
-
-        {/* Current bid — 실데이터 */}
-        <div className="px-5 pb-3">
-          <p className="text-xs text-slate-400 mb-0.5">현재 1위 입찰가</p>
-          <p className="text-3xl font-black text-slate-900 tracking-tight">
-            {price > 0 ? `₩${Number(price).toLocaleString()}` : '-'}
-          </p>
-        </div>
-
-        {/* Time remaining — 실데이터 (endAt 기반) */}
-        <div className="px-5 pb-4">
-          <p className="text-xs text-slate-400 mb-0.5">남은 시간</p>
-          <p className="text-xl font-mono font-bold text-slate-700 tracking-widest">
-            {hot.endAt ? formatTimeRemaining(hot.endAt) : '-'}
-          </p>
-        </div>
-
-        {/* CTA → 실 경매 상세 */}
-        <div className="px-5 pb-4">
-          <Link
-            to={`/auctions/${hot.id}`}
-            className="w-full h-12 flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20"
-          >
-            입찰 참여하기 <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        {/* Bottom stats — 실데이터 (관심 등록은 미수집이므로 -) */}
-        <div className="px-5 pb-5 flex items-center justify-center gap-8 text-center">
-          <div>
-            <p className="text-xs text-slate-400">입찰 참여</p>
-            <p className="text-base font-black text-slate-900">{bids > 0 ? `${bids}건` : '-'}</p>
-          </div>
-          <div className="w-px h-8 bg-slate-100" />
-          <div>
-            <p className="text-xs text-slate-400">관심 등록</p>
-            <p className="text-base font-black text-slate-900">-</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
