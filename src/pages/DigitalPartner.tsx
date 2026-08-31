@@ -101,15 +101,23 @@ export default function DigitalPartner() {
               </span>
               <p className="text-[13px] text-slate-600 leading-relaxed break-keep">
                 선수 승인 후에 사용권이 발급되며, 계약 종료 시 배지·소재 사용이 중지됩니다.
-                선수별 신청·결제는 준비 중입니다 — 지금은 상담으로 시작하실 수 있어요.
+                모집 중인 선수를 고르고 상품을 선택하면 승인 요청이 전달됩니다.
               </p>
             </div>
-            <Link
-              to={`/contact?subject=${encodeURIComponent('[디지털 파트너 월 구독] 도입 상담 요청')}`}
-              className="shrink-0 h-11 px-6 inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors"
-            >
-              도입 상담하기 <ArrowRight className="w-4 h-4" />
-            </Link>
+            <div className="shrink-0 flex flex-wrap gap-2">
+              <Link
+                to="/digital-partner/athletes"
+                className="h-11 px-6 inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-white text-sm font-bold hover:bg-emerald-600 transition-colors"
+              >
+                모집 중인 선수 보기 <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                to={`/contact?subject=${encodeURIComponent('[디지털 파트너 월 구독] 도입 상담 요청')}`}
+                className="h-11 px-5 inline-flex items-center rounded-xl border border-slate-200 bg-white text-slate-700 text-sm font-bold hover:bg-slate-50 transition-colors"
+              >
+                도입 상담하기
+              </Link>
+            </div>
           </div>
 
           <div className="mt-6 flex items-center justify-center gap-1.5 text-[12.5px] text-slate-400">

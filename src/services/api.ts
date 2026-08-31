@@ -3133,6 +3133,44 @@ class ApiService {
     return r.data;
   }
 
+  /* ── 디지털 파트너 월 구독 (핸드오프 v1.0 §8.2) ── */
+  async getDigitalPlans() {
+    const r = await this.client.get<ApiResponse<any>>('/digital-partner/plans');
+    return r.data;
+  }
+  async getDigitalAthletes(params?: { q?: string; tour?: string; plan?: string; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/digital-partner/athletes', { params });
+    return r.data;
+  }
+  async getDigitalAthlete(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/digital-partner/athletes/${id}`);
+    return r.data;
+  }
+  async applyDigitalPartner(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/digital-partner/applications', body);
+    return r.data;
+  }
+  async getDigitalApplication(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/digital-partner/applications/${id}`);
+    return r.data;
+  }
+  async reviewDigitalApplication(id: string, body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/digital-partner/applications/${id}/review`, body);
+    return r.data;
+  }
+  async checkoutDigital(id: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/digital-partner/applications/${id}/checkout`, {});
+    return r.data;
+  }
+  async getDigitalSubscriptions() {
+    const r = await this.client.get<ApiResponse<any>>('/digital-partner/subscriptions');
+    return r.data;
+  }
+  async getAthleteDigitalRequests() {
+    const r = await this.client.get<ApiResponse<any>>('/digital-partner/athlete/requests');
+    return r.data;
+  }
+
   /* ── AI 간편 매칭 (핸드오프 v1.0 §9.1 · 브랜드 전용) ── */
   async aiMatchBrandContext() {
     const r = await this.client.get<ApiResponse<any>>('/ai-match/brand-context');
