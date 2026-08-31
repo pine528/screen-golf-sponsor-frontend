@@ -7,6 +7,11 @@ import ScrollToTop from './components/ScrollToTop';
 import { useAuth } from './hooks/useAuth';
 import { Home } from './pages/Home';
 import DigitalPartner from './pages/DigitalPartner';
+import AboutService from './pages/about/AboutService';
+import AboutHow from './pages/about/AboutHow';
+import AboutGuarantee from './pages/about/AboutGuarantee';
+import AboutBrands from './pages/about/AboutBrands';
+import AboutCases from './pages/about/AboutCases';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
@@ -259,6 +264,12 @@ function App() {
       <Route path="/slots" element={<SponsorshipSlots />} />
       <Route path="/growth-market" element={<GrowthMarket />} />
       <Route path="/digital-partner" element={<DigitalPartner />} />
+      {/* 스폰픽 소개 — 리디자인 v2.0 §9 */}
+      <Route path="/about" element={<AboutService />} />
+      <Route path="/about/how" element={<AboutHow />} />
+      <Route path="/about/guarantee" element={<AboutGuarantee />} />
+      <Route path="/about/brands" element={<AboutBrands />} />
+      <Route path="/about/cases" element={<AboutCases />} />
       <Route path="/auctions" element={<Auctions />} />
       <Route path="/auctions/:id" element={<AuctionDetail />} />
       <Route path="/inventory" element={<Inventory />} />

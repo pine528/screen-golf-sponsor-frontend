@@ -79,11 +79,11 @@ const MENUS: { key: string; label: string; items: MegaItem[]; note?: string }[] 
     key: 'about',
     label: '스폰픽 소개',
     items: [
-      { icon: Info, title: '서비스 소개', desc: '스폰픽이 해결하는 후원 문제', to: '/features' },
-      { icon: BookOpen, title: '이용방법', desc: '선택부터 성과 확인까지', to: '/how-it-works' },
-      { icon: ShieldCheck, title: '성과보장 프로그램', desc: '기준 미달 시 보정 지원', to: '/guide' },
-      { icon: Handshake, title: '함께하는 브랜드', desc: '스폰픽과 성장하는 파트너', to: '/for-who' },
-      { icon: LineChart, title: '매칭 사례', desc: '실제 후원과 성과', to: '/growth-market' },
+      { icon: Info, title: '서비스 소개', desc: '스폰픽이 해결하는 후원 문제', to: '/about' },
+      { icon: BookOpen, title: '이용방법', desc: '선택부터 성과 확인까지', to: '/about/how' },
+      { icon: ShieldCheck, title: '성과보장 프로그램', desc: '기준 미달 시 보정 지원', to: '/about/guarantee' },
+      { icon: Handshake, title: '함께하는 브랜드', desc: '스폰픽과 성장하는 파트너', to: '/about/brands' },
+      { icon: LineChart, title: '매칭 사례', desc: '실제 후원과 성과', to: '/about/cases' },
     ],
   },
 ];
