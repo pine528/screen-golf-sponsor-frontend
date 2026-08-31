@@ -3133,6 +3133,28 @@ class ApiService {
     return r.data;
   }
 
+  /* ── 직접 PICK (리디자인 v2.0 시안 img_12~14) ── */
+  async getPickOptions() {
+    const r = await this.client.get<ApiResponse<any>>('/direct-pick/options');
+    return r.data;
+  }
+  async getPickAthletes(params?: { q?: string; tour?: string; region?: string; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/direct-pick/athletes', { params });
+    return r.data;
+  }
+  async getPickAthlete(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/direct-pick/athletes/${id}`);
+    return r.data;
+  }
+  async getPickSlots(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/direct-pick/athletes/${id}/slots`);
+    return r.data;
+  }
+  async getDirectPickQuote(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/direct-pick/quote', body);
+    return r.data;
+  }
+
   /* ── 디지털 파트너 월 구독 (핸드오프 v1.0 §8.2) ── */
   async getDigitalPlans() {
     const r = await this.client.get<ApiResponse<any>>('/digital-partner/plans');

@@ -21,6 +21,9 @@ import ApplicationCheckout from './pages/recommend/ApplicationCheckout';
 import DigitalAthletes from './pages/digital/DigitalAthletes';
 import DigitalApply from './pages/digital/DigitalApply';
 import DigitalApplicationStatus from './pages/digital/DigitalApplicationStatus';
+import PickAthletes from './pages/pick/PickAthletes';
+import PickSlots from './pages/pick/PickSlots';
+import PickConfigure from './pages/pick/PickConfigure';
 import AthleteRequests from './pages/athlete/AthleteRequests';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -288,6 +291,10 @@ function App() {
       <Route path="/sponsor/applications/:id" element={<ProtectedRoute><ApplicationStatus /></ProtectedRoute>} />
       <Route path="/sponsor/applications/:id/checkout" element={<ProtectedRoute><ApplicationCheckout /></ProtectedRoute>} />
       <Route path="/athlete/requests" element={<ProtectedRoute><AthleteRequests /></ProtectedRoute>} />
+      {/* 직접 PICK — 리디자인 v2.0 시안 img_12~14 */}
+      <Route path="/sponsor/pick" element={<PickAthletes />} />
+      <Route path="/sponsor/pick/:athleteId/slots" element={<PickSlots />} />
+      <Route path="/sponsor/pick/:athleteId/configure" element={<PickConfigure />} />
       {/* 디지털 파트너 월 구독 — 핸드오프 v1.0 §5 */}
       <Route path="/digital-partner/athletes" element={<DigitalAthletes />} />
       <Route path="/digital-partner/athletes/:athleteId" element={<DigitalApply />} />
