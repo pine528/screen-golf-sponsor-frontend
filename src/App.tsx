@@ -13,6 +13,9 @@ import AboutGuarantee from './pages/about/AboutGuarantee';
 import AboutBrands from './pages/about/AboutBrands';
 import AboutCases from './pages/about/AboutCases';
 import RecommendLanding from './pages/recommend/RecommendLanding';
+import RecommendBrief from './pages/recommend/RecommendBrief';
+import RecommendAnalyzing from './pages/recommend/RecommendAnalyzing';
+import RecommendResults from './pages/recommend/RecommendResults';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
@@ -273,6 +276,9 @@ function App() {
       <Route path="/about/cases" element={<AboutCases />} />
       {/* 추천 PICK — 핸드오프 v1.0 §1.1 */}
       <Route path="/sponsor/recommended" element={<RecommendLanding />} />
+      <Route path="/sponsor/recommended/brief" element={<RecommendBrief />} />
+      <Route path="/sponsor/recommended/analyzing" element={<RecommendAnalyzing />} />
+      <Route path="/sponsor/recommended/results/:requestId" element={<RecommendResults />} />
       <Route path="/auctions" element={<Auctions />} />
       <Route path="/auctions/:id" element={<AuctionDetail />} />
       <Route path="/inventory" element={<Inventory />} />
