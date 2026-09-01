@@ -51,7 +51,7 @@ export default function FanVote() {
         const athleteId = withPlayer?.target?.playerId || l?.data?.athletes?.[0]?.id;
         if (athleteId) {
           const [t, b, a]: any[] = await Promise.all([
-            api.getFanTemperature(athleteId),
+            api.getEngageTemperature(athleteId),
             api.getBrandSuggestions(athleteId),
             api.getQuickProfile(athleteId).catch(() => null),
           ]);

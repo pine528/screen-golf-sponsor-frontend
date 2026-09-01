@@ -3142,7 +3142,8 @@ class ApiService {
     const r = await this.client.get<ApiResponse<any>>('/fan-engage/athletes', { params });
     return r.data;
   }
-  async getFanTemperature(athleteId: string) {
+  /** v1 누적 팬온도 — 커뮤니티 화면 전용. 신규 화면은 getFanTemperature(v1.0 산식)를 쓴다 */
+  async getEngageTemperature(athleteId: string) {
     const r = await this.client.get<ApiResponse<any>>(`/fan-engage/athletes/${athleteId}/temperature`);
     return r.data;
   }
@@ -3176,6 +3177,98 @@ class ApiService {
   }
   async getMyEngagement() {
     const r = await this.client.get<ApiResponse<any>>('/fan-engage/me');
+    return r.data;
+  }
+
+  /* ── 팬 참여 v1.0 (핸드오프 v1.0 2026-08-22 §18) ── */
+  async getFanMeta() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/meta');
+    return r.data;
+  }
+  async getFanHub() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub');
+    return r.data;
+  }
+  async listFanVotes(params?: { tab?: string; athleteId?: string; type?: string; sort?: string; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/votes', { params });
+    return r.data;
+  }
+  async getFanVote(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-hub/votes/${id}`);
+    return r.data;
+  }
+  async submitFanBallot(id: string, answer: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/fan-hub/votes/${id}/ballot`, { answer });
+    return r.data;
+  }
+  async getFanTemperature(athleteId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-hub/athletes/${athleteId}/temperature`);
+    return r.data;
+  }
+  async getMyContributions() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/me/contributions');
+    return r.data;
+  }
+  async getMyFanPoints() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/me/points');
+    return r.data;
+  }
+  async getMyPointLedger(params?: { kind?: string; from?: string; to?: string; athleteId?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/me/point-ledger', { params });
+    return r.data;
+  }
+  async getLetterQuota() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/me/letter-quota');
+    return r.data;
+  }
+  async sendFanLetter(athleteId: string, body: { title?: string; content: string; isPublic?: boolean; imageUrl?: string }) {
+    const r = await this.client.post<ApiResponse<any>>(`/fan-hub/athletes/${athleteId}/letters`, body);
+    return r.data;
+  }
+  async getFanAdCampaign() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/campaign');
+    return r.data;
+  }
+  async listFanStores(params?: { athleteId?: string; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/stores', { params });
+    return r.data;
+  }
+  async getFanStore(idOrSlug: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-hub/stores/${idOrSlug}`);
+    return r.data;
+  }
+  async getFanStoreProduct(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-hub/store-products/${id}`);
+    return r.data;
+  }
+  async exitToFanStore(storeId: string, productId?: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/fan-hub/stores/${storeId}/exit`, { productId });
+    return r.data;
+  }
+  async getMyStoreExits() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/me/store-exits');
+    return r.data;
+  }
+  async getBrandSuggestOptions() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/brand-suggest/options');
+    return r.data;
+  }
+  async getMyBrandSuggestions() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/me/brand-suggestions');
+    return r.data;
+  }
+  async getAthleteBrandSuggestSummary(athleteId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-hub/athletes/${athleteId}/brand-suggestions`);
+    return r.data;
+  }
+  async createBrandSuggestion(athleteId: string, body: {
+    category: string; brandName?: string; reason: string; interest: string; isPublic?: boolean;
+  }) {
+    const r = await this.client.post<ApiResponse<any>>(`/fan-hub/athletes/${athleteId}/brand-suggestions`, body);
+    return r.data;
+  }
+  async getMyFanActivity() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/me/activity');
     return r.data;
   }
 

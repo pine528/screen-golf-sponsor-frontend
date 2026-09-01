@@ -42,6 +42,21 @@ import FanStore from './pages/fanhub/FanStore';
 import FanCommunity from './pages/fanhub/FanCommunity';
 import FanVote from './pages/fanhub/FanVote';
 import FanPoints from './pages/fanhub/FanPoints';
+import FanHub from './pages/fanhub/FanHub';
+import FanVoteList from './pages/fanhub/FanVoteList';
+import FanVoteDetail from './pages/fanhub/FanVoteDetail';
+import FanTemperature from './pages/fanhub/FanTemperature';
+import FanContributions from './pages/fanhub/FanContributions';
+import FanPointsHome from './pages/fanhub/FanPointsHome';
+import FanPointLedger from './pages/fanhub/FanPointLedger';
+import FanLetter from './pages/fanhub/FanLetter';
+import FanCampaign from './pages/fanhub/FanCampaign';
+import FanActivity from './pages/fanhub/FanActivity';
+import FanCommunityNew from './pages/fanhub/FanCommunityNew';
+import FanBrandSuggest from './pages/fanhub/FanBrandSuggest';
+import FanStoreHome from './pages/fanhub/FanStoreHome';
+import FanStoreDetail from './pages/fanhub/FanStoreDetail';
+import FanStoreProduct from './pages/fanhub/FanStoreProduct';
 import AthleteRequests from './pages/athlete/AthleteRequests';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -319,11 +334,26 @@ function App() {
       <Route path="/sponsor/applications/:id/checkout" element={<ProtectedRoute><ApplicationCheckout /></ProtectedRoute>} />
       <Route path="/athlete/requests" element={<ProtectedRoute><AthleteRequests /></ProtectedRoute>} />
       {/* 팬 참여 — 리디자인 v2.0 시안 img_05~08 */}
-      <Route path="/fan/store" element={<FanStore />} />
-      <Route path="/fan/community" element={<FanCommunity />} />
-      <Route path="/fan/community/:athleteId" element={<FanCommunity />} />
-      <Route path="/fan/vote" element={<FanVote />} />
-      <Route path="/fan/points" element={<FanPoints />} />
+      <Route path="/fan/store" element={<FanStoreHome />} />
+      <Route path="/fan/store/product/:id" element={<FanStoreProduct />} />
+      <Route path="/fan/store/:idOrSlug" element={<FanStoreDetail />} />
+      <Route path="/fan/store-legacy" element={<FanStore />} />
+      <Route path="/fan/community" element={<FanCommunityNew />} />
+      <Route path="/fan/community/:athleteId" element={<FanCommunityNew />} />
+      <Route path="/fan/community-legacy/:athleteId" element={<FanCommunity />} />
+      <Route path="/fan/brand-suggest/:athleteId" element={<FanBrandSuggest />} />
+      <Route path="/fan" element={<FanHub />} />
+      <Route path="/fan/vote" element={<FanVoteList />} />
+      <Route path="/fan/vote/:id" element={<FanVoteDetail />} />
+      <Route path="/fan/vote-legacy" element={<FanVote />} />
+      <Route path="/fan/temperature/:athleteId" element={<FanTemperature />} />
+      <Route path="/fan/contributions" element={<FanContributions />} />
+      <Route path="/fan/points" element={<FanPointsHome />} />
+      <Route path="/fan/points/ledger" element={<FanPointLedger />} />
+      <Route path="/fan/points-legacy" element={<FanPoints />} />
+      <Route path="/fan/letter/:athleteId" element={<FanLetter />} />
+      <Route path="/fan/campaign" element={<FanCampaign />} />
+      <Route path="/fan/activity" element={<FanActivity />} />
       {/* 지금 가능한 후원 — 관리자 (핸드오프 v1.0 §2.2) */}
       <Route path="/admin/offers" element={<ProtectedRoute><AdminOfferList /></ProtectedRoute>} />
       <Route path="/admin/offers/new" element={<ProtectedRoute><AdminOfferBuilder /></ProtectedRoute>} />

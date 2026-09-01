@@ -33,7 +33,7 @@ export default function FanStore() {
       /* 스토어에 연결된 선수의 팬온도만 읽는다 */
       const ids = [...new Set(FAN_STORES.map((s) => s.athleteId).filter(Boolean))] as string[];
       const results = await Promise.all(
-        ids.map((id) => api.getFanTemperature(id).then((x: any) => [id, x?.data?.celsius ?? null]).catch(() => [id, null])),
+        ids.map((id) => api.getEngageTemperature(id).then((x: any) => [id, x?.data?.celsius ?? null]).catch(() => [id, null])),
       );
       setTemps(Object.fromEntries(results.filter(([, v]) => v != null) as [string, number][]));
     })();

@@ -71,7 +71,7 @@ export default function FanCommunity() {
     if (!athleteId) return;
     const [b, t, s]: any[] = await Promise.all([
       api.getCommunityPosts(athleteId, tab),
-      api.getFanTemperature(athleteId),
+      api.getEngageTemperature(athleteId),
       api.getBrandSuggestions(athleteId),
     ]);
     setBoard(b?.data || null);
