@@ -3179,25 +3179,70 @@ class ApiService {
     return r.data;
   }
 
-  /* ── 직접 PICK (리디자인 v2.0 시안 img_12~14) ── */
+  /* ── 직접 선택 PICK (핸드오프 v1.0 §13.1) ── */
   async getPickOptions() {
     const r = await this.client.get<ApiResponse<any>>('/direct-pick/options');
     return r.data;
   }
-  async getPickAthletes(params?: { q?: string; tour?: string; region?: string; limit?: number }) {
+  async getPickAthletes(params?: {
+    q?: string; tour?: string; region?: string; maxMonthly?: number; mode?: string; sort?: string; limit?: number;
+  }) {
     const r = await this.client.get<ApiResponse<any>>('/direct-pick/athletes', { params });
     return r.data;
   }
-  async getPickAthlete(id: string) {
-    const r = await this.client.get<ApiResponse<any>>(`/direct-pick/athletes/${id}`);
+  async getQuickProfile(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/direct-pick/athletes/${id}/quick-profile`);
     return r.data;
   }
-  async getPickSlots(id: string) {
-    const r = await this.client.get<ApiResponse<any>>(`/direct-pick/athletes/${id}/slots`);
+  async getAthleteOffers(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/direct-pick/athletes/${id}/offers`);
     return r.data;
   }
   async getDirectPickQuote(body: any) {
     const r = await this.client.post<ApiResponse<any>>('/direct-pick/quote', body);
+    return r.data;
+  }
+  /* 견적함 */
+  async openDirectDraft() {
+    const r = await this.client.post<ApiResponse<any>>('/direct-pick/drafts', {});
+    return r.data;
+  }
+  async getDirectDraft(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/direct-pick/drafts/${id}`);
+    return r.data;
+  }
+  async listDirectDrafts() {
+    const r = await this.client.get<ApiResponse<any>>('/direct-pick/drafts');
+    return r.data;
+  }
+  async addDirectItem(draftId: string, body: any, idempotencyKey?: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/direct-pick/drafts/${draftId}/items`, body, {
+      headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+    });
+    return r.data;
+  }
+  async updateDirectItem(itemId: string, body: any) {
+    const r = await this.client.patch<ApiResponse<any>>(`/direct-pick/items/${itemId}`, body);
+    return r.data;
+  }
+  async removeDirectItem(itemId: string) {
+    const r = await this.client.delete<ApiResponse<any>>(`/direct-pick/items/${itemId}`);
+    return r.data;
+  }
+  async getDirectAlternatives(itemId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/direct-pick/items/${itemId}/alternatives`);
+    return r.data;
+  }
+  async extendDirectHold(draftId: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/direct-pick/drafts/${draftId}/extend-hold`, {});
+    return r.data;
+  }
+  async validateDirectDraft(draftId: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/direct-pick/drafts/${draftId}/validate`, {});
+    return r.data;
+  }
+  async submitDirectDraft(draftId: string, brandInfo?: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/direct-pick/drafts/${draftId}/submit`, { brandInfo });
     return r.data;
   }
 

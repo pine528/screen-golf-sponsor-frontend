@@ -21,9 +21,14 @@ import ApplicationCheckout from './pages/recommend/ApplicationCheckout';
 import DigitalAthletes from './pages/digital/DigitalAthletes';
 import DigitalApply from './pages/digital/DigitalApply';
 import DigitalApplicationStatus from './pages/digital/DigitalApplicationStatus';
-import PickAthletes from './pages/pick/PickAthletes';
-import PickSlots from './pages/pick/PickSlots';
-import PickConfigure from './pages/pick/PickConfigure';
+import DirectAthletes from './pages/direct/DirectAthletes';
+import DirectBuild from './pages/direct/DirectBuild';
+import DirectConfigure from './pages/direct/DirectConfigure';
+import DirectCart from './pages/direct/DirectCart';
+import DirectRequest from './pages/direct/DirectRequest';
+import DirectApproval from './pages/direct/DirectApproval';
+import DirectCheckout from './pages/direct/DirectCheckout';
+import DirectComplete from './pages/direct/DirectComplete';
 import FanStore from './pages/fanhub/FanStore';
 import FanCommunity from './pages/fanhub/FanCommunity';
 import FanVote from './pages/fanhub/FanVote';
@@ -218,6 +223,15 @@ function LegacyStoreRedirect({ kind }: { kind?: 'product' | 'checkout' }) {
   return <Navigate to={path} replace />;
 }
 
+/** 이전 /sponsor/pick/* 경로를 직접 선택 PICK 9단계 경로로 넘긴다 */
+function LegacyPickRedirect({ kind }: { kind: 'build' | 'configure' }) {
+  const { athleteId } = useParams();
+  const search = window.location.search;
+  if (!athleteId) return <Navigate to="/sponsor/direct/athletes" replace />;
+  const base = `/sponsor/direct/build/${athleteId}`;
+  return <Navigate to={kind === 'configure' ? `${base}/configure${search}` : `${base}${search}`} replace />;
+}
+
 function HomeRoute() {
   const { isLoading } = useAuth();
 
@@ -301,10 +315,20 @@ function App() {
       <Route path="/fan/community/:athleteId" element={<FanCommunity />} />
       <Route path="/fan/vote" element={<FanVote />} />
       <Route path="/fan/points" element={<FanPoints />} />
-      {/* 직접 PICK — 리디자인 v2.0 시안 img_12~14 */}
-      <Route path="/sponsor/pick" element={<PickAthletes />} />
-      <Route path="/sponsor/pick/:athleteId/slots" element={<PickSlots />} />
-      <Route path="/sponsor/pick/:athleteId/configure" element={<PickConfigure />} />
+      {/* 직접 선택 PICK — 핸드오프 v1.0 §2.1 (9단계) */}
+      <Route path="/sponsor/direct" element={<Navigate to="/sponsor/direct/athletes" replace />} />
+      <Route path="/sponsor/direct/athletes" element={<DirectAthletes />} />
+      <Route path="/sponsor/direct/build/:athleteId" element={<DirectBuild />} />
+      <Route path="/sponsor/direct/build/:athleteId/configure" element={<DirectConfigure />} />
+      <Route path="/sponsor/direct/cart" element={<ProtectedRoute><DirectCart /></ProtectedRoute>} />
+      <Route path="/sponsor/direct/request/:draftId" element={<ProtectedRoute><DirectRequest /></ProtectedRoute>} />
+      <Route path="/sponsor/direct/approval/:requestId" element={<ProtectedRoute><DirectApproval /></ProtectedRoute>} />
+      <Route path="/sponsor/direct/checkout/:applicationId" element={<ProtectedRoute><DirectCheckout /></ProtectedRoute>} />
+      <Route path="/sponsor/direct/complete/:applicationId" element={<ProtectedRoute><DirectComplete /></ProtectedRoute>} />
+      {/* 이전 경로 호환 */}
+      <Route path="/sponsor/pick" element={<Navigate to="/sponsor/direct/athletes" replace />} />
+      <Route path="/sponsor/pick/:athleteId/slots" element={<LegacyPickRedirect kind="build" />} />
+      <Route path="/sponsor/pick/:athleteId/configure" element={<LegacyPickRedirect kind="configure" />} />
       {/* 디지털 파트너 월 구독 — 핸드오프 v1.0 §5 */}
       <Route path="/digital-partner/athletes" element={<DigitalAthletes />} />
       <Route path="/digital-partner/athletes/:athleteId" element={<DigitalApply />} />

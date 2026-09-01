@@ -414,7 +414,7 @@ export default function FanCommunity() {
             <div className="mt-4 divide-y divide-slate-100">
               {[
                 { label: '선수 프로필', to: `/athletes/${athleteId}` },
-                { label: '이 선수 후원하기', to: `/sponsor/pick/${athleteId}/slots` },
+                { label: '이 선수 후원하기', to: `/sponsor/direct/build/${athleteId}` },
                 { label: '팬스토어', to: '/fan/store' },
               ].map((l) => (
                 <Link key={l.label} to={l.to} className="flex items-center justify-between py-3 text-[13px] font-bold hover:text-emerald-700">

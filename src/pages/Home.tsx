@@ -202,7 +202,7 @@ export function Home() {
             {/* 우: 두 개의 PICK CTA */}
             <div className="relative z-10 space-y-4 pb-8 lg:pb-0">
               <Link
-                to="/sponsor/pick"
+                to="/sponsor/direct/athletes"
                 className="group flex items-center gap-5 rounded-[40px] bg-gradient-to-r from-emerald-500 to-emerald-600 pl-4 pr-6 py-4 lg:py-5 shadow-[0_16px_40px_-12px_rgba(16,185,129,0.55)] hover:shadow-[0_20px_48px_-12px_rgba(16,185,129,0.7)] hover:-translate-y-0.5 transition-all"
               >
                 <span className="w-[64px] h-[64px] lg:w-[72px] lg:h-[72px] rounded-full bg-white flex items-center justify-center shrink-0">
@@ -405,7 +405,7 @@ export function Home() {
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Link
-              to="/sponsor/pick"
+              to="/sponsor/direct/athletes"
               className="h-12 px-7 inline-flex items-center gap-2 rounded-xl bg-white text-emerald-700 text-sm font-bold hover:bg-emerald-50 transition-colors"
             >
               <Crosshair className="w-4 h-4" /> 직접 PICK

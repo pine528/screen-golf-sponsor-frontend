@@ -50,7 +50,7 @@ const MENUS: { key: string; label: string; items: MegaItem[]; note?: string }[] 
     key: 'sponsor',
     label: '후원하기',
     items: [
-      { icon: Crosshair, title: '선수·후원슬롯 직접 PICK', desc: '경기 착장 위치를 직접 선택', to: '/sponsor/pick' },
+      { icon: Crosshair, title: '선수·후원슬롯 직접 PICK', desc: '경기 착장 위치를 직접 선택', to: '/sponsor/direct/athletes' },
       { icon: Sparkles, title: '스폰픽 추천 PICK', desc: '목표와 예산에 맞는 조합 추천', to: '/sponsor/recommended' },
       { icon: BarChart3, title: '진행 중 후원기회', desc: '직접구매·경매·장기계약 비교', to: '/auctions' },
       { icon: CalendarCheck, title: '디지털 파트너 월 구독', desc: '월 부담으로 1년간 온라인·등록매장 파트너', to: '/digital-partner', badge: 'NEW', highlight: true },
@@ -262,7 +262,7 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
           <div className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-white overflow-y-auto px-5 pb-28 pt-4 border-t border-slate-100">
             <div className="grid grid-cols-2 gap-2.5 mb-5">
               <Link
-                to="/sponsor/pick"
+                to="/sponsor/direct/athletes"
                 onClick={() => setMobileOpen(false)}
                 className="rounded-2xl bg-emerald-500 text-white px-4 py-4 flex flex-col gap-1"
               >
