@@ -3272,6 +3272,128 @@ class ApiService {
     return r.data;
   }
 
+  /* ── 팬 운영 관리자 (핸드오프 v1.0 §18.2 A01~A12) ── */
+  async getFanAdminDashboard() {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/dashboard');
+    return r.data;
+  }
+  async getFanAdminVotes(params?: { status?: string; q?: string; from?: string; to?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/votes', { params });
+    return r.data;
+  }
+  async getFanAdminVoteSettlement(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/fan/votes/${id}/settlement`);
+    return r.data;
+  }
+  async getFanAdminModeration(params?: { tab?: string; risk?: string; status?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/moderation', { params });
+    return r.data;
+  }
+  async getFanAdminModerationItem(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/fan/moderation/${id}`);
+    return r.data;
+  }
+  async decideFanModeration(id: string, body: { decision: string; reason: string; note?: string }) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/fan/moderation/${id}/decide`, body);
+    return r.data;
+  }
+  async bulkApproveFanModeration(ids: string[], reason?: string) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/fan/moderation/bulk-approve', { ids, reason });
+    return r.data;
+  }
+  async getFanAdminReports(params?: { tab?: string; risk?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/reports', { params });
+    return r.data;
+  }
+  async getFanAdminReport(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/fan/reports/${id}`);
+    return r.data;
+  }
+  async createFanSanction(body: { reportId?: string; userId: string; level: string; days?: number; reason: string }) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/fan/sanctions', body);
+    return r.data;
+  }
+  async approveFanSanction(id: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/fan/sanctions/${id}/approve`, {});
+    return r.data;
+  }
+  async decideFanAppeal(id: string, body: { decision: string; note: string; days?: number }) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/fan/appeals/${id}/decide`, body);
+    return r.data;
+  }
+  async getFanFormula(athleteId?: string) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/formula', { params: { athleteId } });
+    return r.data;
+  }
+  async publishFanFormula(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/fan/formula/publish', body);
+    return r.data;
+  }
+  async getFanPointPolicy() {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/point-policy');
+    return r.data;
+  }
+  async publishFanPointPolicy(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/fan/point-policy/publish', body);
+    return r.data;
+  }
+  async upsertPointCampaign(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/fan/point-campaigns', body);
+    return r.data;
+  }
+  async getFanAdminPointLedger(params?: { q?: string; type?: string; status?: string; from?: string; to?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/point-ledger', { params });
+    return r.data;
+  }
+  async requestPointAdjustment(body: { userId: string; delta: number; reason: string; caseId: string; evidenceUrl?: string }) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/fan/point-adjustments', body);
+    return r.data;
+  }
+  async approvePointAdjustment(id: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/fan/point-adjustments/${id}/approve`, {});
+    return r.data;
+  }
+  async rejectPointAdjustment(id: string, reason: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/fan/point-adjustments/${id}/reject`, { reason });
+    return r.data;
+  }
+  async getFanAdminStores(params?: { status?: string; q?: string }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/stores', { params });
+    return r.data;
+  }
+  async getFanAdminStore(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/fan/stores/${id}`);
+    return r.data;
+  }
+  async upsertFanStore(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/fan/stores', body);
+    return r.data;
+  }
+  async getFanAdminOrders(params?: { from?: string; to?: string }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/orders', { params });
+    return r.data;
+  }
+  async getFanSuggestionBoard() {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/brand-suggestions');
+    return r.data;
+  }
+  async getFanSuggestion(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/fan/brand-suggestions/${id}`);
+    return r.data;
+  }
+  async moveFanSuggestion(id: string, body: { status: string; note?: string }) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/fan/brand-suggestions/${id}/move`, body);
+    return r.data;
+  }
+  async getFanAdminReport12(params?: { from?: string; to?: string }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/fan/report', { params });
+    return r.data;
+  }
+  async runFanBatch(job: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/fan/batch/${job}/run`, {});
+    return r.data;
+  }
+
   /* ── 지금 가능한 후원 (핸드오프 v1.0 2026-08-22 §13.1) ── */
   async getOfferOptions() {
     const r = await this.client.get<ApiResponse<any>>('/available-offers/options');

@@ -57,6 +57,17 @@ import FanBrandSuggest from './pages/fanhub/FanBrandSuggest';
 import FanStoreHome from './pages/fanhub/FanStoreHome';
 import FanStoreDetail from './pages/fanhub/FanStoreDetail';
 import FanStoreProduct from './pages/fanhub/FanStoreProduct';
+import FanOpsDashboard from './pages/admin/fan/FanOpsDashboard';
+import FanOpsVotes from './pages/admin/fan/FanOpsVotes';
+import FanOpsModeration from './pages/admin/fan/FanOpsModeration';
+import FanOpsReports from './pages/admin/fan/FanOpsReports';
+import FanOpsFormula from './pages/admin/fan/FanOpsFormula';
+import FanOpsPointPolicy from './pages/admin/fan/FanOpsPointPolicy';
+import FanOpsPointLedger from './pages/admin/fan/FanOpsPointLedger';
+import FanOpsStores from './pages/admin/fan/FanOpsStores';
+import FanOpsOrders from './pages/admin/fan/FanOpsOrders';
+import FanOpsSuggestions from './pages/admin/fan/FanOpsSuggestions';
+import FanOpsReport from './pages/admin/fan/FanOpsReport';
 import AthleteRequests from './pages/athlete/AthleteRequests';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -355,6 +366,18 @@ function App() {
       <Route path="/fan/campaign" element={<FanCampaign />} />
       <Route path="/fan/activity" element={<FanActivity />} />
       {/* 지금 가능한 후원 — 관리자 (핸드오프 v1.0 §2.2) */}
+      {/* 팬 운영 관리자 A01~A12 */}
+      <Route path="/admin/fan" element={<ProtectedRoute><FanOpsDashboard /></ProtectedRoute>} />
+      <Route path="/admin/fan/votes" element={<ProtectedRoute><FanOpsVotes /></ProtectedRoute>} />
+      <Route path="/admin/fan/moderation" element={<ProtectedRoute><FanOpsModeration /></ProtectedRoute>} />
+      <Route path="/admin/fan/reports" element={<ProtectedRoute><FanOpsReports /></ProtectedRoute>} />
+      <Route path="/admin/fan/formula" element={<ProtectedRoute><FanOpsFormula /></ProtectedRoute>} />
+      <Route path="/admin/fan/point-policy" element={<ProtectedRoute><FanOpsPointPolicy /></ProtectedRoute>} />
+      <Route path="/admin/fan/point-ledger" element={<ProtectedRoute><FanOpsPointLedger /></ProtectedRoute>} />
+      <Route path="/admin/fan/stores" element={<ProtectedRoute><FanOpsStores /></ProtectedRoute>} />
+      <Route path="/admin/fan/orders" element={<ProtectedRoute><FanOpsOrders /></ProtectedRoute>} />
+      <Route path="/admin/fan/brand-suggestions" element={<ProtectedRoute><FanOpsSuggestions /></ProtectedRoute>} />
+      <Route path="/admin/fan/report" element={<ProtectedRoute><FanOpsReport /></ProtectedRoute>} />
       <Route path="/admin/offers" element={<ProtectedRoute><AdminOfferList /></ProtectedRoute>} />
       <Route path="/admin/offers/new" element={<ProtectedRoute><AdminOfferBuilder /></ProtectedRoute>} />
       <Route path="/admin/offers/placements" element={<ProtectedRoute><AdminOfferPlacements /></ProtectedRoute>} />
