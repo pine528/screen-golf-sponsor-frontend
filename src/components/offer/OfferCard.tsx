@@ -34,9 +34,10 @@ export const OFFER_STATUS: Record<string, { label: string; cls: string }> = {
   ARCHIVED: { label: '보관', cls: 'bg-slate-100 text-slate-400' },
 };
 
+/** 가격 유형 — 승인 방식(즉시구매/선수확인)과 다른 축이므로 이름을 섞지 않는다 */
 export const PRICE_TYPE_LABEL: Record<string, string> = {
-  FIXED: '즉시구매', SUBSCRIPTION: '정기후원', NEGOTIABLE: '조건협의',
-  AUCTION: '경매', DISCOUNTED: '할인', MIXED: '혼합',
+  FIXED: '확정가', SUBSCRIPTION: '월 구독', NEGOTIABLE: '조건협의',
+  AUCTION: '경매', DISCOUNTED: '할인가', MIXED: '혼합',
 };
 
 /** 예상성과 범위 문구 — 단일 숫자보다 범위를 먼저 쓴다 (§5.2) */

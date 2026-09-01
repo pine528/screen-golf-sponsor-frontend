@@ -34,6 +34,10 @@ import AvailableOffers from './pages/offers/AvailableOffers';
 import OfferDetail from './pages/offers/OfferDetail';
 import OfferCart from './pages/offers/OfferCart';
 import OfferOrderComplete from './pages/offers/OfferOrderComplete';
+import AdminOfferList from './pages/admin/offers/AdminOfferList';
+import AdminOfferBuilder from './pages/admin/offers/AdminOfferBuilder';
+import AdminOfferPlacements from './pages/admin/offers/AdminOfferPlacements';
+import AdminOfferDashboard from './pages/admin/offers/AdminOfferDashboard';
 import FanStore from './pages/fanhub/FanStore';
 import FanCommunity from './pages/fanhub/FanCommunity';
 import FanVote from './pages/fanhub/FanVote';
@@ -320,6 +324,12 @@ function App() {
       <Route path="/fan/community/:athleteId" element={<FanCommunity />} />
       <Route path="/fan/vote" element={<FanVote />} />
       <Route path="/fan/points" element={<FanPoints />} />
+      {/* 지금 가능한 후원 — 관리자 (핸드오프 v1.0 §2.2) */}
+      <Route path="/admin/offers" element={<ProtectedRoute><AdminOfferList /></ProtectedRoute>} />
+      <Route path="/admin/offers/new" element={<ProtectedRoute><AdminOfferBuilder /></ProtectedRoute>} />
+      <Route path="/admin/offers/placements" element={<ProtectedRoute><AdminOfferPlacements /></ProtectedRoute>} />
+      <Route path="/admin/offers/dashboard" element={<ProtectedRoute><AdminOfferDashboard /></ProtectedRoute>} />
+      <Route path="/admin/offers/:offerId" element={<ProtectedRoute><AdminOfferBuilder /></ProtectedRoute>} />
       {/* 지금 가능한 후원 — 핸드오프 v1.0 (2026-08-22) §2.1 */}
       <Route path="/sponsor" element={<SponsorLanding />} />
       <Route path="/sponsor/available" element={<AvailableOffers />} />
