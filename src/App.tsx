@@ -29,6 +29,11 @@ import DirectRequest from './pages/direct/DirectRequest';
 import DirectApproval from './pages/direct/DirectApproval';
 import DirectCheckout from './pages/direct/DirectCheckout';
 import DirectComplete from './pages/direct/DirectComplete';
+import SponsorLanding from './pages/offers/SponsorLanding';
+import AvailableOffers from './pages/offers/AvailableOffers';
+import OfferDetail from './pages/offers/OfferDetail';
+import OfferCart from './pages/offers/OfferCart';
+import OfferOrderComplete from './pages/offers/OfferOrderComplete';
 import FanStore from './pages/fanhub/FanStore';
 import FanCommunity from './pages/fanhub/FanCommunity';
 import FanVote from './pages/fanhub/FanVote';
@@ -315,6 +320,12 @@ function App() {
       <Route path="/fan/community/:athleteId" element={<FanCommunity />} />
       <Route path="/fan/vote" element={<FanVote />} />
       <Route path="/fan/points" element={<FanPoints />} />
+      {/* 지금 가능한 후원 — 핸드오프 v1.0 (2026-08-22) §2.1 */}
+      <Route path="/sponsor" element={<SponsorLanding />} />
+      <Route path="/sponsor/available" element={<AvailableOffers />} />
+      <Route path="/sponsor/available/orders/:applicationId" element={<ProtectedRoute><OfferOrderComplete /></ProtectedRoute>} />
+      <Route path="/sponsor/available/:offerId" element={<OfferDetail />} />
+      <Route path="/sponsor/cart" element={<ProtectedRoute><OfferCart /></ProtectedRoute>} />
       {/* 직접 선택 PICK — 핸드오프 v1.0 §2.1 (9단계) */}
       <Route path="/sponsor/direct" element={<Navigate to="/sponsor/direct/athletes" replace />} />
       <Route path="/sponsor/direct/athletes" element={<DirectAthletes />} />

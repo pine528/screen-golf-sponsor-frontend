@@ -3179,6 +3179,129 @@ class ApiService {
     return r.data;
   }
 
+  /* ── 지금 가능한 후원 (핸드오프 v1.0 2026-08-22 §13.1) ── */
+  async getOfferOptions() {
+    const r = await this.client.get<ApiResponse<any>>('/available-offers/options');
+    return r.data;
+  }
+  async getOfferSections(params?: { surface?: string; keys?: string }) {
+    const r = await this.client.get<ApiResponse<any>>('/available-offers/sections', { params });
+    return r.data;
+  }
+  async listAvailableOffers(params?: {
+    q?: string; purpose?: string; budget?: string; duration?: string;
+    mode?: string; state?: string; section?: string; sort?: string; limit?: number;
+  }) {
+    const r = await this.client.get<ApiResponse<any>>('/available-offers', { params });
+    return r.data;
+  }
+  async getAvailableOffer(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/available-offers/${id}`);
+    return r.data;
+  }
+  async quoteAvailableOffer(id: string, body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/available-offers/${id}/quote`, body);
+    return r.data;
+  }
+  async trackOfferImpressions(offerIds: string[]) {
+    const r = await this.client.post<ApiResponse<any>>('/available-offers/impressions', { offerIds });
+    return r.data;
+  }
+  /* 보관함 · 장바구니 */
+  async getSavedOffers() {
+    const r = await this.client.get<ApiResponse<any>>('/offer-cart/saved');
+    return r.data;
+  }
+  async saveOffer(offerId: string) {
+    const r = await this.client.post<ApiResponse<any>>('/offer-cart/saved', { offerId });
+    return r.data;
+  }
+  async unsaveOffer(offerId: string) {
+    const r = await this.client.delete<ApiResponse<any>>(`/offer-cart/saved/${offerId}`);
+    return r.data;
+  }
+  async getOfferCart() {
+    const r = await this.client.get<ApiResponse<any>>('/offer-cart');
+    return r.data;
+  }
+  async addOfferToCart(body: { offerId: string; quantity?: number; startDate?: string; options?: any }) {
+    const r = await this.client.post<ApiResponse<any>>('/offer-cart/items', body);
+    return r.data;
+  }
+  async updateOfferCartItem(itemId: string, body: any) {
+    const r = await this.client.patch<ApiResponse<any>>(`/offer-cart/items/${itemId}`, body);
+    return r.data;
+  }
+  async removeOfferCartItem(itemId: string, keep?: boolean) {
+    const r = await this.client.delete<ApiResponse<any>>(`/offer-cart/items/${itemId}`, { params: keep ? { keep: 1 } : undefined });
+    return r.data;
+  }
+  async checkoutOfferCart(itemIds: string[], brandInfo?: any) {
+    const r = await this.client.post<ApiResponse<any>>('/offer-cart/checkout', { itemIds, brandInfo });
+    return r.data;
+  }
+  /* 관리자 */
+  async getOfferTemplates() {
+    const r = await this.client.get<ApiResponse<any>>('/admin/offers/templates');
+    return r.data;
+  }
+  async getOfferAlerts() {
+    const r = await this.client.get<ApiResponse<any>>('/admin/offers/alerts');
+    return r.data;
+  }
+  async getOfferDashboard(params?: { from?: string; to?: string }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/offers/dashboard', { params });
+    return r.data;
+  }
+  async listAdminOffers(params?: any) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/offers', { params });
+    return r.data;
+  }
+  async getAdminOffer(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/offers/${id}`);
+    return r.data;
+  }
+  async createAdminOffer(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/offers', body);
+    return r.data;
+  }
+  async updateAdminOffer(id: string, body: any) {
+    const r = await this.client.patch<ApiResponse<any>>(`/admin/offers/${id}`, body);
+    return r.data;
+  }
+  async validateAdminOffer(id: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/offers/${id}/validate`, {});
+    return r.data;
+  }
+  async publishAdminOffer(id: string, body?: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/offers/${id}/publish`, body || {});
+    return r.data;
+  }
+  async setAdminOfferStatus(id: string, status: string, reason?: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/offers/${id}/status`, { status, reason });
+    return r.data;
+  }
+  async duplicateAdminOffer(id: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/offers/${id}/duplicate`, {});
+    return r.data;
+  }
+  async getOfferBuilderSlots(athleteId: string, params?: { from?: string; to?: string }) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/offers/builder/athletes/${athleteId}/slots`, { params });
+    return r.data;
+  }
+  async listOfferPlacements(surface?: string) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/offers/placements', { params: surface ? { surface } : undefined });
+    return r.data;
+  }
+  async upsertOfferPlacement(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/offers/placements', body);
+    return r.data;
+  }
+  async removeOfferPlacement(id: string) {
+    const r = await this.client.delete<ApiResponse<any>>(`/admin/offers/placements/${id}`);
+    return r.data;
+  }
+
   /* ── 직접 선택 PICK (핸드오프 v1.0 §13.1) ── */
   async getPickOptions() {
     const r = await this.client.get<ApiResponse<any>>('/direct-pick/options');
