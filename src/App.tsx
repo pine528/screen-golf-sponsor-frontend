@@ -68,6 +68,25 @@ import FanOpsStores from './pages/admin/fan/FanOpsStores';
 import FanOpsOrders from './pages/admin/fan/FanOpsOrders';
 import FanOpsSuggestions from './pages/admin/fan/FanOpsSuggestions';
 import FanOpsReport from './pages/admin/fan/FanOpsReport';
+import ServiceIntro from './pages/about/ServiceIntro';
+import CaseList from './pages/about/CaseList';
+import CaseDetail from './pages/about/CaseDetail';
+import GuaranteeIntro from './pages/about/GuaranteeIntro';
+import MyGuarantees from './pages/about/MyGuarantees';
+import GuaranteeAppeal from './pages/about/GuaranteeAppeal';
+import HowItWorksNew from './pages/about/HowItWorks';
+import BrandList from './pages/about/BrandList';
+import BrandDetail from './pages/about/BrandDetail';
+import AboutOpsDashboard from './pages/admin/about/AboutOpsDashboard';
+import AboutOpsPages from './pages/admin/about/AboutOpsPages';
+import AboutOpsCases from './pages/admin/about/AboutOpsCases';
+import AboutOpsPolicies from './pages/admin/about/AboutOpsPolicies';
+import AboutOpsJudgements from './pages/admin/about/AboutOpsJudgements';
+import AboutOpsAppeals from './pages/admin/about/AboutOpsAppeals';
+import AboutOpsBrands from './pages/admin/about/AboutOpsBrands';
+import AboutOpsRights from './pages/admin/about/AboutOpsRights';
+import AboutOpsAnalytics from './pages/admin/about/AboutOpsAnalytics';
+import AboutOpsAudit from './pages/admin/about/AboutOpsAudit';
 import AthleteRequests from './pages/athlete/AthleteRequests';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
@@ -331,11 +350,23 @@ function App() {
       <Route path="/growth-market" element={<GrowthMarket />} />
       <Route path="/digital-partner" element={<DigitalPartner />} />
       {/* 스폰픽 소개 — 리디자인 v2.0 §9 */}
-      <Route path="/about" element={<AboutService />} />
+      {/* 스폰픽 소개 v1.0 (핸드오프 2026-08-22) */}
+      <Route path="/about" element={<ServiceIntro />} />
+      <Route path="/about/service" element={<ServiceIntro />} />
+      <Route path="/about/cases" element={<CaseList />} />
+      <Route path="/about/cases/:slug" element={<CaseDetail />} />
+      <Route path="/about/performance-guarantee" element={<GuaranteeIntro />} />
+      <Route path="/about/my-guarantees" element={<MyGuarantees />} />
+      <Route path="/about/my-guarantees/:id/appeal" element={<GuaranteeAppeal />} />
+      <Route path="/about/how-it-works" element={<HowItWorksNew />} />
+      <Route path="/about/brands" element={<BrandList />} />
+      <Route path="/about/brands/:slug" element={<BrandDetail />} />
+      {/* 구 소개 화면 */}
+      <Route path="/about/legacy" element={<AboutService />} />
       <Route path="/about/how" element={<AboutHow />} />
       <Route path="/about/guarantee" element={<AboutGuarantee />} />
-      <Route path="/about/brands" element={<AboutBrands />} />
-      <Route path="/about/cases" element={<AboutCases />} />
+      <Route path="/about/brands-legacy" element={<AboutBrands />} />
+      <Route path="/about/cases-legacy" element={<AboutCases />} />
       {/* 추천 PICK — 핸드오프 v1.0 §1.1 */}
       <Route path="/sponsor/recommended" element={<RecommendLanding />} />
       <Route path="/sponsor/recommended/brief" element={<RecommendBrief />} />
@@ -366,6 +397,17 @@ function App() {
       <Route path="/fan/campaign" element={<FanCampaign />} />
       <Route path="/fan/activity" element={<FanActivity />} />
       {/* 지금 가능한 후원 — 관리자 (핸드오프 v1.0 §2.2) */}
+      {/* 소개 운영 관리자 IA01~IA14 */}
+      <Route path="/admin/about" element={<ProtectedRoute><AboutOpsDashboard /></ProtectedRoute>} />
+      <Route path="/admin/about/pages" element={<ProtectedRoute><AboutOpsPages /></ProtectedRoute>} />
+      <Route path="/admin/about/cases" element={<ProtectedRoute><AboutOpsCases /></ProtectedRoute>} />
+      <Route path="/admin/about/policies" element={<ProtectedRoute><AboutOpsPolicies /></ProtectedRoute>} />
+      <Route path="/admin/about/judgements" element={<ProtectedRoute><AboutOpsJudgements /></ProtectedRoute>} />
+      <Route path="/admin/about/appeals" element={<ProtectedRoute><AboutOpsAppeals /></ProtectedRoute>} />
+      <Route path="/admin/about/brands" element={<ProtectedRoute><AboutOpsBrands /></ProtectedRoute>} />
+      <Route path="/admin/about/rights" element={<ProtectedRoute><AboutOpsRights /></ProtectedRoute>} />
+      <Route path="/admin/about/analytics" element={<ProtectedRoute><AboutOpsAnalytics /></ProtectedRoute>} />
+      <Route path="/admin/about/audit" element={<ProtectedRoute><AboutOpsAudit /></ProtectedRoute>} />
       {/* 팬 운영 관리자 A01~A12 */}
       <Route path="/admin/fan" element={<ProtectedRoute><FanOpsDashboard /></ProtectedRoute>} />
       <Route path="/admin/fan/votes" element={<ProtectedRoute><FanOpsVotes /></ProtectedRoute>} />

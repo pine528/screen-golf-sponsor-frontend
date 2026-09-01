@@ -3272,6 +3272,203 @@ class ApiService {
     return r.data;
   }
 
+  /* ── SPONPIK 소개 (핸드오프 v1.0 2026-08-22) ── */
+  async getAboutMeta() {
+    const r = await this.client.get<ApiResponse<any>>('/about/meta');
+    return r.data;
+  }
+  async getAboutPage(slug: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/about/pages/${slug}`);
+    return r.data;
+  }
+  async listMatchingCases(params?: {
+    sport?: string; tour?: string; sponsorType?: string; category?: string;
+    objective?: string; brand?: string; sort?: string; q?: string; page?: number; limit?: number;
+  }) {
+    const r = await this.client.get<ApiResponse<any>>('/about/cases', { params });
+    return r.data;
+  }
+  async getMatchingCase(slug: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/about/cases/${slug}`);
+    return r.data;
+  }
+  async getMetricEvidence(metricId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/about/metrics/${metricId}/evidence`);
+    return r.data;
+  }
+  async listPartnerBrands(params?: { category?: string; q?: string; hasStore?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/about/brands', { params });
+    return r.data;
+  }
+  async getPartnerBrand(slug: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/about/brands/${slug}`);
+    return r.data;
+  }
+  async getGuaranteePolicyPublic() {
+    const r = await this.client.get<ApiResponse<any>>('/about/guarantee/policy');
+    return r.data;
+  }
+  async getMyGuarantees() {
+    const r = await this.client.get<ApiResponse<any>>('/about/me/guarantees');
+    return r.data;
+  }
+  async getGuaranteeAppealContext(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/about/me/guarantees/${id}/appeal`);
+    return r.data;
+  }
+  async submitGuaranteeAppeal(id: string, body: {
+    reason: string; evidenceTypes?: string[]; attachments?: any; attested: boolean;
+  }) {
+    const r = await this.client.post<ApiResponse<any>>(`/about/me/guarantees/${id}/appeal`, body);
+    return r.data;
+  }
+  async trackAboutEvent(body: { event: string; pageSlug?: string; visitorKey?: string; params?: any }) {
+    const r = await this.client.post<ApiResponse<any>>('/about/events', body);
+    return r.data;
+  }
+
+  /* ── 소개 운영 관리자 (§20 IA01~IA14) ── */
+  async getAboutAdminDashboard() {
+    const r = await this.client.get<ApiResponse<any>>('/admin/about/dashboard');
+    return r.data;
+  }
+  async getAboutAdminPages() {
+    const r = await this.client.get<ApiResponse<any>>('/admin/about/pages');
+    return r.data;
+  }
+  async getAboutAdminPage(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/about/pages/${id}`);
+    return r.data;
+  }
+  async saveAboutPage(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/about/pages', body);
+    return r.data;
+  }
+  async publishAboutPage(id: string, scheduledAt?: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/pages/${id}/publish`, { scheduledAt });
+    return r.data;
+  }
+  async getAboutAdminCases(params?: { status?: string; brand?: string; q?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/about/cases', { params });
+    return r.data;
+  }
+  async getAboutAdminCase(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/about/cases/${id}`);
+    return r.data;
+  }
+  async saveAboutCase(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/about/cases', body);
+    return r.data;
+  }
+  async moveAboutCase(id: string, body: { to: string; reason?: string; scheduledAt?: string }) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/cases/${id}/move`, body);
+    return r.data;
+  }
+  async getCaseEvidenceReview(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/about/cases/${id}/evidence`);
+    return r.data;
+  }
+  async reviewCaseMetric(metricId: string, body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/metrics/${metricId}/review`, body);
+    return r.data;
+  }
+  async getCaseApproval(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/about/cases/${id}/approval`);
+    return r.data;
+  }
+  async requestCaseApproval(id: string, parties?: string[]) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/cases/${id}/approval/request`, { parties });
+    return r.data;
+  }
+  async recordCaseApproval(id: string, body: { party: string; status: string; comment?: string; itemStatus?: any }) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/cases/${id}/approval/record`, body);
+    return r.data;
+  }
+  async getGuaranteePolicies() {
+    const r = await this.client.get<ApiResponse<any>>('/admin/about/policies');
+    return r.data;
+  }
+  async getGuaranteePolicyAdmin(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/about/policies/${id}`);
+    return r.data;
+  }
+  async saveGuaranteePolicy(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/about/policies', body);
+    return r.data;
+  }
+  async legalApprovePolicy(id: string, note?: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/policies/${id}/legal-approve`, { note });
+    return r.data;
+  }
+  async activateGuaranteePolicy(id: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/policies/${id}/activate`, {});
+    return r.data;
+  }
+  async getGuaranteeJudgements(params?: { status?: string; q?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/about/judgements', { params });
+    return r.data;
+  }
+  async getGuaranteeJudgement(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/about/judgements/${id}`);
+    return r.data;
+  }
+  async updateGuaranteeObservation(id: string, body: any) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/observations/${id}`, body);
+    return r.data;
+  }
+  async finalizeGuaranteeJudgement(id: string, note?: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/judgements/${id}/finalize`, { note });
+    return r.data;
+  }
+  async getGuaranteeAppeals(params?: { status?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/about/appeals', { params });
+    return r.data;
+  }
+  async decideGuaranteeAppeal(id: string, body: { decisionType: string; decisionCode: string; note?: string }) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/appeals/${id}/decide`, body);
+    return r.data;
+  }
+  async issueRemedyGrant(body: { snapshotId: string; ratio: number; capAmount: number; validMonths?: number; note?: string; approverId?: string }) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/about/remedies', body);
+    return r.data;
+  }
+  async getAboutAdminBrands(params?: { status?: string; category?: string; q?: string }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/about/brands', { params });
+    return r.data;
+  }
+  async getAboutAdminBrand(id: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/admin/about/brands/${id}`);
+    return r.data;
+  }
+  async saveAboutBrand(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/about/brands', body);
+    return r.data;
+  }
+  async publishAboutBrand(id: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/admin/about/brands/${id}/publish`, {});
+    return r.data;
+  }
+  async getRightsQueue(params?: { assetType?: string; holderType?: string; status?: string; q?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/about/rights', { params });
+    return r.data;
+  }
+  async saveRightsGrant(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/admin/about/rights', body);
+    return r.data;
+  }
+  async sweepRights() {
+    const r = await this.client.post<ApiResponse<any>>('/admin/about/rights/sweep', {});
+    return r.data;
+  }
+  async getAboutAnalytics(params?: { from?: string; to?: string }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/about/analytics', { params });
+    return r.data;
+  }
+  async getAboutAuditLogs(params?: { from?: string; to?: string; actor?: string; action?: string; entity?: string; page?: number; limit?: number }) {
+    const r = await this.client.get<ApiResponse<any>>('/admin/about/audit-logs', { params });
+    return r.data;
+  }
+
   /* ── 팬 운영 관리자 (핸드오프 v1.0 §18.2 A01~A12) ── */
   async getFanAdminDashboard() {
     const r = await this.client.get<ApiResponse<any>>('/admin/fan/dashboard');
