@@ -75,7 +75,7 @@ const BRAND_PATHS = [
       { l: '예상 소요', v: '즉시 구독 가능' },
       { l: '로그인 필요 시점', v: '구독 및 결제 시' },
     ],
-    cta: { label: '구독 알아보기', to: '/sponsor/digital' },
+    cta: { label: '구독 알아보기', to: '/digital-partner' },
   },
 ];
 
@@ -247,11 +247,11 @@ export default function HowItWorks() {
                 })}
               </ol>
               <div className="mt-5 grid grid-cols-2 gap-2">
-                <Link to="/athlete/register"
+                <Link to="/register"
                   className="h-12 rounded-2xl bg-sky-600 text-white text-[14px] font-bold flex items-center justify-center gap-1.5 hover:bg-sky-700 transition">
                   선수 등록하기 <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link to="/athlete/proposals"
+                <Link to="/dashboard"
                   className="h-12 rounded-2xl border border-slate-200 text-slate-700 text-[14px] font-bold flex items-center justify-center hover:border-slate-400 transition">
                   제안함 보기
                 </Link>

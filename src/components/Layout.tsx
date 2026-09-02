@@ -177,134 +177,188 @@ export function Layout({ children }: LayoutProps) {
     return date.toLocaleDateString('ko-KR');
   };
 
-  const brandNavItems = [
-    { path: '/dashboard', label: '대시보드', icon: Home },
-    { path: '/inventory', label: '인벤토리', icon: Calendar },
-    { path: '/auctions', label: '라이브 경매', icon: Gavel, live: true },
-    { path: '/contracts', label: '계약 관리', icon: FileText },
-    { path: '/brand/wallet', label: '지갑', icon: Wallet },
-    { path: '/brand/billing', label: '청구/명세서', icon: Receipt },
-    { path: '/campaigns', label: '캠페인', icon: Megaphone },
-    { path: '/brand/sponsored-votes', label: '후원 투표', icon: Heart },
-    { path: '/brand/creative-approvals', label: '크리에이티브 승인', icon: FileImage },
-    { path: '/brand/reports/roi', label: 'ROI 리포트', icon: TrendingUp },
-    { path: '/brand/slot-analytics', label: '슬롯 분석', icon: BarChart3 },
-    { path: '/brand/logo-templates', label: '로고 템플릿', icon: Image },
-    { path: '/brand/roi-settings', label: 'ROI 설정', icon: Settings },
-    // === Full Funnel ===
-    { path: '/brand/funnel/dashboard', label: '🔥 풀 퍼널 대시보드', icon: TrendingUp },
-    { path: '/brand/funnel/compare', label: '🔥 성과 비교', icon: BarChart3 },
-    { path: '/brand/funnel/orders', label: '🔥 주문·매출 내역', icon: Receipt },
-    { path: '/brand/funnel/pixel', label: '🔥 픽셀 설치 (Phase 2)', icon: Wrench },
-    { path: '/brand/funnel/attribution', label: '🔥 멀티터치 (Phase 3)', icon: Target },
-    { path: '/votes', label: '무료 투표', icon: Gift },
-    { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
-    { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
-    { path: '/points', label: '내 포인트', icon: Trophy },
-    { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
-    { path: '/profile', label: '프로필', icon: User },
+  /* ── 역할별 사이드바 (v2.0 §1.1 마이페이지) ──────────────
+   * 자주 쓰는 순서로 묶고, 내부 단계명·이모지는 라벨에서 뺀다.
+   * 드물게 쓰는 항목은 '더보기' 그룹에 접어 둔다. */
+  type NavItem = { path: string; label: string; icon: any; live?: boolean };
+  type NavGroup = { title: string; items: NavItem[]; collapsed?: boolean };
+
+  const brandNav: NavGroup[] = [
+    { title: '시작', items: [
+      { path: '/dashboard', label: '대시보드', icon: Home },
+      { path: '/sponsor/available', label: '후원하기', icon: Target },
+    ] },
+    { title: '내 후원', items: [
+      { path: '/inventory', label: '보유 슬롯', icon: Calendar },
+      { path: '/contracts', label: '계약 관리', icon: FileText },
+      { path: '/brand/creative-approvals', label: '크리에이티브 승인', icon: FileImage },
+      { path: '/brand/sponsored-votes', label: '후원 투표', icon: Heart },
+    ] },
+    { title: '성과', items: [
+      { path: '/brand/funnel/dashboard', label: '풀 퍼널 대시보드', icon: TrendingUp },
+      { path: '/brand/reports/roi', label: 'ROI 리포트', icon: BarChart3 },
+      { path: '/brand/slot-analytics', label: '슬롯 분석', icon: BarChart3 },
+      { path: '/brand/funnel/compare', label: '성과 비교', icon: BarChart3 },
+      { path: '/brand/funnel/orders', label: '주문·매출 내역', icon: Receipt },
+      { path: '/about/my-guarantees', label: '성과보장 현황', icon: Shield },
+    ] },
+    { title: '결제', items: [
+      { path: '/brand/wallet', label: '지갑', icon: Wallet },
+      { path: '/brand/billing', label: '청구 · 명세서', icon: Receipt },
+      { path: '/points', label: '포인트', icon: Coins },
+    ] },
+    { title: '계정', items: [
+      { path: '/profile', label: '프로필', icon: User },
+      { path: '/brand/logo-templates', label: '로고 템플릿', icon: Image },
+      { path: '/brand/roi-settings', label: 'ROI 설정', icon: Settings },
+    ] },
+    { title: '더보기', collapsed: true, items: [
+      { path: '/campaigns', label: '캠페인', icon: Megaphone },
+      { path: '/auctions', label: '라이브 경매', icon: Gavel, live: true },
+      { path: '/brand/funnel/pixel', label: '픽셀 설치', icon: Wrench },
+      { path: '/brand/funnel/attribution', label: '멀티터치 기여', icon: Target },
+      { path: '/votes', label: '무료 투표', icon: Gift },
+      { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
+      { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
+      { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
+    ] },
   ];
 
-  const athleteNavItems = [
-    { path: '/dashboard', label: '대시보드', icon: Home },
-    { path: '/my-slots', label: '슬롯 관리', icon: Calendar },
-    { path: '/contracts', label: '계약/오퍼', icon: FileText },
-    { path: '/athlete/pending-signatures', label: '서명 대기', icon: PenLine },
-    { path: '/athlete/agency-requests', label: '에이전시 요청', icon: Building2 },
-    { path: '/settlements', label: '정산', icon: Wallet },
-    { path: '/athlete/withdrawals', label: '정산금 출금', icon: Banknote },
-    { path: '/athlete/point-withdrawals', label: '포인트 출금', icon: Coins },
-    { path: '/athlete/donations', label: '받은 후원', icon: Heart },
-    // === Full Funnel ===
-    { path: '/athlete/funnel/dashboard', label: '🔥 내 성과 대시보드', icon: TrendingUp },
-    { path: '/votes', label: '무료 투표', icon: Gift },
-    { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
-    { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
-    { path: '/points', label: '내 포인트', icon: Trophy },
-    { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
-    { path: '/profile', label: '프로필', icon: User },
+  const athleteNav: NavGroup[] = [
+    { title: '시작', items: [
+      { path: '/dashboard', label: '대시보드', icon: Home },
+      { path: '/my-slots', label: '슬롯 관리', icon: Calendar },
+    ] },
+    { title: '계약', items: [
+      { path: '/contracts', label: '계약 · 오퍼', icon: FileText },
+      { path: '/athlete/pending-signatures', label: '서명 대기', icon: PenLine },
+      { path: '/athlete/agency-requests', label: '에이전시 요청', icon: Building2 },
+    ] },
+    { title: '정산', items: [
+      { path: '/settlements', label: '정산', icon: Wallet },
+      { path: '/athlete/withdrawals', label: '정산금 출금', icon: Banknote },
+      { path: '/athlete/donations', label: '받은 후원', icon: Heart },
+    ] },
+    { title: '성과 · 팬', items: [
+      { path: '/athlete/funnel/dashboard', label: '내 성과 대시보드', icon: TrendingUp },
+      { path: '/fan', label: '팬 참여 보기', icon: Heart },
+    ] },
+    { title: '계정', items: [
+      { path: '/profile', label: '프로필', icon: User },
+      { path: '/points', label: '포인트', icon: Coins },
+    ] },
+    { title: '더보기', collapsed: true, items: [
+      { path: '/athlete/point-withdrawals', label: '포인트 출금', icon: Coins },
+      { path: '/votes', label: '무료 투표', icon: Gift },
+      { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
+      { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
+      { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
+    ] },
   ];
 
-  const adminNavItems = [
-    { path: '/admin', label: '대시보드', icon: LayoutDashboard },
-    { path: '/admin/events', label: '이벤트 관리', icon: Calendar },
-    { path: '/admin/auctions', label: '경매 모니터링', icon: Gavel },
-    { path: '/admin/featured-auctions', label: '추천 경매', icon: Star },
-    { path: '/admin/slot-templates', label: '슬롯 템플릿', icon: Layers },
-    { path: '/admin/entities', label: '등록 회원', icon: Users },
-    { path: '/admin/kyc', label: 'KYC 심사', icon: User },
-    { path: '/admin/brand-registrations', label: '브랜드 신청', icon: Building2 },
-    { path: '/admin/reviews', label: '검수 관리', icon: FileText },
-    { path: '/admin/votes', label: '투표 관리', icon: Gift },
-    { path: '/admin/points', label: '포인트 관리', icon: Coins },
-    { path: '/admin/fee-policies', label: '수수료 정책', icon: Receipt },
-    { path: '/admin/point-withdrawals', label: '포인트 출금', icon: Coins },
-    { path: '/admin/creative-approvals', label: '크리에이티브 심사', icon: FileImage },
-    { path: '/admin/payments', label: '결제 관리', icon: CreditCard },
-    { path: '/admin/finance', label: '재무 콘솔', icon: Wallet },
-    { path: '/admin/finance/point-topups', label: '포인트 충전', icon: Coins },
-    { path: '/admin/finance/withdrawals', label: '출금 관리', icon: Banknote },
-    { path: '/admin/finance/tax-invoices', label: '세금계산서', icon: FileCheck },
-    { path: '/admin/reconciliation', label: '대사 관리', icon: Shield },
-    { path: '/admin/users', label: '관리자 관리', icon: UserCog },
-    { path: '/admin/faq', label: 'FAQ 관리', icon: HelpCircle },
-    { path: '/admin/penalties', label: '페널티', icon: AlertTriangle },
-    { path: '/admin/disputes', label: '분쟁 관리', icon: Flag },
-    { path: '/admin/seasons', label: '시즌 관리', icon: Trophy },
-    { path: '/admin/exposure', label: '노출 관리', icon: Eye },
-    { path: '/admin/roi/campaign-builder', label: 'ROI 캠페인', icon: Target },
-    { path: '/admin/roi/vod', label: 'VOD 관리', icon: Video },
-    { path: '/admin/roi/qa', label: '검출 검수', icon: ScanLine },
-    { path: '/admin/roi/evidence', label: '증빙 관리', icon: FileImage },
-    { path: '/admin/roi/reports', label: '리포트 관리', icon: FileText },
-    // === Full Funnel ===
-    { path: '/admin/athletes/event-results', label: '🏆 선수 경기결과', icon: Trophy },
-    { path: '/admin/athletes/media-exposure', label: '📺 미디어 노출 (수동/자동)', icon: Trophy },
-    { path: '/admin/tournament-activation', label: '⚙️ 대회 활성화 / N값', icon: Settings },
-    { path: '/admin/funnel/campaigns', label: '🔥 풀 퍼널 캠페인', icon: Megaphone },
-    { path: '/admin/funnel/codes-links', label: '🔥 코드·링크', icon: Layers },
-    { path: '/admin/funnel/integrated-report', label: '🔥 통합 ROI', icon: TrendingUp },
-    { path: '/admin/funnel/settlements', label: '🔥 성과 정산 (Phase 3)', icon: Coins },
-    { path: '/admin/ops', label: '운영 도구', icon: Wrench },
-    { path: '/admin/reports', label: '통합 리포트', icon: BarChart3 },
-    { path: '/admin/settings', label: '설정', icon: Settings },
+  const fanNav: NavGroup[] = [
+    { title: '팬 참여', items: [
+      { path: '/fan', label: '팬 참여 홈', icon: Home },
+      { path: '/fan/activity', label: '내 팬활동', icon: Heart },
+      { path: '/fan/vote', label: 'Fan VOTE', icon: Gift },
+      { path: '/fan/points', label: '팬포인트', icon: Coins },
+      { path: '/fan/store', label: '팬스토어', icon: ShoppingBag },
+    ] },
+    { title: '계정', items: [
+      { path: '/profile', label: '프로필', icon: User },
+      { path: '/favorites', label: '즐겨찾기', icon: Star },
+      { path: '/brand-register', label: '브랜드 등록', icon: Building2 },
+    ] },
+    { title: '더보기', collapsed: true, items: [
+      { path: '/votes', label: '무료 투표', icon: Gift },
+      { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
+      { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
+      { path: '/my-donations', label: '선수 후원', icon: Heart },
+      { path: '/fan/badges', label: '내 뱃지', icon: Award },
+      { path: '/ranking', label: '랭킹', icon: Star },
+      { path: '/points', label: '포인트 지갑', icon: Trophy },
+      { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
+      { path: '/shop', label: '포인트샵', icon: Gift },
+      { path: '/orders', label: '교환내역', icon: ShoppingBag },
+    ] },
   ];
 
-  const fanNavItems = [
-    { path: '/fan', label: '홈', icon: Home },
-    { path: '/votes', label: '무료 투표', icon: Gift },
-    { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
-    { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
-    { path: '/my-donations', label: '선수 후원', icon: Heart },
-    { path: '/fan/badges', label: '내 뱃지', icon: Award },
-    { path: '/points', label: '내 포인트', icon: Trophy },
-    { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
-    { path: '/shop', label: '포인트샵', icon: Gift },
-    { path: '/orders', label: '교환내역', icon: ShoppingBag },
-    { path: '/ranking', label: '랭킹', icon: Star },
-    { path: '/favorites', label: '즐겨찾기', icon: Star },
-    { path: '/brand-register', label: '브랜드 등록', icon: Building2 },
+  const adminNav: NavGroup[] = [
+    { title: '운영', items: [
+      { path: '/admin', label: '대시보드', icon: LayoutDashboard },
+      { path: '/admin/fan', label: '팬 운영', icon: Heart },
+      { path: '/admin/about', label: '소개 운영', icon: FileText },
+      { path: '/admin/offers', label: '후원 상품', icon: ShoppingBag },
+    ] },
+    { title: '회원', items: [
+      { path: '/admin/entities', label: '등록 회원', icon: Users },
+      { path: '/admin/kyc', label: 'KYC 심사', icon: User },
+      { path: '/admin/brand-registrations', label: '브랜드 신청', icon: Building2 },
+      { path: '/admin/penalties', label: '페널티', icon: AlertTriangle },
+      { path: '/admin/disputes', label: '분쟁 관리', icon: Flag },
+      { path: '/admin/users', label: '관리자 관리', icon: UserCog },
+    ] },
+    { title: '후원 · 슬롯', items: [
+      { path: '/admin/events', label: '이벤트 관리', icon: Calendar },
+      { path: '/admin/slot-templates', label: '슬롯 템플릿', icon: Layers },
+      { path: '/admin/auctions', label: '경매 모니터링', icon: Gavel },
+      { path: '/admin/featured-auctions', label: '추천 경매', icon: Star },
+      { path: '/admin/reviews', label: '검수 관리', icon: FileText },
+      { path: '/admin/creative-approvals', label: '크리에이티브 심사', icon: FileImage },
+      { path: '/admin/exposure', label: '노출 관리', icon: Eye },
+      { path: '/admin/seasons', label: '시즌 관리', icon: Trophy },
+    ] },
+    { title: '재무', items: [
+      { path: '/admin/payments', label: '결제 관리', icon: CreditCard },
+      { path: '/admin/finance', label: '재무 콘솔', icon: Wallet },
+      { path: '/admin/finance/point-topups', label: '포인트 충전', icon: Coins },
+      { path: '/admin/finance/withdrawals', label: '출금 관리', icon: Banknote },
+      { path: '/admin/finance/tax-invoices', label: '세금계산서', icon: FileCheck },
+      { path: '/admin/reconciliation', label: '대사 관리', icon: Shield },
+      { path: '/admin/fee-policies', label: '수수료 정책', icon: Receipt },
+      { path: '/admin/points', label: '포인트 관리', icon: Coins },
+      { path: '/admin/point-withdrawals', label: '포인트 출금', icon: Coins },
+    ] },
+    { title: '성과 · 데이터', collapsed: true, items: [
+      { path: '/admin/athletes/event-results', label: '선수 경기결과', icon: Trophy },
+      { path: '/admin/athletes/media-exposure', label: '미디어 노출', icon: Video },
+      { path: '/admin/tournament-activation', label: '대회 활성화', icon: Settings },
+      { path: '/admin/roi/campaign-builder', label: 'ROI 캠페인', icon: Target },
+      { path: '/admin/roi/vod', label: 'VOD 관리', icon: Video },
+      { path: '/admin/roi/qa', label: '검출 검수', icon: ScanLine },
+      { path: '/admin/roi/evidence', label: '증빙 관리', icon: FileImage },
+      { path: '/admin/roi/reports', label: '리포트 관리', icon: FileText },
+      { path: '/admin/funnel/campaigns', label: '풀 퍼널 캠페인', icon: Megaphone },
+      { path: '/admin/funnel/codes-links', label: '코드 · 링크', icon: Layers },
+      { path: '/admin/funnel/integrated-report', label: '통합 ROI', icon: TrendingUp },
+      { path: '/admin/funnel/settlements', label: '성과 정산', icon: Coins },
+      { path: '/admin/reports', label: '통합 리포트', icon: BarChart3 },
+    ] },
+    { title: '설정', collapsed: true, items: [
+      { path: '/admin/votes', label: '투표 관리', icon: Gift },
+      { path: '/admin/faq', label: 'FAQ 관리', icon: HelpCircle },
+      { path: '/admin/ops', label: '운영 도구', icon: Wrench },
+      { path: '/admin/settings', label: '설정', icon: Settings },
+    ] },
   ];
 
-  const agencyNavItems = [
-    { path: '/agency', label: '대시보드', icon: Home },
-    { path: '/agency/athletes', label: '소속 선수', icon: Users },
-    { path: '/agency/athletes/search', label: '선수 검색/연결', icon: User },
-    { path: '/agency/requests', label: '보낸 요청', icon: FileText },
-    { path: '/profile', label: '프로필', icon: Briefcase },
+  const agencyNav: NavGroup[] = [
+    { title: '에이전시', items: [
+      { path: '/agency', label: '대시보드', icon: Home },
+      { path: '/agency/athletes', label: '소속 선수', icon: Users },
+      { path: '/agency/athletes/search', label: '선수 검색 · 연결', icon: User },
+      { path: '/agency/requests', label: '보낸 요청', icon: FileText },
+      { path: '/profile', label: '프로필', icon: Briefcase },
+    ] },
   ];
 
   const role = user?.role as string;
-  const navItems =
-    role === 'ADMIN'
-      ? adminNavItems
-      : role === 'ATHLETE'
-      ? athleteNavItems
-      : role === 'FAN'
-      ? fanNavItems
-      : role === 'AGENCY'
-      ? agencyNavItems
-      : brandNavItems;
+  const navGroups: NavGroup[] =
+    role === 'ADMIN' ? adminNav
+      : role === 'ATHLETE' ? athleteNav
+      : role === 'FAN' ? fanNav
+      : role === 'AGENCY' ? agencyNav
+      : brandNav;
 
   const getRoleLabel = () => {
     switch (role) {
@@ -403,8 +457,10 @@ export function Layout({ children }: LayoutProps) {
           {/* Navigation */}
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             <NavSections
-              items={navItems}
-              isActive={(p) => location.pathname === p}
+              groups={navGroups}
+              isActive={(p) =>
+                location.pathname === p ||
+                (!['/admin', '/fan', '/dashboard', '/agency'].includes(p) && location.pathname.startsWith(`${p}/`))}
               onClick={closeMobileMenu}
             />
           </nav>
@@ -531,60 +587,66 @@ export function Layout({ children }: LayoutProps) {
 }
 
 /**
- * NavSections — 네비게이션을 "기본" vs "🔥 풀 퍼널" 섹션으로 분리
- * 풀 퍼널 섹션은 기본 접힘 상태로 시작
+ * NavSections — 역할별 사이드바를 그룹으로 나눠 그린다.
+ * 접힌 그룹(더보기 등)은 현재 경로가 그 안에 있으면 자동으로 펼친다.
  */
-function NavSections({ items, isActive, onClick }: {
-  items: { path: string; label: string; icon: any }[];
+function NavSections({ groups, isActive, onClick }: {
+  groups: { title: string; items: { path: string; label: string; icon: any; live?: boolean }[]; collapsed?: boolean }[];
   isActive: (p: string) => boolean;
   onClick: () => void;
 }) {
-  const [funnelOpen, setFunnelOpen] = useState(() => {
-    // 현재 경로가 funnel 하위면 자동 열림
-    return typeof window !== 'undefined' && /\/funnel\//.test(window.location.pathname);
-  });
-
-  const funnelItems = items.filter((i) => i.label.startsWith('🔥'));
-  const regularItems = items.filter((i) => !i.label.startsWith('🔥'));
-
-  const renderItem = (item: any) => {
-    const active = isActive(item.path);
-    const Icon = item.icon;
-    return (
-      <Link
-        key={item.path}
-        to={item.path}
-        onClick={onClick}
-        className={cn(
-          'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group',
-          active
-            ? 'bg-gradient-to-r from-emerald-500/10 to-teal-500/5 text-slate-900 border border-emerald-500/30'
-            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent'
-        )}
-      >
-        <Icon className={cn('w-5 h-5', active ? 'text-emerald-600' : 'text-slate-400 group-hover:text-slate-600')} />
-        {item.label.replace(/^🔥\s*/, '')}
-        {item.live && <LiveBadge />}
-        {active && <ChevronRight className="w-4 h-4 ml-auto text-emerald-600" />}
-      </Link>
-    );
-  };
+  const [open, setOpen] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(groups.map((g) => [g.title, !g.collapsed || g.items.some((i) => isActive(i.path))])));
 
   return (
-    <>
-      {regularItems.map(renderItem)}
-      {funnelItems.length > 0 && (
-        <div className="pt-3 mt-3 border-t border-slate-200">
-          <button
-            onClick={() => setFunnelOpen(!funnelOpen)}
-            className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-emerald-600 uppercase tracking-wider hover:bg-slate-50 rounded-lg"
-          >
-            <span>🔥 풀 퍼널 ({funnelItems.length})</span>
-            <ChevronRight className={cn('w-4 h-4 transition-transform', funnelOpen && 'rotate-90')} />
-          </button>
-          {funnelOpen && <div className="mt-1 space-y-1">{funnelItems.map(renderItem)}</div>}
-        </div>
-      )}
-    </>
+    <div className="space-y-4">
+      {groups.map((g) => {
+        const expanded = open[g.title] ?? !g.collapsed;
+        const hasActive = g.items.some((i) => isActive(i.path));
+        return (
+          <div key={g.title}>
+            <button
+              type="button"
+              onClick={() => g.collapsed && setOpen((o) => ({ ...o, [g.title]: !expanded }))}
+              className={cn(
+                'w-full flex items-center justify-between px-3 mb-1 text-[10.5px] font-bold uppercase tracking-[0.12em]',
+                g.collapsed ? 'text-slate-400 hover:text-slate-600 cursor-pointer' : 'text-slate-400 cursor-default',
+                hasActive && !expanded && 'text-emerald-600',
+              )}
+            >
+              <span>{g.title}{g.collapsed ? ` (${g.items.length})` : ''}</span>
+              {g.collapsed && (
+                <ChevronRight className={cn('w-3.5 h-3.5 transition-transform', expanded && 'rotate-90')} />
+              )}
+            </button>
+            {expanded && (
+              <div className="space-y-0.5">
+                {g.items.map((item) => {
+                  const active = isActive(item.path);
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={onClick}
+                      className={cn(
+                        'flex items-center gap-3 px-3 py-2 rounded-xl text-[13.5px] font-semibold transition-all group',
+                        active
+                          ? 'bg-emerald-50 text-emerald-800'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
+                      )}
+                    >
+                      <Icon className={cn('w-[18px] h-[18px]', active ? 'text-emerald-600' : 'text-slate-400 group-hover:text-slate-600')} />
+                      <span className="truncate">{item.label}</span>
+                      {item.live && <LiveBadge />}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }

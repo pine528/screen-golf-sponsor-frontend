@@ -1,359 +1,227 @@
 /**
- * 공개 선수 둘러보기 페이지 (/athletes)
+ * 선수 목록 — 전체사이트개편 v2.0 §7.1
  *
- * - 메인 → "선수 둘러보기" 버튼 / 상단 메뉴 "선수" 진입점
- * - 검색 + 투어 필터
- * - 가로 슬라이드(추천) + 세로 카드 그리드
- * - 카드 클릭 → /athletes/:id 상세
+ *  - 한 목록, 한 정렬. 추천·신규·전체를 세 번 나열하던 구조를 없앤다.
+ *  - 카드에는 판단에 필요한 신호만 둔다: 사진·이름·투어·지역·팬온도·최근 성적·후원 현황·시작가.
+ *  - 미수집 지표는 0으로 만들지 않고 "확인 필요"로 둔다 (LEG-06).
+ *  - 이모지·장식 배지 대신 텍스트 배지만 쓴다.
  */
-
-import { useState, useRef, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { Search, ChevronLeft, ChevronRight, Users, ExternalLink, Trophy } from 'lucide-react';
-import { api } from '../services/api';
-import Breadcrumb from '../components/Breadcrumb';
+import { Search, Thermometer, Loader2, RotateCcw, Sparkles, ArrowRight } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
+import { api } from '../services/api';
 
-const TOUR_OPTIONS = [
-  { value: '', label: '전체' },
-  { value: 'KLPGA', label: 'KLPGA' },
-  { value: 'KPGA', label: 'KPGA' },
-  { value: 'LPGA', label: 'LPGA' },
-  { value: 'PGA', label: 'PGA' },
+const SORTS = [
+  { key: 'RECENT', label: '추천순' },
+  { key: 'FAN_TEMP', label: '팬온도순' },
+  { key: 'PERFORMANCE', label: '최근 성적순' },
+  { key: 'NEW', label: '신규순' },
+  { key: 'PRICE', label: '가격 낮은순' },
 ];
 
-// SPONPIK 3-8 + 2-4 — 1차 종목 (골프 > 스크린골프)
-const SPORT_OPTIONS = [
-  { value: '', label: '전체 종목' },
-  { value: 'GOLF', label: '🏌️ 골프' },
-  { value: 'SCREEN_GOLF', label: '⛳ 스크린골프' },
+const CHIPS = [
+  { key: 'ALL', label: '전체', patch: {} },
+  { key: 'KLPGA', label: 'KLPGA', patch: { tour: 'KLPGA' } },
+  { key: 'KPGA', label: 'KPGA', patch: { tour: 'KPGA' } },
+  { key: 'SEOUL', label: '서울·경기', patch: { region: '서울' } },
+  { key: 'OPEN', label: '모집 중', patch: { mode: 'OFFLINE' } },
+  { key: 'ONLINE', label: '온라인 가능', patch: { mode: 'ONLINE' } },
 ];
+
+const AVAILABILITY: Record<string, { label: string; cls: string }> = {
+  OPEN: { label: '후원 가능', cls: 'bg-emerald-600 text-white' },
+  PARTIAL: { label: '일부 가능', cls: 'bg-amber-500 text-white' },
+  CLOSED: { label: '모집 마감', cls: 'bg-slate-500 text-white' },
+};
 
 export default function PublicAthletes() {
-  // 메인 히어로 검색창이 `/athletes?q=광주` 형태로 보내므로 주소의 검색어를 초기값으로 받는다
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [q, setQ] = useState(searchParams.get('q') || '');
-  const [tour, setTour] = useState(searchParams.get('tour') || '');
-  const [sport, setSport] = useState('');
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const newSliderRef = useRef<HTMLDivElement>(null);
-  // 메인에서 '신규등록선수 > 전체보기'로 진입하면 추천 라인은 숨기고 신규부터 노출 (?filter=new)
-  const onlyNew = searchParams.get('filter') === 'new';
+  const [sp, setSp] = useSearchParams();
+  const [q, setQ] = useState(sp.get('q') || '');
+  const [chip, setChip] = useState(sp.get('recommended') ? 'ALL' : 'ALL');
+  const [sort, setSort] = useState('RECENT');
+  const [athletes, setAthletes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // 뒤로가기·주소 직접 입력 등으로 주소의 검색어가 바뀌면 입력창도 따라간다
-  const urlQ = searchParams.get('q') || '';
-  useEffect(() => {
-    setQ((prev) => (prev === urlQ ? prev : urlQ));
-  }, [urlQ]);
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const patch = CHIPS.find((c) => c.key === chip)?.patch || {};
+      const r: any = await api.getPickAthletes({ q: q.trim() || undefined, sort, limit: 60, ...patch });
+      setAthletes(r?.data?.athletes || []);
+    } catch {
+      setAthletes([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [q, chip, sort]);
 
-  // 입력한 검색어를 주소에도 남겨 새로고침·공유 시에도 결과가 유지되게 한다
   useEffect(() => {
-    const cur = searchParams.get('q') || '';
-    if (cur === q) return;
-    const t = setTimeout(() => {
-      const next = new URLSearchParams(searchParams);
-      if (q) next.set('q', q);
-      else next.delete('q');
-      setSearchParams(next, { replace: true });
-    }, 400);
+    const t = setTimeout(load, q ? 300 : 0);
     return () => clearTimeout(t);
+  }, [load, q]);
+
+  /* 검색어를 주소에 남겨 새로고침·공유 시 유지 */
+  useEffect(() => {
+    const next = new URLSearchParams(sp);
+    if (q) next.set('q', q); else next.delete('q');
+    setSp(next, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q]);
 
-  const { data: resp, isLoading } = useQuery({
-    queryKey: ['public-athletes', q, tour, sport],
-    queryFn: () => api.listPublicAthletes({ q: q || undefined, tour: tour || undefined, sport: sport || undefined, limit: 50 } as any),
-  });
-  const items = resp?.data?.items || [];
-  const total = resp?.data?.total || 0;
-
-  const scrollBy = (ref: React.RefObject<HTMLDivElement>, dir: 'left' | 'right') => {
-    const el = ref.current;
-    if (!el) return;
-    // 카드 폭이 화면 폭에 따라 달라지므로 실제 카드 하나 + 간격(gap-4 = 16px)만큼 이동한다
-    const card = el.firstElementChild as HTMLElement | null;
-    const step = card ? card.getBoundingClientRect().width + 16 : 400;
-    el.scrollBy({ left: dir === 'left' ? -step : step, behavior: 'smooth' });
-  };
-  const scroll = (dir: 'left' | 'right') => scrollBy(sliderRef, dir);
-
-  // 2026-07 항목2 — 추천은 운영 지정(isRecommended) 선수만, 신규는 가입 최신순
-  const featured = items
-    .filter((a: any) => a.isRecommended)
-    .sort((a: any, b: any) => (a.recommendOrder ?? 999) - (b.recommendOrder ?? 999));
-  const newList = items
-    .filter((a: any) => isNewAthlete(a))
-    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  const allList = items;
+  const reset = () => { setQ(''); setChip('ALL'); setSort('RECENT'); };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white text-slate-900">
       <PublicHeader />
-      {/* 헤더 */}
-      <div className="bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 text-white">
-        {/* 상단 경로 표시 */}
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-5">
-          <Breadcrumb tone="onDark" className="mb-0" />
-        </div>
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-6 pb-12 sm:pb-16">
-          <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 inline-flex items-center gap-3">
-            <Users className="w-8 h-8" /> 후원 가능한 선수 찾기
-          </h1>
-          <p className="text-sm sm:text-base opacity-90 max-w-xl">
-            스폰픽에 등록된 프로 골퍼들을 만나보세요. 마음에 드는 선수의 슬롯을 직접 후원할 수 있습니다.
-          </p>
-          <div className="mt-3 inline-flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full text-xs font-semibold">
-            <Trophy className="w-3.5 h-3.5" /> 총 {total.toLocaleString()}명 등록
-          </div>
-        </div>
-      </div>
 
-      {/* 검색 + 필터 */}
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 -mt-6 relative z-10">
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 sm:p-5 space-y-3">
-          {/* 검색 + 투어 필터 */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
-              <input
-                type="text"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="선수명, 투어, 소속, 지역으로 검색해보세요"
-                className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-              />
-            </div>
-            <div className="flex gap-1.5 overflow-x-auto">
-              {TOUR_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => setTour(opt.value)}
-                  className={`px-3.5 py-2.5 text-sm font-semibold rounded-xl whitespace-nowrap transition-colors ${
-                    tour === opt.value
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
+      <div className="max-w-[1280px] mx-auto px-5">
+        {/* breadcrumb */}
+        <nav aria-label="breadcrumb" className="flex items-center gap-1.5 pt-5 text-[12.5px]">
+          <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+          <span className="text-slate-300">/</span>
+          <span className="font-bold text-emerald-700">선수</span>
+        </nav>
+
+        {/* 헤더 */}
+        <header className="pt-7 sm:pt-9 flex flex-col lg:flex-row lg:items-end justify-between gap-5">
+          <div>
+            <h1 className="text-[28px] sm:text-[36px] font-extrabold tracking-[-0.03em] leading-tight">
+              후원할 선수를 찾아보세요
+            </h1>
+            <p className="mt-2.5 text-[14px] text-slate-500 break-keep">
+              스폰픽에 등록된 선수입니다. 마음에 드는 선수를 고르면 직접 PICK으로 바로 이어집니다.
+            </p>
           </div>
-          {/* SPONPIK 3-8 — 종목별 소팅 (1차: 골프/스크린골프) */}
-          <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
-            <span className="text-[11px] font-bold text-slate-500 whitespace-nowrap">종목</span>
-            <div className="flex gap-1.5 overflow-x-auto">
-              {SPORT_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => setSport(opt.value)}
-                  className={`px-3 py-1.5 text-xs font-bold rounded-full whitespace-nowrap transition-colors ${
-                    sport === opt.value
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
+          <Link to="/sponsor/recommended"
+            className="inline-flex items-center gap-1.5 h-11 px-5 rounded-2xl border border-slate-200 text-[13.5px] font-bold text-slate-700 hover:border-slate-400 transition shrink-0">
+            <Sparkles className="w-4 h-4 text-orange-500" /> 고르기 어렵다면 추천 PICK
+          </Link>
+        </header>
+
+        {/* 검색 · 필터 · 정렬 — 한 줄 */}
+        <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-4">
+          <div className="flex flex-col lg:flex-row gap-3">
+            <label className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+              <input value={q} onChange={(e) => setQ(e.target.value)}
+                placeholder="선수명, 투어, 지역으로 검색"
+                className="w-full h-11 pl-11 pr-4 rounded-2xl border border-slate-200 text-[14px] placeholder:text-slate-300 focus:outline-none focus:border-emerald-400" />
+            </label>
+            <select value={sort} onChange={(e) => setSort(e.target.value)}
+              className="h-11 px-3.5 rounded-2xl border border-slate-200 text-[13px] font-bold text-slate-700 focus:outline-none focus:border-emerald-400">
+              {SORTS.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
+            </select>
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {CHIPS.map((c) => (
+              <button key={c.key} onClick={() => setChip(c.key)}
+                className={`h-9 px-3.5 rounded-full text-[12.5px] font-bold border transition ${
+                  chip === c.key ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                }`}>
+                {c.label}
+              </button>
+            ))}
           </div>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 py-8 space-y-10">
-        {isLoading ? (
-          <div className="text-center py-20 text-slate-400">선수 목록을 불러오는 중...</div>
-        ) : items.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-4xl mb-3">🔍</div>
-            <div className="text-sm text-slate-500">검색 결과가 없습니다. 다른 키워드로 시도해보세요.</div>
+        <p className="mt-5 text-[13px] text-slate-500">
+          <b className="text-slate-900 tabular-nums">{loading ? '—' : athletes.length}</b>명
+          <span className="ml-2 text-slate-400">선택한 정렬 기준으로 나열됩니다</span>
+        </p>
+
+        {/* 목록 */}
+        {loading ? (
+          <div className="py-24 text-center"><Loader2 className="w-7 h-7 text-emerald-500 animate-spin mx-auto" /></div>
+        ) : athletes.length === 0 ? (
+          <div className="mt-5 rounded-3xl border border-dashed border-slate-200 bg-slate-50/60 py-16 text-center">
+            <p className="text-[15px] font-bold text-slate-700">조건에 맞는 선수가 없습니다</p>
+            <p className="mt-1.5 text-[13px] text-slate-400">필터를 넓히거나 추천 PICK으로 조건에 맞는 선수를 받아보세요.</p>
+            <div className="mt-5 flex gap-2 justify-center">
+              <button onClick={reset}
+                className="inline-flex items-center gap-1.5 h-10 px-4 rounded-2xl border border-slate-200 text-[13px] font-bold text-slate-600">
+                <RotateCcw className="w-3.5 h-3.5" /> 필터 초기화
+              </button>
+              <Link to="/sponsor/recommended"
+                className="inline-flex items-center gap-1.5 h-10 px-4 rounded-2xl bg-slate-900 text-white text-[13px] font-bold">
+                추천 PICK 받기 <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         ) : (
-          <>
-            {/* 가로 슬라이드 - 추천 (운영 지정 선수만) — ?filter=new 진입 시 숨김 */}
-            {!q && !onlyNew && featured.length > 0 && (
-              <section>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg sm:text-xl font-extrabold text-slate-900">⭐ 추천 선수</h2>
-                  <div className="flex gap-1">
-                    <button onClick={() => scroll('left')} className="w-9 h-9 rounded-full bg-white border border-slate-200 hover:bg-slate-50 inline-flex items-center justify-center"><ChevronLeft className="w-4 h-4" /></button>
-                    <button onClick={() => scroll('right')} className="w-9 h-9 rounded-full bg-white border border-slate-200 hover:bg-slate-50 inline-flex items-center justify-center"><ChevronRight className="w-4 h-4" /></button>
-                  </div>
-                </div>
-                <div ref={sliderRef} className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
-                  {featured.map((a: any) => (
-                    <FeaturedCard key={a.id} athlete={a} />
-                  ))}
-                </div>
-              </section>
-            )}
+          <div className="mt-4 mb-16 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {athletes.map((a) => {
+              const av = AVAILABILITY[a.availability] || AVAILABILITY.OPEN;
+              const temp = typeof a.fanTemp === 'number' && a.fanTemp > 0 ? a.fanTemp : null;
+              return (
+                <article key={a.id}
+                  className="rounded-3xl border border-slate-200 bg-white overflow-hidden hover:border-emerald-300 hover:shadow-[0_12px_32px_-14px_rgba(15,23,42,0.16)] transition-all flex flex-col">
+                  <Link to={`/athletes/${a.id}`} className="relative aspect-[4/5] sm:aspect-[4/3] bg-slate-100 block overflow-hidden shrink-0">
+                    {a.profileImageUrl
+                      ? <img src={a.profileImageUrl} alt={a.name} loading="lazy" className="w-full h-full object-cover object-top" />
+                      : <span className="w-full h-full flex items-center justify-center text-[40px] font-extrabold text-slate-300">{a.name?.slice(0, 1)}</span>}
+                    <span className={`absolute top-3 left-3 px-2 py-1 rounded-lg text-[10.5px] font-extrabold ${av.cls}`}>{av.label}</span>
+                    {a.isRecommended && (
+                      <span className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-white/90 text-emerald-700 text-[10.5px] font-extrabold">추천</span>
+                    )}
+                  </Link>
 
-            {/* 신규 등록 선수 — 가입 최신순, 가로 슬라이드 (2026-07 항목2) */}
-            {!q && newList.length > 0 && (
-              <section id="new-athletes" className="scroll-mt-24">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 inline-flex items-center gap-2">
-                    🆕 신규 등록 선수
-                    <span className="text-xs font-semibold text-slate-400">최근 가입순</span>
-                  </h2>
-                  <div className="flex gap-1">
-                    <button onClick={() => scrollBy(newSliderRef, 'left')} className="w-9 h-9 rounded-full bg-white border border-slate-200 hover:bg-slate-50 inline-flex items-center justify-center"><ChevronLeft className="w-4 h-4" /></button>
-                    <button onClick={() => scrollBy(newSliderRef, 'right')} className="w-9 h-9 rounded-full bg-white border border-slate-200 hover:bg-slate-50 inline-flex items-center justify-center"><ChevronRight className="w-4 h-4" /></button>
-                  </div>
-                </div>
-                <div ref={newSliderRef} className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth" style={{ scrollbarWidth: 'thin' }}>
-                  {newList.map((a: any) => (
-                    <FeaturedCard key={a.id} athlete={a} />
-                  ))}
-                </div>
-              </section>
-            )}
+                  <div className="p-4 flex-1 flex flex-col">
+                    <Link to={`/athletes/${a.id}`} className="min-w-0">
+                      <p className="text-[15px] font-extrabold text-slate-900 truncate">
+                        {a.name} <span className="text-[11.5px] font-bold text-slate-400">프로</span>
+                      </p>
+                      <p className="mt-0.5 text-[11.5px] text-slate-400 truncate">
+                        {[a.tour, a.region].filter(Boolean).join(' · ') || '선수'}
+                      </p>
+                    </Link>
 
-            {/* 세로 그리드 - 전체 */}
-            <section>
-              <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mb-4">
-                {q ? `"${q}" 검색 결과 (${items.length}명)` : `전체 선수 (${total}명)`}
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-                {allList.map((a: any) => (
-                  <AthleteCard key={a.id} athlete={a} />
-                ))}
-              </div>
-            </section>
-          </>
+                    <dl className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-x-3 gap-y-2 text-[11.5px]">
+                      <div>
+                        <dt className="text-slate-400">팬온도</dt>
+                        <dd className="mt-0.5 font-extrabold text-[13px] inline-flex items-center gap-1 tabular-nums">
+                          <Thermometer className="w-3.5 h-3.5 text-emerald-600" />
+                          {temp !== null ? `${temp.toFixed(1)}℃` : <span className="text-slate-400 font-bold">집계 중</span>}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-slate-400">최근 성적</dt>
+                        <dd className="mt-0.5 font-extrabold text-[13px] tabular-nums">
+                          {a.recentAvgRank != null ? `평균 ${a.recentAvgRank}위` : <span className="text-slate-400 font-bold">확인 필요</span>}
+                        </dd>
+                      </div>
+                      <div className="col-span-2">
+                        <dt className="text-slate-400">후원 현황</dt>
+                        <dd className="mt-0.5 font-extrabold text-[13px] tabular-nums">
+                          슬롯 {a.slotOpen ?? 0}/{a.slotTotal ?? 0}
+                          {a.offerCount > 0 && <span className="ml-1.5 font-bold text-slate-500">온라인 {a.offerCount}종</span>}
+                        </dd>
+                      </div>
+                    </dl>
+
+                    <p className="mt-3 text-right text-[12.5px] text-slate-400">
+                      시작가 <b className="text-[15px] text-emerald-600 tabular-nums">
+                        {a.minPrice != null ? `${(a.minPrice / 10000).toLocaleString()}만원` : '협의'}
+                      </b>부터
+                    </p>
+
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                      <Link to={`/athletes/${a.id}`}
+                        className="h-10 rounded-xl border border-slate-200 text-[12.5px] font-bold text-slate-600 flex items-center justify-center hover:border-slate-400 transition">
+                        프로필
+                      </Link>
+                      <Link to={`/sponsor/direct/build/${a.id}`}
+                        className="h-10 rounded-xl bg-emerald-600 text-white text-[12.5px] font-bold flex items-center justify-center hover:bg-emerald-700 transition">
+                        이 선수 PICK
+                      </Link>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
-  );
-}
-
-/** 신규 기준: 가입(등록) 60일 이내 */
-function isNewAthlete(a: any): boolean {
-  return !!a?.createdAt && Date.now() - new Date(a.createdAt).getTime() < 60 * 86400000;
-}
-
-/**
- * 업데이트 기준: 선수가 직접 프로필·경기결과를 고친 지 14일 이내.
- * 운영 일괄 작업은 profileUpdatedAt을 건드리지 않으므로 여기 잡히지 않는다.
- * 신규 등록 직후에는 NEW와 겹치므로 UPDATE를 표시하지 않는다.
- */
-function isUpdatedAthlete(a: any): boolean {
-  if (!a?.profileUpdatedAt) return false;
-  if (isNewAthlete(a)) return false;
-  return Date.now() - new Date(a.profileUpdatedAt).getTime() < 14 * 86400000;
-}
-
-/** 카드 우측 상단 상태 뱃지 (추천 / 신규 / 업데이트) */
-function AthleteBadges({ athlete, size = 'md' }: { athlete: any; size?: 'sm' | 'md' }) {
-  const cls = size === 'sm' ? 'text-[8px] px-1.5 py-0.5' : 'text-[9px] px-2 py-0.5';
-  const isNew = isNewAthlete(athlete);
-  const isUpdated = isUpdatedAthlete(athlete);
-  if (!athlete.isRecommended && !isNew && !isUpdated) return null;
-  return (
-    <div className="absolute top-2.5 right-2.5 flex flex-col items-end gap-1">
-      {athlete.isRecommended && (
-        <span className={`inline-flex items-center gap-0.5 bg-amber-400 text-white font-extrabold rounded-full shadow-md animate-pulse ${cls}`}>
-          ✨ 추천
-        </span>
-      )}
-      {isNew && (
-        <span className={`inline-flex items-center gap-0.5 bg-rose-500 text-white font-extrabold rounded-full shadow-md animate-pulse ${cls}`}>
-          NEW
-        </span>
-      )}
-      {isUpdated && (
-        <span
-          title="선수가 최근 프로필을 업데이트했습니다"
-          className={`inline-flex items-center gap-0.5 bg-sky-500 text-white font-extrabold rounded-full shadow-md ${cls}`}
-        >
-          UPDATE
-        </span>
-      )}
-    </div>
-  );
-}
-
-function FeaturedCard({ athlete }: { athlete: any }) {
-  return (
-    <Link
-      to={`/athletes/${athlete.id}`}
-      /* 카드 폭을 컨테이너 폭에서 나눠 잡아 화면 크기와 무관하게 정해진 개수(lg 4개)만 보이게 한다.
-         고정 폭이면 화면 폭에 따라 마지막 카드가 잘려 보인다. gap-4 = 16px */
-      className="group flex-shrink-0 snap-start bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-emerald-300 hover:shadow-xl transition-all w-[calc((100%-16px)/2)] sm:w-[calc((100%-32px)/3)] lg:w-[calc((100%-48px)/4)]"
-    >
-      <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
-        {athlete.profileImageUrl ? (
-          <img
-            src={athlete.profileImageUrl}
-            alt={athlete.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-6xl font-extrabold text-emerald-300">
-            {athlete.name.charAt(0)}
-          </div>
-        )}
-        <div className="absolute top-3 left-3">
-          <span className="inline-flex items-center gap-1 bg-white/90 backdrop-blur text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-full">
-            <Trophy className="w-2.5 h-2.5" /> {athlete.tour || 'PRO'}
-          </span>
-        </div>
-        <AthleteBadges athlete={athlete} />
-      </div>
-      <div className="p-4">
-        <h3 className="text-base font-extrabold text-slate-900 mb-1">{athlete.name}</h3>
-        {/* SPONPIK 4. 권장 데이터: 신장 · 지역 · 데뷔 (구조화) */}
-        {(athlete.height || athlete.region || athlete.debutYear) && (
-          <div className="text-[11px] text-slate-600 font-semibold mb-1 flex flex-wrap items-center gap-x-1.5">
-            {athlete.height && <span>📏 {athlete.height}cm</span>}
-            {athlete.region && <span>📍 {athlete.region}</span>}
-            {athlete.debutYear && <span>🎯 {athlete.debutYear}</span>}
-          </div>
-        )}
-        <p className="text-xs text-slate-500 line-clamp-2 min-h-[2rem]">{athlete.bio || '프로 골퍼'}</p>
-        <div className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 group-hover:gap-2 transition-all">
-          프로필 보기 <ExternalLink className="w-3 h-3" />
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function AthleteCard({ athlete }: { athlete: any }) {
-  return (
-    <Link
-      to={`/athletes/${athlete.id}`}
-      className="group bg-white rounded-xl overflow-hidden border border-slate-200 hover:border-emerald-300 hover:shadow-lg transition-all"
-    >
-      <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-emerald-100 to-teal-100">
-        {athlete.profileImageUrl ? (
-          <img
-            src={athlete.profileImageUrl}
-            alt={athlete.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-5xl font-extrabold text-emerald-300">
-            {athlete.name.charAt(0)}
-          </div>
-        )}
-        <AthleteBadges athlete={athlete} size="sm" />
-      </div>
-      <div className="p-3">
-        <div className="flex items-center justify-between mb-1">
-          <h3 className="text-sm font-extrabold text-slate-900 truncate">{athlete.name}</h3>
-          <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">{athlete.tour || 'PRO'}</span>
-        </div>
-        {(athlete.height || athlete.region) && (
-          <div className="text-[10px] text-slate-600 font-semibold mb-0.5 truncate">
-            {athlete.height && <span>{athlete.height}cm</span>}
-            {athlete.height && athlete.region && <span className="opacity-50"> · </span>}
-            {athlete.region && <span>{athlete.region}</span>}
-          </div>
-        )}
-        <p className="text-[10px] text-slate-500 line-clamp-1">{athlete.bio || '프로 골퍼'}</p>
-      </div>
-    </Link>
   );
 }

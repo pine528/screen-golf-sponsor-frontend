@@ -118,10 +118,28 @@ export function Home() {
       .map((a) => ({ ...a, slots: byAthlete.get(a.id)! }));
   }, [athleteItems, liveAuctions, directSlots]);
 
-  /* §2.2-3 진행 중 후원기회 — 경매 우선 혼합 최대 3개 */
+  /* §2.2-3 진행 중 후원기회 — 완성형 상품(지금 가능한 후원)을 먼저, 없으면 슬롯·경매 */
+  const { data: offerItems } = useQuery({
+    queryKey: ['home-offers'],
+    queryFn: async () => {
+      const r: any = await api.listAvailableOffers({ limit: 3, sort: 'CLOSING' });
+      return ((r?.data?.offers || []) as any[]).map((o) => ({
+        id: o.id,
+        kind: 'OFFER' as const,
+        athleteId: o.athletes?.[0]?.athlete?.id ?? o.athletes?.[0]?.id,
+        player: o.athletes?.[0]?.athlete?.name ?? o.athletes?.[0]?.name ?? '선수',
+        playerImage: o.athletes?.[0]?.athlete?.profileImageUrl ?? o.athletes?.[0]?.profileImageUrl ?? '',
+        playerTour: o.athletes?.[0]?.athlete?.tour ?? o.athletes?.[0]?.tour ?? '',
+        slotName: o.title,
+        price: Number(o.supplyAmount || o.monthlyAmount || 0),
+        to: `/sponsor/available/${o.id}`,
+      }));
+    },
+    staleTime: 60_000,
+  });
   const opportunities = useMemo(
-    () => [...(liveAuctions || []), ...(directSlots || [])].slice(0, 3),
-    [liveAuctions, directSlots],
+    () => [...(offerItems || []), ...(liveAuctions || []), ...(directSlots || [])].slice(0, 3),
+    [offerItems, liveAuctions, directSlots],
   );
 
   const showTip = (key: string) => {
@@ -234,7 +252,7 @@ export function Home() {
 
               {/* 보조 링크 — 핵심 CTA와 시각 경쟁 금지 (§2.1) */}
               <div className="flex items-center justify-center gap-5 pt-1 text-[13px] font-semibold text-slate-500">
-                <Link to="/auctions" className="hover:text-emerald-600 transition-colors">진행 중 후원기회</Link>
+                <Link to="/sponsor/available" className="hover:text-emerald-600 transition-colors">지금 가능한 후원</Link>
                 <span className="w-px h-3 bg-slate-300" />
                 <Link to="/digital-partner" className="hover:text-emerald-600 transition-colors">디지털 파트너 월 구독</Link>
               </div>
@@ -297,9 +315,9 @@ export function Home() {
             <div className="flex items-end justify-between mb-7">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black tracking-tight">진행 중 후원기회</h2>
-                <p className="text-[13px] text-slate-400 mt-1.5">직접구매 · 경매 · 협의 방식의 모집 중 후원 상품입니다.</p>
+                <p className="text-[13px] text-slate-400 mt-1.5">지금 바로 시작할 수 있는 후원 상품입니다.</p>
               </div>
-              <Link to="/auctions" className="inline-flex items-center gap-1 text-[13px] font-bold text-slate-500 hover:text-emerald-600 shrink-0">
+              <Link to="/sponsor/available" className="inline-flex items-center gap-1 text-[13px] font-bold text-slate-500 hover:text-emerald-600 shrink-0">
                 전체 보기 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
@@ -322,13 +340,13 @@ export function Home() {
                       className={`ml-auto shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${
                         o.kind === 'AUCTION'
                           ? 'bg-rose-50 text-rose-600'
-                          : o.kind === 'DIRECT'
+                          : o.kind === 'DIRECT' || o.kind === 'OFFER'
                             ? 'bg-emerald-50 text-emerald-700'
                             : 'bg-slate-100 text-slate-500'
                       }`}
                     >
                       {o.kind === 'AUCTION' ? <Gavel className="w-3 h-3" /> : <Tag className="w-3 h-3" />}
-                      {o.kind === 'AUCTION' ? '라이브 경매' : o.kind === 'DIRECT' ? '직접구매' : '협의'}
+                      {o.kind === 'AUCTION' ? '라이브 경매' : o.kind === 'OFFER' ? '바로구매' : o.kind === 'DIRECT' ? '직접구매' : '협의'}
                     </span>
                   </div>
                   <p className="text-[15px] font-bold text-slate-800">{o.slotName}</p>
@@ -362,7 +380,7 @@ export function Home() {
             ))}
           </div>
           <Link
-            to="/how-it-works"
+            to="/about/how-it-works"
             className="mt-7 inline-flex items-center gap-1.5 text-[13px] font-bold text-emerald-600 hover:text-emerald-700"
           >
             이용방법 자세히 보기 <ArrowRight className="w-4 h-4" />
@@ -428,7 +446,7 @@ export function Home() {
       {/* ════════════════ FOOTER ════════════════ */}
       <footer className="border-t border-slate-200 bg-slate-50">
         <div className="max-w-7xl mx-auto px-5 py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
                 <img src="/logo-48.png" alt="" className="w-7 h-7 rounded-lg" />
@@ -439,8 +457,9 @@ export function Home() {
               </p>
             </div>
             {[
-              { title: '후원하기', links: [{ to: '/athletes', t: '직접 PICK' }, { to: '/sponsor/recommended', t: '추천 PICK' }, { to: '/auctions', t: '진행 중 후원기회' }, { to: '/digital-partner', t: '월 구독' }] },
-              { title: '지원', links: [{ to: '/guide', t: '이용가이드' }, { to: '/faq', t: 'FAQ' }, { to: '/contact', t: '고객센터' }] },
+              { title: '후원하기', links: [{ to: '/sponsor/direct/athletes', t: '직접 PICK' }, { to: '/sponsor/recommended', t: '추천 PICK' }, { to: '/sponsor/available', t: '지금 가능한 후원' }, { to: '/digital-partner', t: '디지털 파트너 월 구독' }] },
+              { title: '스폰픽 소개', links: [{ to: '/about/service', t: '서비스 소개' }, { to: '/about/how-it-works', t: '이용방법' }, { to: '/about/performance-guarantee', t: '성과보장 프로그램' }, { to: '/about/cases', t: '매칭사례' }] },
+              { title: '지원', links: [{ to: '/faq', t: 'FAQ' }, { to: '/contact', t: '고객센터' }] },
               { title: '법적 고지', links: [{ to: '/terms', t: '이용약관' }, { to: '/privacy', t: '개인정보처리방침' }] },
             ].map((col) => (
               <div key={col.title}>
