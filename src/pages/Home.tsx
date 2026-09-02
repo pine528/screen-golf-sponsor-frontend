@@ -164,7 +164,7 @@ export function Home() {
           <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,470px)_minmax(0,410px)] items-center gap-4 lg:gap-6 py-8 lg:py-0 lg:min-h-[620px]">
             {/* 좌: 카피 */}
             <div className="relative z-10 lg:pr-2">
-              <h1 className="text-[30px] sm:text-4xl lg:text-[40px] xl:text-[44px] font-black tracking-tight leading-[1.32]">
+              <h1 className="text-[30px] sm:text-[36px] lg:text-[40px] xl:text-[44px] font-extrabold tracking-[-0.02em] leading-[1.5]">
                 <span className="block whitespace-nowrap">선수를 선택하고,</span>
                 <span className="block whitespace-nowrap">후원방식을 <span className="text-emerald-500">PICK</span>하고,</span>
                 <span className="block whitespace-nowrap">바로 시작하세요.</span>
