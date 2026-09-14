@@ -294,7 +294,7 @@ export default function UnifiedPurchase({
   return (
     /* 폭·좌우 여백은 선수 상세의 히어로 및 다른 섹션과 동일하게 맞춘다.
        모바일은 하단 고정 바 높이만큼 여백 확보 */
-    <section data-section="purchase" className="max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-28 lg:pb-8">
+    <section data-section="purchase" className="max-w-7xl mx-auto px-4 sm:px-6 py-8 pb-28 lg:pb-8 scroll-mt-28">
       <h2 className="text-xl font-extrabold text-slate-900 mb-1 inline-flex items-center gap-2">
         <Gavel className="w-5 h-5 text-emerald-500" />
         {athlete?.name ? `${athlete.name}'s 스폰서십 슬롯` : '진행중인 스폰서십 슬롯'}

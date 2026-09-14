@@ -28,6 +28,7 @@ import LegalNotice from '../components/LegalNotice';
 import UnifiedPurchase from '../components/purchase/UnifiedPurchase';
 import Breadcrumb from '../components/Breadcrumb';
 import PublicHeader from '../components/PublicHeader';
+import AthleteSnapshot from '../components/athlete/AthleteSnapshot';
 
 // 빈 값 → '-' 표기 헬퍼
 const dash = (v: any, suffix = ''): string => {
@@ -207,6 +208,16 @@ export default function PublicAthleteDetail() {
         onLogin={() => navigate('/login')}
       />
 
+      {/* 4축 Snapshot + 탭 (UI 가이드 §10.2) */}
+      <AthleteSnapshot
+        athlete={athlete}
+        eventResults={eventResults}
+        slotInstances={orderedSlots}
+        social={social}
+        youtube={youtube}
+        userRole={user?.role}
+      />
+
       {/* 중단: 슬롯별 실시간 경매 현황 (3-2 + 3-3 + 3-4) */}
       {/* 개편 Phase 2 (WF-04): 선수정보·슬롯 인벤토리·구매 패널 통합 3열 */}
       <UnifiedPurchase
@@ -282,7 +293,7 @@ export default function PublicAthleteDetail() {
       </section>
 
       {/* === E. 운영 현황 (docx §8 — 슬롯 / 최근 대회 / 예정 대회) === */}
-      <section data-section="profile-detail" className="max-w-7xl mx-auto px-4 sm:px-6 pb-12">
+      <section data-section="profile-detail" className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 scroll-mt-28">
         <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
           <Gavel className="w-5 h-5 text-emerald-500" />
           운영 현황
@@ -776,7 +787,7 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
 
           {/* 주요 이력 및 성적 */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5">
-            <h2 className="text-sm font-extrabold text-slate-900 mb-3.5">주요 이력 및 성적</h2>
+            <h2 data-section="results" className="text-sm font-extrabold text-slate-900 mb-3.5 scroll-mt-28">주요 이력 및 성적</h2>
             <div className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-6">
               <div>
                 <div className="text-[12px] font-bold text-slate-500 mb-2">주요 이력</div>
@@ -855,7 +866,7 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
             )}
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-5">
+          <div data-section="sns" className="bg-white rounded-2xl border border-slate-200 p-5 scroll-mt-28">
             <h2 className="text-sm font-extrabold text-slate-900 mb-3">SNS &amp; 콘텐츠 채널</h2>
             <div className="space-y-2">
               <a
