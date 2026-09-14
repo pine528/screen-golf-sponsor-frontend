@@ -23,7 +23,6 @@ import DigitalApply from './pages/digital/DigitalApply';
 import DigitalApplicationStatus from './pages/digital/DigitalApplicationStatus';
 import DirectAthletes from './pages/direct/DirectAthletes';
 import DirectBuild from './pages/direct/DirectBuild';
-import DirectConfigure from './pages/direct/DirectConfigure';
 import DirectCart from './pages/direct/DirectCart';
 import DirectRequest from './pages/direct/DirectRequest';
 import DirectApproval from './pages/direct/DirectApproval';
@@ -278,6 +277,13 @@ function LegacyStoreRedirect({ kind }: { kind?: 'product' | 'checkout' }) {
 }
 
 /** 이전 /sponsor/pick/* 경로를 직접 선택 PICK 9단계 경로로 넘긴다 */
+/** /build/:id/configure → /build/:id (v2.1 §3: 구성은 build 한 화면) — 선택값 query는 유지 */
+function ConfigureRedirect() {
+  const { athleteId } = useParams();
+  const search = typeof window !== 'undefined' ? window.location.search : '';
+  return <Navigate to={`/sponsor/direct/build/${athleteId}${search}`} replace />;
+}
+
 function LegacyPickRedirect({ kind }: { kind: 'build' | 'configure' }) {
   const { athleteId } = useParams();
   const search = window.location.search;
@@ -441,7 +447,7 @@ function App() {
       <Route path="/sponsor/direct" element={<Navigate to="/sponsor/direct/athletes" replace />} />
       <Route path="/sponsor/direct/athletes" element={<DirectAthletes />} />
       <Route path="/sponsor/direct/build/:athleteId" element={<DirectBuild />} />
-      <Route path="/sponsor/direct/build/:athleteId/configure" element={<DirectConfigure />} />
+      <Route path="/sponsor/direct/build/:athleteId/configure" element={<ConfigureRedirect />} />
       <Route path="/sponsor/direct/cart" element={<ProtectedRoute><DirectCart /></ProtectedRoute>} />
       <Route path="/sponsor/direct/request/:draftId" element={<ProtectedRoute><DirectRequest /></ProtectedRoute>} />
       <Route path="/sponsor/direct/approval/:requestId" element={<ProtectedRoute><DirectApproval /></ProtectedRoute>} />
