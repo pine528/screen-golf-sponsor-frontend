@@ -220,6 +220,14 @@ export default function RecommendResults() {
                   </div>
                 </div>
                 <p className="mt-1.5 text-[12px] text-slate-500 font-semibold">{p.tagline}</p>
+                {p.approvability && (
+                  <p className={`mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[12.5px] font-bold ${
+                    p.approvability.level === 'HIGH' ? 'bg-emerald-50 text-emerald-700' : p.approvability.level === 'MEDIUM' ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-700'
+                  }`} title={(p.approvability.reasons || []).join(' / ')}>
+                    {p.approvability.level === 'HIGH' ? <Check className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
+                    {p.approvability.label} · 승인 유효 {p.approvability.approvalWindowHours}시간
+                  </p>
+                )}
 
                 {/* 예산 사용 바 */}
                 <div className="mt-3 h-1.5 rounded-full bg-slate-100 overflow-hidden">
@@ -272,11 +280,15 @@ export default function RecommendResults() {
                   </div>
                 )}
 
-                {p.key === 'CHALLENGE' && (
-                  <p className="mt-3 flex items-start gap-1.5 rounded-xl bg-violet-50 px-3 py-2.5 text-[12.5px] text-violet-800 break-keep">
-                    <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                    성장 가능성을 우선한 조합입니다. 데이터가 적은 선수가 포함될 수 있어 예상 범위의 불확실성이 큽니다.
-                  </p>
+                {(p.risks?.length ?? 0) > 0 && (
+                  <ul className="mt-3 space-y-1.5">
+                    {p.risks.map((r: any) => (
+                      <li key={r.code} className="flex items-start gap-1.5 rounded-xl bg-amber-50 px-3 py-2 text-[12.5px] text-amber-800 break-keep">
+                        <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                        <span><b>{r.label}</b> — {r.text}</span>
+                      </li>
+                    ))}
+                  </ul>
                 )}
 
                 {/* 실측 지표 */}
@@ -295,6 +307,31 @@ export default function RecommendResults() {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                {/* 예상 범위 — 보장이 아니며 근거·기준일·산식 버전과 함께만 표시 (v2.1 §14.1) */}
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <p className="text-[12px] font-extrabold text-slate-500 mb-2">예상 범위 <span className="font-bold">(보장 아님)</span></p>
+                  {p.expected?.metrics?.length ? (
+                    <div className="space-y-1.5">
+                      {p.expected.metrics.map((m: any) => (
+                        <div key={m.metric} className="rounded-xl bg-slate-50 px-3 py-2.5">
+                          <div className="flex items-baseline justify-between gap-2">
+                            <span className="text-[12.5px] text-slate-600">{m.metric}</span>
+                            <span className="text-[14px] font-extrabold text-slate-900 tabular-nums">
+                              {m.minValue >= 10000 ? `${(m.minValue / 10000).toFixed(1)}만` : m.minValue.toLocaleString()}~{m.maxValue >= 10000 ? `${(m.maxValue / 10000).toFixed(1)}만` : m.maxValue.toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-[12px] text-slate-500 break-keep">{m.basis}</p>
+                        </div>
+                      ))}
+                      <p className="text-[12px] text-slate-500">
+                        신뢰도 {p.expected.confidence === 'HIGH' ? '높음' : p.expected.confidence === 'MEDIUM' ? '보통' : '제한적'} · 기준일 {new Date(p.expected.dataAsOf).toLocaleDateString('ko-KR')} · 산식 {p.expected.methodVersion}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-[12.5px] text-slate-500 break-keep">예상 범위를 만들 실측 데이터(팔로워)가 없어 표시하지 않습니다.</p>
+                  )}
                 </div>
 
                 <div className="mt-5 grid grid-cols-2 gap-2">

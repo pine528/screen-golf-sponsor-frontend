@@ -314,6 +314,13 @@ function AthleteDashboard() {
   const { data: stats } = useQuery({ queryKey: ['athlete-stats'], queryFn: () => api.getMyAthleteStats(), retry: 1 });
   const { data: contracts } = useQuery({ queryKey: ['my-contracts'], queryFn: () => api.getMyContracts(), retry: 1 });
   const { data: settlement } = useQuery({ queryKey: ['settlement-stats'], queryFn: () => api.getMySettlementStats(), retry: 1 });
+  const { data: meResp } = useQuery({ queryKey: ['athlete-me'], queryFn: () => api.getMyAthlete(), retry: 0 });
+  const athleteId: string | undefined = meResp?.data?.id;
+  const { data: tempResp } = useQuery({ queryKey: ['fan-temperature', athleteId], queryFn: () => api.getFanTemperature(athleteId!), enabled: !!athleteId, retry: 0 });
+  const temp: any = tempResp?.data || null;
+  const tempText = temp?.score != null && temp.score > 0 && !temp.lowSample ? `${Number(temp.score).toFixed(1)}℃` : temp?.lowSample ? `집계 중 (참여 ${temp.sampleSize ?? 0}명)` : '집계 중';
+  const checkedAt: string | null = meResp?.data?.profileUpdatedAt || null;
+  const checkedDays = checkedAt ? Math.floor((Date.now() - new Date(checkedAt).getTime()) / 86400_000) : null;
 
   const reqList: any[] = useMemo(() => (Array.isArray(requests?.data) ? requests.data : []), [requests]);
   const pending = reqList.filter((r) => r.status === 'PENDING');
@@ -396,11 +403,13 @@ function AthleteDashboard() {
           <Section title="팬 · 데이터 체크인" desc="팬온도는 실력이 아니라 최근 30일 팬 활동의 활성도입니다">
             <ul className="divide-y divide-slate-100">
               <li>
-                <Link to="/fan" className="px-5 py-3.5 flex items-center gap-3 hover:bg-slate-50">
+                <Link to={athleteId ? `/fan/temperature/${athleteId}` : '/fan'} className="px-5 py-3.5 flex items-center gap-3 hover:bg-slate-50">
                   <span className="w-9 h-9 rounded-xl bg-rose-50 text-rose-500 inline-flex items-center justify-center shrink-0"><Heart className="w-4 h-4" /></span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[14px] font-bold text-slate-900">팬온도 · 새 VOTE · 최근 응원</span>
-                    <span className="block text-[12.5px] text-slate-500">팬 참여 허브에서 내 선수 페이지를 확인하세요.</span>
+                    <span className="block text-[14px] font-bold text-slate-900">팬온도 <span className="text-rose-600 tabular-nums">{tempText}</span></span>
+                    <span className="block text-[12.5px] text-slate-500">
+                      {temp?.weeklyDelta != null && !temp?.lowSample ? `지난주 대비 ${temp.weeklyDelta > 0 ? '+' : ''}${Number(temp.weeklyDelta).toFixed(1)}℃ · ` : ''}최근 30일 팬 활동 활성도입니다. 실력 점수가 아닙니다.
+                    </span>
                   </span>
                   <ArrowRight className="w-4 h-4 text-slate-300 shrink-0" />
                 </Link>
@@ -409,8 +418,15 @@ function AthleteDashboard() {
                 <Link to="/profile" className="px-5 py-3.5 flex items-center gap-3 hover:bg-slate-50">
                   <span className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 inline-flex items-center justify-center shrink-0"><PenLine className="w-4 h-4" /></span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[14px] font-bold text-slate-900">5분 체크인</span>
-                    <span className="block text-[12.5px] text-slate-500">일정 · 활동 · 가격 · 업종 · SNS를 확인하고 "변경 없음"이라도 저장하세요.</span>
+                    <span className="block text-[14px] font-bold text-slate-900">
+                      5분 체크인
+                      {checkedDays != null && (
+                        <span className={`ml-2 text-[12.5px] font-bold ${checkedDays >= 28 ? 'text-amber-700' : 'text-slate-500'}`}>마지막 확인 {checkedDays === 0 ? '오늘' : `${checkedDays}일 전`}</span>
+                      )}
+                    </span>
+                    <span className="block text-[12.5px] text-slate-500">
+                      {checkedDays != null && checkedDays >= 28 ? '4주 넘게 확인하지 않았습니다. ' : ''}일정 · 활동 · 가격 · 업종 · SNS를 확인하고 "변경 없음"이라도 저장하세요.
+                    </span>
                   </span>
                   <ArrowRight className="w-4 h-4 text-slate-300 shrink-0" />
                 </Link>

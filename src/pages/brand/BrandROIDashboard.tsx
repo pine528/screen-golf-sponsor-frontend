@@ -42,6 +42,9 @@ export default function BrandROIDashboard() {
     queryFn: () => api.get('/campaigns/my'),
   });
   const { data: me } = useQuery({ queryKey: ['brand-me'], queryFn: () => api.get('/brands/me'), retry: 0 });
+  /* 계약 시 예상 범위 — 신청(승인·결제·진행) 스냅샷에 기록된 값만. 캠페인 자체에는 예상치가 없다 */
+  const { data: appsData } = useQuery({ queryKey: ['brand-applications'], queryFn: () => api.listApplications(), retry: 0 });
+  const [selectedAppId, setSelectedAppId] = useState<string>('');
   const brandId: string | undefined = (me as any)?.data?.id;
 
   /* Media — AI 로고 검출 노출 (캠페인 단위) */
@@ -65,13 +68,16 @@ export default function BrandROIDashboard() {
   });
 
   const campaigns: any[] = campaignsData?.data || [];
-  const campaign = campaigns.find((c) => c.id === selectedCampaignId);
   const dashboard = dashboardData?.data;
   const exposures: any[] = exposureStatsData?.data?.items || [];
   const funnel: any = (funnelData as any)?.data?.summary || null;
 
-  /* 계약 시 예상 범위 — 캠페인 스냅샷에 있을 때만 (없으면 "기록 없음") */
-  const expected: any = campaign?.expectedPerformance || campaign?.snapshot?.expectedPerformance || null;
+  const contracted: any[] = useMemo(() => {
+    const list: any[] = Array.isArray(appsData?.data) ? appsData.data : appsData?.data?.applications || [];
+    return list.filter((a) => ['APPROVED', 'PAYMENT_PENDING', 'ACTIVE'].includes(a.status) && a.snapshot?.plan?.expected);
+  }, [appsData]);
+  const selectedApp = contracted.find((a) => a.id === selectedAppId) || contracted[0] || null;
+  const expected: any = selectedApp?.snapshot?.plan?.expected || null;
   const expectedOf = (metric: string) => {
     const m = (expected?.metrics || []).find((x: any) => String(x.metric).includes(metric));
     if (!m) return null;
@@ -205,6 +211,13 @@ export default function BrandROIDashboard() {
                 예상은 구매 판단을 돕는 범위이고, 실제는 집행 후 측정한 값입니다. 둘을 같은 숫자로 섞지 않습니다.
               </p>
             </div>
+            {contracted.length > 0 && (
+              <select value={selectedApp?.id || ''} onChange={(e) => setSelectedAppId(e.target.value)} className="input w-64 ml-auto shrink-0" aria-label="예상 범위 기준 신청">
+                {contracted.map((a) => (
+                  <option key={a.id} value={a.id}>{a.planName || a.snapshot?.plan?.name || '후원 신청'} · {a.submittedAt ? new Date(a.submittedAt).toLocaleDateString('ko-KR') : ''}</option>
+                ))}
+              </select>
+            )}
           </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[560px]">
@@ -237,10 +250,16 @@ export default function BrandROIDashboard() {
               </tbody>
             </table>
           </div>
+          {expected && (
+            <p className="px-5 py-3 text-[12.5px] text-slate-500 flex items-start gap-1.5 border-t border-slate-100 break-keep">
+              <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+              예상 범위 기준일 {expected.dataAsOf ? new Date(expected.dataAsOf).toLocaleDateString('ko-KR') : '-'} · 산식 {expected.methodVersion || '-'} · 신뢰도 {expected.confidence === 'HIGH' ? '높음' : expected.confidence === 'MEDIUM' ? '보통' : '제한적'} · 보장 아님
+            </p>
+          )}
           {!expected && (
             <p className="px-5 py-3 text-[12.5px] text-slate-500 flex items-start gap-1.5 border-t border-slate-100 break-keep">
               <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-              선택한 캠페인의 계약 스냅샷에 예상 범위가 없습니다. 추천 PICK · 지금 가능한 후원으로 계약한 캠페인은 기준일·신뢰도와 함께 예상 범위가 기록됩니다.
+              승인·진행 중인 신청 중 예상 범위가 기록된 건이 없습니다. 추천 PICK으로 신청하면 계약 시점의 예상 범위(근거·기준일·산식 버전)가 스냅샷으로 남습니다.
             </p>
           )}
         </section>
