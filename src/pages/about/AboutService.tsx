@@ -152,7 +152,7 @@ export default function AboutService() {
             <span className="h-11 px-5 inline-flex items-center gap-1.5 rounded-xl border border-indigo-300 text-indigo-600 text-sm font-bold hover:bg-indigo-50 transition-colors">
               @sponpik_official 바로가기 <ExternalLink className="w-4 h-4" />
             </span>
-            <span className="text-[10.5px] text-slate-400">instagram.com/sponpik_official</span>
+            <span className="text-[12.5px] text-slate-500">instagram.com/sponpik_official</span>
           </a>
         </div>
       </section>

@@ -144,19 +144,19 @@ export default function RecommendBrief() {
         {/* 브레드크럼 + 단계 */}
         <div className="flex flex-col lg:flex-row lg:items-center gap-4 justify-between">
           <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px]">
-            <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+            <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <span className="text-slate-400">후원하기</span>
+            <span className="text-slate-500">후원하기</span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             <span className="font-bold text-emerald-700">스폰픽 추천 PICK</span>
           </nav>
           <ol className="flex items-center gap-1.5 overflow-x-auto">
             {STEPS.map((s, i) => (
               <li key={s} className="flex items-center gap-1.5 shrink-0">
-                <span className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center ${
-                  i === 0 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'
+                <span className={`w-6 h-6 rounded-full text-[12px] font-black flex items-center justify-center ${
+                  i === 0 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-500'
                 }`}>{i + 1}</span>
-                <span className={`text-[12px] font-bold ${i === 0 ? 'text-emerald-700' : 'text-slate-400'}`}>{s}</span>
+                <span className={`text-[12px] font-bold ${i === 0 ? 'text-emerald-700' : 'text-slate-500'}`}>{s}</span>
                 {i < STEPS.length - 1 && <span className="w-5 h-px bg-slate-200 mx-1" />}
               </li>
             ))}
@@ -172,7 +172,7 @@ export default function RecommendBrief() {
             <section className="rounded-2xl border border-slate-200 p-5 sm:p-6">
               <label htmlFor="ft" className="flex items-center gap-1.5 text-[14px] font-extrabold">
                 브랜드와 제품을 소개해주세요
-                <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-black">필수</span>
+                <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[12.5px] font-black">필수</span>
               </label>
               <div className="relative mt-3">
                 <textarea
@@ -183,10 +183,10 @@ export default function RecommendBrief() {
                   placeholder="월 100만원으로 3040 여성 골퍼에게 화장품을 알리고 구매로 연결하고 싶어요."
                   className="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-[14px] leading-relaxed focus:outline-none focus:border-emerald-400 resize-none"
                 />
-                <span className="absolute right-3 bottom-2.5 text-[11px] text-slate-300 tabular-nums">{freeText.length} / 500</span>
+                <span className="absolute right-3 bottom-2.5 text-[12px] text-slate-300 tabular-nums">{freeText.length} / 500</span>
               </div>
 
-              <label htmlFor="url" className="block mt-4 text-[12.5px] font-bold text-slate-500">브랜드/제품 관련 URL <span className="font-normal text-slate-400">(선택)</span></label>
+              <label htmlFor="url" className="block mt-4 text-[12.5px] font-bold text-slate-500">브랜드/제품 관련 URL <span className="font-normal text-slate-500">(선택)</span></label>
               <input
                 id="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://"
                 className="mt-1.5 w-full h-11 rounded-xl border border-slate-200 px-4 text-[13.5px] focus:outline-none focus:border-emerald-400"
@@ -219,7 +219,7 @@ export default function RecommendBrief() {
               <section className="rounded-2xl border border-slate-200 p-5">
                 <h2 className="text-[13.5px] font-extrabold flex items-center gap-1.5">
                   <span className="text-emerald-600">①</span> 월 예산은 얼마인가요?
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-black">필수</span>
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[12.5px] font-black">필수</span>
                 </h2>
                 <div role="radiogroup" className="mt-3 space-y-2">
                   {BUDGETS.map((b) => <Radio key={b.key} on={budget === b.key} onClick={() => setBudget(b.key)}>{b.label}</Radio>)}
@@ -228,7 +228,7 @@ export default function RecommendBrief() {
               <section className="rounded-2xl border border-slate-200 p-5">
                 <h2 className="text-[13.5px] font-extrabold flex items-center gap-1.5">
                   <span className="text-emerald-600">②</span> 목표는 무엇인가요?
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-black">필수</span>
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[12.5px] font-black">필수</span>
                 </h2>
                 <div role="radiogroup" className="mt-3 space-y-2">
                   {OBJECTIVES.map((o) => <Radio key={o.key} on={objective === o.key} onClick={() => setObjective(o.key)}>{o.label}</Radio>)}
@@ -245,7 +245,7 @@ export default function RecommendBrief() {
               <section className="rounded-2xl border border-slate-200 p-5">
                 <h2 className="text-[13.5px] font-extrabold flex items-center gap-1.5">
                   <span className="text-emerald-600">④</span> 필수/제외 조건이 있나요?
-                  <span className="text-[10.5px] font-bold text-slate-400">선택</span>
+                  <span className="text-[12.5px] font-bold text-slate-500">선택</span>
                 </h2>
                 <div className="relative mt-3">
                   <textarea
@@ -255,7 +255,7 @@ export default function RecommendBrief() {
                     placeholder="예) 여성 골프 선수 선호해요. 정치/주류/도박 관련은 제외합니다."
                     className="w-full rounded-xl border border-slate-200 px-4 py-3 text-[13px] leading-relaxed focus:outline-none focus:border-emerald-400 resize-none"
                   />
-                  <span className="absolute right-3 bottom-2.5 text-[11px] text-slate-300 tabular-nums">{constraints.length} / 300</span>
+                  <span className="absolute right-3 bottom-2.5 text-[12px] text-slate-300 tabular-nums">{constraints.length} / 300</span>
                 </div>
               </section>
             </div>
@@ -290,7 +290,7 @@ export default function RecommendBrief() {
               </div>
             </div>
 
-            <p className="mt-4 flex items-start gap-2 rounded-xl bg-emerald-50/70 px-3.5 py-3 text-[11.5px] text-emerald-800 leading-relaxed">
+            <p className="mt-4 flex items-start gap-2 rounded-xl bg-emerald-50/70 px-3.5 py-3 text-[12.5px] text-emerald-800 leading-relaxed">
               <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5" />
               입력 정보는 추천 분석과 제안서 작성에만 사용됩니다.
             </p>
@@ -307,7 +307,7 @@ export default function RecommendBrief() {
           >
             <Bookmark className="w-4 h-4" /> {saved ? '저장했어요' : '저장 후 나중에 계속'}
           </button>
-          <p className="hidden sm:flex items-center gap-1.5 text-[11.5px] text-slate-400">
+          <p className="hidden sm:flex items-center gap-1.5 text-[12.5px] text-slate-500">
             <Info className="w-3.5 h-3.5" /> 입력 정보는 추천 분석과 제안서 작성에만 사용됩니다.
           </p>
           <button

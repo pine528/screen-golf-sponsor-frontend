@@ -104,10 +104,10 @@ export default function DirectComplete() {
                   <span className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
                     <s.icon className="w-4 h-4 text-emerald-600" />
                   </span>
-                  <span className="w-6 h-6 rounded-full bg-emerald-500 text-white text-[11px] font-black flex items-center justify-center">{i + 1}</span>
+                  <span className="w-6 h-6 rounded-full bg-emerald-500 text-white text-[12px] font-black flex items-center justify-center">{i + 1}</span>
                 </div>
                 <p className="mt-3 text-[13.5px] font-extrabold">{s.title}</p>
-                <p className="mt-1 text-[11.5px] text-slate-500 break-keep">{s.desc}</p>
+                <p className="mt-1 text-[12.5px] text-slate-500 break-keep">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -117,7 +117,7 @@ export default function DirectComplete() {
           {/* 선수별 실행 일정 */}
           <div className="rounded-2xl bg-white border border-slate-200 p-5">
             <h2 className="text-[15px] font-extrabold">선수별 실행 일정</h2>
-            <p className="mt-1 text-[12px] text-slate-400">선수별 준비 및 노출 일정을 확인하세요.</p>
+            <p className="mt-1 text-[12px] text-slate-500">선수별 준비 및 노출 일정을 확인하세요.</p>
             <ul className="mt-4 divide-y divide-slate-100">
               {items.map((i: any, idx: number) => (
                 <li key={i.id} className="py-3.5 flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -125,14 +125,14 @@ export default function DirectComplete() {
                     {i.athlete?.profileImageUrl && <img src={i.athlete.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
                   </span>
                   <div className="min-w-0">
-                    <p className="text-[14px] font-extrabold">{i.athlete?.name} <span className="text-[11px] font-bold text-slate-400">프로</span></p>
-                    <p className="text-[11.5px] text-slate-400">{i.athlete?.tour} · {i.slotName}</p>
+                    <p className="text-[14px] font-extrabold">{i.athlete?.name} <span className="text-[12px] font-bold text-slate-500">프로</span></p>
+                    <p className="text-[12.5px] text-slate-500">{i.athlete?.tour} · {i.slotName}</p>
                   </div>
                   <div className="ml-auto text-right">
-                    <p className="text-[11px] text-slate-400">다음 단계</p>
+                    <p className="text-[12px] text-slate-500">다음 단계</p>
                     <p className="text-[12.5px] font-bold">{idx === 0 ? '소재 최종 제출' : idx === 1 ? '패치 제작' : '선수 확인'}</p>
                   </div>
-                  <span className={`shrink-0 px-2 py-1 rounded-md text-[11px] font-bold ${
+                  <span className={`shrink-0 px-2 py-1 rounded-md text-[12px] font-bold ${
                     idx === 0 ? 'bg-emerald-50 text-emerald-700' : idx === 1 ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-500'
                   }`}>
                     {idx === 0 ? '준비 중' : idx === 1 ? '대기 중' : '예정'}
@@ -140,7 +140,7 @@ export default function DirectComplete() {
                 </li>
               ))}
             </ul>
-            <p className="mt-3 pt-3 border-t border-slate-100 text-[11.5px] text-slate-400 break-keep">
+            <p className="mt-3 pt-3 border-t border-slate-100 text-[12.5px] text-slate-500 break-keep">
               정확한 일정은 패치 제작 리드타임과 대회 일정에 따라 선수별 안내로 확정됩니다.
             </p>
           </div>
@@ -149,7 +149,7 @@ export default function DirectComplete() {
           <aside className="space-y-4">
             <div className="rounded-2xl bg-white border border-slate-200 p-5">
               <h2 className="text-[15px] font-extrabold">지금 할 일</h2>
-              <p className="mt-1 text-[12px] text-slate-400">아래 항목을 확인하고 준비해주세요.</p>
+              <p className="mt-1 text-[12px] text-slate-500">아래 항목을 확인하고 준비해주세요.</p>
               <ul className="mt-3 space-y-2">
                 {TODO.map((t, i) => {
                   const on = done.includes(i);
@@ -163,8 +163,8 @@ export default function DirectComplete() {
                           className="w-4 h-4 accent-emerald-600 shrink-0 mt-0.5"
                         />
                         <span className="min-w-0">
-                          <span className={`block text-[13px] font-bold ${on ? 'text-slate-400 line-through' : ''}`}>{t.title}</span>
-                          <span className="block text-[11.5px] text-slate-400 break-keep">{t.desc}</span>
+                          <span className={`block text-[13px] font-bold ${on ? 'text-slate-500 line-through' : ''}`}>{t.title}</span>
+                          <span className="block text-[12.5px] text-slate-500 break-keep">{t.desc}</span>
                         </span>
                       </label>
                     </li>
@@ -175,13 +175,13 @@ export default function DirectComplete() {
 
             <div className="rounded-2xl bg-white border border-slate-200 p-5">
               <h2 className="text-[15px] font-extrabold">도움이 필요하신가요?</h2>
-              <p className="mt-1 text-[12px] text-slate-400">평일 09:00 ~ 18:00 (주말 및 공휴일 휴무)</p>
+              <p className="mt-1 text-[12px] text-slate-500">평일 09:00 ~ 18:00 (주말 및 공휴일 휴무)</p>
               <div className="mt-3 space-y-2">
                 <a href="tel:02-6953-1987" className="flex items-center gap-2.5 rounded-xl border border-slate-200 px-3.5 py-3 text-[13px] font-bold hover:bg-slate-50">
-                  <Phone className="w-4 h-4 text-slate-400" /> 02-6953-1987
+                  <Phone className="w-4 h-4 text-slate-500" /> 02-6953-1987
                 </a>
                 <a href="mailto:help@sponpik.com" className="flex items-center gap-2.5 rounded-xl border border-slate-200 px-3.5 py-3 text-[13px] font-bold hover:bg-slate-50">
-                  <Mail className="w-4 h-4 text-slate-400" /> help@sponpik.com
+                  <Mail className="w-4 h-4 text-slate-500" /> help@sponpik.com
                 </a>
               </div>
             </div>
@@ -210,7 +210,7 @@ export default function DirectComplete() {
 function Info({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className="text-center">
-      <p className="text-[11.5px] text-slate-400">{label}</p>
+      <p className="text-[12.5px] text-slate-500">{label}</p>
       <p className={`mt-1 text-[16px] font-black ${accent ? 'text-emerald-600' : ''}`}>{value}</p>
     </div>
   );

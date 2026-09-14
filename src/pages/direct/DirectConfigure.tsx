@@ -215,8 +215,8 @@ export default function DirectConfigure() {
                 {a?.profileImageUrl && <img src={a.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
               </span>
               <div className="min-w-0">
-                <p className="text-[16px] font-extrabold">{a?.name} <span className="text-[12px] font-bold text-slate-400">프로</span></p>
-                <p className="text-[12px] text-slate-400 truncate">
+                <p className="text-[16px] font-extrabold">{a?.name} <span className="text-[12px] font-bold text-slate-500">프로</span></p>
+                <p className="text-[12px] text-slate-500 truncate">
                   {lines.map((l) => l.quote?.slotName).filter(Boolean).join(' · ') || '상품 확인 중'}
                 </p>
               </div>
@@ -256,7 +256,7 @@ export default function DirectConfigure() {
                     );
                   })}
                 </div>
-                {auctionBlocked && <p className="mt-2 text-[11.5px] text-slate-400">6개월 이상 장기 상품은 경매로 판매하지 않습니다.</p>}
+                {auctionBlocked && <p className="mt-2 text-[12.5px] text-slate-500">6개월 이상 장기 상품은 경매로 판매하지 않습니다.</p>}
               </Row>
 
               <Row n={3} title="시작일" required>
@@ -268,7 +268,7 @@ export default function DirectConfigure() {
                     onChange={(e) => setStartDate(e.target.value)}
                     className="h-11 px-3.5 rounded-xl border border-slate-200 text-[13.5px] focus:outline-none focus:border-emerald-400"
                   />
-                  <span className="text-[12px] text-slate-400">패치 제작 리드타임을 고려해 7일 이후부터 선택할 수 있습니다.</span>
+                  <span className="text-[12px] text-slate-500">패치 제작 리드타임을 고려해 7일 이후부터 선택할 수 있습니다.</span>
                 </div>
               </Row>
 
@@ -288,7 +288,7 @@ export default function DirectConfigure() {
                               aria-label={o.label}
                             />
                             <span className="text-[12.5px] font-bold truncate">{o.label}</span>
-                            <span className="ml-auto text-[11.5px] font-extrabold text-emerald-600 shrink-0">
+                            <span className="ml-auto text-[12.5px] font-extrabold text-emerald-600 shrink-0">
                               +{o.price.toLocaleString()}
                             </span>
                           </div>
@@ -312,7 +312,7 @@ export default function DirectConfigure() {
                     })}
                   </div>
                 ) : (
-                  <p className="text-[12.5px] text-slate-400 break-keep">
+                  <p className="text-[12.5px] text-slate-500 break-keep">
                     온라인 전용 상품만 선택하셨습니다. 추가 활동은 착장 슬롯을 함께 담을 때 구성할 수 있습니다.
                   </p>
                 )}
@@ -341,7 +341,7 @@ export default function DirectConfigure() {
                   })}
                 </div>
                 {droppedScopes.length > 0 && (
-                  <p className="mt-2 flex items-start gap-1.5 text-[11.5px] text-amber-700 break-keep">
+                  <p className="mt-2 flex items-start gap-1.5 text-[12.5px] text-amber-700 break-keep">
                     <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                     선택한 상품이 제공하지 않는 범위는 견적에서 제외됩니다.
                   </p>
@@ -360,7 +360,7 @@ export default function DirectConfigure() {
                     />
                   </label>
                   <label className="block">
-                    <span className="text-[12px] font-bold text-slate-500">캠페인 카피 <span className="font-normal text-slate-400">(선택)</span></span>
+                    <span className="text-[12px] font-bold text-slate-500">캠페인 카피 <span className="font-normal text-slate-500">(선택)</span></span>
                     <input
                       value={campaignCopy}
                       onChange={(e) => setCampaignCopy(e.target.value)}
@@ -369,7 +369,7 @@ export default function DirectConfigure() {
                     />
                   </label>
                   <label className="block">
-                    <span className="text-[12px] font-bold text-slate-500">랜딩 페이지 URL <span className="font-normal text-slate-400">(선택)</span></span>
+                    <span className="text-[12px] font-bold text-slate-500">랜딩 페이지 URL <span className="font-normal text-slate-500">(선택)</span></span>
                     <input
                       value={landingUrl}
                       onChange={(e) => setLandingUrl(e.target.value)}
@@ -395,7 +395,7 @@ export default function DirectConfigure() {
                   </div>
                 </div>
                 <label className="mt-3 block">
-                  <span className="text-[12px] font-bold text-slate-500">선수에게 전달할 요청사항 <span className="font-normal text-slate-400">(선택)</span></span>
+                  <span className="text-[12px] font-bold text-slate-500">선수에게 전달할 요청사항 <span className="font-normal text-slate-500">(선택)</span></span>
                   <textarea
                     value={note}
                     onChange={(e) => setNote(e.target.value.slice(0, 300))}
@@ -426,15 +426,15 @@ export default function DirectConfigure() {
                 <div key={l.key} className="flex items-start justify-between gap-3 text-[13px]">
                   <span className="min-w-0">
                     <span className="block font-bold truncate">{l.quote?.slotName || (l.slotCode ?? l.offerCode)}</span>
-                    <span className="block text-[11px] text-slate-400">
+                    <span className="block text-[12px] text-slate-500">
                       {l.kind === 'ONLINE_PRODUCT' ? '온라인 전용' : '착장'} · {l.quote?.duration?.label ?? '-'}
                       {/* 라벨에 개월이 없는 기간(대회 1회·30일)만 환산 개월을 덧붙인다 */}
                       {l.quote?.duration && !l.quote.duration.label.includes('개월') && l.quote.duration.months > 1
                         && ` (${l.quote.duration.months}개월 환산)`}
                     </span>
-                    {l.error && <span className="block text-[11px] font-bold text-rose-600">{l.error}</span>}
+                    {l.error && <span className="block text-[12px] font-bold text-rose-600">{l.error}</span>}
                     {l.quote?.status === 'NEEDS_CONFIRMATION' && (
-                      <span className="block text-[11px] font-bold text-amber-600">선수 확인 필요</span>
+                      <span className="block text-[12px] font-bold text-amber-600">선수 확인 필요</span>
                     )}
                   </span>
                   <span className="font-bold tabular-nums shrink-0">
@@ -456,7 +456,7 @@ export default function DirectConfigure() {
                 {busy ? <Loader2 className="w-5 h-5 animate-spin" /> : `${(supply + vat).toLocaleString()}원`}
               </span>
             </div>
-            <p className="mt-1 text-right text-[11px] text-slate-400">{options.pricingRule} · VAT 포함</p>
+            <p className="mt-1 text-right text-[12px] text-slate-500">{options.pricingRule} · VAT 포함</p>
 
             {err && <p className="mt-3 text-[12.5px] font-bold text-rose-600 break-keep">{err}</p>}
 
@@ -474,7 +474,7 @@ export default function DirectConfigure() {
               <Bookmark className="w-4 h-4" /> {saved ? '저장했습니다' : '임시저장'}
             </button>
 
-            <p className="mt-3 flex items-start gap-1.5 text-[11.5px] text-slate-400 break-keep">
+            <p className="mt-3 flex items-start gap-1.5 text-[12.5px] text-slate-500 break-keep">
               <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
               견적함에 담아도 승인 요청 전까지 선수에게는 노출되지 않습니다.
             </p>
@@ -491,13 +491,13 @@ function Row({ n, title, hint, required, children }: {
   return (
     <section className="rounded-2xl border border-slate-100 p-4 grid sm:grid-cols-[132px_minmax(0,1fr)] gap-3 sm:gap-4 items-start">
       <div className="flex items-start gap-2">
-        <span className="w-6 h-6 rounded-full bg-emerald-500 text-white text-[11px] font-black flex items-center justify-center shrink-0">{n}</span>
+        <span className="w-6 h-6 rounded-full bg-emerald-500 text-white text-[12px] font-black flex items-center justify-center shrink-0">{n}</span>
         <div>
           <p className="text-[13.5px] font-extrabold">
             {title}
-            {required && <span className="ml-1 text-[10px] font-bold text-rose-500 align-top">필수</span>}
+            {required && <span className="ml-1 text-[12.5px] font-bold text-rose-500 align-top">필수</span>}
           </p>
-          {hint && <p className="mt-1 text-[11px] text-slate-400 whitespace-pre-line break-keep">{hint}</p>}
+          {hint && <p className="mt-1 text-[12px] text-slate-500 whitespace-pre-line break-keep">{hint}</p>}
         </div>
       </div>
       <div>{children}</div>

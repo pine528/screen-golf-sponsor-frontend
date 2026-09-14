@@ -86,13 +86,13 @@ export function AboutMegaMenu({ onNavigate }: { onNavigate?: (key: string) => vo
                       on ? 'bg-emerald-50/70 ring-1 ring-emerald-200' : 'hover:bg-slate-50'
                     }`}>
                     <span className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                      on ? 'bg-white text-emerald-600' : 'bg-slate-50 text-slate-400'
+                      on ? 'bg-white text-emerald-600' : 'bg-slate-50 text-slate-500'
                     }`}>
                       <I className="w-4 h-4" />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className={`block text-[14px] font-bold ${on ? 'text-emerald-700' : 'text-slate-900'}`}>{m.label}</span>
-                      <span className="block text-[12px] text-slate-400 mt-0.5">{m.desc}</span>
+                      <span className="block text-[12px] text-slate-500 mt-0.5">{m.desc}</span>
                     </span>
                     <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
                   </Link>
@@ -162,7 +162,7 @@ export function AboutMobileNav() {
                       className="flex items-start gap-3 py-3.5 border-b border-slate-50">
                       <span className="min-w-0 flex-1">
                         <span className={`block text-[14px] font-bold ${on ? 'text-emerald-600' : 'text-slate-800'}`}>{m.label}</span>
-                        <span className="block text-[12px] text-slate-400 mt-0.5">{m.desc}</span>
+                        <span className="block text-[12px] text-slate-500 mt-0.5">{m.desc}</span>
                       </span>
                       {on && (
                         <span className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 mt-0.5">
@@ -201,9 +201,9 @@ export default function AboutShell({
       <div className="max-w-[1280px] mx-auto px-5">
         {/* breadcrumb — 모바일에서도 1줄 (§2.3) */}
         <nav aria-label="breadcrumb" className="flex items-center gap-1.5 pt-5 text-[12.5px] whitespace-nowrap overflow-hidden">
-          <Link to="/" className="text-slate-400 hover:text-slate-600 shrink-0">홈</Link>
+          <Link to="/" className="text-slate-500 hover:text-slate-600 shrink-0">홈</Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-          <span className="text-slate-400 shrink-0">스폰픽 소개</span>
+          <span className="text-slate-500 shrink-0">스폰픽 소개</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
           <span className="font-bold text-emerald-700 truncate">{current}</span>
         </nav>
@@ -249,7 +249,7 @@ export const nf = (n: number | null | undefined) =>
 
 export function VerifiedBadge({ label = '검증 완료' }: { label?: string }) {
   return (
-    <span className="inline-flex items-center gap-1 h-6 px-2 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold">
+    <span className="inline-flex items-center gap-1 h-6 px-2 rounded-lg bg-emerald-50 text-emerald-700 text-[12px] font-bold">
       <ShieldCheck className="w-3 h-3" /> {label}
     </span>
   );
@@ -266,7 +266,7 @@ export function Tag({ children, tone = 'slate' }: {
     amber: 'bg-amber-50 text-amber-700',
     rose: 'bg-rose-50 text-rose-600',
   };
-  return <span className={`inline-flex items-center h-6 px-2 rounded-lg text-[11px] font-bold ${tones[tone]}`}>{children}</span>;
+  return <span className={`inline-flex items-center h-6 px-2 rounded-lg text-[12px] font-bold ${tones[tone]}`}>{children}</span>;
 }
 
 /** 상태 안내 — 색상만으로 구분하지 않는다 (§3.2 · §3.4) */
@@ -279,11 +279,11 @@ export function StateNotice({ kind, title, desc, action }: {
   }[kind];
   return (
     <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50/60 px-6 py-12 text-center">
-      <div className="mx-auto mb-3 w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 text-[15px] font-bold">
+      <div className="mx-auto mb-3 w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 text-[15px] font-bold">
         {icon}
       </div>
       <p className="text-[15px] font-bold text-slate-700">{title}</p>
-      {desc && <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed whitespace-pre-line">{desc}</p>}
+      {desc && <p className="mt-1.5 text-[13px] text-slate-500 leading-relaxed whitespace-pre-line">{desc}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
   );

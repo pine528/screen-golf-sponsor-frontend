@@ -106,7 +106,7 @@ export default function AboutGuarantee() {
                 }`}>
                   <e.icon className={`w-5 h-5 shrink-0 ${e.gold ? 'text-amber-600' : e.warn ? 'text-rose-500' : 'text-emerald-600'}`} />
                   <span>
-                    <span className="block text-[10.5px] text-slate-400 font-bold">{e.label}</span>
+                    <span className="block text-[12.5px] text-slate-500 font-bold">{e.label}</span>
                     <span className="block text-[13.5px] font-extrabold text-slate-800">{e.value}</span>
                   </span>
                 </div>
@@ -130,7 +130,7 @@ export default function AboutGuarantee() {
             운영기준 자세히 <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
-        <p className="mt-5 text-center text-[11.5px] text-slate-400 break-keep">
+        <p className="mt-5 text-center text-[12.5px] text-slate-500 break-keep">
           성과보장은 추천 PICK 중 성과보장 배지 상품에 적용되며, 매출·순위를 보장하는 프로그램이 아닙니다.
           적용 기준·제외 조건·지원 한도는 계약 시 확정됩니다.
         </p>

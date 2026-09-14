@@ -73,7 +73,7 @@ export default function FanLetter() {
             <span className="text-[13px] font-bold text-emerald-700">팬포인트 +{result.point.earned}P 적립 예정</span>
           </div>
         )}
-        <p className="mt-4 text-[12px] text-slate-400">이번 달 남은 편지 {result.remaining}통</p>
+        <p className="mt-4 text-[12px] text-slate-500">이번 달 남은 편지 {result.remaining}통</p>
         <div className="mt-8 flex gap-2 justify-center">
           <Link to="/fan" className="h-11 px-5 rounded-2xl bg-slate-100 text-slate-700 text-[14px] font-bold flex items-center hover:bg-slate-200 transition">
             팬 참여 홈
@@ -92,7 +92,7 @@ export default function FanLetter() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to={`/fan/temperature/${athleteId}`} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to={`/fan/temperature/${athleteId}`} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 돌아가기
       </Link>
 
@@ -102,7 +102,7 @@ export default function FanLetter() {
         </div>
         <div>
           <h1 className="text-[22px] font-extrabold text-slate-900 tracking-[-0.02em]">응원 편지 쓰기</h1>
-          <p className="text-[13px] text-slate-400 mt-0.5">
+          <p className="text-[13px] text-slate-500 mt-0.5">
             {quota ? `이번 달 ${quota.remaining}/${quota.limit}통 남음` : '월 2통까지 보낼 수 있습니다'}
           </p>
         </div>
@@ -113,7 +113,7 @@ export default function FanLetter() {
           <AthleteAvatar athlete={athlete} size={44} />
           <div>
             <p className="text-[15px] font-bold text-slate-900">{athlete.name}</p>
-            <p className="text-[12px] text-slate-400">{athlete.tour || athlete.sportType || '선수'}</p>
+            <p className="text-[12px] text-slate-500">{athlete.tour || athlete.sportType || '선수'}</p>
           </div>
         </Card>
       )}
@@ -137,7 +137,7 @@ export default function FanLetter() {
           className="w-full text-[15px] text-slate-700 leading-relaxed placeholder:text-slate-300 border-0 resize-none focus:outline-none disabled:bg-transparent" />
         <div className="flex items-center justify-between pt-3 border-t border-slate-100">
           <span className={`text-[12px] font-semibold tabular-nums ${
-            len > MAX ? 'text-rose-500' : len >= MIN ? 'text-emerald-600' : 'text-slate-400'
+            len > MAX ? 'text-rose-500' : len >= MIN ? 'text-emerald-600' : 'text-slate-500'
           }`}>
             {len} / {MAX}자 {len < MIN && `(최소 ${MIN}자)`}
           </span>
@@ -156,9 +156,9 @@ export default function FanLetter() {
               className={`rounded-2xl border p-4 text-left transition ${
                 isPublic === o.v ? 'border-slate-900 bg-slate-50' : 'border-slate-200 bg-white hover:border-slate-300'
               }`}>
-              <I className={`w-4 h-4 mb-2 ${isPublic === o.v ? 'text-slate-900' : 'text-slate-400'}`} />
+              <I className={`w-4 h-4 mb-2 ${isPublic === o.v ? 'text-slate-900' : 'text-slate-500'}`} />
               <p className="text-[14px] font-bold text-slate-900">{o.label}</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">{o.desc}</p>
+              <p className="text-[12px] text-slate-500 mt-0.5">{o.desc}</p>
             </button>
           );
         })}

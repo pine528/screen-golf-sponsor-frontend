@@ -50,7 +50,7 @@ export default function FanStoreProduct() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to={`/fan/store/${s.slug || s.id}`} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to={`/fan/store/${s.slug || s.id}`} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> {s.title}
       </Link>
 
@@ -83,7 +83,7 @@ export default function FanStoreProduct() {
             <AthleteAvatar athlete={s.athlete} size={40} />
             <div className="min-w-0 flex-1">
               <p className="text-[14px] font-bold text-slate-900">{s.athlete.name}</p>
-              <p className="text-[12px] text-slate-400">{s.brandName}와 함께하는 협업 상품</p>
+              <p className="text-[12px] text-slate-500">{s.brandName}와 함께하는 협업 상품</p>
             </div>
           </Link>
         </Card>
@@ -93,7 +93,7 @@ export default function FanStoreProduct() {
       <Card className="mt-4 divide-y divide-slate-100">
         {data.policies?.map((pol: any) => (
           <div key={pol.key} className="flex gap-4 px-4 py-3.5">
-            <span className="text-[13px] font-semibold text-slate-400 w-20 shrink-0">{pol.label}</span>
+            <span className="text-[13px] font-semibold text-slate-500 w-20 shrink-0">{pol.label}</span>
             <span className="text-[13px] text-slate-700 leading-relaxed flex-1">{pol.value}</span>
           </div>
         ))}
@@ -102,7 +102,7 @@ export default function FanStoreProduct() {
       {/* 판매자 · 책임주체 */}
       <Card className="mt-4 p-5">
         <div className="flex items-center gap-1.5 mb-2">
-          <ShieldCheck className="w-4 h-4 text-slate-400" />
+          <ShieldCheck className="w-4 h-4 text-slate-500" />
           <span className="text-[13px] font-bold text-slate-700">{data.seller.responsibleLabel}</span>
         </div>
         <p className="text-[13px] text-slate-500 leading-relaxed mb-3">{data.seller.responsibleDesc}</p>

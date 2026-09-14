@@ -46,7 +46,7 @@ export default function FanHub() {
         <div className="absolute -left-10 bottom-[-60px] w-56 h-56 rounded-full blur-3xl opacity-30"
           style={{ background: 'radial-gradient(circle, #FF9F5A 0%, transparent 70%)' }} />
         <div className="relative">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold tracking-wide text-white/80 mb-4">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[12px] font-bold tracking-wide text-white/80 mb-4">
             <Sparkles className="w-3 h-3" /> FAN ENGAGEMENT
           </div>
           <h1 className="text-[28px] sm:text-[38px] font-extrabold text-white leading-[1.15] tracking-[-0.03em]">
@@ -107,7 +107,7 @@ export default function FanHub() {
                       <Countdown ms={new Date(v.closeAt).getTime() - Date.now()} />
                     </div>
                     <p className="text-[14px] font-bold text-slate-900 truncate">{v.title}</p>
-                    <p className="text-[12px] text-slate-400 mt-0.5">
+                    <p className="text-[12px] text-slate-500 mt-0.5">
                       {v.athlete ? `${v.athlete.name} · ` : ''}{nf(v.participants)}명 참여
                     </p>
                   </div>
@@ -137,12 +137,12 @@ export default function FanHub() {
                   <AthleteAvatar athlete={s.athlete} size={40} />
                   <div className="min-w-0">
                     <p className="text-[14px] font-bold text-slate-900 truncate">{s.athlete.name}</p>
-                    <p className="text-[12px] text-slate-400 truncate">{s.athlete.tour || s.athlete.sportType || '선수'}</p>
+                    <p className="text-[12px] text-slate-500 truncate">{s.athlete.tour || s.athlete.sportType || '선수'}</p>
                   </div>
                 </div>
                 <TempBar score={s.score} tier={s.tier?.label} lowSample={s.lowSample} />
                 {s.weeklyDelta !== null && s.weeklyDelta !== undefined && (
-                  <p className="mt-2 text-[11px] text-slate-400">
+                  <p className="mt-2 text-[12px] text-slate-500">
                     지난주 대비 {s.weeklyDelta > 0 ? '+' : ''}{s.weeklyDelta.toFixed(1)}℃
                   </p>
                 )}
@@ -168,18 +168,18 @@ export default function FanHub() {
           <Card className="p-5">
             <div className="flex items-end justify-between gap-4 flex-wrap">
               <div>
-                <p className="text-[12px] font-semibold text-slate-400 mb-1">사용 가능</p>
+                <p className="text-[12px] font-semibold text-slate-500 mb-1">사용 가능</p>
                 <p className="text-[34px] font-extrabold text-slate-900 tabular-nums leading-none tracking-[-0.03em]">
-                  {nf(data.points.balance)}<span className="text-[18px] text-slate-400 ml-1">P</span>
+                  {nf(data.points.balance)}<span className="text-[18px] text-slate-500 ml-1">P</span>
                 </p>
               </div>
               <div className="flex gap-2">
                 <div className="rounded-2xl bg-slate-50 px-3.5 py-2.5 text-center min-w-[86px]">
-                  <p className="text-[11px] text-slate-400 font-semibold">적립 예정</p>
+                  <p className="text-[12px] text-slate-500 font-semibold">적립 예정</p>
                   <p className="text-[15px] font-bold text-slate-700 tabular-nums">{nf(data.points.pending)}P</p>
                 </div>
                 <div className="rounded-2xl bg-amber-50 px-3.5 py-2.5 text-center min-w-[86px]">
-                  <p className="text-[11px] text-amber-600/80 font-semibold">30일 내 소멸</p>
+                  <p className="text-[12px] text-amber-600/80 font-semibold">30일 내 소멸</p>
                   <p className="text-[15px] font-bold text-amber-700 tabular-nums">{nf(data.points.expiringSoon)}P</p>
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default function FanHub() {
                 </div>
                 <div className="p-4">
                   <p className="text-[14px] font-bold text-slate-900 line-clamp-1">{c.title}</p>
-                  {c.athlete && <p className="text-[12px] text-slate-400 mt-1">{c.athlete.name}</p>}
+                  {c.athlete && <p className="text-[12px] text-slate-500 mt-1">{c.athlete.name}</p>}
                 </div>
               </Card>
             ))}
@@ -226,7 +226,7 @@ export default function FanHub() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-[14px] font-bold text-slate-900">{data.campaign.title}</p>
-              <p className="text-[12px] text-slate-400 mt-0.5 line-clamp-1">{data.campaign.description}</p>
+              <p className="text-[12px] text-slate-500 mt-0.5 line-clamp-1">{data.campaign.description}</p>
             </div>
             <ArrowRight className="w-4 h-4 text-slate-300 shrink-0" />
           </div>

@@ -49,7 +49,7 @@ export default function AboutBrands() {
                   <t.icon className="w-6 h-6 text-white" strokeWidth={1.9} />
                 </span>
                 <h3 className="mt-3 text-[14.5px] font-extrabold">{t.title}</h3>
-                <p className="mt-1 text-[11.5px] text-slate-500 break-keep">{t.desc}</p>
+                <p className="mt-1 text-[12.5px] text-slate-500 break-keep">{t.desc}</p>
               </div>
             ))}
           </div>
@@ -77,11 +77,11 @@ export default function AboutBrands() {
               {filtered.map((b) => (
                 <div key={b.name} className="flex flex-col items-center justify-center h-24 bg-white rounded-2xl border border-slate-200 px-3 hover:border-emerald-200 hover:shadow-md transition-all">
                   <img src={b.src} alt={b.name} title={b.name} className="max-h-11 max-w-full object-contain" loading="lazy" />
-                  <span className="mt-1.5 text-[10.5px] text-slate-400 font-semibold truncate max-w-full">{b.name}</span>
+                  <span className="mt-1.5 text-[12.5px] text-slate-500 font-semibold truncate max-w-full">{b.name}</span>
                 </div>
               ))}
             </div>
-            <p className="mt-5 text-[12px] text-slate-400">
+            <p className="mt-5 text-[12px] text-slate-500">
               다양한 브랜드들이 스폰픽을 통해 선수와 팬을 연결하고 함께 성장하고 있습니다.
             </p>
           </div>
@@ -90,7 +90,7 @@ export default function AboutBrands() {
           <div className="rounded-2xl border border-slate-200 overflow-hidden">
             <div className="relative">
               <img src="/golfers/bae-jinri.png" alt="배진리 프로" className="w-full h-44 object-cover object-top" />
-              <span className="absolute top-4 left-4 px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-700 text-[11px] font-black">협업 스토리</span>
+              <span className="absolute top-4 left-4 px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-700 text-[12px] font-black">협업 스토리</span>
             </div>
             <div className="p-6">
               <h2 className="text-[20px] font-black">엘렌실라 × 배진리</h2>
@@ -101,9 +101,9 @@ export default function AboutBrands() {
               <div className="mt-4 rounded-xl bg-slate-50 border border-slate-100 px-4 py-3 flex items-center justify-center gap-3">
                 <img src="/brands/elensilia.png" alt="ELENSILIA" className="h-6 object-contain" />
                 <span className="text-slate-300">×</span>
-                <span className="text-[13.5px] font-extrabold text-slate-800">배진리 <span className="text-[11px] font-bold text-slate-400">프로 골퍼</span></span>
+                <span className="text-[13.5px] font-extrabold text-slate-800">배진리 <span className="text-[12px] font-bold text-slate-500">프로 골퍼</span></span>
               </div>
-              <p className="mt-4 text-[11.5px] font-black tracking-wide text-emerald-700">주요 협업 성과</p>
+              <p className="mt-4 text-[12.5px] font-black tracking-wide text-emerald-700">주요 협업 성과</p>
               <div className="mt-2 grid grid-cols-3 gap-2">
                 {[
                   { icon: Shirt, t: '착장', d: '경기 착용 및 노출' },
@@ -112,8 +112,8 @@ export default function AboutBrands() {
                 ].map((s) => (
                   <div key={s.t} className="rounded-xl border border-slate-100 px-2 py-3 text-center">
                     <s.icon className="w-[18px] h-[18px] text-emerald-600 mx-auto" />
-                    <p className="mt-1.5 text-[11.5px] font-extrabold text-slate-800">{s.t}</p>
-                    <p className="text-[10px] text-slate-400 break-keep">{s.d}</p>
+                    <p className="mt-1.5 text-[12.5px] font-extrabold text-slate-800">{s.t}</p>
+                    <p className="text-[12.5px] text-slate-500 break-keep">{s.d}</p>
                   </div>
                 ))}
               </div>

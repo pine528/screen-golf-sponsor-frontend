@@ -186,10 +186,10 @@ export default function HowItWorks() {
                       return (
                         <li key={s.label} className="flex items-center gap-1.5">
                           <div className="text-center w-[62px]">
-                            <span className="mx-auto mb-1 w-9 h-9 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center">
+                            <span className="mx-auto mb-1 w-9 h-9 rounded-xl bg-slate-50 text-slate-500 flex items-center justify-center">
                               <SI className="w-4 h-4" />
                             </span>
-                            <span className="block text-[10.5px] text-slate-500 leading-tight">{s.label}</span>
+                            <span className="block text-[12.5px] text-slate-500 leading-tight">{s.label}</span>
                           </div>
                           {i < p.steps.length - 1 && <ChevronRight className="w-3.5 h-3.5 text-slate-200 shrink-0" />}
                         </li>
@@ -240,7 +240,7 @@ export default function HowItWorks() {
                       <I className="w-4 h-4 text-slate-300 shrink-0" />
                       <span className="min-w-0 flex-1">
                         <span className="block text-[14px] font-bold text-slate-900">{s.title}</span>
-                        <span className="block text-[12px] text-slate-400 mt-0.5">{s.desc}</span>
+                        <span className="block text-[12px] text-slate-500 mt-0.5">{s.desc}</span>
                       </span>
                     </li>
                   );
@@ -256,7 +256,7 @@ export default function HowItWorks() {
                   제안함 보기
                 </Link>
               </div>
-              <p className="mt-4 text-[11.5px] text-slate-400 leading-relaxed">
+              <p className="mt-4 text-[12.5px] text-slate-500 leading-relaxed">
                 승인 전 공개되는 정보와 계약 당사자에게만 보이는 정보는 구분해 관리됩니다.
               </p>
             </section>
@@ -278,7 +278,7 @@ export default function HowItWorks() {
                       <I className="w-4 h-4 text-slate-300 shrink-0" />
                       <span className="min-w-0 flex-1">
                         <span className="block text-[14px] font-bold text-slate-900">{s.title}</span>
-                        <span className="block text-[12px] text-slate-400 mt-0.5">{s.desc}</span>
+                        <span className="block text-[12px] text-slate-500 mt-0.5">{s.desc}</span>
                       </span>
                     </li>
                   );
@@ -293,7 +293,7 @@ export default function HowItWorks() {
                 <Megaphone className="w-5 h-5 text-violet-400 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-[13px] font-bold text-slate-800">한 해의 응원이 광고가 됩니다</p>
-                  <p className="mt-1 text-[11.5px] text-slate-400 leading-relaxed">
+                  <p className="mt-1 text-[12.5px] text-slate-500 leading-relaxed">
                     팬 활동이 활발한 선수는 연말에 참여 팬들의 이름으로 응원 광고를 지원받을 수 있어요.
                     (예산·매체 확정 시 진행되는 시즌형 캠페인입니다)
                   </p>
@@ -319,7 +319,7 @@ export default function HowItWorks() {
                       <I className="w-4 h-4 text-slate-300 shrink-0" />
                       <span className="min-w-0 flex-1">
                         <span className="block text-[14.5px] font-bold text-slate-900">{s.title}</span>
-                        <span className="block text-[12.5px] text-slate-400 mt-0.5">{s.desc}</span>
+                        <span className="block text-[12.5px] text-slate-500 mt-0.5">{s.desc}</span>
                       </span>
                     </li>
                   );
@@ -347,7 +347,7 @@ export default function HowItWorks() {
           <div className="overflow-x-auto">
             <table className="w-full text-[12.5px]">
               <thead>
-                <tr className="text-[11px] text-slate-400 border-b border-emerald-200/60">
+                <tr className="text-[12px] text-slate-500 border-b border-emerald-200/60">
                   <th className="text-left font-semibold py-2">행동</th>
                   <th className="text-left font-semibold py-2">비로그인</th>
                   <th className="text-left font-semibold py-2">로그인 필요 시점</th>

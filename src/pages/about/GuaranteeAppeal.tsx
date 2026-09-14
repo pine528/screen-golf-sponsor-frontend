@@ -71,9 +71,9 @@ export default function GuaranteeAppeal() {
           </div>
           <h1 className="text-[22px] font-extrabold text-slate-900 tracking-[-0.02em]">이의제기가 접수되었습니다</h1>
           <p className="mt-3 text-[14px] text-slate-500 leading-relaxed">{done.message}</p>
-          <p className="mt-4 font-mono text-[13px] text-slate-400">{done.appeal.code}</p>
+          <p className="mt-4 font-mono text-[13px] text-slate-500">{done.appeal.code}</p>
           {done.appeal.slaDueAt && (
-            <p className="mt-1.5 text-[12px] text-slate-400">
+            <p className="mt-1.5 text-[12px] text-slate-500">
               검토 예정 {new Date(done.appeal.slaDueAt).toLocaleDateString('ko-KR')} 까지
             </p>
           )}
@@ -94,7 +94,7 @@ export default function GuaranteeAppeal() {
     <AboutShell current="성과보장프로그램" title="이의제기 · 보완지원"
       desc="최종 KPI 결과에 이의가 있거나, 보완지원이 필요하신 경우 아래 내용을 제출해 주세요.">
       <div className="max-w-[1280px] mx-auto px-5 pb-20">
-        <Link to="/about/my-guarantees" className="inline-flex items-center gap-1 mt-6 text-[13px] font-semibold text-slate-400 hover:text-slate-700">
+        <Link to="/about/my-guarantees" className="inline-flex items-center gap-1 mt-6 text-[13px] font-semibold text-slate-500 hover:text-slate-700">
           <ArrowLeft className="w-4 h-4" /> 내 성과보장 현황
         </Link>
 
@@ -127,12 +127,12 @@ export default function GuaranteeAppeal() {
                     </div>
                     {data.appealRemainDays !== null && (
                       <div className="text-right shrink-0">
-                        <p className="text-[11px] text-slate-500 font-semibold">이의제기 마감일</p>
-                        <p className={`text-[22px] font-extrabold tabular-nums ${data.appealRemainDays > 0 ? 'text-rose-600' : 'text-slate-400'}`}>
+                        <p className="text-[12px] text-slate-500 font-semibold">이의제기 마감일</p>
+                        <p className={`text-[22px] font-extrabold tabular-nums ${data.appealRemainDays > 0 ? 'text-rose-600' : 'text-slate-500'}`}>
                           {data.appealRemainDays > 0 ? `D-${data.appealRemainDays}` : '마감'}
                         </p>
                         {data.appealDueAt && (
-                          <p className="text-[11px] text-slate-400 tabular-nums">
+                          <p className="text-[12px] text-slate-500 tabular-nums">
                             {new Date(data.appealDueAt).toLocaleDateString('ko-KR')} 까지
                           </p>
                         )}
@@ -151,7 +151,7 @@ export default function GuaranteeAppeal() {
               <textarea value={reason} onChange={(e) => setReason(e.target.value.slice(0, 1000))}
                 placeholder="이의 사유를 입력해 주세요." rows={6} disabled={!data.canAppeal}
                 className="w-full rounded-2xl border border-slate-200 p-4 text-[14px] text-slate-700 leading-relaxed placeholder:text-slate-300 resize-none focus:outline-none focus:border-slate-400 disabled:bg-slate-50" />
-              <p className="mt-1.5 text-right text-[11.5px] text-slate-400 tabular-nums">{len} / 1,000</p>
+              <p className="mt-1.5 text-right text-[12.5px] text-slate-500 tabular-nums">{len} / 1,000</p>
 
               <div className="mt-5 grid sm:grid-cols-2 gap-4">
                 <div>
@@ -160,8 +160,8 @@ export default function GuaranteeAppeal() {
                   </p>
                   <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 text-center">
                     <Upload className="w-5 h-5 text-slate-300 mx-auto mb-2" />
-                    <p className="text-[12.5px] text-slate-400">파일 업로드는 접수 후 담당자 안내에 따라 진행합니다.</p>
-                    <p className="text-[11px] text-slate-300 mt-1">PDF, JPG, PNG (최대 10MB)</p>
+                    <p className="text-[12.5px] text-slate-500">파일 업로드는 접수 후 담당자 안내에 따라 진행합니다.</p>
+                    <p className="text-[12px] text-slate-300 mt-1">PDF, JPG, PNG (최대 10MB)</p>
                   </div>
                 </div>
                 <div>
@@ -188,7 +188,7 @@ export default function GuaranteeAppeal() {
                   <span className="block text-[13.5px] font-bold text-slate-800">
                     상기 내용이 사실이며, 제출한 증빙자료가 진실됨을 확인합니다. <Tag tone="rose">필수</Tag>
                   </span>
-                  <span className="block text-[11.5px] text-slate-400 mt-0.5">
+                  <span className="block text-[12.5px] text-slate-500 mt-0.5">
                     허위 제출 시 서비스 이용 제한 및 법적 책임이 발생할 수 있습니다.
                   </span>
                 </span>
@@ -230,7 +230,7 @@ export default function GuaranteeAppeal() {
                     <div key={a.id} className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3">
                       <span className="font-mono text-[12px] text-slate-500">{a.code}</span>
                       <Tag tone={a.status === 'DECIDED' ? 'emerald' : 'sky'}>{a.status}</Tag>
-                      <span className="ml-auto text-[11.5px] text-slate-400 tabular-nums">
+                      <span className="ml-auto text-[12.5px] text-slate-500 tabular-nums">
                         {new Date(a.createdAt).toLocaleDateString('ko-KR')}
                       </span>
                     </div>
@@ -258,7 +258,7 @@ export default function GuaranteeAppeal() {
                       <p className="text-[20px] font-extrabold text-emerald-600 tabular-nums leading-none">
                         {data.remedyEstimate.ratio ? `최대 ${data.remedyEstimate.ratio}%` : '계약별'}
                       </p>
-                      <p className="text-[11px] text-slate-400 mt-1">{data.remedyEstimate.basis}</p>
+                      <p className="text-[12px] text-slate-500 mt-1">{data.remedyEstimate.basis}</p>
                     </dd>
                   </div>
                   {data.remedyEstimate.estimatedAmount !== null && (
@@ -277,7 +277,7 @@ export default function GuaranteeAppeal() {
                   )}
                 </dl>
               ) : (
-                <p className="text-[13px] text-slate-400 leading-relaxed">
+                <p className="text-[13px] text-slate-500 leading-relaxed">
                   보완지원 자격은 최종 판정이 확정된 뒤에 산정됩니다.
                 </p>
               )}
@@ -313,7 +313,7 @@ export default function GuaranteeAppeal() {
                       </span>
                       <span className="min-w-0">
                         <span className="block text-[13.5px] font-bold text-slate-800">{p.label}</span>
-                        <span className="block text-[11.5px] text-slate-400 mt-0.5">{p.desc}</span>
+                        <span className="block text-[12.5px] text-slate-500 mt-0.5">{p.desc}</span>
                       </span>
                     </li>
                   );
@@ -336,7 +336,7 @@ export default function GuaranteeAppeal() {
 
             <ul className="space-y-1.5 px-1">
               {data.notices.map((n: string, i: number) => (
-                <li key={i} className="text-[11.5px] text-slate-400 leading-relaxed pl-3 relative">
+                <li key={i} className="text-[12.5px] text-slate-500 leading-relaxed pl-3 relative">
                   <span className="absolute left-0 top-[7px] w-1 h-1 rounded-full bg-slate-300" />{n}
                 </li>
               ))}

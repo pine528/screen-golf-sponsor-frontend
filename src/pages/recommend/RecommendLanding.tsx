@@ -124,7 +124,7 @@ export default function RecommendLanding() {
       <section className="max-w-[1180px] mx-auto px-5 pt-8 sm:pt-10 pb-24 grid lg:grid-cols-[minmax(0,1fr)_340px] gap-8 lg:gap-12 items-start">
         {/* 좌: 한 질문 + 브리프 */}
         <div>
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-rose-500 text-white text-[10.5px] font-black tracking-wide">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-rose-500 text-white text-[12.5px] font-black tracking-wide">
             SPONPIK RECOMMENDED
           </span>
           <h1 className="mt-4 text-[27px] sm:text-[36px] font-extrabold tracking-[-0.02em] leading-tight break-keep">

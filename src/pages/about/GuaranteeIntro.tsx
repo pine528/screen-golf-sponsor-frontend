@@ -65,7 +65,7 @@ export default function GuaranteeIntro() {
                         <I className="w-5 h-5" />
                       </span>
                       <p className="text-[13.5px] font-bold text-slate-900">{s.label}</p>
-                      <p className="mt-1.5 text-[11.5px] text-slate-400 leading-relaxed">{s.desc}</p>
+                      <p className="mt-1.5 text-[12.5px] text-slate-500 leading-relaxed">{s.desc}</p>
                     </div>
                   );
                 })}
@@ -78,21 +78,21 @@ export default function GuaranteeIntro() {
                 <h2 className="text-[17px] font-extrabold text-slate-900 mb-4">어떤 상품에 적용되나요?</h2>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-2xl border border-slate-200 p-4 text-center">
-                    <span className="inline-flex h-6 px-2 rounded-lg bg-slate-900 text-white text-[10px] font-bold items-center mb-3">SPONPIK 추천</span>
+                    <span className="inline-flex h-6 px-2 rounded-lg bg-slate-900 text-white text-[12.5px] font-bold items-center mb-3">SPONPIK 추천</span>
                     <p className="text-[17px] font-extrabold text-slate-900">PICK</p>
                     <p className="mt-2 text-[12.5px] font-bold text-slate-700">SPONPIK 추천 PICK</p>
                     <span className="mt-2 inline-block"><Tag tone="emerald">성과보장 적용</Tag></span>
-                    <p className="mt-2.5 text-[11.5px] text-slate-400 leading-relaxed">
+                    <p className="mt-2.5 text-[12.5px] text-slate-500 leading-relaxed">
                       스폰픽이 엄선한 선수·구단과 함께 성과까지 보장받는 상품입니다.
                     </p>
                   </div>
                   <div className="rounded-2xl border border-slate-200 p-4 text-center">
-                    <span className="inline-flex items-center gap-1 h-6 px-2 rounded-lg border border-emerald-300 text-emerald-700 text-[10px] font-bold mb-3">
+                    <span className="inline-flex items-center gap-1 h-6 px-2 rounded-lg border border-emerald-300 text-emerald-700 text-[12.5px] font-bold mb-3">
                       <ShieldCheck className="w-3 h-3" /> GUARANTEE
                     </span>
                     <p className="text-[15px] font-extrabold text-slate-900 mt-1.5">보장 적용 패키지</p>
                     <span className="mt-2 inline-block"><Tag tone="emerald">성과보장 적용</Tag></span>
-                    <p className="mt-2.5 text-[11.5px] text-slate-400 leading-relaxed">
+                    <p className="mt-2.5 text-[12.5px] text-slate-500 leading-relaxed">
                       상품 상세에 보장 적용 표시가 있는 패키지에 한해 적용됩니다.
                     </p>
                   </div>
@@ -113,7 +113,7 @@ export default function GuaranteeIntro() {
                 {rules.length ? (
                   <table className="w-full text-[12.5px]">
                     <thead>
-                      <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                      <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                         <th className="text-left font-semibold py-2">지표</th>
                         <th className="text-right font-semibold py-2">기준</th>
                         <th className="text-left font-semibold py-2 pl-4">출처</th>
@@ -132,11 +132,11 @@ export default function GuaranteeIntro() {
                     </tbody>
                   </table>
                 ) : (
-                  <p className="text-[13px] text-slate-400 py-6 text-center leading-relaxed">
+                  <p className="text-[13px] text-slate-500 py-6 text-center leading-relaxed">
                     공개된 KPI 예시가 아직 없습니다.<br />정책이 발행되면 이곳에 표시됩니다.
                   </p>
                 )}
-                <p className="mt-4 text-[11.5px] text-slate-400 leading-relaxed">
+                <p className="mt-4 text-[12.5px] text-slate-500 leading-relaxed">
                   ※ KPI와 기준, 측정 방법과 출처는 계약 상품에 따라 다를 수 있으며, 모든 내용은 계약서에 명시됩니다.
                 </p>
               </section>
@@ -175,7 +175,7 @@ export default function GuaranteeIntro() {
                       { l: '사용 기한', v: (data.policy.remedyRules as any).validMonths ? `${(data.policy.remedyRules as any).validMonths}개월` : '계약별' },
                     ].map((r) => (
                       <div key={r.l}>
-                        <p className="text-[11px] text-slate-400 font-semibold">{r.l}</p>
+                        <p className="text-[12px] text-slate-500 font-semibold">{r.l}</p>
                         <p className="text-[16px] font-extrabold text-violet-700 tabular-nums">{r.v}</p>
                       </div>
                     ))}
@@ -207,7 +207,7 @@ export default function GuaranteeIntro() {
                       aria-expanded={openFaq === i}
                       className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left">
                       <span className="text-[14px] font-bold text-slate-800">{f.q}</span>
-                      <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 text-slate-500 shrink-0 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
                     </button>
                     {openFaq === i && (
                       <p className="px-5 pb-4 text-[13.5px] text-slate-600 leading-relaxed">{f.a}</p>

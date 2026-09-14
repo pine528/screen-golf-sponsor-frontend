@@ -115,10 +115,10 @@ export default function ApplicationCheckout() {
         <div className="max-w-7xl mx-auto px-5 py-3.5 flex items-center gap-2 overflow-x-auto">
           {STEPS.map((s, i) => (
             <div key={s} className="flex items-center gap-1.5 shrink-0">
-              <span className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center ${
+              <span className={`w-6 h-6 rounded-full text-[12px] font-black flex items-center justify-center ${
                 i < 5 ? 'bg-emerald-100 text-emerald-700' : 'bg-emerald-500 text-white'
               }`}>{i < 5 ? <Check className="w-3 h-3" /> : i + 1}</span>
-              <span className={`text-[12px] font-bold ${i === 5 ? 'text-emerald-700' : 'text-slate-400'}`}>{s}</span>
+              <span className={`text-[12px] font-bold ${i === 5 ? 'text-emerald-700' : 'text-slate-500'}`}>{s}</span>
               {i < STEPS.length - 1 && <span className="w-6 h-px bg-slate-200 mx-1" />}
             </div>
           ))}
@@ -144,7 +144,7 @@ export default function ApplicationCheckout() {
               <div className="overflow-x-auto">
                 <table className="w-full text-[13px] min-w-[520px]">
                   <thead>
-                    <tr className="text-[11px] text-slate-400 font-bold border-b border-slate-200">
+                    <tr className="text-[12px] text-slate-500 font-bold border-b border-slate-200">
                       <th className="text-left pb-2.5">선수</th>
                       <th className="text-left pb-2.5">선택한 후원 유형</th>
                       <th className="text-left pb-2.5">후원 기간</th>
@@ -166,13 +166,13 @@ export default function ApplicationCheckout() {
                           </td>
                           <td className="py-3">
                             <span className="inline-flex items-center gap-1.5">
-                              <Shirt className="w-3.5 h-3.5 text-slate-400" />
+                              <Shirt className="w-3.5 h-3.5 text-slate-500" />
                               {it.slotName}{it.role ? ` · ${it.role}` : ''}
                             </span>
                           </td>
                           <td className="py-3 text-slate-500">{app.durationMonths}개월</td>
                           <td className="py-3 text-right font-black tabular-nums">
-                            {excluded ? <span className="text-[11.5px] text-slate-400">미승인 · 제외</span> : `${(it.price / 10000).toLocaleString()}만원`}
+                            {excluded ? <span className="text-[12.5px] text-slate-500">미승인 · 제외</span> : `${(it.price / 10000).toLocaleString()}만원`}
                           </td>
                         </tr>
                       );
@@ -184,7 +184,7 @@ export default function ApplicationCheckout() {
 
             <div className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6">
               <h2 className="flex items-center gap-2 text-[15px] font-extrabold mb-4">
-                <FileText className="w-4 h-4 text-slate-400" /> 계약서 확인
+                <FileText className="w-4 h-4 text-slate-500" /> 계약서 확인
               </h2>
               <dl className="space-y-3 text-[13px]">
                 {[
@@ -194,7 +194,7 @@ export default function ApplicationCheckout() {
                   { k: '계약 해지', v: '선수 또는 스폰서의 귀책 사유 시, 계약 해지 및 환불 규정에 따릅니다.' },
                 ].map((r) => (
                   <div key={r.k} className="flex gap-4">
-                    <dt className="w-28 shrink-0 text-slate-400 font-bold">{r.k}</dt>
+                    <dt className="w-28 shrink-0 text-slate-500 font-bold">{r.k}</dt>
                     <dd className="text-slate-700 break-keep">{r.v}</dd>
                   </div>
                 ))}
@@ -210,7 +210,7 @@ export default function ApplicationCheckout() {
 
             <div className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6">
               <h2 className="flex items-center gap-2 text-[15px] font-extrabold mb-4">
-                <Building2 className="w-4 h-4 text-slate-400" /> 세금계산서 / 사업자 정보
+                <Building2 className="w-4 h-4 text-slate-500" /> 세금계산서 / 사업자 정보
               </h2>
               <p className="text-[12.5px] text-slate-500 break-keep">
                 세금계산서는 결제 완료 후 등록된 사업자 정보로 발행됩니다.
@@ -260,8 +260,8 @@ export default function ApplicationCheckout() {
                     </span>
                     <m.icon className="w-4 h-4 text-slate-500 shrink-0" />
                     <span className="text-[13.5px] font-bold">{m.label}</span>
-                    {m.badge && <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[10px] font-black">{m.badge}</span>}
-                    {m.note && <span className="ml-auto text-[11px] text-slate-400">{m.note}</span>}
+                    {m.badge && <span className="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[12.5px] font-black">{m.badge}</span>}
+                    {m.note && <span className="ml-auto text-[12px] text-slate-500">{m.note}</span>}
                   </button>
                 ))}
               </div>
@@ -275,8 +275,8 @@ export default function ApplicationCheckout() {
                       onChange={(e) => setAgreed(e.target.checked ? [...agreed, a.key] : agreed.filter((k) => k !== a.key))}
                       className="w-4 h-4 accent-emerald-600 shrink-0"
                     />
-                    <span className="text-[12px] text-slate-600">{a.label} <span className="text-slate-400">(필수)</span></span>
-                    <Link to={a.to} className="ml-auto text-[11px] text-slate-400 hover:text-slate-600 shrink-0">보기</Link>
+                    <span className="text-[12px] text-slate-600">{a.label} <span className="text-slate-500">(필수)</span></span>
+                    <Link to={a.to} className="ml-auto text-[12px] text-slate-500 hover:text-slate-600 shrink-0">보기</Link>
                   </label>
                 ))}
               </div>
@@ -290,11 +290,11 @@ export default function ApplicationCheckout() {
               >
                 {paying ? '결제 처리 중…' : <>{total.toLocaleString()}원 결제하기 <Lock className="w-4 h-4" /></>}
               </button>
-              <p className="mt-2 text-center text-[11px] text-slate-400">결제는 선수 승인 완료 후에만 진행됩니다.</p>
+              <p className="mt-2 text-center text-[12px] text-slate-500">결제는 선수 승인 완료 후에만 진행됩니다.</p>
             </div>
 
             <Link to={`/sponsor/applications/${app.id}`} className="flex items-center gap-2 rounded-2xl bg-white border border-slate-200 px-5 py-4 hover:border-emerald-300 transition-colors">
-              <Calendar className="w-4 h-4 text-slate-400" />
+              <Calendar className="w-4 h-4 text-slate-500" />
               <span className="text-[13px] font-bold">승인 현황 다시 보기</span>
               <ChevronRight className="w-4 h-4 text-slate-300 ml-auto" />
             </Link>

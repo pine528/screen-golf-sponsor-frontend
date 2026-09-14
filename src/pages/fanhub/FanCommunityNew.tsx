@@ -131,7 +131,7 @@ export default function FanCommunityNew() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 팬 참여
       </Link>
 
@@ -163,18 +163,18 @@ export default function FanCommunityNew() {
               <AthleteAvatar athlete={a} size={52} />
               <div className="min-w-0 flex-1">
                 <p className="text-[17px] font-bold text-slate-900">{a.name}</p>
-                <p className="text-[12px] text-slate-400">{[a.tour, a.region].filter(Boolean).join(' · ') || '선수'}</p>
+                <p className="text-[12px] text-slate-500">{[a.tour, a.region].filter(Boolean).join(' · ') || '선수'}</p>
               </div>
-              <Link to={`/athletes/${a.id}`} className="text-[12px] font-bold text-slate-400 hover:text-slate-900 inline-flex items-center">
+              <Link to={`/athletes/${a.id}`} className="text-[12px] font-bold text-slate-500 hover:text-slate-900 inline-flex items-center">
                 선수 정보 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
             {temp && (
               <Link to={`/fan/temperature/${a.id}`} className="block pt-4 border-t border-slate-100">
                 <div className="flex items-center gap-1.5 mb-2">
-                  <Thermometer className="w-3.5 h-3.5 text-slate-400" />
+                  <Thermometer className="w-3.5 h-3.5 text-slate-500" />
                   <span className="text-[12px] font-semibold text-slate-500">팬온도</span>
-                  <span className="ml-auto text-[11px] text-slate-400">자세히 보기</span>
+                  <span className="ml-auto text-[12px] text-slate-500">자세히 보기</span>
                 </div>
                 <TempBar score={temp.score} tier={temp.tier?.label} lowSample={temp.lowSample} />
               </Link>
@@ -195,7 +195,7 @@ export default function FanCommunityNew() {
           <Card className="p-4 mb-4">
             <div className="flex gap-3">
               <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                <PenLine className="w-4 h-4 text-slate-400" />
+                <PenLine className="w-4 h-4 text-slate-500" />
               </div>
               <div className="flex-1">
                 <textarea value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 1000))}
@@ -203,7 +203,7 @@ export default function FanCommunityNew() {
                   className="w-full text-[14px] text-slate-700 placeholder:text-slate-300 border-0 resize-none focus:outline-none leading-relaxed" />
                 {draft && (
                   <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
-                    <span className="text-[11px] text-slate-400 tabular-nums">{draft.length}/1,000</span>
+                    <span className="text-[12px] text-slate-500 tabular-nums">{draft.length}/1,000</span>
                     <button onClick={post} disabled={posting || !draft.trim()}
                       className="h-9 px-4 rounded-xl bg-slate-900 text-white text-[13px] font-bold disabled:bg-slate-200 disabled:text-slate-400 hover:bg-slate-800 transition inline-flex items-center gap-1.5">
                       <Send className="w-3.5 h-3.5" /> {posting ? '등록 중…' : '응원 남기기'}
@@ -239,8 +239,8 @@ export default function FanCommunityNew() {
                     <div className="flex items-center gap-2 mb-2.5">
                       <Chip size="xs" tone={meta.tone}>{meta.label}</Chip>
                       <span className="text-[12px] font-semibold text-slate-600">{p.authorName}</span>
-                      <span className="text-[11px] text-slate-300">·</span>
-                      <span className="text-[11px] text-slate-400">{ago(p.createdAt)}</span>
+                      <span className="text-[12px] text-slate-300">·</span>
+                      <span className="text-[12px] text-slate-500">{ago(p.createdAt)}</span>
                       {p.isPrivate && <Chip size="xs">비공개</Chip>}
                     </div>
                     <p className="text-[14px] text-slate-700 leading-relaxed whitespace-pre-line">{p.content}</p>
@@ -250,12 +250,12 @@ export default function FanCommunityNew() {
                     <div className="flex items-center gap-4 mt-3.5 pt-3 border-t border-slate-100">
                       <button onClick={() => like(p.id)}
                         className={`inline-flex items-center gap-1.5 text-[12px] font-semibold transition ${
-                          p.likedByMe ? 'text-rose-500' : 'text-slate-400 hover:text-slate-600'
+                          p.likedByMe ? 'text-rose-500' : 'text-slate-500 hover:text-slate-600'
                         }`}>
                         <Heart className={`w-4 h-4 ${p.likedByMe ? 'fill-rose-500' : ''}`} /> {nf(p.likeCount)}
                       </button>
                       <button onClick={() => toggleComments(p.id)}
-                        className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-slate-400 hover:text-slate-600 transition">
+                        className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-slate-500 hover:text-slate-600 transition">
                         <MessageCircle className="w-4 h-4" /> {nf(p.commentCount)}
                       </button>
                     </div>
@@ -270,13 +270,13 @@ export default function FanCommunityNew() {
                                 <p className="text-[12px]">
                                   <b className="text-slate-700">{c.authorName}</b>
                                   <span className="text-slate-300 mx-1.5">·</span>
-                                  <span className="text-slate-400">{ago(c.createdAt)}</span>
+                                  <span className="text-slate-500">{ago(c.createdAt)}</span>
                                 </p>
                                 <p className="text-[13px] text-slate-600 mt-0.5 leading-relaxed">{c.content}</p>
                               </div>
                             </div>
                           )) : (
-                            <p className="text-[12px] text-slate-400 text-center py-2">첫 댓글을 남겨보세요</p>
+                            <p className="text-[12px] text-slate-500 text-center py-2">첫 댓글을 남겨보세요</p>
                           )}
                         </div>
                         <div className="flex gap-2">

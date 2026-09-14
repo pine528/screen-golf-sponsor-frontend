@@ -54,7 +54,7 @@ export default function FanStoreDetail() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan/store" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to="/fan/store" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 팬스토어
       </Link>
 
@@ -130,7 +130,7 @@ export default function FanStoreDetail() {
                       )}
                     </div>
                     {p.estimatedPoints !== null && (
-                      <p className="text-[11px] text-emerald-600 font-semibold mt-1">
+                      <p className="text-[12px] text-emerald-600 font-semibold mt-1">
                         구매확정 시 약 {nf(p.estimatedPoints)}P 적립
                       </p>
                     )}
@@ -147,7 +147,7 @@ export default function FanStoreDetail() {
       {/* 책임주체 */}
       <Card className="mt-6 p-5">
         <div className="flex items-center gap-1.5 mb-2">
-          <ShieldCheck className="w-4 h-4 text-slate-400" />
+          <ShieldCheck className="w-4 h-4 text-slate-500" />
           <span className="text-[13px] font-bold text-slate-700">{data.responsibleLabel}</span>
         </div>
         <p className="text-[13px] text-slate-500 leading-relaxed">{data.responsibleDesc}</p>
@@ -170,7 +170,7 @@ export default function FanStoreDetail() {
             <p className="text-[12px] font-bold text-slate-500 mb-2">브랜드몰로 이동하기 전에</p>
             <ul className="space-y-1">
               {data.exitNotice?.map((t: string, i: number) => (
-                <li key={i} className="text-[12px] text-slate-400 leading-relaxed pl-2.5 relative">
+                <li key={i} className="text-[12px] text-slate-500 leading-relaxed pl-2.5 relative">
                   <span className="absolute left-0 top-[7px] w-1 h-1 rounded-full bg-slate-300" />{t}
                 </li>
               ))}

@@ -26,7 +26,7 @@ function EvidenceLayer({ metricId, onClose }: { metricId: string; onClose: () =>
         <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between">
           <h2 className="text-[17px] font-extrabold text-slate-900">성과 근거 상세</h2>
           <button onClick={onClose} className="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center">
-            <X className="w-4 h-4 text-slate-400" />
+            <X className="w-4 h-4 text-slate-500" />
           </button>
         </div>
 
@@ -45,7 +45,7 @@ function EvidenceLayer({ metricId, onClose }: { metricId: string; onClose: () =>
                 <ShieldCheck className="w-5 h-5" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-[12px] font-semibold text-slate-400">성과 지표</p>
+                <p className="text-[12px] font-semibold text-slate-500">성과 지표</p>
                 <p className="text-[16px] font-bold text-slate-900">{data.metric.label}</p>
               </div>
               <div className="text-right shrink-0">
@@ -73,7 +73,7 @@ function EvidenceLayer({ metricId, onClose }: { metricId: string; onClose: () =>
                 return (
                   <div key={r.label} className="rounded-2xl border border-slate-200 p-4">
                     <p className="inline-flex items-center gap-1.5 text-[12px] font-bold text-slate-500 mb-1.5">
-                      <I className="w-3.5 h-3.5 text-slate-400" /> {r.label}
+                      <I className="w-3.5 h-3.5 text-slate-500" /> {r.label}
                     </p>
                     <p className="text-[13px] text-slate-700 leading-relaxed">{r.value}</p>
                   </div>
@@ -100,7 +100,7 @@ function EvidenceLayer({ metricId, onClose }: { metricId: string; onClose: () =>
                   원본 리포트 보기 <ExternalLink className="w-4 h-4" />
                 </a>
               ) : (
-                <div className="h-12 rounded-2xl bg-slate-50 text-[13px] font-semibold text-slate-400 flex items-center justify-center gap-1.5">
+                <div className="h-12 rounded-2xl bg-slate-50 text-[13px] font-semibold text-slate-500 flex items-center justify-center gap-1.5">
                   <Lock className="w-4 h-4" /> {data.rawReportNotice}
                 </div>
               )}
@@ -171,7 +171,7 @@ export default function CaseDetail() {
   return (
     <AboutShell current="매칭사례">
       <div className="max-w-[1280px] mx-auto px-5 pb-20">
-        <Link to="/about/cases" className="inline-flex items-center gap-1 mt-6 text-[13px] font-semibold text-slate-400 hover:text-slate-700">
+        <Link to="/about/cases" className="inline-flex items-center gap-1 mt-6 text-[13px] font-semibold text-slate-500 hover:text-slate-700">
           <ArrowLeft className="w-4 h-4" /> 매칭사례
         </Link>
 
@@ -237,7 +237,7 @@ export default function CaseDetail() {
                       {i + 1}
                     </span>
                     <p className="text-[13.5px] font-bold text-slate-900">{t.label}</p>
-                    <p className="text-[11.5px] text-slate-400 mt-1 tabular-nums">{t.date}</p>
+                    <p className="text-[12.5px] text-slate-500 mt-1 tabular-nums">{t.date}</p>
                   </div>
                   {i < timeline.length - 1 && <ArrowRight className="w-4 h-4 text-slate-300 shrink-0 hidden sm:block" />}
                 </li>
@@ -250,7 +250,7 @@ export default function CaseDetail() {
         <section className="mt-12">
           <div className="flex items-end justify-between mb-4">
             <h2 className="text-[18px] font-extrabold text-slate-900">성과 지표</h2>
-            <p className="text-[12px] text-slate-400">지표를 누르면 측정 근거를 볼 수 있습니다</p>
+            <p className="text-[12px] text-slate-500">지표를 누르면 측정 근거를 볼 수 있습니다</p>
           </div>
 
           {data.metrics?.length ? (
@@ -263,25 +263,25 @@ export default function CaseDetail() {
                   <p className="text-[12.5px] font-bold text-slate-500">{m.label}</p>
                   {m.restricted ? (
                     <>
-                      <p className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-slate-400">
+                      <p className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-semibold text-slate-500">
                         <Lock className="w-3.5 h-3.5" /> 비공개
                       </p>
-                      <p className="mt-1.5 text-[11.5px] text-slate-400 leading-relaxed">{m.restrictedReason}</p>
+                      <p className="mt-1.5 text-[12.5px] text-slate-500 leading-relaxed">{m.restrictedReason}</p>
                     </>
                   ) : (
                     <>
                       <p className="mt-2.5 text-[26px] font-extrabold text-slate-900 tabular-nums leading-none">
                         {m.display}
-                        {m.approximate && <span className="ml-1.5 text-[11px] font-bold text-slate-400">근사</span>}
+                        {m.approximate && <span className="ml-1.5 text-[12px] font-bold text-slate-500">근사</span>}
                       </p>
                       <div className="mt-3 pt-3 border-t border-slate-100 space-y-1">
                         {m.periodStart && m.periodEnd && (
-                          <p className="text-[11px] text-slate-400">
+                          <p className="text-[12px] text-slate-500">
                             측정 기간 {new Date(m.periodStart).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })} ~ {new Date(m.periodEnd).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit' })}
                           </p>
                         )}
                         {m.evidence?.sourceName && (
-                          <p className="text-[11px] text-slate-400 truncate">출처 {m.evidence.sourceName}</p>
+                          <p className="text-[12px] text-slate-500 truncate">출처 {m.evidence.sourceName}</p>
                         )}
                       </div>
                     </>
@@ -293,7 +293,7 @@ export default function CaseDetail() {
             <StateNotice kind="partial" title="공개된 성과 지표가 없습니다"
               desc={'검증이 끝난 지표만 공개합니다. 집계가 완료되면 이곳에 표시됩니다.'} />
           )}
-          <p className="mt-3 text-[11.5px] text-slate-400">{data.evidenceNotice}</p>
+          <p className="mt-3 text-[12.5px] text-slate-500">{data.evidenceNotice}</p>
         </section>
 
         {/* 후기 */}
@@ -310,7 +310,7 @@ export default function CaseDetail() {
                       : <span className="w-8 h-8 rounded-full bg-slate-100" />}
                     <span className="text-[12.5px]">
                       <b className="text-slate-800">{q.authorName}</b>
-                      {q.authorRole && <span className="text-slate-400 ml-1.5">{q.authorRole}</span>}
+                      {q.authorRole && <span className="text-slate-500 ml-1.5">{q.authorRole}</span>}
                     </span>
                   </footer>
                 </blockquote>
@@ -332,7 +332,7 @@ export default function CaseDetail() {
                   </div>
                   <div className="p-4">
                     <p className="text-[13.5px] font-bold text-slate-900 truncate">{r.athleteName}</p>
-                    <p className="text-[12px] text-slate-400 mt-0.5 line-clamp-1">{r.title}</p>
+                    <p className="text-[12px] text-slate-500 mt-0.5 line-clamp-1">{r.title}</p>
                   </div>
                 </Link>
               ))}

@@ -173,7 +173,7 @@ export default function PublicAthleteDetail() {
     onAuctionStatus: () => queryClient.invalidateQueries({ queryKey: ['public-athlete', id] }),
   });
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center text-sm text-slate-400">로딩 중...</div>;
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center text-sm text-slate-500">로딩 중...</div>;
   if (error || !athlete) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
@@ -273,7 +273,7 @@ export default function PublicAthleteDetail() {
             <TrendingUp className="w-5 h-5 text-emerald-500" /> ROI 대시보드
           </h2>
           {roi?.meta && (
-            <span className="text-[10px] text-slate-400">
+            <span className="text-[12.5px] text-slate-500">
               수집률 {roi.meta.collectionProgress.collected}/{roi.meta.collectionProgress.total}
             </span>
           )}
@@ -302,7 +302,7 @@ export default function PublicAthleteDetail() {
           {/* 계약 상태 (docx E-1) */}
           <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
             <span className="text-slate-500">계약 상태</span>
-            <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold text-[10px]">
+            <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold text-[12.5px]">
               ● 활동중
             </span>
           </div>
@@ -314,7 +314,7 @@ export default function PublicAthleteDetail() {
             <Calendar className="w-4 h-4 text-emerald-500" /> 최근 참가 대회
           </h2>
           {recentEvents.length === 0 ? (
-            <div className="text-center py-6 text-sm text-slate-400">최근 대회 정보가 없습니다.</div>
+            <div className="text-center py-6 text-sm text-slate-500">최근 대회 정보가 없습니다.</div>
           ) : (
             <div className="space-y-2">
               {recentEvents.slice(0, 3).map((e: any) => {
@@ -331,7 +331,7 @@ export default function PublicAthleteDetail() {
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <div className="text-xs font-semibold truncate">{e.name}</div>
-                        <div className="text-[10px] text-slate-400">
+                        <div className="text-[12.5px] text-slate-500">
                           {e.tour} · {e.dateStart ? new Date(e.dateStart).toLocaleDateString('ko-KR') : '-'}
                         </div>
                       </div>
@@ -343,7 +343,7 @@ export default function PublicAthleteDetail() {
                     </div>
                     {/* 최근 성적 (rank + score) */}
                     {matched ? (
-                      <div className="mt-1.5 flex items-center gap-2 text-[11px]">
+                      <div className="mt-1.5 flex items-center gap-2 text-[12px]">
                         {matched.rank != null && (
                           <span className={`font-extrabold ${
                             matched.rank <= 3 ? 'text-amber-600'
@@ -356,7 +356,7 @@ export default function PublicAthleteDetail() {
                         {matched.score && <span className="text-slate-500 font-mono">{matched.score}</span>}
                       </div>
                     ) : e.status === 'COMPLETED' ? (
-                      <div className="mt-1.5 text-[10px] text-slate-400">📡 성적 수집 준비 중</div>
+                      <div className="mt-1.5 text-[12.5px] text-slate-500">📡 성적 수집 준비 중</div>
                     ) : null}
                   </div>
                 );
@@ -374,7 +374,7 @@ export default function PublicAthleteDetail() {
             const upcoming = recentEvents.filter((e: any) => e.status === 'UPCOMING' && new Date(e.dateStart) >= new Date());
             const next = upcoming[0] || roi?.athletePerformance?.nextEvent || roi?.operations?.nextEvent;
             if (!next) {
-              return <div className="text-center py-6 text-sm text-slate-400">예정된 대회가 없습니다.</div>;
+              return <div className="text-center py-6 text-sm text-slate-500">예정된 대회가 없습니다.</div>;
             }
             return (
               <div className="space-y-2">
@@ -391,12 +391,12 @@ export default function PublicAthleteDetail() {
                 )}
                 {next.tour && (
                   <div>
-                    <span className="inline-block text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
+                    <span className="inline-block text-[12.5px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">
                       {next.tour}
                     </span>
                   </div>
                 )}
-                <span className="inline-block text-[10px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full mt-1">
+                <span className="inline-block text-[12.5px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full mt-1">
                   📅 UPCOMING
                 </span>
               </div>
@@ -416,7 +416,7 @@ export default function PublicAthleteDetail() {
               <Trophy className="w-4 h-4 text-emerald-500" /> 경기결과 / 분석
             </h2>
             {eventResults.length > 0 && (
-              <span className="text-[10px] text-slate-400">
+              <span className="text-[12.5px] text-slate-500">
                 업데이트: {new Date(eventResults[0].sourceUpdatedAt).toLocaleDateString('ko-KR')}
               </span>
             )}
@@ -426,31 +426,31 @@ export default function PublicAthleteDetail() {
           {roi?.matchAnalysis && (
             <div className="mb-4 grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div className="bg-emerald-50 rounded-lg p-2.5 text-center">
-                <div className="text-[10px] text-slate-500">최근 3개 대회 평균순위</div>
+                <div className="text-[12.5px] text-slate-500">최근 3개 대회 평균순위</div>
                 <div className="text-lg font-extrabold text-emerald-700">
                   {roi.matchAnalysis.recentAvgRank != null ? `${roi.matchAnalysis.recentAvgRank}위` : '-'}
                 </div>
               </div>
               <div className="bg-sky-50 rounded-lg p-2.5 text-center">
-                <div className="text-[10px] text-slate-500">시즌 누적 성적</div>
+                <div className="text-[12.5px] text-slate-500">시즌 누적 성적</div>
                 <div className="text-lg font-extrabold text-sky-700">
                   {roi.matchAnalysis.seasonAvgRank != null ? `평균 ${roi.matchAnalysis.seasonAvgRank}위` : '-'}
                 </div>
-                <div className="text-[9px] text-slate-400">출전 {roi.matchAnalysis.seasonTotalEvents}회</div>
+                <div className="text-[9px] text-slate-500">출전 {roi.matchAnalysis.seasonTotalEvents}회</div>
               </div>
               <div className="bg-amber-50 rounded-lg p-2.5 text-center">
-                <div className="text-[10px] text-slate-500">시즌 최고</div>
+                <div className="text-[12.5px] text-slate-500">시즌 최고</div>
                 <div className="text-lg font-extrabold text-amber-700">
                   {roi.matchAnalysis.seasonBestRank != null ? `${roi.matchAnalysis.seasonBestRank}위` : '-'}
                 </div>
-                <div className="text-[9px] text-slate-400">TOP3 {roi.matchAnalysis.seasonTop3Count}회</div>
+                <div className="text-[9px] text-slate-500">TOP3 {roi.matchAnalysis.seasonTop3Count}회</div>
               </div>
               <div className="bg-violet-50 rounded-lg p-2.5 text-center">
-                <div className="text-[10px] text-slate-500">TOP 10 진입</div>
+                <div className="text-[12.5px] text-slate-500">TOP 10 진입</div>
                 <div className="text-lg font-extrabold text-violet-700">
                   {roi.matchAnalysis.seasonTop10Count}회
                 </div>
-                <div className="text-[9px] text-slate-400">시즌 누적</div>
+                <div className="text-[9px] text-slate-500">시즌 누적</div>
               </div>
             </div>
           )}
@@ -459,8 +459,8 @@ export default function PublicAthleteDetail() {
           {roi?.matchAnalysis?.recentTrend?.length >= 2 && (
             <div className="mb-4 p-3 bg-slate-50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-bold text-slate-700">📈 최근 대회 추이</span>
-                <span className="text-[9px] text-slate-400">최근 5개 (낮을수록 좋음)</span>
+                <span className="text-[12px] font-bold text-slate-700">📈 최근 대회 추이</span>
+                <span className="text-[9px] text-slate-500">최근 5개 (낮을수록 좋음)</span>
               </div>
               <div className="flex items-end justify-between gap-2 h-16">
                 {roi.matchAnalysis.recentTrend.map((t: any, i: number) => {
@@ -470,9 +470,9 @@ export default function PublicAthleteDetail() {
                   const color = rank <= 3 ? 'bg-amber-500' : rank <= 10 ? 'bg-emerald-500' : rank <= 30 ? 'bg-sky-500' : 'bg-slate-400';
                   return (
                     <div key={i} className="flex-1 flex flex-col items-center gap-1 group relative" title={`${t.eventName} · ${t.rank}위`}>
-                      <div className="text-[10px] font-bold text-slate-600">{rank}위</div>
+                      <div className="text-[12.5px] font-bold text-slate-600">{rank}위</div>
                       <div className={`w-full ${color} rounded-t transition-all`} style={{ height: `${heightPct}%`, minHeight: '4px' }} />
-                      <div className="text-[8px] text-slate-400 truncate max-w-full">
+                      <div className="text-[8px] text-slate-500 truncate max-w-full">
                         {t.eventDate ? new Date(t.eventDate).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }) : '-'}
                       </div>
                     </div>
@@ -483,7 +483,7 @@ export default function PublicAthleteDetail() {
           )}
 
           {eventResults.length === 0 ? (
-            <div className="text-center py-8 text-sm text-slate-400 bg-slate-50 rounded-lg">
+            <div className="text-center py-8 text-sm text-slate-500 bg-slate-50 rounded-lg">
               📡 최신 경기 정보 준비 중
             </div>
           ) : (
@@ -507,7 +507,7 @@ export default function PublicAthleteDetail() {
                         </span>
                       )}
                     </div>
-                    <div className="text-[10px] text-slate-500 ml-2 whitespace-nowrap">
+                    <div className="text-[12.5px] text-slate-500 ml-2 whitespace-nowrap">
                       {new Date(e.dateStart).toLocaleDateString('ko-KR')}{e.venue ? ` · ${e.venue}` : ''}
                     </div>
                   </div>
@@ -635,14 +635,14 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
               <div className="w-full h-full flex items-center justify-center text-7xl font-extrabold text-emerald-300">{athlete.name.charAt(0)}</div>
             )}
             {athlete.tour && (
-              <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 bg-white/95 text-emerald-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow">
+              <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 bg-white/95 text-emerald-700 text-[12.5px] font-extrabold px-2 py-0.5 rounded-full shadow">
                 <Trophy className="w-3 h-3" /> {athlete.tour}
               </span>
             )}
             {social.instagram && instaFollowers && (
               <a
                 href={`https://instagram.com/${String(social.instagram).replace(/^@/, '')}`} target="_blank" rel="noreferrer"
-                className="absolute bottom-2.5 left-2.5 inline-flex items-center gap-1 bg-black/55 hover:bg-black/70 text-white text-[10px] font-bold px-2 py-1 rounded-full backdrop-blur"
+                className="absolute bottom-2.5 left-2.5 inline-flex items-center gap-1 bg-black/55 hover:bg-black/70 text-white text-[12.5px] font-bold px-2 py-1 rounded-full backdrop-blur"
               >
                 <Instagram className="w-3 h-3" /> 팔로워 {instaFollowers}
               </a>
@@ -656,7 +656,7 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
             {isNew && (
               <span className="text-[9px] font-extrabold text-white bg-rose-500 px-1.5 py-0.5 rounded-full">NEW</span>
             )}
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">● 활동중</span>
+            <span className="inline-flex items-center gap-1 text-[12.5px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">● 활동중</span>
           </div>
 
           {/* SPONPIK 온도 */}
@@ -665,7 +665,7 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
               <span className="text-xs font-extrabold text-slate-800 inline-flex items-center gap-1">
                 SPONPIK 온도 <span className="text-slate-300" title="관심 등록·투표·커뮤니티·구매 활동 기반 인기척도 (기본 30℃ ~ 최대 100℃)">ⓘ</span>
               </span>
-              <span className="text-[9px] text-slate-400">팬심·반응 기반 인기척도</span>
+              <span className="text-[9px] text-slate-500">팬심·반응 기반 인기척도</span>
             </div>
             <div className={isAuthenticated ? '' : 'blur-[6px] select-none pointer-events-none'}>
               <div className="flex items-end gap-2 mb-2">
@@ -700,7 +700,7 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
             {!isAuthenticated && (
               <div className="absolute inset-0 top-8 flex flex-col items-center justify-center gap-1.5 text-center">
                 <div className="w-9 h-9 rounded-full bg-slate-800/85 text-white flex items-center justify-center text-sm">🔒</div>
-                <div className="text-[11px] font-bold text-slate-600">로그인 시 보실 수 있습니다</div>
+                <div className="text-[12px] font-bold text-slate-600">로그인 시 보실 수 있습니다</div>
               </div>
             )}
           </div>
@@ -728,7 +728,7 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
             className="w-full h-11 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-extrabold transition-colors inline-flex items-center justify-center gap-1.5"
           >
             <Gavel className="w-4 h-4" /> 진행중인 스폰서십 슬롯
-            {slotsCount > 0 && <span className="bg-emerald-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{slotsCount}</span>}
+            {slotsCount > 0 && <span className="bg-emerald-500 text-white text-[12.5px] px-1.5 py-0.5 rounded-full">{slotsCount}</span>}
           </button>
         </div>
 
@@ -764,8 +764,8 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
                       active ? 'border-emerald-200 bg-emerald-50/60' : 'border-slate-150 bg-slate-50 opacity-70'
                     }`}
                   >
-                    <div className="text-[11px] font-bold text-slate-800 leading-tight mb-1 break-keep">{t.label}</div>
-                    <div className={`text-[9px] font-extrabold ${active ? 'text-emerald-600' : 'text-slate-400'}`}>
+                    <div className="text-[12px] font-bold text-slate-800 leading-tight mb-1 break-keep">{t.label}</div>
+                    <div className={`text-[9px] font-extrabold ${active ? 'text-emerald-600' : 'text-slate-500'}`}>
                       {hasActivityData ? (active ? '활동 중' : '준비 중') : '-'}
                     </div>
                   </div>
@@ -779,9 +779,9 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
             <h2 className="text-sm font-extrabold text-slate-900 mb-3.5">주요 이력 및 성적</h2>
             <div className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-6">
               <div>
-                <div className="text-[11px] font-bold text-slate-500 mb-2">주요 이력</div>
+                <div className="text-[12px] font-bold text-slate-500 mb-2">주요 이력</div>
                 {fallbackHighlights.length === 0 ? (
-                  <div className="text-xs text-slate-400 py-3">등록된 이력이 없습니다.</div>
+                  <div className="text-xs text-slate-500 py-3">등록된 이력이 없습니다.</div>
                 ) : (
                   <ul className="space-y-1.5">
                     {fallbackHighlights.slice(0, 14).map((h: string, i: number) => (
@@ -793,14 +793,14 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
                 )}
               </div>
               <div>
-                <div className="text-[11px] font-bold text-slate-500 mb-2">주요 대회 성적</div>
+                <div className="text-[12px] font-bold text-slate-500 mb-2">주요 대회 성적</div>
                 {results.length === 0 ? (
-                  <div className="text-xs text-slate-400 py-3">등록된 대회 성적이 없습니다.</div>
+                  <div className="text-xs text-slate-500 py-3">등록된 대회 성적이 없습니다.</div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs">
                       <thead>
-                        <tr className="text-[10px] text-slate-400 border-b border-slate-100">
+                        <tr className="text-[12.5px] text-slate-500 border-b border-slate-100">
                           <th className="text-left py-1.5 pr-2 font-semibold whitespace-nowrap">연도</th>
                           <th className="text-left py-1.5 pr-2 font-semibold">대회명</th>
                           <th className="text-right py-1.5 pr-2 font-semibold whitespace-nowrap">성적</th>
@@ -815,12 +815,12 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
                             <td className={`py-1.5 pr-2 text-right font-extrabold whitespace-nowrap ${r.rank != null && r.rank <= 3 ? 'text-amber-600' : 'text-slate-700'}`}>
                               {r.rank != null ? `${r.rank}위` : r.score || '-'}
                             </td>
-                            <td className="py-1.5 text-right text-[10px] text-slate-400 whitespace-nowrap">{r.rank != null ? '출전' : '본선 진출'}</td>
+                            <td className="py-1.5 text-right text-[12.5px] text-slate-500 whitespace-nowrap">{r.rank != null ? '출전' : '본선 진출'}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                    <div className="text-[9px] text-slate-400 mt-1.5">* 최근 자료 기준</div>
+                    <div className="text-[9px] text-slate-500 mt-1.5">* 최근 자료 기준</div>
                   </div>
                 )}
               </div>
@@ -833,15 +833,15 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
           <div className="relative bg-white rounded-2xl border border-slate-200 p-5 overflow-hidden">
             <div className="flex items-center justify-between mb-1">
               <h2 className="text-sm font-extrabold text-slate-900">Sponpik Index &amp; Ad Impact Score</h2>
-              <span className="text-[9px] text-slate-400 whitespace-nowrap ml-2">지수 기준 ⓘ</span>
+              <span className="text-[9px] text-slate-500 whitespace-nowrap ml-2">지수 기준 ⓘ</span>
             </div>
             <div className={isAuthenticated ? '' : 'blur-[7px] select-none pointer-events-none'}>
               <RadarPentagon axes={axes} overall={overall} />
               <div className="flex items-center justify-between mt-1">
-                <span className="text-[9px] text-slate-400">* 최근 3개월 기준</span>
+                <span className="text-[9px] text-slate-500">* 최근 3개월 기준</span>
                 <button
                   onClick={() => scrollTo('[data-section="roi"]') as any}
-                  className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 border border-emerald-200 rounded-lg px-3 py-1"
+                  className="text-[12px] font-bold text-emerald-600 hover:text-emerald-700 border border-emerald-200 rounded-lg px-3 py-1"
                 >
                   자세히 보기 →
                 </button>
@@ -850,7 +850,7 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
             {!isAuthenticated && (
               <div className="absolute inset-0 top-8 flex flex-col items-center justify-center gap-1.5 text-center">
                 <div className="w-9 h-9 rounded-full bg-slate-800/85 text-white flex items-center justify-center text-sm">🔒</div>
-                <div className="text-[11px] font-bold text-slate-600">로그인 시 보실 수 있습니다</div>
+                <div className="text-[12px] font-bold text-slate-600">로그인 시 보실 수 있습니다</div>
               </div>
             )}
           </div>
@@ -868,19 +868,19 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
                     <Instagram className="w-4 h-4" />
                   </span>
                   <span className="text-xs font-bold text-slate-800 truncate">
-                    인스타그램{social.instagram ? <span className="text-slate-400 font-semibold"> @{String(social.instagram).replace(/^@/, '')}</span> : null}
+                    인스타그램{social.instagram ? <span className="text-slate-500 font-semibold"> @{String(social.instagram).replace(/^@/, '')}</span> : null}
                   </span>
                 </span>
-                <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                <span className="text-[12.5px] font-bold text-slate-500 whitespace-nowrap">
                   {instaFollowers ? `팔로워 ${instaFollowers}` : '-'}
                 </span>
               </a>
               <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-slate-100">
                 <span className="inline-flex items-center gap-2 min-w-0">
-                  <span className="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center text-[10px] font-extrabold shrink-0">▶</span>
+                  <span className="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center text-[12.5px] font-extrabold shrink-0">▶</span>
                   <span className="text-xs font-bold text-slate-800 truncate">{sns.youtubeChannel || '유튜브'}</span>
                 </span>
-                <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                <span className="text-[12.5px] font-bold text-slate-500 whitespace-nowrap">
                   {sns.youtubeSubs ? `구독자 ${fmtFollower(sns.youtubeSubs)}` : '준비 중'}
                 </span>
               </div>
@@ -895,7 +895,7 @@ function AthleteHeroV2({ athlete, social, sponpikTemp, roi, eventResults, slotsC
 function HeroInfoRow({ label, value }: { label: string; value: any }) {
   return (
     <div className="flex items-start gap-3 text-sm">
-      <span className="shrink-0 w-20 text-[11px] font-bold text-slate-400 pt-0.5">{label}</span>
+      <span className="shrink-0 w-20 text-[12px] font-bold text-slate-500 pt-0.5">{label}</span>
       <span className="font-semibold text-slate-800 leading-snug">{value || '-'}</span>
     </div>
   );
@@ -965,7 +965,7 @@ function SlotCard({ slot, selected, index, onClick }: { slot: any; selected: boo
       } ${!isOpen ? 'opacity-60' : ''}`}
     >
       <div className="flex items-center gap-2 mb-1">
-        <span className="text-[10px] font-bold text-slate-400">#{index}</span>
+        <span className="text-[12.5px] font-bold text-slate-500">#{index}</span>
         {isLive && <span className="text-[9px] font-extrabold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded animate-pulse">LIVE</span>}
         {!auction && isDirectBuy && <span className="text-[9px] font-extrabold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded">바로 구매</span>}
         {!auction && isInquiry && <span className="text-[9px] font-extrabold text-violet-700 bg-violet-50 px-1.5 py-0.5 rounded">협의</span>}
@@ -973,7 +973,7 @@ function SlotCard({ slot, selected, index, onClick }: { slot: any; selected: boo
       </div>
       {/* docx 4: slot_name 우선, 없으면 SlotTemplate.name fallback */}
       <div className="text-sm font-extrabold text-slate-900">{dash(slot.slotName || tpl.name || tpl.code)}</div>
-      <div className="text-[10px] text-slate-500 mb-2">{dash(tpl.bodyPart)}{tpl.grade && ` · ${fmtGrade(tpl.grade)}등급`}</div>
+      <div className="text-[12.5px] text-slate-500 mb-2">{dash(tpl.bodyPart)}{tpl.grade && ` · ${fmtGrade(tpl.grade)}등급`}</div>
       <div className="flex items-center justify-between text-xs">
         <span className="text-slate-500">{auction ? '현재가' : isDirectBuy ? '바로 구매가' : isInquiry ? '후원 조건' : '기준가'}</span>
         <span className={`font-bold ${auction ? 'text-emerald-600' : isInquiry ? 'text-violet-600' : 'text-sky-600'}`}>
@@ -1099,9 +1099,9 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
         <div className="flex items-center justify-between mb-3">
           <div>
             <h3 className="text-sm font-bold text-slate-700">{athleteName} · {dash(slot.slotName || tpl.name || tpl.code)}</h3>
-            <div className="text-[10px] text-slate-400">{dash(tpl.bodyPart)}{tpl.grade && ` · ${fmtGrade(tpl.grade)}등급`}</div>
+            <div className="text-[12.5px] text-slate-500">{dash(tpl.bodyPart)}{tpl.grade && ` · ${fmtGrade(tpl.grade)}등급`}</div>
           </div>
-          {auction?.status === 'LIVE' && <span className="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2 py-1 rounded animate-pulse">● LIVE</span>}
+          {auction?.status === 'LIVE' && <span className="text-[12.5px] font-extrabold text-rose-600 bg-rose-50 px-2 py-1 rounded animate-pulse">● LIVE</span>}
         </div>
 
         {!auction ? (
@@ -1109,9 +1109,9 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
             /* 협의 문의 슬롯 — 가격 비공개, 스폰픽 상담으로 확정 */
             <div>
               <div className="bg-violet-50 rounded-xl p-4 mb-3">
-                <div className="text-[10px] font-bold text-violet-700 mb-1">스폰픽 협의 후원</div>
+                <div className="text-[12.5px] font-bold text-violet-700 mb-1">스폰픽 협의 후원</div>
                 <div className="text-lg font-extrabold text-violet-700">가격 협의</div>
-                <div className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                <div className="text-[12px] text-slate-600 mt-1 leading-relaxed">
                   이 슬롯은 후원 가능 상태로만 공개되어 있습니다. 상담을 신청하시면 스폰픽이 노출 조건·기간·금액을 협의해 후원을 확정해 드립니다.
                 </div>
               </div>
@@ -1121,15 +1121,15 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
               >
                 💬 스폰픽 상담 문의
               </button>
-              <div className="text-[10px] text-slate-400 text-center mt-2">카카오톡 채널로 연결됩니다</div>
+              <div className="text-[12.5px] text-slate-500 text-center mt-2">카카오톡 채널로 연결됩니다</div>
             </div>
           ) : isDirectBuy ? (
             /* 바로 구매 슬롯 (경매 없이 고정가 판매) */
             <div>
               <div className="bg-sky-50 rounded-xl p-4 mb-3">
-                <div className="text-[10px] font-bold text-sky-700 mb-1">바로 구매가</div>
+                <div className="text-[12.5px] font-bold text-sky-700 mb-1">바로 구매가</div>
                 <div className="text-2xl font-extrabold text-sky-600">{dashKRW(slot.directBuyPrice)}</div>
-                <div className="text-[10px] text-slate-500 mt-1">경매 없이 바로 구매하며, 결제 후 계약이 생성됩니다.</div>
+                <div className="text-[12.5px] text-slate-500 mt-1">경매 없이 바로 구매하며, 결제 후 계약이 생성됩니다.</div>
               </div>
               {isSold ? (
                 <div className="text-center py-3 bg-slate-100 rounded-xl text-sm font-bold text-slate-500">
@@ -1166,14 +1166,14 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
             {/* 현재가 + 카운트다운 */}
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="bg-emerald-50 rounded-xl p-3">
-                <div className="text-[10px] font-bold text-emerald-700 mb-1">현재가</div>
+                <div className="text-[12.5px] font-bold text-emerald-700 mb-1">현재가</div>
                 <div className="text-2xl font-extrabold text-emerald-600">{dashKRW(currentPrice)}</div>
               </div>
               <div className={`rounded-xl p-3 ${isEnded ? 'bg-slate-100' : remainingMs && remainingMs < 60000 ? 'bg-rose-50' : 'bg-slate-50'}`}>
-                <div className="text-[10px] font-bold text-slate-700 mb-1 inline-flex items-center gap-1">
+                <div className="text-[12.5px] font-bold text-slate-700 mb-1 inline-flex items-center gap-1">
                   <Clock className="w-3 h-3" /> 남은 시간
                 </div>
-                <div className={`text-xl font-extrabold tabular-nums ${isEnded ? 'text-slate-400' : remainingMs && remainingMs < 60000 ? 'text-rose-600' : 'text-slate-900'}`}>{remainingText}</div>
+                <div className={`text-xl font-extrabold tabular-nums ${isEnded ? 'text-slate-500' : remainingMs && remainingMs < 60000 ? 'text-rose-600' : 'text-slate-900'}`}>{remainingText}</div>
               </div>
             </div>
 
@@ -1189,7 +1189,7 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
               </div>
               <div className="bg-slate-50 rounded p-2">
                 <div className="text-[9px] text-slate-500">상태</div>
-                <div className="font-bold text-[11px]">{dash(auction.status)}</div>
+                <div className="font-bold text-[12px]">{dash(auction.status)}</div>
               </div>
             </div>
 
@@ -1264,10 +1264,10 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
       {/* 최근 입찰 내역 (3-4) */}
       <div className="bg-white border border-slate-200 rounded-2xl p-5">
         <h3 className="text-sm font-bold text-slate-700 mb-3 inline-flex items-center gap-2">
-          <Users className="w-4 h-4 text-slate-400" /> 최근 입찰 내역
+          <Users className="w-4 h-4 text-slate-500" /> 최근 입찰 내역
         </h3>
         {bids.length === 0 ? (
-          <div className="text-center py-6 text-sm text-slate-400">아직 입찰 내역이 없습니다.</div>
+          <div className="text-center py-6 text-sm text-slate-500">아직 입찰 내역이 없습니다.</div>
         ) : (
           <div className="space-y-1.5">
             {bids.slice(0, 10).map((b: any, i: number) => (
@@ -1278,7 +1278,7 @@ function SlotAuctionPanel({ slot, athleteName, isAuthenticated, userRole, onLogi
                 </div>
                 <div className="text-right">
                   <div className="font-bold text-emerald-600">{dashKRW(b.currentProxy || b.maxBid)}</div>
-                  <div className="text-[9px] text-slate-400">{b.createdAt ? formatRelativeTime(b.createdAt) : '-'}</div>
+                  <div className="text-[9px] text-slate-500">{b.createdAt ? formatRelativeTime(b.createdAt) : '-'}</div>
                 </div>
               </div>
             ))}
@@ -1316,10 +1316,10 @@ function BidTierLadder({
   return (
     <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl p-3 mb-4">
       <div className="flex items-center justify-between mb-2">
-        <div className="text-[11px] font-extrabold text-emerald-700 inline-flex items-center gap-1">
+        <div className="text-[12px] font-extrabold text-emerald-700 inline-flex items-center gap-1">
           📊 호가 리스트 (다음 5단계)
         </div>
-        <div className="text-[10px] text-slate-500">
+        <div className="text-[12.5px] text-slate-500">
           5단계 누적 <span className="font-bold text-emerald-700">₩{totalSum.toLocaleString()}</span>
         </div>
       </div>
@@ -1333,10 +1333,10 @@ function BidTierLadder({
             title={`${t.step}단계: ₩${t.amount.toLocaleString()}`}
           >
             <div className="text-[9px] font-bold text-emerald-600">{t.step}단계</div>
-            <div className="text-[11px] font-extrabold text-slate-900 group-hover:text-emerald-700 truncate">
+            <div className="text-[12px] font-extrabold text-slate-900 group-hover:text-emerald-700 truncate">
               ₩{t.amount.toLocaleString()}
             </div>
-            <div className="text-[8px] text-slate-400">+₩{t.delta.toLocaleString()}</div>
+            <div className="text-[8px] text-slate-500">+₩{t.delta.toLocaleString()}</div>
           </button>
         ))}
       </div>
@@ -1387,7 +1387,7 @@ function RoiDashboard({
     else setInternalMode(m);
   };
   if (!roi) {
-    return <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-sm text-slate-400">ROI 지표 로딩 중...</div>;
+    return <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center text-sm text-slate-500">ROI 지표 로딩 중...</div>;
   }
 
   const fmt = (v: any, type: 'number' | 'currency' | 'percent' | 'time' = 'number'): string => {
@@ -1417,7 +1417,7 @@ function RoiDashboard({
     amber: 'from-amber-100 to-yellow-50 text-amber-700 border-amber-300',
     orange: 'from-orange-100 to-amber-50 text-orange-700 border-orange-300',
     rose: 'from-rose-100 to-pink-50 text-rose-700 border-rose-300',
-    slate: 'from-slate-100 to-slate-50 text-slate-400 border-slate-200',
+    slate: 'from-slate-100 to-slate-50 text-slate-500 border-slate-200',
   };
 
   const statusBadgeClass = sum.statusBadge === 'OFFICIAL' ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
@@ -1433,17 +1433,17 @@ function RoiDashboard({
         <div className="flex items-start justify-between gap-4 mb-3">
           <div>
             <div className="flex items-center gap-1.5 mb-1">
-              <span className="text-[11px] font-bold opacity-70">📊 SPONPIK Ad Impact Score</span>
+              <span className="text-[12px] font-bold opacity-70">📊 SPONPIK Ad Impact Score</span>
               <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-current/10">
                 {isExtended ? '확장형' : '기본형'}
               </span>
             </div>
-            <div className="text-[10px] opacity-60">
+            <div className="text-[12.5px] opacity-60">
               {isExtended ? '광고효과 + 유입 + 전환 종합 점수' : '미디어 · 콘텐츠 · 팬덤 · 선수성과 기준 산정'}
             </div>
           </div>
           <span
-            className={`text-[10px] font-bold px-2 py-1 rounded-full border cursor-help ${statusBadgeClass}`}
+            className={`text-[12.5px] font-bold px-2 py-1 rounded-full border cursor-help ${statusBadgeClass}`}
             title={
               '점수 상태 매핑 (docx §11):\n' +
               '· 공식 산정: 데이터 수집률 70% 이상\n' +
@@ -1462,12 +1462,12 @@ function RoiDashboard({
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[10px] font-bold opacity-70 mb-0.5">등급</div>
+            <div className="text-[12.5px] font-bold opacity-70 mb-0.5">등급</div>
             <div className="text-4xl font-black leading-none">{grade ?? '-'}</div>
           </div>
         </div>
         {/* B-2 보조 정보 — 최근 업데이트 + 최근 성과 2개만 (데이터 수집률/신뢰도 제거) */}
-        <div className="mt-4 pt-3 border-t border-current/10 grid grid-cols-2 gap-2 text-[10px]">
+        <div className="mt-4 pt-3 border-t border-current/10 grid grid-cols-2 gap-2 text-[12.5px]">
           <AuxStat
             label="최근 업데이트"
             hint="점수 갱신 시각"
@@ -1494,7 +1494,7 @@ function RoiDashboard({
           />
         </div>
         {/* 뷰 토글 */}
-        <div className="mt-3 flex items-center justify-end gap-1 text-[10px]">
+        <div className="mt-3 flex items-center justify-end gap-1 text-[12.5px]">
           <span className="opacity-60">대시보드 유형:</span>
           <button
             onClick={() => setViewMode('BASIC')}
@@ -1599,7 +1599,7 @@ function RoiDashboard({
 
       {/* === D. 확장형 추가 카드 (중장기 계약 브랜드 전용) === */}
       {isExtended && (
-        <div className="text-[11px] font-bold text-amber-600 inline-flex items-center gap-1.5 pt-1">
+        <div className="text-[12px] font-bold text-amber-600 inline-flex items-center gap-1.5 pt-1">
           <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">확장 전용</span>
           <span className="text-slate-500">랜딩 유입 + 구매/전환/ROI</span>
         </div>
@@ -1648,7 +1648,7 @@ function RoiDashboard({
       {!isExtended && (
         <button
           onClick={() => setViewMode('EXTENDED')}
-          className="w-full bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-200 rounded-xl p-3 text-[11px] text-slate-500 transition-colors text-left"
+          className="w-full bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-200 rounded-xl p-3 text-[12px] text-slate-500 transition-colors text-left"
         >
           🔒 랜딩 유입·구매/전환/ROI 카드는 중장기 계약 브랜드 전용 — <span className="font-bold text-emerald-600">확장형 미리보기 →</span>
         </button>
@@ -1677,7 +1677,7 @@ function _ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC'
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="bg-white border border-slate-200 rounded-2xl p-4">
           <h3 className="text-sm font-extrabold text-slate-900 mb-2">📐 {isExtended ? '확장형' : '기본형'} 점수 산정 기준</h3>
-          <div className="space-y-1.5 text-[11px]">
+          <div className="space-y-1.5 text-[12px]">
             {(isExtended ? roi.scoringRules?.extended : roi.scoringRules?.basic)?.map((r: any) => (
               <div key={r.axis} className="flex items-center justify-between">
                 <span className="text-slate-600">{r.axis}</span>
@@ -1685,7 +1685,7 @@ function _ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC'
               </div>
             ))}
           </div>
-          <p className="text-[10px] text-slate-500 mt-3">
+          <p className="text-[12.5px] text-slate-500 mt-3">
             {isExtended
               ? '중장기 계약 브랜드에 한해 확장 성과지표가 제공됩니다.'
               : '대회별 기본 입찰 및 직접 구매형 스폰서십에 제공되는 기본 광고효과 지표입니다. 랜딩 유입 및 구매전환 데이터는 중장기 계약 브랜드 전용 리포트에서 제공됩니다.'}
@@ -1695,12 +1695,12 @@ function _ScoringAndDataSources({ roi, viewMode }: { roi: any; viewMode: 'BASIC'
         <div className="bg-white border border-slate-200 rounded-2xl p-4">
           {/* docx §10 G-3 정확 카드명 '데이터 출처 카드' */}
           <h3 className="text-sm font-extrabold text-slate-900 mb-2">📦 데이터 출처 카드</h3>
-          <div className="space-y-1.5 text-[11px]">
+          <div className="space-y-1.5 text-[12px]">
             {roi.dataSources?.map((s: any) => (
               <div key={s.code} className="flex items-center justify-between">
                 <span className="text-slate-600">{s.name}</span>
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                  s.status === 'OK' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'
+                <span className={`text-[12.5px] font-bold px-1.5 py-0.5 rounded ${
+                  s.status === 'OK' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
                 }`}>
                   {s.status === 'OK' ? '연결됨' : '미수집'}
                 </span>
@@ -1771,16 +1771,16 @@ function RoiCard({
         </div>
       </div>
       {/* 목적은 ? 호버 툴팁으로만 노출 (본문에서는 제거) — 가독성 우선 */}
-      {subtitle && <p className="text-[10px] text-slate-500 mb-2">{subtitle}</p>}
+      {subtitle && <p className="text-[12.5px] text-slate-500 mb-2">{subtitle}</p>}
       <div className="flex items-baseline gap-2 mb-3 pb-2 border-b border-current/10">
-        <span className="text-[10px] text-slate-500">영역 점수</span>
-        <span className={`text-2xl font-black tabular-nums ${score == null ? 'text-slate-400' : c.scoreText}`}>
+        <span className="text-[12.5px] text-slate-500">영역 점수</span>
+        <span className={`text-2xl font-black tabular-nums ${score == null ? 'text-slate-500' : c.scoreText}`}>
           {score != null ? score.toFixed(1) : '-'}
         </span>
         {/* docx §4 B-1 형식 '00 / 100' (공백 포함) - B-1 메인 카드와 통일 */}
-        {score != null && <span className="text-[10px] text-slate-400">/ 100</span>}
+        {score != null && <span className="text-[12.5px] text-slate-500">/ 100</span>}
         {score == null && (
-          <span className="text-[9px] text-slate-400 italic ml-auto">📡 {emptyLabel || '수집 준비 중'}</span>
+          <span className="text-[9px] text-slate-500 italic ml-auto">📡 {emptyLabel || '수집 준비 중'}</span>
         )}
       </div>
       {showMetrics ? (
@@ -1791,8 +1791,8 @@ function RoiCard({
               const isEmpty = m.value === '-' || m.value === '' || m.value == null;
               return (
                 <div key={m.label} className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] text-slate-500">{m.label}</span>
-                  <span className={`text-xs font-bold ${isEmpty ? 'text-slate-400' : 'text-slate-900'} ${m.truncate ? 'truncate max-w-[140px]' : ''}`}>
+                  <span className="text-[12px] text-slate-500">{m.label}</span>
+                  <span className={`text-xs font-bold ${isEmpty ? 'text-slate-500' : 'text-slate-900'} ${m.truncate ? 'truncate max-w-[140px]' : ''}`}>
                     {m.value}
                   </span>
                 </div>
@@ -1801,7 +1801,7 @@ function RoiCard({
           </div>
           {/* 모든 지표 미수집 시 docx §11 '수집 준비 중' (또는 카드별 명시 라벨, 예: C-1 '데이터 수집 전') */}
           {metrics.every(m => m.value === '-' || !m.value) && (
-            <div className="mt-3 pt-2 border-t border-current/10 text-[10px] text-center text-slate-400">
+            <div className="mt-3 pt-2 border-t border-current/10 text-[12.5px] text-center text-slate-500">
               📡 {emptyLabel || '수집 준비 중'}
             </div>
           )}
@@ -1811,7 +1811,7 @@ function RoiCard({
         <button
           type="button"
           onClick={onLoginClick}
-          className="w-full text-center py-3 px-2 rounded-lg bg-slate-50 hover:bg-emerald-50 border border-dashed border-slate-200 hover:border-emerald-300 text-[11px] text-slate-500 hover:text-emerald-700 transition-colors"
+          className="w-full text-center py-3 px-2 rounded-lg bg-slate-50 hover:bg-emerald-50 border border-dashed border-slate-200 hover:border-emerald-300 text-[12px] text-slate-500 hover:text-emerald-700 transition-colors"
         >
           🔒 세부 지표 {metrics.length}개 항목은 <span className="font-bold">로그인 후</span> 확인 가능
         </button>
@@ -1857,7 +1857,7 @@ function EventResultsByYear({ results, fallbackTour }: { results: any[]; fallbac
       {byYear.map(([year, items]) => (
         <div key={year}>
           <h3 className="text-sm font-extrabold text-emerald-700 mb-2 inline-flex items-center gap-1">
-            {year}년 <span className="text-[10px] text-slate-400 font-normal">({items.length}개)</span>
+            {year}년 <span className="text-[12.5px] text-slate-500 font-normal">({items.length}개)</span>
           </h3>
           <div className="space-y-1.5">
             {items.map((r: any) => (
@@ -1869,12 +1869,12 @@ function EventResultsByYear({ results, fallbackTour }: { results: any[]; fallbac
                       {r.rank}{r.rank === 1 ? '위' : r.rank <= 10 ? '위' : ''}
                     </div>
                   ) : (
-                    <div className="text-base text-slate-400">-</div>
+                    <div className="text-base text-slate-500">-</div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-bold text-slate-900 truncate">{r.eventName}</div>
-                  <div className="text-[10px] text-slate-500 mt-0.5 flex flex-wrap items-center gap-1.5">
+                  <div className="text-[12.5px] text-slate-500 mt-0.5 flex flex-wrap items-center gap-1.5">
                     <span>{new Date(r.eventDate).toLocaleDateString('ko-KR')}</span>
                     {/* docx §9 — 투어명 (r.tour > 선수 tour fallback) */}
                     {(r.tour || fallbackTour) && (
@@ -1893,7 +1893,7 @@ function EventResultsByYear({ results, fallbackTour }: { results: any[]; fallbac
                 </div>
                 {r.score && (
                   <div className="text-right">
-                    <div className="text-[10px] text-slate-500">스코어</div>
+                    <div className="text-[12.5px] text-slate-500">스코어</div>
                     <div className="text-sm font-bold text-slate-900">{r.score}</div>
                   </div>
                 )}

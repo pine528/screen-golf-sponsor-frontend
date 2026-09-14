@@ -24,7 +24,7 @@ export default function AboutLayout({ current, children }: { current: string; ch
         <nav aria-label="breadcrumb" className="flex items-center gap-1.5 pt-5 text-[12.5px]">
           <Link to="/" className="text-emerald-600 font-semibold hover:underline">홈</Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-400">스폰픽 소개</span>
+          <span className="text-slate-500">스폰픽 소개</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="font-bold text-emerald-700">{current}</span>
         </nav>

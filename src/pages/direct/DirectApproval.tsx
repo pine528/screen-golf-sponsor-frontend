@@ -18,7 +18,7 @@ const ITEM_UI: Record<string, { label: string; cls: string; icon: any }> = {
   APPROVED: { label: '승인 완료', cls: 'bg-emerald-50 text-emerald-700', icon: CheckCircle2 },
   NEEDS_REVISION: { label: '조정 요청', cls: 'bg-sky-50 text-sky-700', icon: Pencil },
   REJECTED: { label: '거절', cls: 'bg-slate-100 text-slate-500', icon: XCircle },
-  EXPIRED: { label: '기간 만료', cls: 'bg-slate-100 text-slate-400', icon: Clock },
+  EXPIRED: { label: '기간 만료', cls: 'bg-slate-100 text-slate-500', icon: Clock },
 };
 
 export default function DirectApproval() {
@@ -115,18 +115,18 @@ export default function DirectApproval() {
                       {i.athlete?.profileImageUrl && <img src={i.athlete.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[15px] font-extrabold">{i.athlete?.name} <span className="text-[11.5px] font-bold text-slate-400">프로</span></p>
-                      <p className="text-[11.5px] text-slate-400">{i.athlete?.tour}</p>
+                      <p className="text-[15px] font-extrabold">{i.athlete?.name} <span className="text-[12.5px] font-bold text-slate-500">프로</span></p>
+                      <p className="text-[12.5px] text-slate-500">{i.athlete?.tour}</p>
                     </div>
                     <span className={`px-2.5 py-1 rounded-lg text-[12px] font-black inline-flex items-center gap-1.5 ${ui.cls}`}>
                       <ui.icon className="w-3.5 h-3.5" /> {ui.label}
                     </span>
                     <div className="hidden sm:block">
-                      <p className="text-[11px] text-slate-400">노출 위치</p>
+                      <p className="text-[12px] text-slate-500">노출 위치</p>
                       <p className="text-[12.5px] font-bold">{i.slotName || '-'}</p>
                     </div>
                     <div className="hidden md:block">
-                      <p className="text-[11px] text-slate-400">유형</p>
+                      <p className="text-[12px] text-slate-500">유형</p>
                       <p className="text-[12.5px] font-bold">{i.role || '착장'}</p>
                     </div>
                     <p className="ml-auto text-[15px] font-black tabular-nums">{i.price.toLocaleString()}원</p>
@@ -135,7 +135,7 @@ export default function DirectApproval() {
                   {bad && i.comment && (
                     <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-x-6 gap-y-3">
                       <div>
-                        <p className="text-[11px] text-slate-400">선수 의견</p>
+                        <p className="text-[12px] text-slate-500">선수 의견</p>
                         <p className="text-[13px] font-bold break-keep">{i.comment}</p>
                       </div>
                       <div className="ml-auto flex gap-2">
@@ -156,7 +156,7 @@ export default function DirectApproval() {
                   )}
 
                   {i.status === 'APPROVED' && i.reviewedAt && (
-                    <p className="mt-3 pt-3 border-t border-slate-100 text-[11.5px] text-slate-400">
+                    <p className="mt-3 pt-3 border-t border-slate-100 text-[12.5px] text-slate-500">
                       {new Date(i.reviewedAt).toLocaleString('ko-KR')} 승인 완료
                     </p>
                   )}
@@ -179,19 +179,19 @@ export default function DirectApproval() {
                 </Link>
               ) : (
                 <>
-                  <p className="mt-4 w-full h-12 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-100 text-slate-400 text-[13.5px] font-bold">
+                  <p className="mt-4 w-full h-12 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-100 text-slate-500 text-[13.5px] font-bold">
                     <Lock className="w-4 h-4" /> 모든 승인 후 결제 가능
                   </p>
                   {stats.approved > 0 && (
                     <div className="mt-3 rounded-xl border border-slate-200 p-3.5">
                       <p className="text-[12.5px] font-extrabold">승인된 선수만 먼저 진행</p>
-                      <p className="mt-1 text-[11.5px] text-slate-500 break-keep">
+                      <p className="mt-1 text-[12.5px] text-slate-500 break-keep">
                         {stats.approved}건 · {stats.approvedAmount.toLocaleString()}원으로 진행합니다.
                         나머지 {stats.total - stats.approved}건은 별도 요청이 필요하며 캠페인 목표가 달라질 수 있습니다.
                       </p>
                       <label className="mt-2 flex items-start gap-2 cursor-pointer">
                         <input type="checkbox" checked={partialOk} onChange={(e) => setPartialOk(e.target.checked)} className="w-4 h-4 accent-emerald-600 shrink-0 mt-0.5" />
-                        <span className="text-[11.5px] text-slate-600 break-keep">변경된 구성과 총액에 동의합니다.</span>
+                        <span className="text-[12.5px] text-slate-600 break-keep">변경된 구성과 총액에 동의합니다.</span>
                       </label>
                       <button
                         onClick={() => navigate(`/sponsor/direct/checkout/${app.id}?partial=1`)}
@@ -228,7 +228,7 @@ export default function DirectApproval() {
                     </span>
                     <span className="min-w-0">
                       <span className="block text-[12.5px] font-bold break-keep">{r.comment || r.action}</span>
-                      <span className="block text-[11px] text-slate-400">{new Date(r.createdAt).toLocaleString('ko-KR')}</span>
+                      <span className="block text-[12px] text-slate-500">{new Date(r.createdAt).toLocaleString('ko-KR')}</span>
                     </span>
                   </li>
                 ))}
@@ -248,7 +248,7 @@ function Metric({ icon: Icon, label, value }: { icon: any; label: string; value:
         <Icon className="w-4 h-4 text-emerald-600" />
       </span>
       <div className="min-w-0">
-        <p className="text-[11.5px] text-slate-400">{label}</p>
+        <p className="text-[12.5px] text-slate-500">{label}</p>
         <p className="text-[14px] font-extrabold truncate">{value}</p>
       </div>
     </div>

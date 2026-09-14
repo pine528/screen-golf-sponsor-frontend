@@ -75,9 +75,9 @@ export default function FanPoints() {
 
       <div className="max-w-[1400px] mx-auto px-5 pt-6">
         <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px]">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+          <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-400">팬 참여</span>
+          <span className="text-slate-500">팬 참여</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="font-bold text-emerald-700">팬포인트</span>
         </nav>
@@ -137,7 +137,7 @@ export default function FanPoints() {
                       <p className="mt-1 text-[17px] font-black text-emerald-600">
                         {c.source === 'STORE' ? '1%' : r?.points ? `+${r.points}P` : '적립'}
                       </p>
-                      <p className="mt-1.5 flex-1 text-[11.5px] text-slate-500 break-keep">{c.desc}</p>
+                      <p className="mt-1.5 flex-1 text-[12.5px] text-slate-500 break-keep">{c.desc}</p>
                       <Link
                         to={c.to}
                         className="mt-3 h-10 inline-flex items-center justify-center rounded-lg border border-emerald-600 text-emerald-700 text-[12.5px] font-bold hover:bg-emerald-50"
@@ -148,7 +148,7 @@ export default function FanPoints() {
                   );
                 })}
               </div>
-              <p className="mt-4 pt-4 border-t border-slate-100 text-[11.5px] text-slate-400 break-keep">
+              <p className="mt-4 pt-4 border-t border-slate-100 text-[12.5px] text-slate-500 break-keep">
                 팬포인트는 현금이 아니며 SPONPIK 팬 참여 혜택에 사용됩니다.
               </p>
             </div>
@@ -178,17 +178,17 @@ export default function FanPoints() {
                         </span>
                         <Link to={`/fan/community/${s.athlete.id}`} className="min-w-0 flex-1">
                           <p className="text-[14.5px] font-extrabold inline-flex items-center gap-1">
-                            {s.athlete.name} <span className="text-[11.5px] font-bold text-slate-400">프로</span>
+                            {s.athlete.name} <span className="text-[12.5px] font-bold text-slate-500">프로</span>
                             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
                           </p>
-                          <p className="text-[11.5px] text-slate-400">{s.athlete.tour}</p>
+                          <p className="text-[12.5px] text-slate-500">{s.athlete.tour}</p>
                         </Link>
                         <div className="text-right shrink-0">
-                          <p className="text-[11.5px] text-slate-400">내 기여</p>
+                          <p className="text-[12.5px] text-slate-500">내 기여</p>
                           <p className="text-[15px] font-black text-emerald-600">+{s.myCelsius.toFixed(1)}℃</p>
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="text-[11.5px] text-slate-400">총 팬온도</p>
+                          <p className="text-[12.5px] text-slate-500">총 팬온도</p>
                           <p className="text-[15px] font-black">{s.totalCelsius.toFixed(1)}℃</p>
                         </div>
                       </div>
@@ -205,7 +205,7 @@ export default function FanPoints() {
                         </div>
                       )}
                       {s.breakdown.length > 0 && (
-                        <p className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-500">
+                        <p className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-slate-500">
                           {s.breakdown.map((b: any) => (
                             <span key={b.source}>{b.label.replace(/ .*/, '')} {b.share}%</span>
                           ))}
@@ -226,7 +226,7 @@ export default function FanPoints() {
                 </Link>
               </div>
               {!history.length ? (
-                <p className="py-8 text-center text-[12.5px] text-slate-400">아직 내역이 없습니다</p>
+                <p className="py-8 text-center text-[12.5px] text-slate-500">아직 내역이 없습니다</p>
               ) : (
                 <ul className="mt-3 divide-y divide-slate-100">
                   {history.slice(0, 8).map((t: any) => {
@@ -237,7 +237,7 @@ export default function FanPoints() {
                           <span className="block text-[13px] font-bold truncate">
                             {t.description || REASON_LABEL[t.reason] || t.reason}
                           </span>
-                          <span className="block text-[11.5px] text-slate-400">
+                          <span className="block text-[12.5px] text-slate-500">
                             {new Date(t.createdAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </span>

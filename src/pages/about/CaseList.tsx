@@ -52,7 +52,7 @@ export default function CaseList() {
         if (!options.length) return null;
         return (
           <div key={f.key}>
-            <p className="text-[12px] font-bold text-slate-400 mb-2">{f.label}</p>
+            <p className="text-[12px] font-bold text-slate-500 mb-2">{f.label}</p>
             <div className="flex flex-wrap gap-1.5">
               {options.map((o: any) => (
                 <button key={o.code} onClick={() => setFilter(f.key, o.code)}
@@ -96,14 +96,14 @@ export default function CaseList() {
             className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl border border-slate-200 text-[13px] font-bold text-slate-700">
             <SlidersHorizontal className="w-4 h-4" /> 필터
             {activeCount > 0 && (
-              <span className="ml-0.5 inline-flex w-5 h-5 rounded-full bg-emerald-600 text-white text-[11px] items-center justify-center">{activeCount}</span>
+              <span className="ml-0.5 inline-flex w-5 h-5 rounded-full bg-emerald-600 text-white text-[12px] items-center justify-center">{activeCount}</span>
             )}
           </button>
           <select value={sort} onChange={(e) => setSort(e.target.value)}
             className="h-10 px-3 rounded-xl border border-slate-200 text-[13px] font-semibold text-slate-600 focus:outline-none">
             {(data?.sorts ?? []).map((s: any) => <option key={s.code} value={s.code}>{s.label}</option>)}
           </select>
-          <span className="ml-auto text-[13px] text-slate-400 tabular-nums">
+          <span className="ml-auto text-[13px] text-slate-500 tabular-nums">
             {loading ? '' : `${data?.total ?? 0}건`}
           </span>
         </div>
@@ -140,19 +140,19 @@ export default function CaseList() {
                     <dl className="space-y-2 text-[12.5px] mb-4">
                       {c.summary && (
                         <div className="flex gap-2.5">
-                          <dt className="text-slate-400 w-14 shrink-0">목표</dt>
+                          <dt className="text-slate-500 w-14 shrink-0">목표</dt>
                           <dd className="text-slate-700 line-clamp-2">{c.summary}</dd>
                         </div>
                       )}
                       {c.sponsorTypes?.length > 0 && (
                         <div className="flex gap-2.5">
-                          <dt className="text-slate-400 w-14 shrink-0">후원방식</dt>
+                          <dt className="text-slate-500 w-14 shrink-0">후원방식</dt>
                           <dd className="text-slate-700">{c.sponsorTypes.join(' · ')}</dd>
                         </div>
                       )}
                       {(c.periodFrom || c.periodTo) && (
                         <div className="flex gap-2.5">
-                          <dt className="text-slate-400 w-14 shrink-0">후원기간</dt>
+                          <dt className="text-slate-500 w-14 shrink-0">후원기간</dt>
                           <dd className="text-slate-700 tabular-nums">
                             {c.periodFrom ? new Date(c.periodFrom).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' }) : ''}
                             {c.periodTo ? ` ~ ${new Date(c.periodTo).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })}` : ''}
@@ -166,9 +166,9 @@ export default function CaseList() {
                       <div className="rounded-2xl bg-slate-50 px-4 py-3 mb-4">
                         {c.highlights.slice(0, 1).map((h: any) => (
                           <div key={h.id} className="flex items-center gap-2.5">
-                            <span className="text-[11px] font-bold text-slate-400 shrink-0">검증 성과</span>
+                            <span className="text-[12px] font-bold text-slate-500 shrink-0">검증 성과</span>
                             {h.restricted ? (
-                              <span className="text-[12.5px] text-slate-400">{h.restrictedReason}</span>
+                              <span className="text-[12.5px] text-slate-500">{h.restrictedReason}</span>
                             ) : (
                               <>
                                 <span className="text-[19px] font-extrabold text-emerald-600 tabular-nums">{h.display}</span>
@@ -220,10 +220,10 @@ export default function CaseList() {
           <div className="w-full max-h-[80vh] overflow-y-auto rounded-t-[28px] bg-white p-5" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-[17px] font-extrabold text-slate-900 inline-flex items-center gap-1.5">
-                <Filter className="w-4 h-4 text-slate-400" /> 필터
+                <Filter className="w-4 h-4 text-slate-500" /> 필터
               </h2>
               <button onClick={() => setSheet(false)} className="w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center">
-                <X className="w-4 h-4 text-slate-400" />
+                <X className="w-4 h-4 text-slate-500" />
               </button>
             </div>
             <FilterRow />

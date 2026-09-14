@@ -127,7 +127,7 @@ export default function DirectRequest() {
                 <Field label="주요 타깃" value={brand.target} onChange={(v) => setBrand({ ...brand, target: v })} placeholder="예) 3040 여성" />
               </div>
               <label className="mt-3 block">
-                <span className="text-[12px] font-bold text-slate-500">선수에게 전달할 메시지 <span className="font-normal text-slate-400">(선택)</span></span>
+                <span className="text-[12px] font-bold text-slate-500">선수에게 전달할 메시지 <span className="font-normal text-slate-500">(선택)</span></span>
                 <textarea
                   value={brand.message}
                   onChange={(e) => setBrand({ ...brand, message: e.target.value.slice(0, 500) })}
@@ -151,13 +151,13 @@ export default function DirectRequest() {
                       {i.athlete.profileImageUrl && <img src={i.athlete.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
                     </span>
                     <span className="text-[13.5px] font-extrabold">{i.athlete.name} 프로</span>
-                    <span className="text-[12px] text-slate-400">{i.athlete.tour}</span>
+                    <span className="text-[12px] text-slate-500">{i.athlete.tour}</span>
                     <span className="text-[12.5px] text-slate-600">{i.slotName}</span>
-                    <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">
+                    <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold">
                       {i.months > 1 ? `${i.months}개월` : i.durationCode === 'SINGLE_EVENT' ? '대회 1회' : '30일'}
                     </span>
                     {i.status === 'NEEDS_CONFIRMATION' && (
-                      <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 text-[11px] font-bold">확인 필요</span>
+                      <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 text-[12px] font-bold">확인 필요</span>
                     )}
                     <span className="ml-auto text-[14px] font-black tabular-nums">{i.subtotal.toLocaleString()}원</span>
                   </li>
@@ -184,7 +184,7 @@ export default function DirectRequest() {
                   </div>
                 ))}
               </div>
-              <p className="mt-3 text-[11.5px] text-slate-400 break-keep">
+              <p className="mt-3 text-[12.5px] text-slate-500 break-keep">
                 소재는 선수 승인 후 안내드리는 경로로 제출합니다. 제출 마감일은 승인 완료 시 생성됩니다.
               </p>
             </Section>
@@ -199,14 +199,14 @@ export default function DirectRequest() {
                 {Object.entries(SCOPE_LABEL).map(([code, label]) => {
                   const on = allScopes.includes(code);
                   return (
-                    <span key={code} className={`px-3 py-1.5 rounded-lg text-[12.5px] font-bold ${on ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-400 line-through'}`}>
+                    <span key={code} className={`px-3 py-1.5 rounded-lg text-[12.5px] font-bold ${on ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500 line-through'}`}>
                       {label} {on ? '가능' : '불가'}
                     </span>
                   );
                 })}
               </div>
               <p className="mt-3 flex items-start gap-2 rounded-xl bg-slate-50 px-3.5 py-3 text-[12px] text-slate-600 break-keep">
-                <Info className="w-4 h-4 shrink-0 mt-0.5 text-slate-400" />
+                <Info className="w-4 h-4 shrink-0 mt-0.5 text-slate-500" />
                 온라인 사용은 선수 개인 SNS와 선수 관련 공식 채널로 제한됩니다.
                 브랜드 자체 채널·광고 집행·제3자 유통은 별도 협의가 필요합니다.
               </p>
@@ -274,7 +274,7 @@ export default function DirectRequest() {
                       {i.athlete.profileImageUrl && <img src={i.athlete.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
                     </span>
                     <span className="text-[12.5px] font-bold truncate">{i.athlete.name}</span>
-                    <span className={`ml-auto shrink-0 px-2 py-0.5 rounded-md text-[11px] font-bold ${
+                    <span className={`ml-auto shrink-0 px-2 py-0.5 rounded-md text-[12px] font-bold ${
                       i.status === 'NEEDS_CONFIRMATION' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'
                     }`}>
                       {i.status === 'NEEDS_CONFIRMATION' ? '확인 필요' : '즉시 요청 가능'}
@@ -283,7 +283,7 @@ export default function DirectRequest() {
                 ))}
               </ul>
               {needsConfirm.length > 0 && (
-                <p className="mt-2 text-[11.5px] text-amber-700 break-keep">
+                <p className="mt-2 text-[12.5px] text-amber-700 break-keep">
                   확인 필요 {needsConfirm.length}건은 선수가 조건을 확정한 뒤 금액이 확정됩니다.
                 </p>
               )}
@@ -316,7 +316,7 @@ export default function DirectRequest() {
             >
               견적함으로 돌아가기
             </Link>
-            <p className="mt-3 flex items-start gap-1.5 text-[11.5px] text-slate-400 break-keep">
+            <p className="mt-3 flex items-start gap-1.5 text-[12.5px] text-slate-500 break-keep">
               <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
               아직 결제는 진행되지 않습니다. 선수의 승인이 완료되어야 계약 및 결제로 이어집니다.
             </p>
@@ -350,9 +350,9 @@ function Section({ id, open, setOpen, icon: Icon, title, status, summary, childr
           <Icon className="w-4 h-4 text-emerald-600" />
         </span>
         <span className="text-[14px] font-extrabold shrink-0">{title}</span>
-        <span className={`px-2 py-0.5 rounded-md text-[11px] font-bold shrink-0 ${chip.cls}`}>{chip.label}</span>
-        <span className="text-[12px] text-slate-400 truncate hidden sm:block">{summary}</span>
-        <ChevronDown className={`ml-auto w-4 h-4 text-slate-400 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span className={`px-2 py-0.5 rounded-md text-[12px] font-bold shrink-0 ${chip.cls}`}>{chip.label}</span>
+        <span className="text-[12px] text-slate-500 truncate hidden sm:block">{summary}</span>
+        <ChevronDown className={`ml-auto w-4 h-4 text-slate-500 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && <div className="px-5 pb-5 border-t border-slate-100 pt-4">{children}</div>}
     </section>

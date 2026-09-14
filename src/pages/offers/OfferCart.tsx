@@ -139,7 +139,7 @@ export default function OfferCart() {
 
       <div className="max-w-[1400px] mx-auto px-5 pt-6">
         <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px]">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+          <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="font-bold text-emerald-700">보관함 · 장바구니</span>
         </nav>
@@ -198,13 +198,13 @@ export default function OfferCart() {
                             {gs.letter}
                           </span>
                           <span className="text-[13.5px] font-extrabold">{g.label}</span>
-                          <span className="hidden sm:inline-flex items-center gap-1 text-[11.5px] text-slate-400">
+                          <span className="hidden sm:inline-flex items-center gap-1 text-[12.5px] text-slate-500">
                             <Info className="w-3.5 h-3.5" /> {g.desc}
                           </span>
-                          <span className={`ml-auto px-2.5 py-1 rounded-lg border text-[11.5px] font-bold shrink-0 ${gs.chip} border-current/20`}>
+                          <span className={`ml-auto px-2.5 py-1 rounded-lg border text-[12.5px] font-bold shrink-0 ${gs.chip} border-current/20`}>
                             {g.count}개 상품
                           </span>
-                          <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                          <ChevronDown className={`w-4 h-4 text-slate-500 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                         </button>
 
                         {isOpen && (
@@ -226,24 +226,24 @@ export default function OfferCart() {
                                   <Link to={`/sponsor/available/${l.offer.id}`} className="text-[14px] font-extrabold hover:text-emerald-700 break-keep">
                                     {l.offer.title}
                                   </Link>
-                                  <p className="mt-0.5 text-[11.5px] text-slate-400">
+                                  <p className="mt-0.5 text-[12.5px] text-slate-500">
                                     {(l.offer.athletes || []).map((a: any) => a.athlete.name).join(' · ')}
                                     {l.offer.athletes?.[0]?.athlete?.tour && ` | ${l.offer.athletes[0].athlete.tour}`}
                                   </p>
                                   <div className="mt-1.5 flex flex-wrap gap-1">
                                     {(l.offer.badges || []).slice(0, 2).map((b: string) => (
-                                      <span key={b} className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${BADGE_STYLE[b] || 'bg-slate-100 text-slate-600'}`}>{b}</span>
+                                      <span key={b} className={`px-1.5 py-0.5 rounded text-[12.5px] font-bold ${BADGE_STYLE[b] || 'bg-slate-100 text-slate-600'}`}>{b}</span>
                                     ))}
                                   </div>
                                 </div>
                                 <div className="hidden md:block min-w-0 max-w-[200px]">
-                                  <p className="text-[11px] text-slate-400">구성</p>
+                                  <p className="text-[12px] text-slate-500">구성</p>
                                   <p className="text-[12px] break-keep line-clamp-2">
                                     {(l.offer.components || []).map((c: any) => c.label).join(', ') || '—'}
                                   </p>
                                 </div>
                                 <div className="hidden sm:block">
-                                  <p className="text-[11px] text-slate-400">기간</p>
+                                  <p className="text-[12px] text-slate-500">기간</p>
                                   <p className="text-[12px] font-bold">
                                     {l.offer.executionFrom
                                       ? `${new Date(l.offer.executionFrom).toLocaleDateString('ko-KR')} ~ ${new Date(l.offer.executionTo).toLocaleDateString('ko-KR')}`
@@ -254,15 +254,15 @@ export default function OfferCart() {
                                   {l.offer.priceType === 'SUBSCRIPTION'
                                     ? `월 ${l.offer.monthlyAmount.toLocaleString()}원`
                                     : `${(l.currentAmount ?? l.quotedAmount).toLocaleString()}원`}
-                                  {l.quantity > 1 && <span className="ml-1 text-[11px] font-bold text-slate-400">×{l.quantity}</span>}
+                                  {l.quantity > 1 && <span className="ml-1 text-[12px] font-bold text-slate-500">×{l.quantity}</span>}
                                 </p>
                                 <div className="flex gap-1.5 shrink-0">
                                   <button onClick={() => remove(l.id, false)} disabled={busy} aria-label="삭제"
-                                    className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:border-rose-200">
+                                    className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-rose-600 hover:border-rose-200">
                                     <Trash2 className="w-4 h-4" />
                                   </button>
                                   <button onClick={() => remove(l.id, true)} disabled={busy} aria-label="보관함으로 이동"
-                                    className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:border-emerald-200">
+                                    className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-emerald-600 hover:border-emerald-200">
                                     <Bookmark className="w-4 h-4" />
                                   </button>
                                 </div>
@@ -281,7 +281,7 @@ export default function OfferCart() {
                     );
                   })}
 
-                  <p className="text-[11.5px] text-slate-400 break-keep">
+                  <p className="text-[12.5px] text-slate-500 break-keep">
                     ※ 각 그룹의 상품은 함께 주문 · 결제할 수 없습니다.
                   </p>
                 </div>
@@ -309,7 +309,7 @@ export default function OfferCart() {
                         <Link to={`/sponsor/available/${sv.offer.id}`} className="text-[14px] font-extrabold hover:text-emerald-700 break-keep">
                           {sv.offer.title}
                         </Link>
-                        <p className="mt-0.5 text-[11.5px] text-slate-400">
+                        <p className="mt-0.5 text-[12.5px] text-slate-500">
                           {(sv.offer.athletes || []).map((a: any) => a.athlete.name).join(' · ')}
                         </p>
                       </div>
@@ -318,7 +318,7 @@ export default function OfferCart() {
                       </p>
                       <div className="flex gap-2 shrink-0">
                         <button onClick={() => unsave(sv.offer.id)} aria-label="보관 해제"
-                          className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-rose-600">
+                          className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-rose-600">
                           <Trash2 className="w-4 h-4" />
                         </button>
                         <button
@@ -340,7 +340,7 @@ export default function OfferCart() {
           <aside className="lg:sticky lg:top-24 rounded-2xl border border-slate-200 p-5">
             <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
               주문 요약
-              <span className="text-[11.5px] font-normal text-slate-400">(같은 주문군만 함께 결제)</span>
+              <span className="text-[12.5px] font-normal text-slate-500">(같은 주문군만 함께 결제)</span>
             </h2>
 
             <p className="mt-3 text-[12.5px] text-slate-500">
@@ -380,7 +380,7 @@ export default function OfferCart() {
                 : '선수 승인 요청하기'}
             </button>
 
-            <ul className="mt-4 rounded-xl bg-sky-50/70 p-3.5 space-y-1.5 text-[11.5px] text-slate-600">
+            <ul className="mt-4 rounded-xl bg-sky-50/70 p-3.5 space-y-1.5 text-[12.5px] text-slate-600">
               <li className="font-bold text-slate-700 inline-flex items-center gap-1.5"><Info className="w-3.5 h-3.5" /> 안내사항</li>
               <li>• 즉시결제 가능 상품만 함께 결제할 수 있습니다.</li>
               <li>• 승인 필요·조건 협의·경매 상품은 각 단계 완료 후 주문·결제가 가능합니다.</li>
@@ -400,7 +400,7 @@ function Empty({ icon: Icon, title, desc, to, cta }: {
     <div className="mt-4 rounded-2xl border border-dashed border-slate-300 py-16 text-center">
       <Icon className="w-10 h-10 text-slate-300 mx-auto" />
       <p className="mt-3 text-[14px] font-bold text-slate-600">{title}</p>
-      <p className="mt-1 text-[12.5px] text-slate-400">{desc}</p>
+      <p className="mt-1 text-[12.5px] text-slate-500">{desc}</p>
       <Link to={to} className="mt-5 inline-flex h-11 px-5 items-center gap-1.5 rounded-xl bg-emerald-600 text-white text-sm font-bold">
         <Package className="w-4 h-4" /> {cta}
       </Link>

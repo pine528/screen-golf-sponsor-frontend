@@ -50,9 +50,9 @@ export default function FanStore() {
 
       <div className="max-w-[1400px] mx-auto px-5 pt-6">
         <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px]">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+          <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-400">팬 참여</span>
+          <span className="text-slate-500">팬 참여</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="font-bold text-emerald-700">팬스토어</span>
         </nav>
@@ -123,7 +123,7 @@ export default function FanStore() {
                 <h2 className="text-[19px] sm:text-[22px] font-black">
                   {hero.athleteName} <span className="text-slate-300">×</span> {hero.brandName}
                 </h2>
-                <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11.5px] font-black">공식 협업 스토어</span>
+                <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[12.5px] font-black">공식 협업 스토어</span>
               </div>
               <p className="mt-2 text-[13px] text-slate-500 break-keep">{hero.description}</p>
 
@@ -169,10 +169,10 @@ export default function FanStore() {
                   <p className="text-[15px] font-extrabold">{s.athleteName} <span className="text-slate-300">×</span> {s.brandName}</p>
                   <p className="mt-1 text-[12px] text-slate-500 break-keep line-clamp-2">{s.description}</p>
                   <div className="mt-2.5 flex flex-wrap gap-1.5">
-                    {s.benefit && <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-bold">{s.benefit}</span>}
-                    <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">팬포인트 1%</span>
+                    {s.benefit && <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[12px] font-bold">{s.benefit}</span>}
+                    <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold">팬포인트 1%</span>
                     {s.athleteId && temps[s.athleteId] != null && (
-                      <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">
+                      <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold">
                         팬온도 {temps[s.athleteId].toFixed(1)}℃
                       </span>
                     )}
@@ -190,7 +190,7 @@ export default function FanStore() {
                       스토어 가기
                     </Link>
                   ) : (
-                    <p className="mt-3.5 h-11 w-full inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-400 text-[13px] font-bold">
+                    <p className="mt-3.5 h-11 w-full inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 text-[13px] font-bold">
                       준비 중
                     </p>
                   )}
@@ -239,7 +239,7 @@ export default function FanStore() {
 function Stat({ label, value, icon: Icon }: { label: string; value: string; icon?: any }) {
   return (
     <span className="rounded-xl border border-slate-200 px-4 py-2.5">
-      <span className="block text-[11px] text-slate-400">{label}</span>
+      <span className="block text-[12px] text-slate-500">{label}</span>
       <span className="mt-0.5 block text-[14px] font-black text-emerald-600 inline-flex items-center gap-1">
         {Icon && <Icon className="w-3.5 h-3.5" />} {value}
       </span>
@@ -253,7 +253,7 @@ function ProductChip({ product }: { product: { name: string; price: number; list
       <span className="block text-[12px] text-slate-600 line-clamp-2 min-h-[32px] break-keep">{product.name}</span>
       <span className="mt-1.5 block text-[14px] font-black">{product.price.toLocaleString()}원</span>
       {product.listPrice > product.price && (
-        <span className="block text-[11px] text-slate-400 line-through">{product.listPrice.toLocaleString()}원</span>
+        <span className="block text-[12px] text-slate-500 line-through">{product.listPrice.toLocaleString()}원</span>
       )}
     </>
   );

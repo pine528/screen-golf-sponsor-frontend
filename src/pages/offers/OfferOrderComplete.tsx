@@ -77,9 +77,9 @@ export default function OfferOrderComplete() {
 
       <div className="max-w-[1400px] mx-auto px-5 pt-6">
         <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px]">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+          <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <Link to="/sponsor/cart" className="text-slate-400 hover:text-slate-600">보관함 · 장바구니</Link>
+          <Link to="/sponsor/cart" className="text-slate-500 hover:text-slate-600">보관함 · 장바구니</Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="font-bold text-emerald-700">{paid ? '주문 완료' : '주문 접수'}</span>
         </nav>
@@ -100,7 +100,7 @@ export default function OfferOrderComplete() {
                 </p>
               </div>
               <div className="rounded-xl bg-white border border-slate-200 px-4 py-3 shrink-0">
-                <p className="text-[11px] text-slate-400">주문 번호</p>
+                <p className="text-[12px] text-slate-500">주문 번호</p>
                 <p className="mt-0.5 text-[14px] font-black inline-flex items-center gap-1.5">
                   {orderNo}
                   <button
@@ -111,7 +111,7 @@ export default function OfferOrderComplete() {
                     <Copy className="w-3.5 h-3.5" />
                   </button>
                 </p>
-                <p className="mt-1 text-[11px] text-slate-400">
+                <p className="mt-1 text-[12px] text-slate-500">
                   {copied ? '복사했습니다' : new Date(app.createdAt).toLocaleString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
@@ -128,27 +128,27 @@ export default function OfferOrderComplete() {
                 <div className="min-w-0 flex-1">
                   <p className="text-[16px] font-extrabold break-keep">
                     {o.title}
-                    {o.quantity > 1 && <span className="ml-2 px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">×{o.quantity}</span>}
+                    {o.quantity > 1 && <span className="ml-2 px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold">×{o.quantity}</span>}
                   </p>
                   <p className="mt-0.5 text-[12.5px] text-slate-500">
                     {(app.items || []).map((i: any) => i.athlete?.name).filter(Boolean).join(' · ')}
                   </p>
                   <div className="mt-2.5 flex flex-wrap gap-x-6 gap-y-2 text-[12px]">
                     <span>
-                      <span className="text-slate-400">노출 영역 </span>
+                      <span className="text-slate-500">노출 영역 </span>
                       <b>{(o.components || []).map((c: any) => c.label).join(' + ') || '—'}</b>
                     </span>
                     <span>
-                      <span className="text-slate-400">사용 범위 </span>
+                      <span className="text-slate-500">사용 범위 </span>
                       <b>{[o.rights?.offlineUse && '대회 착장', o.rights?.onlineUse && '온라인', o.rights?.printUse && '인쇄물'].filter(Boolean).join(' · ') || '—'}</b>
                     </span>
                   </div>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-[11px] text-slate-400">결제 금액</p>
+                  <p className="text-[12px] text-slate-500">결제 금액</p>
                   <p className="text-[20px] font-black">{Math.round((o.supplyAmount || 0) * 1.1).toLocaleString()}원</p>
-                  <p className="text-[11px] text-slate-400">(VAT 포함)</p>
-                  <span className={`mt-1.5 inline-block px-2 py-0.5 rounded-md text-[11px] font-bold ${
+                  <p className="text-[12px] text-slate-500">(VAT 포함)</p>
+                  <span className={`mt-1.5 inline-block px-2 py-0.5 rounded-md text-[12px] font-bold ${
                     paid ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
                   }`}>
                     {paid ? '결제 완료' : '승인 대기'}
@@ -178,9 +178,9 @@ export default function OfferOrderComplete() {
                         </span>
                         <span className={`h-px flex-1 ${i === STEPS.length - 1 ? 'opacity-0' : done ? 'bg-emerald-400' : 'bg-slate-200'}`} />
                       </div>
-                      <p className="mt-1.5 text-[11px] font-black text-slate-400">{n}</p>
-                      <p className={`text-[12px] font-bold ${active ? 'text-emerald-700' : done ? 'text-slate-600' : 'text-slate-400'}`}>{s.label}</p>
-                      <p className="mt-0.5 text-[10.5px] text-slate-400">{done ? '완료' : active ? '진행 중' : '예정'}</p>
+                      <p className="mt-1.5 text-[12px] font-black text-slate-500">{n}</p>
+                      <p className={`text-[12px] font-bold ${active ? 'text-emerald-700' : done ? 'text-slate-600' : 'text-slate-500'}`}>{s.label}</p>
+                      <p className="mt-0.5 text-[12.5px] text-slate-500">{done ? '완료' : active ? '진행 중' : '예정'}</p>
                     </li>
                   );
                 })}
@@ -203,7 +203,7 @@ export default function OfferOrderComplete() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-[13px] font-extrabold">{c.title}</span>
-                    <span className="mt-0.5 block text-[11px] text-slate-500 break-keep">{c.desc}</span>
+                    <span className="mt-0.5 block text-[12px] text-slate-500 break-keep">{c.desc}</span>
                   </span>
                   <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
                 </Link>
@@ -228,7 +228,7 @@ export default function OfferOrderComplete() {
               <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
                 <p className="text-[12px] text-slate-500">현재 단계</p>
                 <p className="mt-1 flex items-center gap-2 text-[14.5px] font-extrabold">
-                  <span className="w-6 h-6 rounded-full bg-emerald-500 text-white text-[11px] font-black flex items-center justify-center">
+                  <span className="w-6 h-6 rounded-full bg-emerald-500 text-white text-[12px] font-black flex items-center justify-center">
                     {currentStep}
                   </span>
                   {paid ? '브랜드 소재 제출' : '선수 승인 대기'}
@@ -241,12 +241,12 @@ export default function OfferOrderComplete() {
                         {dueAt.toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })}
                       </span>
                       {daysLeft != null && (
-                        <span className="px-2 py-0.5 rounded-md bg-emerald-600 text-white text-[11px] font-black">D-{daysLeft}</span>
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-600 text-white text-[12px] font-black">D-{daysLeft}</span>
                       )}
                     </p>
                   </>
                 )}
-                <p className="mt-3 text-[11.5px] text-slate-500 break-keep">
+                <p className="mt-3 text-[12.5px] text-slate-500 break-keep">
                   {paid
                     ? '기한 내 브랜드 소재를 제출해 주세요. 제출이 완료되어야 다음 단계로 진행됩니다.'
                     : `승인 현황 ${approved}/${totalItems}건. 모든 선수가 승인하면 계약과 결제로 이어집니다.`}
@@ -266,10 +266,10 @@ export default function OfferOrderComplete() {
               <p className="mt-1 text-[12px] text-slate-500">담당 매니저가 빠르게 도와드리겠습니다.</p>
               <div className="mt-3 space-y-2">
                 <a href="tel:02-6953-1987" className="flex items-center gap-2.5 rounded-xl border border-slate-200 px-3.5 py-3 text-[13px] font-bold hover:bg-slate-50">
-                  <Phone className="w-4 h-4 text-slate-400" /> 02-6953-1987
+                  <Phone className="w-4 h-4 text-slate-500" /> 02-6953-1987
                 </a>
                 <a href="mailto:help@sponpik.com" className="flex items-center gap-2.5 rounded-xl border border-slate-200 px-3.5 py-3 text-[13px] font-bold hover:bg-slate-50">
-                  <Mail className="w-4 h-4 text-slate-400" /> help@sponpik.com
+                  <Mail className="w-4 h-4 text-slate-500" /> help@sponpik.com
                 </a>
               </div>
             </div>

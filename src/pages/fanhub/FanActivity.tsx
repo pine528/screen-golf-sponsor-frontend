@@ -45,7 +45,7 @@ export default function FanActivity() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 팬 참여
       </Link>
 
@@ -63,11 +63,11 @@ export default function FanActivity() {
           const I = m.icon;
           const inner = (
             <>
-              <I className="w-4 h-4 text-slate-400 mb-2.5" />
+              <I className="w-4 h-4 text-slate-500 mb-2.5" />
               <p className="text-[22px] font-extrabold text-slate-900 tabular-nums leading-none">
-                {nf(m.v)}<span className="text-[13px] text-slate-400">{m.suffix || ''}</span>
+                {nf(m.v)}<span className="text-[13px] text-slate-500">{m.suffix || ''}</span>
               </p>
-              <p className="text-[11px] text-slate-400 mt-1.5">{m.label}</p>
+              <p className="text-[12px] text-slate-500 mt-1.5">{m.label}</p>
             </>
           );
           return m.to
@@ -87,7 +87,7 @@ export default function FanActivity() {
                   <AthleteAvatar athlete={c.athlete} size={40} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[14px] font-bold text-slate-900 truncate">{c.athlete.name}</p>
-                    <p className="text-[11px] text-slate-400">{c.levelLabel}</p>
+                    <p className="text-[12px] text-slate-500">{c.levelLabel}</p>
                   </div>
                   <Chip size="xs">{c.diversity}/{c.diversityMax} 영역</Chip>
                 </div>
@@ -105,7 +105,7 @@ export default function FanActivity() {
       {data.suggestions?.length > 0 && (
         <section className="mb-6">
           <h2 className="text-[15px] font-bold text-slate-900 mb-1">내 브랜드 추천</h2>
-          <p className="text-[13px] text-slate-400 mb-3">접수 → 검토 → 브랜드 전달 → 관심 → 채택 순으로 진행됩니다.</p>
+          <p className="text-[13px] text-slate-500 mb-3">접수 → 검토 → 브랜드 전달 → 관심 → 채택 순으로 진행됩니다.</p>
           <Card className="divide-y divide-slate-100">
             {data.suggestions.map((sg: any) => {
               const st = SUGGEST_STATUS[sg.status] || SUGGEST_STATUS.RECEIVED;
@@ -116,7 +116,7 @@ export default function FanActivity() {
                     <p className="text-[14px] font-semibold text-slate-800 truncate">
                       {sg.brandName || sg.category}
                     </p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className="text-[12px] text-slate-500 mt-0.5">
                       {sg.athlete?.name} · {new Date(sg.createdAt).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}
                     </p>
                   </div>
@@ -146,7 +146,7 @@ export default function FanActivity() {
                     <p className="text-[14px] font-semibold text-slate-800">{t.label}</p>
                     {t.validity !== 'VALID' && <Chip size="xs" tone="amber">검토 중</Chip>}
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[12px] text-slate-500 mt-0.5">
                     {t.athlete?.name ? `${t.athlete.name} · ` : ''}
                     {new Date(t.at).toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </p>
@@ -174,7 +174,7 @@ export default function FanActivity() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[14px] font-bold text-slate-900">선수에게 어울리는 브랜드를 추천해보세요</p>
-            <p className="text-[12px] text-slate-400 mt-0.5">팬의 추천은 실제 스폰서십 제안으로 이어집니다</p>
+            <p className="text-[12px] text-slate-500 mt-0.5">팬의 추천은 실제 스폰서십 제안으로 이어집니다</p>
           </div>
         </div>
       </Link>

@@ -91,19 +91,19 @@ export default function DigitalApply() {
       <div className="max-w-7xl mx-auto px-5 pt-5">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px]">
-            <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+            <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <Link to="/digital-partner" className="text-slate-400 hover:text-slate-600">디지털 파트너 월 구독</Link>
+            <Link to="/digital-partner" className="text-slate-500 hover:text-slate-600">디지털 파트너 월 구독</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             <span className="font-bold text-emerald-700">상품 선택</span>
           </nav>
           <ol className="flex items-center gap-1.5 overflow-x-auto">
             {STEPS.map((s, i) => (
               <li key={s} className="flex items-center gap-1.5 shrink-0">
-                <span className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center ${
-                  i === 0 ? 'bg-emerald-100 text-emerald-700' : i === 1 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'
+                <span className={`w-6 h-6 rounded-full text-[12px] font-black flex items-center justify-center ${
+                  i === 0 ? 'bg-emerald-100 text-emerald-700' : i === 1 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-500'
                 }`}>{i === 0 ? <Check className="w-3 h-3" /> : i + 1}</span>
-                <span className={`text-[12px] font-bold ${i === 1 ? 'text-emerald-700' : 'text-slate-400'}`}>{s}</span>
+                <span className={`text-[12px] font-bold ${i === 1 ? 'text-emerald-700' : 'text-slate-500'}`}>{s}</span>
                 {i < STEPS.length - 1 && <span className="w-5 h-px bg-slate-200 mx-1" />}
               </li>
             ))}
@@ -132,7 +132,7 @@ export default function DigitalApply() {
                     } ${sold ? 'opacity-50' : ''}`}
                   >
                     {p.code === 'GROW' && (
-                      <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-black tracking-wide">
+                      <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-[12.5px] font-black tracking-wide">
                         RECOMMENDED
                       </span>
                     )}
@@ -145,17 +145,17 @@ export default function DigitalApply() {
                         </li>
                       ))}
                     </ul>
-                    <p className="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-400 text-center">
+                    <p className="mt-4 pt-3 border-t border-slate-100 text-[12px] text-slate-500 text-center">
                       연간 총액 {p.annualTotal.toLocaleString()}원 · {p.termMonths}개월 약정
                     </p>
-                    <p className="mt-1 text-[11px] text-center text-slate-400">
+                    <p className="mt-1 text-[12px] text-center text-slate-500">
                       잔여 {p.remaining}/{p.capacity}
                     </p>
                     <button
                       onClick={() => !sold && setPlanCode(p.code)}
                       disabled={sold}
                       className={`mt-3 h-11 w-full inline-flex items-center justify-center gap-1.5 rounded-xl text-[13.5px] font-bold transition-colors ${
-                        sold ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                        sold ? 'bg-slate-100 text-slate-500 cursor-not-allowed'
                           : on ? 'bg-emerald-600 text-white' : 'border border-slate-200 text-slate-700 hover:bg-slate-50'
                       }`}
                     >
@@ -185,7 +185,7 @@ export default function DigitalApply() {
                   </select>
                 </label>
                 <label className="block">
-                  <span className="text-[12px] font-bold text-slate-500">홈페이지 <span className="font-normal text-slate-400">(선택)</span></span>
+                  <span className="text-[12px] font-bold text-slate-500">홈페이지 <span className="font-normal text-slate-500">(선택)</span></span>
                   <input value={homepage} onChange={(e) => setHomepage(e.target.value)} placeholder="https://" className="mt-1.5 w-full h-11 rounded-xl border border-slate-200 px-3 text-[13.5px] focus:outline-none focus:border-emerald-400" />
                 </label>
                 <label className="block">
@@ -196,16 +196,16 @@ export default function DigitalApply() {
 
               <div className="mt-5 grid sm:grid-cols-[minmax(0,260px)_minmax(0,1fr)] gap-5">
                 <div>
-                  <span className="text-[12px] font-bold text-slate-500">로고 파일 <span className="font-normal text-slate-400">(선택)</span></span>
+                  <span className="text-[12px] font-bold text-slate-500">로고 파일 <span className="font-normal text-slate-500">(선택)</span></span>
                   <div className="mt-1.5 rounded-xl border border-dashed border-slate-300 px-4 py-5 text-center">
-                    <Upload className="w-5 h-5 text-slate-400 mx-auto" />
+                    <Upload className="w-5 h-5 text-slate-500 mx-auto" />
                     <p className="mt-1.5 text-[12px] font-bold text-slate-500">파일 선택 또는 드래그</p>
-                    <p className="text-[10.5px] text-slate-400">PNG, JPG · 2MB 이하</p>
-                    <p className="mt-1.5 text-[10.5px] text-slate-400">승인 후 업로드 안내를 보내드립니다</p>
+                    <p className="text-[12.5px] text-slate-500">PNG, JPG · 2MB 이하</p>
+                    <p className="mt-1.5 text-[12.5px] text-slate-500">승인 후 업로드 안내를 보내드립니다</p>
                   </div>
                 </div>
                 <div>
-                  <span className="text-[12px] font-bold text-slate-500">사용 희망범위 <span className="font-normal text-slate-400">(중복 선택 가능)</span></span>
+                  <span className="text-[12px] font-bold text-slate-500">사용 희망범위 <span className="font-normal text-slate-500">(중복 선택 가능)</span></span>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {SCOPES.map((s) => {
                       const on = scopes.includes(s.key);
@@ -225,7 +225,7 @@ export default function DigitalApply() {
                 </div>
               </div>
 
-              <p className="mt-5 flex items-center gap-1.5 pt-4 border-t border-slate-100 text-[11.5px] text-slate-400">
+              <p className="mt-5 flex items-center gap-1.5 pt-4 border-t border-slate-100 text-[12.5px] text-slate-500">
                 <Info className="w-3.5 h-3.5" /> 선수 승인 후 소재 제작과 사용이 가능합니다.
               </p>
             </div>
@@ -239,8 +239,8 @@ export default function DigitalApply() {
                 {a.profileImageUrl && <img src={a.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
               </span>
               <div className="min-w-0">
-                <p className="text-[15px] font-extrabold">{a.name} <span className="text-[11px] font-bold text-slate-400">프로</span></p>
-                <p className="text-[11.5px] text-slate-400">{[a.tour, a.region].filter(Boolean).join(' · ')}</p>
+                <p className="text-[15px] font-extrabold">{a.name} <span className="text-[12px] font-bold text-slate-500">프로</span></p>
+                <p className="text-[12.5px] text-slate-500">{[a.tour, a.region].filter(Boolean).join(' · ')}</p>
               </div>
             </div>
 
@@ -255,7 +255,7 @@ export default function DigitalApply() {
                 <span className="text-[13px] font-bold">총 계약금액</span>
                 <span className="text-[20px] font-black text-emerald-600 tabular-nums">{plan ? plan.annualTotal.toLocaleString() : '-'}원</span>
               </div>
-              <p className="mt-1 text-right text-[11px] text-slate-400">VAT 별도</p>
+              <p className="mt-1 text-right text-[12px] text-slate-500">VAT 별도</p>
               <div className="mt-2 flex justify-between text-[12px]">
                 <span className="text-slate-500">다음 결제 예정일</span>
                 <span className="font-bold">{nextBilling.toLocaleDateString('ko-KR')}</span>
@@ -266,7 +266,7 @@ export default function DigitalApply() {
               <Ban className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
               <div>
                 <p className="text-[12.5px] font-extrabold text-rose-700">경기복 · 대회 현장 사용 불가</p>
-                <p className="mt-0.5 text-[11.5px] text-rose-600/90 break-keep">본 상품은 경기복 · 대회 현장 부착이 포함되지 않습니다.</p>
+                <p className="mt-0.5 text-[12.5px] text-rose-600/90 break-keep">본 상품은 경기복 · 대회 현장 부착이 포함되지 않습니다.</p>
               </div>
             </div>
 
@@ -279,7 +279,7 @@ export default function DigitalApply() {
             >
               {submitting ? '신청 중…' : <>선수 승인 요청하기 <ChevronRight className="w-4 h-4" /></>}
             </button>
-            <p className="mt-2 text-center text-[11px] text-slate-400">신청은 결제가 아니며, 선수 승인 후 계약·결제합니다.</p>
+            <p className="mt-2 text-center text-[12px] text-slate-500">신청은 결제가 아니며, 선수 승인 후 계약·결제합니다.</p>
           </aside>
         </div>
       </div>

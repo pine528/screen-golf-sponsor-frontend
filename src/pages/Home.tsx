@@ -129,7 +129,7 @@ export function Home() {
                     className="relative w-[18px] h-[18px] rounded-full bg-emerald-500 border-[3px] border-white shadow-md shrink-0 hover:scale-110 transition-transform"
                   >
                     {tipKey === h.key && (
-                      <span className="absolute left-1/2 -translate-x-1/2 -top-9 px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-[11.5px] font-semibold whitespace-nowrap shadow-lg">
+                      <span className="absolute left-1/2 -translate-x-1/2 -top-9 px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-[12.5px] font-semibold whitespace-nowrap shadow-lg">
                         직접 PICK에서 선택할 수 있어요
                       </span>
                     )}
@@ -139,7 +139,7 @@ export function Home() {
 
               {/* 선수 캡션 (시안: KLPGA 프로 · 배진리 · 사인) */}
               <div className="absolute left-0 bottom-[14%] hidden sm:block select-none">
-                <p className="text-[11.5px] font-bold text-emerald-600 tracking-wide">KLPGA 프로</p>
+                <p className="text-[12.5px] font-bold text-emerald-600 tracking-wide">KLPGA 프로</p>
                 <p className="text-[24px] font-extrabold text-slate-800 leading-tight">배진리</p>
                 <p className="font-script text-[24px] text-slate-500/80 -mt-0.5 -rotate-6 origin-left">Bae Jinri</p>
               </div>
@@ -319,7 +319,7 @@ export function Home() {
                 </span>
               ))}
             </div>
-            <p className="mt-3 text-[12px] text-slate-400">&copy; 2026 SPONPIK. All rights reserved.</p>
+            <p className="mt-3 text-[12px] text-slate-500">&copy; 2026 SPONPIK. All rights reserved.</p>
           </div>
         </div>
       </footer>

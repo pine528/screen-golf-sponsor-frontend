@@ -29,7 +29,7 @@ export function FanHeader({ eyebrow, title, desc, right }: {
     <div className="flex items-start justify-between gap-4 mb-6">
       <div>
         {eyebrow && (
-          <div className="text-[11px] font-bold tracking-[0.14em] text-slate-400 uppercase mb-1.5">{eyebrow}</div>
+          <div className="text-[12px] font-bold tracking-[0.14em] text-slate-500 uppercase mb-1.5">{eyebrow}</div>
         )}
         <h1 className="text-[26px] sm:text-[32px] font-extrabold text-slate-900 tracking-[-0.02em] leading-tight">{title}</h1>
         {desc && <p className="mt-2 text-[15px] text-slate-500 leading-relaxed">{desc}</p>}
@@ -47,7 +47,7 @@ export function SectionTitle({ title, sub, to, action }: {
     <div className="flex items-end justify-between mb-3.5">
       <div>
         <h2 className="text-[17px] font-bold text-slate-900 tracking-[-0.01em]">{title}</h2>
-        {sub && <p className="text-[13px] text-slate-400 mt-0.5">{sub}</p>}
+        {sub && <p className="text-[13px] text-slate-500 mt-0.5">{sub}</p>}
       </div>
       {to ? (
         <Link to={to} className="text-[13px] font-semibold text-slate-500 hover:text-slate-900 inline-flex items-center gap-0.5">
@@ -81,7 +81,7 @@ export function Chip({ children, tone = 'slate', size = 'sm' }: {
   };
   return (
     <span className={`inline-flex items-center gap-1 rounded-full font-semibold ${tones[tone]} ${
-      size === 'xs' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-[12px]'
+      size === 'xs' ? 'px-2 py-0.5 text-[12px]' : 'px-2.5 py-1 text-[12px]'
     }`}>{children}</span>
   );
 }
@@ -115,7 +115,7 @@ export function TempGauge({ score, tier, lowSample, size = 168 }: {
       <div className="absolute inset-x-0 top-[38%] text-center">
         <div className="text-[34px] font-extrabold text-slate-900 tabular-nums leading-none tracking-[-0.03em]">
           {lowSample ? '—' : score.toFixed(1)}
-          {!lowSample && <span className="text-[16px] font-bold text-slate-400 ml-0.5">℃</span>}
+          {!lowSample && <span className="text-[16px] font-bold text-slate-500 ml-0.5">℃</span>}
         </div>
         <div className={`mt-1 text-[12px] font-bold ${c.text}`}>{lowSample ? '데이터 축적 중' : tier}</div>
       </div>
@@ -132,7 +132,7 @@ export function TempBar({ score, tier, lowSample }: { score: number; tier?: stri
         <div className="h-full rounded-full transition-[width] duration-700"
           style={{ width: `${lowSample ? 0 : Math.min(100, score)}%`, background: `linear-gradient(90deg, ${c.from}, ${c.to})` }} />
       </div>
-      <span className={`text-[12px] font-bold tabular-nums ${lowSample ? 'text-slate-400' : c.text}`}>
+      <span className={`text-[12px] font-bold tabular-nums ${lowSample ? 'text-slate-500' : c.text}`}>
         {lowSample ? '집계 중' : `${score.toFixed(1)}℃`}
       </span>
     </div>
@@ -146,7 +146,7 @@ export function AthleteAvatar({ athlete, size = 44 }: { athlete: any; size?: num
       className="rounded-full object-cover bg-slate-100 shrink-0"
       style={{ width: size, height: size }} />
   ) : (
-    <div className="rounded-full bg-slate-100 text-slate-400 font-bold flex items-center justify-center shrink-0"
+    <div className="rounded-full bg-slate-100 text-slate-500 font-bold flex items-center justify-center shrink-0"
       style={{ width: size, height: size, fontSize: size * 0.4 }}>{initial}</div>
   );
 }
@@ -165,9 +165,9 @@ export function EmptyState({ icon, title, desc, action }: {
 }) {
   return (
     <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50/60 px-6 py-12 text-center">
-      {icon && <div className="mx-auto mb-3 w-11 h-11 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400">{icon}</div>}
+      {icon && <div className="mx-auto mb-3 w-11 h-11 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-500">{icon}</div>}
       <p className="text-[15px] font-bold text-slate-700">{title}</p>
-      {desc && <p className="mt-1.5 text-[13px] text-slate-400 leading-relaxed whitespace-pre-line">{desc}</p>}
+      {desc && <p className="mt-1.5 text-[13px] text-slate-500 leading-relaxed whitespace-pre-line">{desc}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
   );
@@ -178,12 +178,12 @@ export function Notice({ items, title }: { items: string[]; title?: string }) {
   return (
     <div className="rounded-2xl bg-slate-50 border border-slate-100 px-4 py-3.5">
       <div className="flex items-center gap-1.5 mb-1.5">
-        <Info className="w-3.5 h-3.5 text-slate-400" />
+        <Info className="w-3.5 h-3.5 text-slate-500" />
         <span className="text-[12px] font-bold text-slate-500">{title || '안내'}</span>
       </div>
       <ul className="space-y-1">
         {items.map((t, i) => (
-          <li key={i} className="text-[12px] text-slate-400 leading-relaxed pl-2.5 relative">
+          <li key={i} className="text-[12px] text-slate-500 leading-relaxed pl-2.5 relative">
             <span className="absolute left-0 top-[7px] w-1 h-1 rounded-full bg-slate-300" />{t}
           </li>
         ))}

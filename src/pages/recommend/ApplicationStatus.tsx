@@ -19,8 +19,8 @@ const ITEM_UI: Record<string, { label: string; cls: string; icon: any }> = {
   APPROVED: { label: '승인 완료', cls: 'text-emerald-600', icon: CheckCircle2 },
   PENDING: { label: '확인 중', cls: 'text-amber-500', icon: Clock },
   NEEDS_REVISION: { label: '조정 요청', cls: 'text-rose-600', icon: AlertTriangle },
-  REJECTED: { label: '승인 거절', cls: 'text-slate-400', icon: XCircle },
-  EXPIRED: { label: '기간 만료', cls: 'text-slate-400', icon: Clock },
+  REJECTED: { label: '승인 거절', cls: 'text-slate-500', icon: XCircle },
+  EXPIRED: { label: '기간 만료', cls: 'text-slate-500', icon: Clock },
 };
 
 const ACTION_LABEL: Record<string, string> = {
@@ -96,10 +96,10 @@ export default function ApplicationStatus() {
         <div className="max-w-7xl mx-auto px-5 py-3.5 flex items-center gap-2 overflow-x-auto">
           {STEPS.map((s, i) => (
             <div key={s} className="flex items-center gap-1.5 shrink-0">
-              <span className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center ${
-                i < 4 ? 'bg-emerald-100 text-emerald-700' : i === 4 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'
+              <span className={`w-6 h-6 rounded-full text-[12px] font-black flex items-center justify-center ${
+                i < 4 ? 'bg-emerald-100 text-emerald-700' : i === 4 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-500'
               }`}>{i + 1}</span>
-              <span className={`text-[12px] font-bold ${i === 4 ? 'text-emerald-700' : 'text-slate-400'}`}>{s}</span>
+              <span className={`text-[12px] font-bold ${i === 4 ? 'text-emerald-700' : 'text-slate-500'}`}>{s}</span>
               {i < STEPS.length - 1 && <span className="w-6 h-px bg-slate-200 mx-1" />}
             </div>
           ))}
@@ -120,7 +120,7 @@ export default function ApplicationStatus() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-[17px] font-black">{items.length}명 중 {approved.length}명 승인</p>
-                  <p className="text-[11.5px] text-slate-400 mt-0.5">
+                  <p className="text-[12.5px] text-slate-500 mt-0.5">
                     승인 {approved.length}명 · 확인 중 {pending.length}명{revision.length ? ` · 조정 요청 ${revision.length}명` : ''}
                   </p>
                   <div className="mt-2 flex items-center gap-2">
@@ -136,9 +136,9 @@ export default function ApplicationStatus() {
                   <Clock className="w-5 h-5 text-sky-600" />
                 </span>
                 <div>
-                  <p className="text-[11.5px] text-slate-400 font-bold">승인 요청 유효기간</p>
+                  <p className="text-[12.5px] text-slate-500 font-bold">승인 요청 유효기간</p>
                   <p className="text-[19px] font-black">{remainText(app.approvalDueAt) || '-'}</p>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[12px] text-slate-500">
                     {app.approvalDueAt ? new Date(app.approvalDueAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) + '까지' : ''}
                   </p>
                 </div>
@@ -148,9 +148,9 @@ export default function ApplicationStatus() {
                   <Wallet className="w-5 h-5 text-violet-600" />
                 </span>
                 <div>
-                  <p className="text-[11.5px] text-slate-400 font-bold">패키지 총 금액</p>
+                  <p className="text-[12.5px] text-slate-500 font-bold">패키지 총 금액</p>
                   <p className="text-[19px] font-black">월 {Math.round(total / 10000)}만원</p>
-                  <p className="text-[11px] text-slate-400">부가세 별도</p>
+                  <p className="text-[12px] text-slate-500">부가세 별도</p>
                 </div>
               </div>
             </div>
@@ -169,7 +169,7 @@ export default function ApplicationStatus() {
                       <p className="text-[15px] font-extrabold">{it.athlete?.name} 프로</p>
                       <div className="mt-1 flex flex-wrap gap-1">
                         {[it.athlete?.tour, it.role].filter(Boolean).map((t: string) => (
-                          <span key={t} className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10.5px] font-bold">{t}</span>
+                          <span key={t} className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[12.5px] font-bold">{t}</span>
                         ))}
                       </div>
                     </div>
@@ -180,10 +180,10 @@ export default function ApplicationStatus() {
                     <div className="min-w-0 flex-1">
                       {it.status === 'APPROVED' ? (
                         <>
-                          <p className="text-[11.5px] text-slate-400 font-bold">승인한 후원 구성</p>
+                          <p className="text-[12.5px] text-slate-500 font-bold">승인한 후원 구성</p>
                           <div className="mt-1 flex flex-wrap gap-1.5">
                             {[it.slotName, `${app.durationMonths}개월`].filter(Boolean).map((t: string) => (
-                              <span key={t} className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11.5px] font-bold">{t}</span>
+                              <span key={t} className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[12.5px] font-bold">{t}</span>
                             ))}
                           </div>
                         </>
@@ -191,7 +191,7 @@ export default function ApplicationStatus() {
                         <p className="text-[12.5px] text-slate-500">선수에게 승인 요청을 보냈습니다.</p>
                       ) : (
                         <>
-                          <p className="text-[11.5px] text-slate-400 font-bold">사유</p>
+                          <p className="text-[12.5px] text-slate-500 font-bold">사유</p>
                           <p className="text-[12.5px] text-slate-600 break-keep">{it.comment || it.reasonCode || '사유 미기재'}</p>
                         </>
                       )}
@@ -219,7 +219,7 @@ export default function ApplicationStatus() {
                     </span>
                     <div className="min-w-0">
                       <p className="text-[13px] font-bold">{ACTION_LABEL[r.action] || r.action}</p>
-                      <p className="text-[11.5px] text-slate-400">
+                      <p className="text-[12.5px] text-slate-500">
                         {new Date(r.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                         {r.comment ? ` · ${r.comment}` : ''}
                       </p>
@@ -245,7 +245,7 @@ export default function ApplicationStatus() {
                 onClick={() => navigate(`/sponsor/applications/${app.id}/checkout`)}
                 disabled={!allApproved}
                 className={`mt-4 w-full h-12 inline-flex items-center justify-center gap-2 rounded-xl text-[14px] font-bold transition-colors ${
-                  allApproved ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                  allApproved ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-500 cursor-not-allowed'
                 }`}
               >
                 {allApproved ? <>계약·결제 진행 <ArrowRight className="w-4 h-4" /></> : <><Lock className="w-4 h-4" /> 모든 승인 후 결제 가능</>}
@@ -253,7 +253,7 @@ export default function ApplicationStatus() {
 
               {canPartial && (
                 <>
-                  <p className="mt-5 mb-2.5 text-center text-[11.5px] text-slate-400 font-bold">다른 방법으로 진행하기</p>
+                  <p className="mt-5 mb-2.5 text-center text-[12.5px] text-slate-500 font-bold">다른 방법으로 진행하기</p>
                   <button
                     onClick={() => navigate(`/sponsor/applications/${app.id}/checkout?partial=1`)}
                     className="w-full rounded-xl border border-slate-200 px-4 py-3.5 text-left hover:border-emerald-300 transition-colors"
@@ -261,7 +261,7 @@ export default function ApplicationStatus() {
                     <span className="flex items-center gap-2 text-[13.5px] font-extrabold">
                       <Users className="w-4 h-4 text-emerald-600" /> 승인된 선수만 먼저 진행
                     </span>
-                    <span className="block mt-1 text-[11.5px] text-slate-400">
+                    <span className="block mt-1 text-[12.5px] text-slate-500">
                       승인 완료된 선수 {approved.length}명으로 먼저 계약 및 결제 (월 {Math.round(approvedTotal / 10000)}만원)
                     </span>
                   </button>
@@ -275,7 +275,7 @@ export default function ApplicationStatus() {
                 <span className="flex items-center gap-2 text-[13.5px] font-extrabold">
                   <Pencil className="w-4 h-4 text-emerald-600" /> 추천안 수정
                 </span>
-                <span className="block mt-1 text-[11.5px] text-slate-400">구성·일정·조건을 변경하여 재요청</span>
+                <span className="block mt-1 text-[12.5px] text-slate-500">구성·일정·조건을 변경하여 재요청</span>
               </Link>
             </div>
 

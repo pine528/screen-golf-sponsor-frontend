@@ -24,8 +24,8 @@ function Pipeline({ stages, index }: { stages: any[]; index: number }) {
               {i < index && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
               {i === index && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
             </span>
-            <span className={`mt-1.5 text-[10px] whitespace-nowrap ${
-              i <= index ? 'font-bold text-slate-700' : 'text-slate-400'
+            <span className={`mt-1.5 text-[12.5px] whitespace-nowrap ${
+              i <= index ? 'font-bold text-slate-700' : 'text-slate-500'
             }`}>{s.label}</span>
           </div>
           {i < stages.length - 1 && (
@@ -97,7 +97,7 @@ export default function FanBrandSuggest() {
             <span className="text-[13px] font-bold text-emerald-700">팬포인트 +{done.point.earned}P 적립 예정</span>
           </div>
         )}
-        <p className="mt-4 text-[12px] text-slate-400">이번 달 남은 추천 {done.remaining}건</p>
+        <p className="mt-4 text-[12px] text-slate-500">이번 달 남은 추천 {done.remaining}건</p>
         <div className="mt-8 flex gap-2 justify-center">
           <Link to="/fan/activity" className="h-11 px-5 rounded-2xl bg-slate-100 text-slate-700 text-[14px] font-bold flex items-center hover:bg-slate-200 transition">
             내 팬활동
@@ -119,7 +119,7 @@ export default function FanBrandSuggest() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
       <Link to={athleteId ? `/fan/community/${athleteId}` : '/fan'}
-        className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+        className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 돌아가기
       </Link>
 
@@ -129,7 +129,7 @@ export default function FanBrandSuggest() {
         </div>
         <div>
           <h1 className="text-[22px] font-extrabold text-slate-900 tracking-[-0.02em]">브랜드 추천</h1>
-          <p className="text-[13px] text-slate-400 mt-0.5">
+          <p className="text-[13px] text-slate-500 mt-0.5">
             {opts?.quota ? `이번 달 ${opts.quota.remaining}/${opts.quota.limit}건 남음` : '월 3건까지 추천할 수 있습니다'}
           </p>
         </div>
@@ -140,7 +140,7 @@ export default function FanBrandSuggest() {
           <AthleteAvatar athlete={athlete} size={44} />
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-bold text-slate-900">{athlete.name}</p>
-            <p className="text-[12px] text-slate-400">{athlete.tour || athlete.sportType || '선수'}</p>
+            <p className="text-[12px] text-slate-500">{athlete.tour || athlete.sportType || '선수'}</p>
           </div>
           {summary?.total > 0 && <Chip size="xs">누적 추천 {summary.total}건</Chip>}
         </Card>
@@ -183,7 +183,7 @@ export default function FanBrandSuggest() {
           rows={6} disabled={exhausted}
           className="w-full rounded-2xl bg-slate-50 border border-slate-100 p-3.5 text-[14px] text-slate-700 leading-relaxed placeholder:text-slate-300 resize-none focus:outline-none focus:border-slate-300" />
         <p className={`mt-2 text-[12px] font-semibold tabular-nums ${
-          len >= min ? 'text-emerald-600' : 'text-slate-400'
+          len >= min ? 'text-emerald-600' : 'text-slate-500'
         }`}>
           {len} / {max}자 {len < min && `(최소 ${min}자)`}
         </p>
@@ -192,7 +192,7 @@ export default function FanBrandSuggest() {
       {/* 이해관계 — 건너뛸 수 없다 */}
       <Card className="p-5 mb-3">
         <p className="text-[13px] font-bold text-slate-500 mb-1">이 브랜드와 관계가 있나요</p>
-        <p className="text-[12px] text-slate-400 mb-3">공정한 검토를 위해 반드시 표시해주세요.</p>
+        <p className="text-[12px] text-slate-500 mb-3">공정한 검토를 위해 반드시 표시해주세요.</p>
         <div className="space-y-2">
           {opts?.interests?.map((i: any) => (
             <button key={i.code} onClick={() => setInterest(i.code)} disabled={exhausted}
@@ -206,7 +206,7 @@ export default function FanBrandSuggest() {
               </span>
               <span className="min-w-0">
                 <span className="block text-[14px] font-bold text-slate-900">{i.label}</span>
-                <span className="block text-[12px] text-slate-400 mt-0.5">{i.desc}</span>
+                <span className="block text-[12px] text-slate-500 mt-0.5">{i.desc}</span>
               </span>
             </button>
           ))}
@@ -233,9 +233,9 @@ export default function FanBrandSuggest() {
               className={`rounded-2xl border p-4 text-left transition ${
                 isPublic === o.v ? 'border-slate-900 bg-slate-50' : 'border-slate-200 bg-white hover:border-slate-300'
               }`}>
-              <I className={`w-4 h-4 mb-2 ${isPublic === o.v ? 'text-slate-900' : 'text-slate-400'}`} />
+              <I className={`w-4 h-4 mb-2 ${isPublic === o.v ? 'text-slate-900' : 'text-slate-500'}`} />
               <p className="text-[13px] font-bold text-slate-900">{o.label}</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">{o.desc}</p>
+              <p className="text-[12px] text-slate-500 mt-0.5">{o.desc}</p>
             </button>
           );
         })}
@@ -262,7 +262,7 @@ export default function FanBrandSuggest() {
                   {s.athlete && <AthleteAvatar athlete={s.athlete} size={34} />}
                   <div className="min-w-0 flex-1">
                     <p className="text-[14px] font-bold text-slate-900 truncate">{s.brandName || s.category}</p>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[12px] text-slate-500">
                       {s.athlete?.name} · {new Date(s.createdAt).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}
                     </p>
                   </div>
@@ -272,7 +272,7 @@ export default function FanBrandSuggest() {
                 </div>
                 {s.stageIndex >= 0
                   ? <Pipeline stages={mine.pipeline} index={s.stageIndex} />
-                  : <p className="text-[12px] text-slate-400">{s.statusNote || '운영팀 판단으로 진행이 종료되었습니다.'}</p>}
+                  : <p className="text-[12px] text-slate-500">{s.statusNote || '운영팀 판단으로 진행이 종료되었습니다.'}</p>}
               </Card>
             ))}
           </div>

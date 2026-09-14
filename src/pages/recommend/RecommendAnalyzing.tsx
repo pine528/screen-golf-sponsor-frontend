@@ -138,7 +138,7 @@ export default function RecommendAnalyzing() {
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <span className="text-[38px] font-black tabular-nums leading-none">{Math.round(progress)}<span className="text-[20px]">%</span></span>
-                  <span className="mt-1.5 text-[12px] text-slate-400 font-bold">분석 진행 중</span>
+                  <span className="mt-1.5 text-[12px] text-slate-500 font-bold">분석 진행 중</span>
                 </div>
               </div>
 
@@ -154,7 +154,7 @@ export default function RecommendAnalyzing() {
                       }`} style={active ? { animationDuration: '2.4s' } : undefined}>
                         {done && <Check className="w-3 h-3 text-white" strokeWidth={3.5} />}
                       </span>
-                      <span className={`text-[13.5px] font-bold ${done ? 'text-slate-700' : active ? 'text-emerald-700' : 'text-slate-400'}`}>
+                      <span className={`text-[13.5px] font-bold ${done ? 'text-slate-700' : active ? 'text-emerald-700' : 'text-slate-500'}`}>
                         {s}{active && ' 중'}{done && ' 완료'}
                       </span>
                     </li>
@@ -172,7 +172,7 @@ export default function RecommendAnalyzing() {
                   </span>
                   <div className="min-w-0">
                     <p className="text-[13.5px] font-extrabold">{f.title}</p>
-                    <p className="text-[11px] text-slate-400 break-keep">{f.desc}</p>
+                    <p className="text-[12px] text-slate-500 break-keep">{f.desc}</p>
                   </div>
                 </div>
               ))}
@@ -189,7 +189,7 @@ export default function RecommendAnalyzing() {
               </Link>
             </div>
 
-            <p className="mt-5 flex items-center justify-center gap-1.5 text-[12px] text-slate-400">
+            <p className="mt-5 flex items-center justify-center gap-1.5 text-[12px] text-slate-500">
               <Clock className="w-3.5 h-3.5" /> 보통 20초 이내로 끝나요. 화면을 닫아도 분석은 계속됩니다.
             </p>
           </>

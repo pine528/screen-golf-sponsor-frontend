@@ -141,7 +141,7 @@ export default function AvailableOffers() {
       <section className="bg-gradient-to-b from-[#f2faf5] to-white border-b border-slate-100 px-5 pt-6 pb-8">
         <div className="max-w-[1400px] mx-auto">
           <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px] mb-4">
-            <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+            <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             <Link to="/sponsor" className="text-slate-500 hover:text-slate-700">후원하기</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
@@ -201,7 +201,7 @@ export default function AvailableOffers() {
               >
                 {t.label}
                 {n != null && (
-                  <span className={`text-[12px] font-black ${on ? 'text-emerald-100' : t.key === 'CLOSING' ? 'text-rose-500' : 'text-slate-400'}`}>
+                  <span className={`text-[12px] font-black ${on ? 'text-emerald-100' : t.key === 'CLOSING' ? 'text-rose-500' : 'text-slate-500'}`}>
                     {n}
                   </span>
                 )}
@@ -229,7 +229,7 @@ export default function AvailableOffers() {
           <div className="mt-6 rounded-2xl border border-dashed border-slate-300 py-20 text-center">
             <Bookmark className="w-10 h-10 text-slate-300 mx-auto" />
             <p className="mt-3 text-[14px] font-bold text-slate-600">조건에 맞는 상품이 없습니다</p>
-            <p className="mt-1 text-[12.5px] text-slate-400">필터를 넓히거나 직접 PICK으로 원하는 구성을 만들어보세요.</p>
+            <p className="mt-1 text-[12.5px] text-slate-500">필터를 넓히거나 직접 PICK으로 원하는 구성을 만들어보세요.</p>
             <div className="mt-5 flex flex-wrap justify-center gap-2">
               <button onClick={reset} className="h-11 px-5 inline-flex items-center rounded-xl border border-slate-200 text-sm font-bold text-slate-600">
                 필터 초기화
@@ -262,7 +262,7 @@ export default function AvailableOffers() {
               </span>
               <div>
                 <p className="text-[13px] font-extrabold">{t.title}</p>
-                <p className="mt-0.5 text-[11.5px] text-slate-500 break-keep">{t.desc}</p>
+                <p className="mt-0.5 text-[12.5px] text-slate-500 break-keep">{t.desc}</p>
               </div>
             </div>
           ))}

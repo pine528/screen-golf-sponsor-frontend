@@ -90,9 +90,9 @@ export default function FanVote() {
 
       <div className="max-w-[1400px] mx-auto px-5 pt-6">
         <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px]">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+          <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-400">팬 참여</span>
+          <span className="text-slate-500">팬 참여</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="font-bold text-emerald-700">팬 VOTE</span>
         </nav>
@@ -121,12 +121,12 @@ export default function FanVote() {
                   <span className="text-[30px] font-black text-emerald-600 tabular-nums">{temp.celsius.toFixed(1)}</span>
                   <span className="text-[15px] font-bold text-emerald-600">℃</span>
                   {!!temp.weeklyDelta && (
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11.5px] font-bold">
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[12.5px] font-bold">
                       이번 주 +{temp.weeklyDelta.toFixed(1)}℃
                     </span>
                   )}
                 </p>
-                <p className="mt-1 text-[11.5px] text-slate-400">
+                <p className="mt-1 text-[12.5px] text-slate-500">
                   응원한 팬 {temp.fanCount}명 · 원장에 기록된 활동만 반영합니다
                 </p>
               </div>
@@ -144,7 +144,7 @@ export default function FanVote() {
               <div className="rounded-2xl border border-dashed border-slate-300 py-16 text-center">
                 <VoteIcon className="w-10 h-10 text-slate-300 mx-auto" />
                 <p className="mt-3 text-[14px] font-bold text-slate-600">진행 중인 투표가 없습니다</p>
-                <p className="mt-1 text-[12.5px] text-slate-400">새 투표가 열리면 여기에서 바로 참여할 수 있어요.</p>
+                <p className="mt-1 text-[12.5px] text-slate-500">새 투표가 열리면 여기에서 바로 참여할 수 있어요.</p>
                 <Link to="/votes" className="mt-5 inline-flex h-11 px-5 items-center rounded-xl border border-slate-200 text-sm font-bold text-slate-600">
                   지난 투표 보기
                 </Link>
@@ -152,12 +152,12 @@ export default function FanVote() {
             ) : (
               <article className="rounded-2xl border border-slate-200 p-5">
                 <div className="flex items-center gap-2">
-                  <span className={`px-2.5 py-1 rounded-lg text-[11.5px] font-black ${
+                  <span className={`px-2.5 py-1 rounded-lg text-[12.5px] font-black ${
                     isClosed(featured.closeAt) ? 'bg-slate-100 text-slate-500' : 'bg-emerald-100 text-emerald-700'
                   }`}>
                     {isClosed(featured.closeAt) ? '집계 중' : '진행 중'}
                   </span>
-                  <span className="px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[11.5px] font-black">{dday(featured.closeAt)}</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[12.5px] font-black">{dday(featured.closeAt)}</span>
                 </div>
                 <h2 className="mt-3.5 text-[20px] sm:text-[23px] font-black leading-snug break-keep">{featured.title}</h2>
                 {featured.description && (
@@ -179,11 +179,11 @@ export default function FanVote() {
 
                 <div className="mt-4 flex flex-wrap items-center gap-4">
                   <span className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-500">
-                    <Users className="w-4 h-4 text-slate-400" /> {(featured._count?.participations ?? 0).toLocaleString()}명 참여
+                    <Users className="w-4 h-4 text-slate-500" /> {(featured._count?.participations ?? 0).toLocaleString()}명 참여
                   </span>
                   {voteRule && (
                     <span className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-500">
-                      <Coins className="w-4 h-4 text-slate-400" /> 참여 +{voteRule.points}P
+                      <Coins className="w-4 h-4 text-slate-500" /> 참여 +{voteRule.points}P
                     </span>
                   )}
                   <Link
@@ -205,15 +205,15 @@ export default function FanVote() {
                     className="rounded-2xl border border-slate-200 p-4 hover:border-emerald-300 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-0.5 rounded-md text-[11px] font-black ${
+                      <span className={`px-2 py-0.5 rounded-md text-[12px] font-black ${
                         isClosed(v.closeAt) ? 'bg-slate-100 text-slate-500' : 'bg-emerald-100 text-emerald-700'
                       }`}>
                         {isClosed(v.closeAt) ? '집계 중' : '진행 중'}
                       </span>
-                      <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">{dday(v.closeAt)}</span>
+                      <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold">{dday(v.closeAt)}</span>
                     </div>
                     <p className="mt-2.5 text-[14px] font-extrabold leading-snug break-keep line-clamp-2">{v.title}</p>
-                    <p className="mt-2.5 flex items-center gap-3 text-[11.5px] text-slate-400">
+                    <p className="mt-2.5 flex items-center gap-3 text-[12.5px] text-slate-500">
                       <span className="inline-flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {(v._count?.participations ?? 0).toLocaleString()}명</span>
                       {voteRule && <span className="inline-flex items-center gap-1"><Coins className="w-3.5 h-3.5" /> +{voteRule.points}P</span>}
                     </p>
@@ -251,7 +251,7 @@ export default function FanVote() {
                   </li>
                 ))}
               </ol>
-              <p className="mt-3 text-[11px] text-slate-400 break-keep text-center">
+              <p className="mt-3 text-[12px] text-slate-500 break-keep text-center">
                 팬온도는 활동 원장에 기록된 값만 합산합니다.
               </p>
             </div>
@@ -268,9 +268,9 @@ export default function FanVote() {
                     ))}
                   </div>
                 ) : (
-                  <p className="mt-2 text-[12.5px] text-slate-400 break-keep">아직 모인 추천이 없어요. 첫 추천을 남겨보세요.</p>
+                  <p className="mt-2 text-[12.5px] text-slate-500 break-keep">아직 모인 추천이 없어요. 첫 추천을 남겨보세요.</p>
                 )}
-                <p className="mt-3 text-[11.5px] text-slate-400 break-keep">
+                <p className="mt-3 text-[12.5px] text-slate-500 break-keep">
                   팬 추천은 검토 후 선수의 브랜드 적합도에 반영됩니다.
                 </p>
                 <Link

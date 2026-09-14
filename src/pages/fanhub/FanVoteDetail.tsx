@@ -71,7 +71,7 @@ export default function FanVoteDetail() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan/vote" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to="/fan/vote" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 팬 투표
       </Link>
 
@@ -105,7 +105,7 @@ export default function FanVoteDetail() {
           {vote.title}
         </h1>
         {vote.description && <p className="mt-2.5 text-[14px] text-slate-500 leading-relaxed">{vote.description}</p>}
-        <div className="mt-3 flex items-center gap-3 text-[12px] text-slate-400">
+        <div className="mt-3 flex items-center gap-3 text-[12px] text-slate-500">
           <span className="inline-flex items-center gap-1"><Users className="w-3 h-3" />{nf(vote.participants)}명 참여</span>
           <span>
             {new Date(vote.closeAt).toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })} 마감
@@ -120,7 +120,7 @@ export default function FanVoteDetail() {
             <AthleteAvatar athlete={vote.athlete} size={48} />
             <div className="min-w-0 flex-1">
               <p className="text-[15px] font-bold text-slate-900">{vote.athlete.name}</p>
-              <p className="text-[12px] text-slate-400">
+              <p className="text-[12px] text-slate-500">
                 {[vote.athlete.tour, vote.athlete.region].filter(Boolean).join(' · ') || vote.athlete.sportType}
               </p>
             </div>
@@ -128,7 +128,7 @@ export default function FanVoteDetail() {
           {vote.temperature && (
             <div className="mt-3.5 pt-3.5 border-t border-slate-100">
               <div className="flex items-center gap-1.5 mb-2">
-                <Thermometer className="w-3.5 h-3.5 text-slate-400" />
+                <Thermometer className="w-3.5 h-3.5 text-slate-500" />
                 <span className="text-[12px] font-semibold text-slate-500">팬온도</span>
               </div>
               <TempBar score={vote.temperature.score} tier={vote.temperature.tier?.label} lowSample={vote.temperature.lowSample} />
@@ -137,11 +137,11 @@ export default function FanVoteDetail() {
           {vote.recentSummary && (
             <div className="mt-3.5 pt-3.5 border-t border-slate-100 flex gap-6">
               <div>
-                <p className="text-[11px] text-slate-400 font-semibold">최근 평균 순위</p>
+                <p className="text-[12px] text-slate-500 font-semibold">최근 평균 순위</p>
                 <p className="text-[17px] font-extrabold text-slate-900 tabular-nums">{vote.recentSummary.avgRank}위</p>
               </div>
               <div>
-                <p className="text-[11px] text-slate-400 font-semibold">최근 Top 10</p>
+                <p className="text-[12px] text-slate-500 font-semibold">최근 Top 10</p>
                 <p className="text-[17px] font-extrabold text-slate-900 tabular-nums">{vote.recentSummary.top10}회</p>
               </div>
             </div>
@@ -197,7 +197,7 @@ export default function FanVoteDetail() {
         {/* 결과 비공개 사유 */}
         {vote.resultHidden && (
           <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 flex items-start gap-2.5">
-            <Lock className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+            <Lock className="w-4 h-4 text-slate-500 mt-0.5 shrink-0" />
             <p className="text-[12px] text-slate-500 leading-relaxed">{vote.resultHiddenReason}</p>
           </div>
         )}

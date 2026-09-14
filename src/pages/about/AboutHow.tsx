@@ -66,10 +66,10 @@ export default function AboutHow() {
                   <p className="mt-1 text-[13px] text-slate-500">{m.desc}</p>
                   <div className="mt-2.5 flex flex-wrap gap-1.5">
                     {m.chips.map((c) => (
-                      <span key={c} className="px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">{c}</span>
+                      <span key={c} className="px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold">{c}</span>
                     ))}
                   </div>
-                  {'note' in m && m.note && <p className="mt-2.5 text-[11.5px] text-slate-400">{m.note}</p>}
+                  {'note' in m && m.note && <p className="mt-2.5 text-[12.5px] text-slate-500">{m.note}</p>}
                 </div>
               </div>
             </Link>

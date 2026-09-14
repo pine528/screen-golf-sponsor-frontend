@@ -73,7 +73,7 @@ export default function AboutCases() {
         <div className="mt-8 grid lg:grid-cols-2 gap-5 items-start">
           {/* 대표 사례 — 배진리 × 엘렌실라 (방송 노출 실측) */}
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50/30 p-6 sm:p-7">
-            <span className="inline-flex px-2.5 py-1 rounded-md bg-emerald-600 text-white text-[11px] font-black">대표 사례</span>
+            <span className="inline-flex px-2.5 py-1 rounded-md bg-emerald-600 text-white text-[12px] font-black">대표 사례</span>
             <div className="mt-5 grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-6">
               <div className="flex sm:flex-col items-center gap-4">
                 <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white border border-slate-200 flex items-center justify-center p-4">
@@ -83,7 +83,7 @@ export default function AboutCases() {
                 <div className="text-center">
                   <img src="/golfers/bae-jinri.png" alt="배진리 프로" className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover object-top border border-slate-200" />
                   <p className="mt-2 text-[15px] font-extrabold">배진리</p>
-                  <p className="text-[11px] text-slate-400 font-semibold">KLPGA 프로 골퍼</p>
+                  <p className="text-[12px] text-slate-500 font-semibold">KLPGA 프로 골퍼</p>
                 </div>
               </div>
               <div className="space-y-4">
@@ -95,12 +95,12 @@ export default function AboutCases() {
                   <p className="flex items-center gap-1.5 text-[12px] font-black text-emerald-700"><Layers className="w-4 h-4" /> 선정 조합</p>
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {['바이저 정면', 'WGTOUR 6차', '팬스토어 협업'].map((c) => (
-                      <span key={c} className="px-2 py-1 rounded-md bg-white border border-slate-200 text-[11.5px] font-bold text-slate-600">{c}</span>
+                      <span key={c} className="px-2 py-1 rounded-md bg-white border border-slate-200 text-[12.5px] font-bold text-slate-600">{c}</span>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <p className="flex items-center gap-1.5 text-[12px] font-black text-emerald-700"><CheckCircle2 className="w-4 h-4" /> 성과 요약 <span className="text-[10px] font-bold text-slate-400">(중계 실측)</span></p>
+                  <p className="flex items-center gap-1.5 text-[12px] font-black text-emerald-700"><CheckCircle2 className="w-4 h-4" /> 성과 요약 <span className="text-[12.5px] font-bold text-slate-500">(중계 실측)</span></p>
                   <div className="mt-1.5 grid grid-cols-3 gap-2">
                     {[
                       { k: '중계 착용 노출', v: '57초' },
@@ -109,7 +109,7 @@ export default function AboutCases() {
                     ].map((s) => (
                       <div key={s.k} className="rounded-xl bg-white border border-slate-200 px-2 py-2.5 text-center">
                         <p className="text-[13.5px] font-black text-slate-900">{s.v}</p>
-                        <p className="text-[10px] text-slate-400 font-semibold break-keep">{s.k}</p>
+                        <p className="text-[12.5px] text-slate-500 font-semibold break-keep">{s.k}</p>
                       </div>
                     ))}
                   </div>
@@ -140,7 +140,7 @@ export default function AboutCases() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-[14.5px] font-extrabold truncate">{c.brandName} × {c.athlete}</p>
-                    <p className="text-[11px] text-slate-400 font-semibold">{c.brandDesc} · {c.tour}</p>
+                    <p className="text-[12px] text-slate-500 font-semibold">{c.brandDesc} · {c.tour}</p>
                   </div>
                 </div>
                 <dl className="mt-4 space-y-2 text-[13px]">
@@ -176,7 +176,7 @@ export default function AboutCases() {
                 </span>
                 <div className="min-w-0">
                   <p className="text-[13.5px] font-extrabold whitespace-nowrap">{p.no}. {p.title}</p>
-                  <p className="text-[11px] text-slate-400 break-keep">{p.desc}</p>
+                  <p className="text-[12px] text-slate-500 break-keep">{p.desc}</p>
                 </div>
                 {i < PROCESS.length - 1 && <ArrowRight className="hidden sm:block w-4 h-4 text-slate-300 ml-auto shrink-0" />}
               </div>
@@ -192,7 +192,7 @@ export default function AboutCases() {
           >
             우리 브랜드 매칭안 받아보기 <ChevronRight className="w-4 h-4" />
           </Link>
-          <p className="mt-3 flex items-center justify-center gap-1.5 text-[12px] text-slate-400">
+          <p className="mt-3 flex items-center justify-center gap-1.5 text-[12px] text-slate-500">
             <ShieldCheck className="w-4 h-4 text-emerald-500" /> 성과보장 프로그램으로 안심하고 시작하세요.
           </p>
         </div>

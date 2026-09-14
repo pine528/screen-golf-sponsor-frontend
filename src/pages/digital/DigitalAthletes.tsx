@@ -54,9 +54,9 @@ export default function DigitalAthletes() {
       <section className="bg-gradient-to-b from-[#f2faf5] to-white px-5 pt-8 pb-7 border-b border-slate-100">
         <div className="max-w-7xl mx-auto">
           <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px] mb-4">
-            <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+            <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <Link to="/digital-partner" className="text-slate-400 hover:text-slate-600">디지털 파트너 월 구독</Link>
+            <Link to="/digital-partner" className="text-slate-500 hover:text-slate-600">디지털 파트너 월 구독</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             <span className="font-bold text-emerald-700">선수 선택</span>
           </nav>
@@ -122,7 +122,7 @@ export default function DigitalAthletes() {
               <article key={a.id} className="rounded-2xl border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-[0_12px_32px_-14px_rgba(15,23,42,0.16)] transition-all">
                 <div className="relative aspect-[4/3] bg-slate-100">
                   {a.profileImageUrl && <img src={a.profileImageUrl} alt={a.name} loading="lazy" className="w-full h-full object-cover object-top" />}
-                  <span className="absolute top-3 right-3 px-2 py-1 rounded-md bg-slate-900/75 text-white text-[10.5px] font-bold backdrop-blur-sm">
+                  <span className="absolute top-3 right-3 px-2 py-1 rounded-md bg-slate-900/75 text-white text-[12.5px] font-bold backdrop-blur-sm">
                     경기복 부착 미포함
                   </span>
                 </div>
@@ -130,13 +130,13 @@ export default function DigitalAthletes() {
                   <p className="text-[15px] font-extrabold">
                     {a.name} <span className="ml-1 text-[12px] font-bold text-emerald-600">{a.tour}</span>
                   </p>
-                  <p className="mt-0.5 text-[12px] text-slate-400">디지털 파트너 모집</p>
+                  <p className="mt-0.5 text-[12px] text-slate-500">디지털 파트너 모집</p>
 
                   <div className="mt-3 flex items-baseline justify-between">
                     <span className="text-[17px] font-black text-emerald-600">
                       월 {a.minMonthlyPrice ? a.minMonthlyPrice.toLocaleString() : '-'}원
                     </span>
-                    <span className="text-[11px] text-slate-400 font-bold">12개월 약정</span>
+                    <span className="text-[12px] text-slate-500 font-bold">12개월 약정</span>
                   </div>
                   <p className="mt-1.5 text-[12px] text-slate-500">
                     제공 가능 슬롯 <b className="text-slate-800">{a.totalRemaining}/{a.totalCapacity}</b>
@@ -144,8 +144,8 @@ export default function DigitalAthletes() {
 
                   <div className="mt-2.5 flex flex-wrap gap-1">
                     {['디지털 배지', '팬스토어', '매장 POP'].map((t) => (
-                      <span key={t} className="text-[10.5px] text-slate-400">{t}</span>
-                    )).reduce((acc: any[], el, i) => i === 0 ? [el] : [...acc, <span key={`d${i}`} className="text-[10.5px] text-slate-300">·</span>, el], [])}
+                      <span key={t} className="text-[12.5px] text-slate-500">{t}</span>
+                    )).reduce((acc: any[], el, i) => i === 0 ? [el] : [...acc, <span key={`d${i}`} className="text-[12.5px] text-slate-300">·</span>, el], [])}
                   </div>
 
                   <Link

@@ -152,7 +152,7 @@ export default function DirectBuild() {
                     }`}
                   >
                     {v === 'FRONT' ? '정면' : '후면'}
-                    <span className="ml-1 text-[11px] opacity-70">{offers.viewCounts[v]}</span>
+                    <span className="ml-1 text-[12px] opacity-70">{offers.viewCounts[v]}</span>
                   </button>
                 ))}
               </div>
@@ -192,7 +192,7 @@ export default function DirectBuild() {
             ) : (
               <div className="mt-4 rounded-2xl bg-white border border-dashed border-slate-300 py-10 px-5 text-center">
                 <p className="text-[13px] font-bold text-slate-600">후면 도식 이미지는 준비 중입니다</p>
-                <p className="mt-1 text-[12px] text-slate-400 break-keep">
+                <p className="mt-1 text-[12px] text-slate-500 break-keep">
                   후면 위치는 아래 <b>등</b> 목록에서 동일하게 선택할 수 있습니다.
                 </p>
               </div>
@@ -202,12 +202,12 @@ export default function DirectBuild() {
               {['AVAILABLE', 'NEEDS_CONFIRMATION', 'HOLD', 'RESERVED', 'SOLD', 'AUCTION', 'BLOCKED', 'EXPIRED'].map((k) => (
                 <span key={k} className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600">
                   <span className={`w-2 h-2 rounded-full ${SLOT_STATUS[k].dot}`} />
-                  <span aria-hidden className="text-[10px]">{SLOT_STATUS[k].icon}</span>
+                  <span aria-hidden className="text-[12.5px]">{SLOT_STATUS[k].icon}</span>
                   {SLOT_STATUS[k].label}
                 </span>
               ))}
             </div>
-            <p className="mt-2 text-center text-[11px] text-slate-400">
+            <p className="mt-2 text-center text-[12px] text-slate-500">
               슬롯명의 좌·우는 선수가 착용한 기준입니다 (정면에서 보면 좌우가 바뀝니다)
             </p>
           </div>
@@ -248,8 +248,8 @@ export default function DirectBuild() {
                                 : 'border-slate-100 bg-slate-50/60 cursor-not-allowed'
                             }`}
                           >
-                            <span className={`block text-[12.5px] font-bold ${s.selectable ? '' : 'text-slate-400'}`}>{s.name}</span>
-                            <span className={`mt-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10.5px] font-bold ${meta.chip}`}>
+                            <span className={`block text-[12.5px] font-bold ${s.selectable ? '' : 'text-slate-500'}`}>{s.name}</span>
+                            <span className={`mt-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[12.5px] font-bold ${meta.chip}`}>
                               <span aria-hidden>{meta.icon}</span> {meta.label}
                             </span>
                             <span className={`mt-1.5 block text-[13px] font-black text-right ${s.selectable ? '' : 'text-slate-300'}`}>
@@ -270,32 +270,32 @@ export default function DirectBuild() {
         <aside className="lg:sticky lg:top-24 rounded-2xl border border-slate-200 p-5">
           <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
             선택한 상품
-            <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-[11px] font-black flex items-center justify-center">{count}</span>
+            <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-[12px] font-black flex items-center justify-center">{count}</span>
           </h2>
 
           <div className="mt-4">
-            <p className="text-[12px] font-bold text-slate-400">위치 상품</p>
+            <p className="text-[12px] font-bold text-slate-500">위치 상품</p>
             {selectedSlot ? (
               <div className="mt-2 rounded-xl border border-emerald-500 bg-emerald-50/40 p-3.5">
                 <p className="text-[13.5px] font-extrabold">{selectedSlot.name}</p>
-                <span className={`mt-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10.5px] font-bold ${SLOT_STATUS[selectedSlot.status].chip}`}>
+                <span className={`mt-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[12.5px] font-bold ${SLOT_STATUS[selectedSlot.status].chip}`}>
                   {SLOT_STATUS[selectedSlot.status].label}
                 </span>
                 <p className="mt-2 flex items-baseline justify-between">
-                  <span className="text-[11.5px] text-slate-400">시작가</span>
+                  <span className="text-[12.5px] text-slate-500">시작가</span>
                   <span className="text-[15px] font-black">{(selectedSlot.price / 10000).toLocaleString()}만원</span>
                 </p>
-                {selectedSlot.headline && <p className="mt-1.5 text-[11.5px] text-slate-500 break-keep">{selectedSlot.headline}</p>}
+                {selectedSlot.headline && <p className="mt-1.5 text-[12.5px] text-slate-500 break-keep">{selectedSlot.headline}</p>}
               </div>
             ) : (
-              <p className="mt-2 rounded-xl border border-dashed border-slate-200 py-5 text-center text-[12.5px] text-slate-400">
+              <p className="mt-2 rounded-xl border border-dashed border-slate-200 py-5 text-center text-[12.5px] text-slate-500">
                 도식이나 목록에서 위치를 선택하세요
               </p>
             )}
           </div>
 
           <div className="mt-5">
-            <p className="flex items-center gap-1.5 text-[12px] font-bold text-slate-400">
+            <p className="flex items-center gap-1.5 text-[12px] font-bold text-slate-500">
               온라인 상품 <span className="font-normal">(다중 선택 가능)</span>
               <Info className="w-3.5 h-3.5" />
             </p>
@@ -317,7 +317,7 @@ export default function DirectBuild() {
                     />
                     <span className="min-w-0 flex-1">
                       <span className="block text-[12.5px] font-bold truncate">{o.name}</span>
-                      {o.description && <span className="block text-[10.5px] text-slate-400 truncate">{o.description}</span>}
+                      {o.description && <span className="block text-[12.5px] text-slate-500 truncate">{o.description}</span>}
                     </span>
                     <span className="text-[12.5px] font-extrabold shrink-0">{(o.price / 10000).toLocaleString()}만원</span>
                   </label>
@@ -338,7 +338,7 @@ export default function DirectBuild() {
               {total > 0 ? `${(total / 10000).toLocaleString()}만원` : '-'}
             </span>
           </div>
-          <p className="mt-1 text-right text-[11px] text-slate-400">기간·추가 활동 적용 전 · VAT 별도</p>
+          <p className="mt-1 text-right text-[12px] text-slate-500">기간·추가 활동 적용 전 · VAT 별도</p>
 
           <button
             onClick={next}

@@ -20,7 +20,7 @@ const FILTERS = [
 
 const KIND_META: Record<string, { tone: 'slate' | 'emerald' | 'amber' | 'rose'; label: string; color: string }> = {
   EARN: { tone: 'emerald', label: '적립', color: 'text-emerald-600' },
-  PENDING: { tone: 'slate', label: '적립 예정', color: 'text-slate-400' },
+  PENDING: { tone: 'slate', label: '적립 예정', color: 'text-slate-500' },
   SPEND: { tone: 'slate', label: '사용', color: 'text-slate-900' },
   EXPIRE: { tone: 'amber', label: '만료', color: 'text-amber-600' },
   REVERSE: { tone: 'rose', label: '회수', color: 'text-rose-500' },
@@ -45,7 +45,7 @@ export default function FanPointLedger() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan/points" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to="/fan/points" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 팬포인트
       </Link>
 
@@ -61,7 +61,7 @@ export default function FanPointLedger() {
             { label: '30일 내 소멸', v: data.summary.expiringSoon, cls: 'text-amber-600' },
           ].map((s) => (
             <Card key={s.label} className="px-3.5 py-3.5">
-              <p className="text-[11px] font-semibold text-slate-400 mb-1">{s.label}</p>
+              <p className="text-[12px] font-semibold text-slate-500 mb-1">{s.label}</p>
               <p className={`text-[17px] font-extrabold tabular-nums leading-none ${s.cls}`}>{nf(s.v)}P</p>
             </Card>
           ))}
@@ -93,7 +93,7 @@ export default function FanPointLedger() {
                 <div key={t.id} className="flex items-center gap-3 px-4 py-4">
                   {t.athlete ? <AthleteAvatar athlete={t.athlete} size={38} /> : (
                     <div className="w-[38px] h-[38px] rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                      <Receipt className="w-4 h-4 text-slate-400" />
+                      <Receipt className="w-4 h-4 text-slate-500" />
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
@@ -102,7 +102,7 @@ export default function FanPointLedger() {
                       {t.kind === 'PENDING' && <Chip size="xs">확정 대기</Chip>}
                       {t.kind === 'REVERSE' && <Chip size="xs" tone="rose">회수</Chip>}
                     </div>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className="text-[12px] text-slate-500 mt-0.5">
                       {new Date(t.createdAt).toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       {t.athlete && ` · ${t.athlete.name}`}
                       {t.expiresAt && t.kind === 'EARN' &&

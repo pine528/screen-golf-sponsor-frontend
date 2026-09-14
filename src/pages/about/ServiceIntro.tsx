@@ -99,7 +99,7 @@ export default function ServiceIntro() {
 
             <Link to="/sponsor/recommended" onClick={() => track('recommended_pick', '/sponsor/recommended')}
               className="group relative rounded-3xl border border-orange-200 bg-gradient-to-b from-orange-50/70 to-white p-5 transition hover:-translate-y-0.5 hover:border-orange-300">
-              <span className="absolute -top-2.5 left-5 inline-flex h-6 px-2.5 rounded-lg bg-orange-500 text-white text-[11px] font-bold items-center">추천</span>
+              <span className="absolute -top-2.5 left-5 inline-flex h-6 px-2.5 rounded-lg bg-orange-500 text-white text-[12px] font-bold items-center">추천</span>
               <Sparkles className="w-9 h-9 text-orange-400 mb-8" />
               <p className="text-[17px] font-extrabold text-slate-900 leading-snug">
                 SPONPIK<br /><span className="text-orange-500">추천 PICK</span>
@@ -128,7 +128,7 @@ export default function ServiceIntro() {
                     <I className="w-[18px] h-[18px]" />
                   </span>
                   <p className="text-[14px] font-bold text-slate-900">{f.title}</p>
-                  <p className="mt-1.5 text-[12px] text-slate-400 leading-relaxed">{f.desc}</p>
+                  <p className="mt-1.5 text-[12px] text-slate-500 leading-relaxed">{f.desc}</p>
                 </div>
               );
             })}
@@ -144,7 +144,7 @@ export default function ServiceIntro() {
               return (
                 <button key={a.key} onClick={() => setTab(a.key)}
                   className={`relative inline-flex items-center gap-1.5 px-4 py-3 text-[14px] font-bold transition ${
-                    on ? 'text-emerald-700' : 'text-slate-400 hover:text-slate-700'
+                    on ? 'text-emerald-700' : 'text-slate-500 hover:text-slate-700'
                   }`}>
                   <I className="w-4 h-4" /> {a.label}
                   {on && <span className="absolute left-3 right-3 -bottom-px h-[2.5px] rounded-full bg-emerald-500" />}
@@ -167,7 +167,7 @@ export default function ServiceIntro() {
           <div className="flex items-end justify-between mb-5">
             <div>
               <h2 className="text-[20px] font-extrabold text-slate-900 tracking-[-0.02em]">실제 매칭 사례</h2>
-              <p className="text-[13px] text-slate-400 mt-1">브랜드 목표가 실제 후원과 성과로 이어진 사례입니다.</p>
+              <p className="text-[13px] text-slate-500 mt-1">브랜드 목표가 실제 후원과 성과로 이어진 사례입니다.</p>
             </div>
             <Link to="/about/cases" className="text-[13px] font-semibold text-slate-500 hover:text-slate-900 inline-flex items-center gap-0.5">
               전체보기 <ArrowRight className="w-3.5 h-3.5" />

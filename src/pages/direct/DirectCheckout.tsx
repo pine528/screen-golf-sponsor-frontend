@@ -125,7 +125,7 @@ export default function DirectCheckout() {
             <div className="rounded-2xl border border-slate-200 p-5">
               <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
                 최종 후원 구성
-                <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-bold">
+                <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[12px] font-bold">
                   항목 {approved.length}건 승인 완료
                 </span>
               </h2>
@@ -136,12 +136,12 @@ export default function DirectCheckout() {
                       {i.athlete?.profileImageUrl && <img src={i.athlete.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[14px] font-extrabold">{i.athlete?.name} <span className="text-[11px] font-bold text-slate-400">프로</span></p>
-                      <p className="text-[11.5px] text-slate-400">{i.athlete?.tour}</p>
+                      <p className="text-[14px] font-extrabold">{i.athlete?.name} <span className="text-[12px] font-bold text-slate-500">프로</span></p>
+                      <p className="text-[12.5px] text-slate-500">{i.athlete?.tour}</p>
                     </div>
                     <div className="min-w-0">
                       <p className="text-[13px] font-bold">{i.slotName}</p>
-                      <span className={`inline-block mt-0.5 px-2 py-0.5 rounded-md text-[10.5px] font-bold ${
+                      <span className={`inline-block mt-0.5 px-2 py-0.5 rounded-md text-[12.5px] font-bold ${
                         i.role === '온라인 전용' ? 'bg-sky-50 text-sky-700' : 'bg-slate-100 text-slate-600'
                       }`}>
                         {i.role || '착장'}
@@ -160,7 +160,7 @@ export default function DirectCheckout() {
             {/* 계약 내용 */}
             <div className="rounded-2xl border border-slate-200 p-5">
               <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
-                <FileText className="w-4 h-4 text-slate-400" /> 계약 내용 검토
+                <FileText className="w-4 h-4 text-slate-500" /> 계약 내용 검토
               </h2>
               <ul className="mt-3 divide-y divide-slate-100">
                 {CONTRACT_TERMS.map((t, i) => (
@@ -170,9 +170,9 @@ export default function DirectCheckout() {
                       aria-expanded={openTerm === i}
                       className="w-full py-3.5 flex items-center gap-3 text-left"
                     >
-                      <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 text-[11px] font-black flex items-center justify-center shrink-0">{i + 1}</span>
+                      <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 text-[12px] font-black flex items-center justify-center shrink-0">{i + 1}</span>
                       <span className="text-[13.5px] font-bold">{t.title}</span>
-                      <ChevronDown className={`ml-auto w-4 h-4 text-slate-400 transition-transform ${openTerm === i ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`ml-auto w-4 h-4 text-slate-500 transition-transform ${openTerm === i ? 'rotate-180' : ''}`} />
                     </button>
                     {openTerm === i && (
                       <p className="pb-3.5 pl-9 text-[12.5px] text-slate-600 leading-relaxed break-keep">{t.body}</p>
@@ -201,12 +201,12 @@ export default function DirectCheckout() {
                   ['업종', app.snapshot?.brandInfo?.category || '—'],
                 ].map(([k, v]) => (
                   <div key={k as string}>
-                    <dt className="text-[11px] text-slate-400">{k}</dt>
+                    <dt className="text-[12px] text-slate-500">{k}</dt>
                     <dd className="mt-0.5 font-bold break-keep">{v}</dd>
                   </div>
                 ))}
               </dl>
-              <p className="mt-3 text-[11.5px] text-slate-400">
+              <p className="mt-3 text-[12.5px] text-slate-500">
                 정보를 수정하려면 승인 요청 화면에서 브랜드 정보를 다시 입력해주세요.
               </p>
             </div>
@@ -247,9 +247,9 @@ export default function DirectCheckout() {
                     }`}
                   >
                     <input type="radio" checked={method === m.code} onChange={() => setMethod(m.code)} className="w-4 h-4 accent-emerald-600 shrink-0" />
-                    <m.icon className="w-4 h-4 text-slate-400 shrink-0" />
+                    <m.icon className="w-4 h-4 text-slate-500 shrink-0" />
                     <span className="text-[13px] font-bold">{m.label}</span>
-                    <span className="ml-auto text-[11px] text-slate-400 text-right">{m.desc}</span>
+                    <span className="ml-auto text-[12px] text-slate-500 text-right">{m.desc}</span>
                   </label>
                 ))}
               </div>
@@ -277,7 +277,7 @@ export default function DirectCheckout() {
               onClick={pay}
               disabled={!canPay || paying}
               className={`mt-4 w-full h-12 inline-flex items-center justify-center gap-2 rounded-xl text-[14.5px] font-bold transition-colors ${
-                canPay ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                canPay ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-500 cursor-not-allowed'
               }`}
             >
               {paying ? '결제 처리 중…'
@@ -285,7 +285,7 @@ export default function DirectCheckout() {
                 : approved.length === 0 ? <><Lock className="w-4 h-4" /> 승인된 항목이 없습니다</>
                 : <><Lock className="w-4 h-4" /> {(supply + vat).toLocaleString()}원 결제하기</>}
             </button>
-            <p className="mt-2 flex items-center justify-center gap-1.5 text-[11.5px] text-slate-400">
+            <p className="mt-2 flex items-center justify-center gap-1.5 text-[12.5px] text-slate-500">
               <ShieldCheck className="w-3.5 h-3.5" /> 결제 정보는 PG사에서 암호화 처리됩니다
             </p>
 

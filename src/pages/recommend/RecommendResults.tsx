@@ -91,7 +91,7 @@ export default function RecommendResults() {
         <PublicHeader />
         <div className="max-w-4xl mx-auto px-5 py-24 text-center">
           <div className="w-10 h-10 rounded-full border-4 border-emerald-100 border-t-emerald-500 animate-spin mx-auto" />
-          <p className="mt-4 text-[13.5px] text-slate-400">추천 결과를 불러오는 중…</p>
+          <p className="mt-4 text-[13.5px] text-slate-500">추천 결과를 불러오는 중…</p>
         </div>
       </div>
     );
@@ -106,10 +106,10 @@ export default function RecommendResults() {
         <div className="max-w-7xl mx-auto px-5 py-3.5 flex items-center gap-2 overflow-x-auto">
           {STEPS.map((s, i) => (
             <div key={s} className="flex items-center gap-1.5 shrink-0">
-              <span className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center ${
-                i < 2 ? 'bg-emerald-100 text-emerald-700' : i === 2 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'
+              <span className={`w-6 h-6 rounded-full text-[12px] font-black flex items-center justify-center ${
+                i < 2 ? 'bg-emerald-100 text-emerald-700' : i === 2 ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-500'
               }`}>{i + 1}</span>
-              <span className={`text-[12px] font-bold ${i === 2 ? 'text-emerald-700' : 'text-slate-400'}`}>{s}</span>
+              <span className={`text-[12px] font-bold ${i === 2 ? 'text-emerald-700' : 'text-slate-500'}`}>{s}</span>
               {i < STEPS.length - 1 && <span className="w-6 h-px bg-slate-200 mx-1" />}
             </div>
           ))}
@@ -146,7 +146,7 @@ export default function RecommendResults() {
             {[brief.objectiveLabel, brief.budgetLabel, brief.durationLabel].filter(Boolean).map((c: string) => (
               <span key={c} className="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[12px] font-bold">{c}</span>
             ))}
-            <span className="ml-auto text-[11.5px] text-slate-400">
+            <span className="ml-auto text-[12.5px] text-slate-500">
               후보 {data.candidateCount}명 검토 · 기준일 {data.dataAsOf ? new Date(data.dataAsOf).toLocaleDateString('ko-KR') : '-'}
             </span>
           </div>
@@ -174,7 +174,7 @@ export default function RecommendResults() {
                 디지털 파트너 월 구독 보기
               </Link>
             </div>
-            <p className="mt-4 text-[11.5px] text-slate-400">
+            <p className="mt-4 text-[12.5px] text-slate-500">
               최소 필요 금액은 현재 판매 중인 슬롯 실거래가 기준입니다.
             </p>
           </div>
@@ -201,17 +201,17 @@ export default function RecommendResults() {
                   <div className="flex items-center gap-2">
                     <span className={`px-2.5 py-1 rounded-lg text-[12px] font-black ${tone.chip}`}>{p.name}</span>
                     {p.badge && (
-                      <span className="px-2 py-1 rounded-lg bg-emerald-500 text-white text-[11px] font-black">{p.badge}</span>
+                      <span className="px-2 py-1 rounded-lg bg-emerald-500 text-white text-[12px] font-black">{p.badge}</span>
                     )}
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-[11px] text-slate-400 font-bold">월 총액</p>
+                    <p className="text-[12px] text-slate-500 font-bold">월 총액</p>
                     <p className="text-[22px] font-black leading-none tabular-nums">
-                      {Math.round(p.total / 10000)}<span className="text-[13px] font-bold text-slate-400">만원</span>
+                      {Math.round(p.total / 10000)}<span className="text-[13px] font-bold text-slate-500">만원</span>
                     </p>
                   </div>
                 </div>
-                <p className="mt-1.5 text-[12px] text-slate-400 font-semibold">{p.tagline}</p>
+                <p className="mt-1.5 text-[12px] text-slate-500 font-semibold">{p.tagline}</p>
 
                 {/* 예산 사용 바 */}
                 <div className="mt-3 h-1.5 rounded-full bg-slate-100 overflow-hidden">
@@ -235,13 +235,13 @@ export default function RecommendResults() {
                             </span>
                           )}
                         </span>
-                        <span className="block text-[11px] text-slate-400">{m.tour}</span>
+                        <span className="block text-[12px] text-slate-500">{m.tour}</span>
                       </span>
                       <span className="shrink-0 text-right">
-                        <span className="block px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold whitespace-nowrap">
+                        <span className="block px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold whitespace-nowrap">
                           {m.slot?.name || m.role}
                         </span>
-                        <span className="block mt-1 text-[11.5px] font-bold text-slate-600">적합도 {m.fitScore}%</span>
+                        <span className="block mt-1 text-[12.5px] font-bold text-slate-600">적합도 {m.fitScore}%</span>
                       </span>
                     </li>
                   ))}
@@ -281,9 +281,9 @@ export default function RecommendResults() {
                       { icon: BadgeCheck, k: '데이터 충분도', v: p.members.every((m: any) => m.confidence !== 'LOW') ? '충분' : '일부 수집 중' },
                     ].map((s) => (
                       <div key={s.k} className="text-center">
-                        <s.icon className="w-4 h-4 text-slate-400 mx-auto" />
+                        <s.icon className="w-4 h-4 text-slate-500 mx-auto" />
                         <p className="mt-1 text-[13px] font-black tabular-nums">{s.v}</p>
-                        <p className="text-[10px] text-slate-400">{s.k}</p>
+                        <p className="text-[12.5px] text-slate-500">{s.k}</p>
                       </div>
                     ))}
                   </div>
@@ -328,14 +328,14 @@ export default function RecommendResults() {
           )}
           <div className="max-w-7xl mx-auto flex items-center gap-4">
             <div className="min-w-0 flex-1">
-              <p className="text-[11.5px] text-slate-400 font-bold">선택한 추천안</p>
+              <p className="text-[12.5px] text-slate-500 font-bold">선택한 추천안</p>
               <p className="text-[14.5px] font-extrabold truncate">
                 {plans.find((p) => p.key === selected)?.name} ·{' '}
                 {plans.find((p) => p.key === selected)?.members.map((m: any) => m.name).join(' · ')}
               </p>
             </div>
             <div className="text-right shrink-0 hidden sm:block">
-              <p className="text-[11.5px] text-slate-400 font-bold">월 총액 (VAT 별도)</p>
+              <p className="text-[12.5px] text-slate-500 font-bold">월 총액 (VAT 별도)</p>
               <p className="text-[17px] font-black tabular-nums">
                 ₩{plans.find((p) => p.key === selected)?.total.toLocaleString()}
               </p>

@@ -30,7 +30,7 @@ export default function FanCampaign() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 팬 참여
       </Link>
 
@@ -64,7 +64,7 @@ export default function FanCampaign() {
       {/* 심사 기준 */}
       <section className="mb-6 mt-6">
         <h2 className="text-[15px] font-bold text-slate-900 mb-1">어떻게 선정하나요</h2>
-        <p className="text-[13px] text-slate-400 mb-3.5">구매 금액은 심사 항목에 포함되지 않습니다.</p>
+        <p className="text-[13px] text-slate-500 mb-3.5">구매 금액은 심사 항목에 포함되지 않습니다.</p>
         <Card className="p-5">
           <div className="space-y-4">
             {data?.criteria?.map((cr: any) => (
@@ -76,7 +76,7 @@ export default function FanCampaign() {
                 <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden mb-1.5">
                   <div className="h-full rounded-full bg-slate-900" style={{ width: `${cr.weight}%` }} />
                 </div>
-                <p className="text-[12px] text-slate-400">{cr.desc}</p>
+                <p className="text-[12px] text-slate-500">{cr.desc}</p>
               </div>
             ))}
           </div>
@@ -122,7 +122,7 @@ export default function FanCampaign() {
       {data?.candidates?.length > 0 && (
         <section className="mb-6">
           <h2 className="text-[15px] font-bold text-slate-900 mb-1">응원이 활발한 선수</h2>
-          <p className="text-[13px] text-slate-400 mb-3.5">심사 기준으로 환산한 현재 현황이며, 최종 선정 결과가 아닙니다.</p>
+          <p className="text-[13px] text-slate-500 mb-3.5">심사 기준으로 환산한 현재 현황이며, 최종 선정 결과가 아닙니다.</p>
           <div className="space-y-2">
             {data.candidates.map((cand: any) => (
               <Card key={cand.athlete.id} as="link" to={`/fan/temperature/${cand.athlete.id}`} className="p-4">
@@ -132,7 +132,7 @@ export default function FanCampaign() {
                     <p className="text-[14px] font-bold text-slate-900">{cand.athlete.name}</p>
                     <div className="flex flex-wrap gap-1 mt-1.5">
                       {Object.entries(cand.marks).map(([k, v]) => (
-                        <span key={k} className="text-[11px] text-slate-400 bg-slate-50 rounded-full px-2 py-0.5">
+                        <span key={k} className="text-[12px] text-slate-500 bg-slate-50 rounded-full px-2 py-0.5">
                           {({ activity: '활동', continuity: '지속', letter: '편지', mission: '미션' } as any)[k]} {String(v)}
                         </span>
                       ))}
@@ -140,7 +140,7 @@ export default function FanCampaign() {
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-[18px] font-extrabold text-slate-900 tabular-nums leading-none">{cand.index}</p>
-                    <p className="text-[11px] text-slate-400 mt-1">/ 100</p>
+                    <p className="text-[12px] text-slate-500 mt-1">/ 100</p>
                   </div>
                 </div>
               </Card>

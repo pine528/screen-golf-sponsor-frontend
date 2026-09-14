@@ -55,7 +55,7 @@ export default function MyGuarantees() {
                     </span>
                     <p className="text-[12.5px] font-semibold text-slate-500">{k.label}</p>
                     <p className="mt-1 text-[26px] font-extrabold text-slate-900 tabular-nums leading-none">
-                      {nf(k.value)}<span className="text-[13px] text-slate-400 ml-1">{k.unit}</span>
+                      {nf(k.value)}<span className="text-[13px] text-slate-500 ml-1">{k.unit}</span>
                     </p>
                   </div>
                 );
@@ -68,7 +68,7 @@ export default function MyGuarantees() {
                 <p className="mt-1 text-[20px] font-extrabold text-violet-700 tabular-nums leading-none">
                   {data.remedySummary.usableCount > 0 ? `${nf(data.remedySummary.usableAmount)}원` : '없음'}
                 </p>
-                <p className="mt-1.5 text-[11px] text-slate-400">{data.remedySummary.usableCount}건 보유</p>
+                <p className="mt-1.5 text-[12px] text-slate-500">{data.remedySummary.usableCount}건 보유</p>
               </div>
             </div>
 
@@ -83,7 +83,7 @@ export default function MyGuarantees() {
                       </h2>
                       <Tag tone={TONE[s.statusTone] ?? 'slate'}>{s.statusLabel}</Tag>
                       {s.provisional && <Tag tone="amber">잠정 데이터</Tag>}
-                      <span className="ml-auto text-[12px] text-slate-400 tabular-nums">
+                      <span className="ml-auto text-[12px] text-slate-500 tabular-nums">
                         측정 {s.measureStart ? new Date(s.measureStart).toLocaleDateString('ko-KR') : '—'}
                         {' ~ '}
                         {s.measureEnd ? new Date(s.measureEnd).toLocaleDateString('ko-KR') : '—'}
@@ -104,17 +104,17 @@ export default function MyGuarantees() {
                                 </div>
                                 <div className="grid grid-cols-3 gap-2 text-center">
                                   <div>
-                                    <p className="text-[10.5px] text-slate-400">목표</p>
+                                    <p className="text-[12.5px] text-slate-500">목표</p>
                                     <p className="text-[14px] font-bold text-slate-700 tabular-nums">{nf(o.target)}{o.unit}</p>
                                   </div>
                                   <div>
-                                    <p className="text-[10.5px] text-slate-400">{o.provisional ? '잠정 실적' : '실적'}</p>
+                                    <p className="text-[12.5px] text-slate-500">{o.provisional ? '잠정 실적' : '실적'}</p>
                                     <p className={`text-[14px] font-bold tabular-nums ${o.actual === null ? 'text-slate-300' : 'text-slate-900'}`}>
                                       {o.actual === null ? '집계 중' : `${nf(o.actual)}${o.unit}`}
                                     </p>
                                   </div>
                                   <div>
-                                    <p className="text-[10.5px] text-slate-400">달성률</p>
+                                    <p className="text-[12.5px] text-slate-500">달성률</p>
                                     <p className={`text-[14px] font-extrabold tabular-nums ${
                                       o.achievementRate === null ? 'text-slate-300'
                                         : o.achievementRate >= 100 ? 'text-emerald-600' : 'text-slate-700'
@@ -123,7 +123,7 @@ export default function MyGuarantees() {
                                     </p>
                                   </div>
                                 </div>
-                                <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[10.5px] text-slate-400">
+                                <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[12.5px] text-slate-500">
                                   <span className="truncate">출처 {o.sourceName ?? '미등록'}</span>
                                   {o.nextCheckAt && (
                                     <span className="tabular-nums shrink-0 ml-2">
@@ -140,7 +140,7 @@ export default function MyGuarantees() {
 
                         {s.provisional && (
                           <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 flex items-start gap-2.5">
-                            <Info className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+                            <Info className="w-4 h-4 text-slate-500 mt-0.5 shrink-0" />
                             <p className="text-[12px] text-slate-500 leading-relaxed">
                               잠정 실적은 검증 전 데이터로, 최종 확정 시 변경될 수 있습니다.
                               {s.hasPending && ' 일부 지표는 아직 데이터를 수집하는 중입니다.'}
@@ -161,7 +161,7 @@ export default function MyGuarantees() {
                             { l: '이의제기 기간', v: `결과 확정일로부터 ${s.appealWindowDays}일` },
                           ].map((r) => (
                             <div key={r.l} className="flex items-start justify-between gap-3">
-                              <dt className="text-slate-400 shrink-0">{r.l}</dt>
+                              <dt className="text-slate-500 shrink-0">{r.l}</dt>
                               <dd className="font-semibold text-slate-800 text-right">{r.v}</dd>
                             </div>
                           ))}
@@ -173,14 +173,14 @@ export default function MyGuarantees() {
                             {s.remedies.map((g: any) => (
                               <div key={g.id} className="rounded-2xl bg-white border border-slate-200 px-3.5 py-3">
                                 <div className="flex items-center justify-between">
-                                  <span className="font-mono text-[11px] text-slate-400">{g.code}</span>
+                                  <span className="font-mono text-[12px] text-slate-500">{g.code}</span>
                                   <Tag tone={g.status === 'ISSUED' ? 'violet' : 'slate'}>{g.statusLabel}</Tag>
                                 </div>
                                 <p className="mt-1.5 text-[15px] font-extrabold text-violet-700 tabular-nums">
                                   {nf(g.remainAmount)}원
                                 </p>
                                 {g.validTo && (
-                                  <p className="text-[11px] text-slate-400 mt-0.5 tabular-nums">
+                                  <p className="text-[12px] text-slate-500 mt-0.5 tabular-nums">
                                     {new Date(g.validTo).toLocaleDateString('ko-KR')}까지
                                   </p>
                                 )}
@@ -218,7 +218,7 @@ export default function MyGuarantees() {
               </div>
             )}
 
-            <p className="mt-6 text-[11.5px] text-slate-400">{data.remedySummary.notice}</p>
+            <p className="mt-6 text-[12.5px] text-slate-500">{data.remedySummary.notice}</p>
           </>
         )}
       </div>

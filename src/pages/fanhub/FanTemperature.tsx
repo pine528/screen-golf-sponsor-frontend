@@ -51,7 +51,7 @@ export default function FanTemperature() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 팬 참여
       </Link>
 
@@ -62,7 +62,7 @@ export default function FanTemperature() {
             <AthleteAvatar athlete={data.athlete} size={36} />
             <div className="text-left">
               <p className="text-[15px] font-bold text-slate-900">{data.athlete.name}</p>
-              <p className="text-[12px] text-slate-400">{data.athlete.tour || data.athlete.sportType || '선수'}</p>
+              <p className="text-[12px] text-slate-500">{data.athlete.tour || data.athlete.sportType || '선수'}</p>
             </div>
           </Link>
         )}
@@ -72,13 +72,13 @@ export default function FanTemperature() {
         <p className="mt-3 text-[14px] font-semibold text-slate-600">{data.tier?.meaning || data.tier?.label}</p>
 
         {data.lowSample ? (
-          <p className="mt-3 text-[13px] text-slate-400 leading-relaxed">
+          <p className="mt-3 text-[13px] text-slate-500 leading-relaxed">
             최근 30일 참여 팬이 {nf(data.sampleSize)}명입니다.<br />
             30명 이상 모이면 팬온도가 공개됩니다.
           </p>
         ) : (
           <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3.5 py-1.5">
-            <TrendingUp className={`w-3.5 h-3.5 ${data.weeklyDelta >= 0 ? 'text-emerald-500' : 'text-slate-400'}`} />
+            <TrendingUp className={`w-3.5 h-3.5 ${data.weeklyDelta >= 0 ? 'text-emerald-500' : 'text-slate-500'}`} />
             <span className="text-[12px] font-bold text-slate-600">
               {data.weeklyDelta === null || data.weeklyDelta === undefined
                 ? '지난주 비교 집계 중'
@@ -100,7 +100,7 @@ export default function FanTemperature() {
                   {(() => { const I = COMP_ICON[SOURCE_COMP[f.source]] || Vote; return <I className="w-3.5 h-3.5" style={{ color: c.to }} />; })()}
                 </span>
                 <p className="text-[13px] text-slate-600 flex-1">{f.label}</p>
-                <span className="text-[12px] font-bold text-slate-400 tabular-nums">+{f.count}건</span>
+                <span className="text-[12px] font-bold text-slate-500 tabular-nums">+{f.count}건</span>
               </div>
             ))}
           </div>
@@ -111,14 +111,14 @@ export default function FanTemperature() {
       <Card className="p-5 mb-4">
         <div className="flex items-center justify-between mb-4">
           <p className="text-[13px] font-bold text-slate-500">팬온도 구성</p>
-          <span className="text-[11px] text-slate-400">최근 30일 기준</span>
+          <span className="text-[12px] text-slate-500">최근 30일 기준</span>
         </div>
         <div className="space-y-3.5">
           {(data.components || []).map((comp: any) => (
             <div key={comp.key}>
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[13px] font-semibold text-slate-700">{comp.label}</span>
-                <span className="text-[12px] text-slate-400 tabular-nums">가중치 {comp.weight}%</span>
+                <span className="text-[12px] text-slate-500 tabular-nums">가중치 {comp.weight}%</span>
               </div>
               <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
                 <div className="h-full rounded-full transition-[width] duration-700"
@@ -127,7 +127,7 @@ export default function FanTemperature() {
                     background: `linear-gradient(90deg, ${c.from}, ${c.to})`,
                   }} />
               </div>
-              {comp.desc && <p className="mt-1 text-[11px] text-slate-400">{comp.desc}</p>}
+              {comp.desc && <p className="mt-1 text-[12px] text-slate-500">{comp.desc}</p>}
             </div>
           ))}
         </div>
@@ -150,7 +150,7 @@ export default function FanTemperature() {
               </div>
             ))}
           </div>
-          <div className="flex justify-between mt-2 text-[11px] text-slate-400">
+          <div className="flex justify-between mt-2 text-[12px] text-slate-500">
             <span>{new Date(trend[0].date).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' })}</span>
             <span>{new Date(trend[trend.length - 1].date).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' })}</span>
           </div>
@@ -173,7 +173,7 @@ export default function FanTemperature() {
             ].map((s) => (
               <div key={s.label} className="rounded-2xl bg-slate-50 py-3">
                 <p className="text-[17px] font-extrabold text-slate-900 tabular-nums">{nf(s.v)}</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">{s.label}</p>
+                <p className="text-[12px] text-slate-500 mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
@@ -193,7 +193,7 @@ export default function FanTemperature() {
 
       <div className="mt-4 flex items-center gap-2 justify-center">
         <Info className="w-3.5 h-3.5 text-slate-300" />
-        <p className="text-[11px] text-slate-400">팬온도는 선수 간 순위를 매기기 위한 지표가 아닙니다.</p>
+        <p className="text-[12px] text-slate-500">팬온도는 선수 간 순위를 매기기 위한 지표가 아닙니다.</p>
       </div>
     </div>
   );

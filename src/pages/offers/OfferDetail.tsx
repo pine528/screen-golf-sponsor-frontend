@@ -140,9 +140,9 @@ export default function OfferDetail() {
       <div className="max-w-[1400px] mx-auto px-5 pt-5">
         <div className="flex items-center justify-between gap-3">
           <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px] min-w-0">
-            <Link to="/" className="text-slate-400 hover:text-slate-600 shrink-0">홈</Link>
+            <Link to="/" className="text-slate-500 hover:text-slate-600 shrink-0">홈</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-            <Link to="/sponsor/available" className="text-slate-400 hover:text-slate-600 shrink-0">지금 가능한 후원</Link>
+            <Link to="/sponsor/available" className="text-slate-500 hover:text-slate-600 shrink-0">지금 가능한 후원</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
             <span className="font-bold text-emerald-700 truncate">상품 상세</span>
           </nav>
@@ -161,15 +161,15 @@ export default function OfferDetail() {
                 <h1 className="mt-1 text-[24px] sm:text-[30px] font-black tracking-tight break-keep">{offer.title}</h1>
                 <div className="mt-2.5 flex flex-wrap gap-1.5">
                   {(offer.badges || []).map((b: string) => (
-                    <span key={b} className={`px-2 py-0.5 rounded-md text-[11px] font-black ${BADGE_STYLE[b] || 'bg-slate-100 text-slate-600'}`}>{b}</span>
+                    <span key={b} className={`px-2 py-0.5 rounded-md text-[12px] font-black ${BADGE_STYLE[b] || 'bg-slate-100 text-slate-600'}`}>{b}</span>
                   ))}
-                  <span className={`px-2 py-0.5 rounded-md text-[11px] font-bold ${st.cls}`}>{st.label}</span>
+                  <span className={`px-2 py-0.5 rounded-md text-[12px] font-bold ${st.cls}`}>{st.label}</span>
                 </div>
                 <p className="mt-3.5 text-[24px] font-black text-emerald-600">
                   {offer.priceType === 'NEGOTIABLE' ? '가격 협의'
                     : offer.priceType === 'SUBSCRIPTION' ? `월 ${offer.monthlyAmount.toLocaleString()}원`
                     : `${offer.supplyAmount.toLocaleString()}원`}
-                  <span className="ml-1.5 text-[12px] font-bold text-slate-400">(VAT 별도)</span>
+                  <span className="ml-1.5 text-[12px] font-bold text-slate-500">(VAT 별도)</span>
                 </p>
 
                 {/* 예상성과 요약 */}
@@ -177,7 +177,7 @@ export default function OfferDetail() {
                   <div className="mt-4 rounded-2xl border border-slate-200 p-4">
                     <p className="text-[12.5px] font-extrabold">
                       예상 노출 및 성과
-                      {perf.dataAsOf && <span className="ml-1.5 font-normal text-slate-400">({new Date(perf.dataAsOf).toLocaleDateString('ko-KR')} 데이터 기준)</span>}
+                      {perf.dataAsOf && <span className="ml-1.5 font-normal text-slate-500">({new Date(perf.dataAsOf).toLocaleDateString('ko-KR')} 데이터 기준)</span>}
                     </p>
                     <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {(perf.metrics || []).slice(0, 2).map((m: any) => (
@@ -186,7 +186,7 @@ export default function OfferDetail() {
                       <Stat label="신뢰도" value={conf?.label ?? '—'} valueCls={conf?.cls} />
                       <Stat label="성과 보장" value={perf.guaranteed ? '있음' : '아님'} valueCls={perf.guaranteed ? 'text-emerald-600' : 'text-rose-600'} sub={perf.guaranteed ? undefined : '성과는 변동될 수 있음'} />
                     </div>
-                    <p className="mt-3 text-[11px] text-slate-400 break-keep">* {perf.disclaimer}</p>
+                    <p className="mt-3 text-[12px] text-slate-500 break-keep">* {perf.disclaimer}</p>
                   </div>
                 )}
               </div>
@@ -200,7 +200,7 @@ export default function OfferDetail() {
                     key={t}
                     onClick={() => setTab(t)}
                     className={`px-3.5 py-3 text-[13.5px] font-bold border-b-2 whitespace-nowrap transition-colors ${
-                      tab === t ? 'border-emerald-500 text-emerald-700' : 'border-transparent text-slate-400 hover:text-slate-600'
+                      tab === t ? 'border-emerald-500 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-600'
                     }`}
                   >
                     {t}
@@ -216,7 +216,7 @@ export default function OfferDetail() {
                         {(offer.components || []).map((c: any) => (
                           <li key={c.id}>
                             <p className="text-[12.5px] font-bold">{c.label}{c.quantity > 1 && ` ${c.quantity}회`}</p>
-                            <p className="text-[11px] text-slate-400">{COMPONENT_LABEL[c.componentType] || c.componentType}{c.note ? ` · ${c.note}` : ''}</p>
+                            <p className="text-[12px] text-slate-500">{COMPONENT_LABEL[c.componentType] || c.componentType}{c.note ? ` · ${c.note}` : ''}</p>
                           </li>
                         ))}
                       </ul>
@@ -232,7 +232,7 @@ export default function OfferDetail() {
                         </ul>
                       ) : <Empty text="등록된 추천 업종이 없습니다" />}
                       {(offer.purposes || []).length > 0 && (
-                        <p className="mt-3 pt-3 border-t border-slate-100 text-[11.5px] text-slate-500">
+                        <p className="mt-3 pt-3 border-t border-slate-100 text-[12.5px] text-slate-500">
                           목적: {offer.purposes.join(' · ')}
                         </p>
                       )}
@@ -244,7 +244,7 @@ export default function OfferDetail() {
                         ))}
                         <li className="text-[12.5px] text-slate-600">노출 리포트 (요약 PDF)</li>
                       </ul>
-                      <p className="mt-3 pt-3 border-t border-slate-100 text-[11.5px] text-slate-400 break-keep">
+                      <p className="mt-3 pt-3 border-t border-slate-100 text-[12.5px] text-slate-500 break-keep">
                         노출 채널: {(offer.channels || []).join(' · ') || '—'}
                       </p>
                     </Panel>
@@ -264,13 +264,13 @@ export default function OfferDetail() {
                             {a.athlete.profileImageUrl && <img src={a.athlete.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
                           </span>
                           <div className="min-w-0">
-                            <p className="text-[14px] font-extrabold truncate">{a.athlete.name} <span className="text-[11px] font-bold text-slate-400">프로</span></p>
-                            <p className="text-[11.5px] text-slate-400 truncate">{[a.athlete.tour, a.athlete.region].filter(Boolean).join(' · ')}</p>
+                            <p className="text-[14px] font-extrabold truncate">{a.athlete.name} <span className="text-[12px] font-bold text-slate-500">프로</span></p>
+                            <p className="text-[12.5px] text-slate-500 truncate">{[a.athlete.tour, a.athlete.region].filter(Boolean).join(' · ')}</p>
                           </div>
                         </div>
                         <p className="mt-2.5 flex items-center gap-1.5 text-[12px] text-slate-500">
                           <Thermometer className="w-3.5 h-3.5 text-emerald-600" /> 팬온도 {(a.athlete.fanTemp ?? 0).toFixed(1)}℃
-                          <span className="ml-auto inline-flex items-center gap-1 text-[11.5px] font-bold text-emerald-700">
+                          <span className="ml-auto inline-flex items-center gap-1 text-[12.5px] font-bold text-emerald-700">
                             퀵프로필 <ChevronRight className="w-3.5 h-3.5" />
                           </span>
                         </p>
@@ -285,17 +285,17 @@ export default function OfferDetail() {
                       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {(perf.metrics || []).map((m: any) => (
                           <div key={m.metric} className="rounded-xl border border-slate-200 p-4">
-                            <p className="text-[11.5px] text-slate-400">{m.metric}</p>
-                            <p className="mt-1 text-[20px] font-black text-emerald-600">{metricRange(m)}<span className="ml-1 text-[12px] text-slate-400">{m.unit}</span></p>
-                            {m.basis && <p className="mt-1.5 text-[11px] text-slate-500 break-keep">근거: {m.basis}</p>}
+                            <p className="text-[12.5px] text-slate-500">{m.metric}</p>
+                            <p className="mt-1 text-[20px] font-black text-emerald-600">{metricRange(m)}<span className="ml-1 text-[12px] text-slate-500">{m.unit}</span></p>
+                            {m.basis && <p className="mt-1.5 text-[12px] text-slate-500 break-keep">근거: {m.basis}</p>}
                           </div>
                         ))}
                       </div>
                       <dl className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-slate-100 text-[12.5px]">
-                        <div><dt className="text-slate-400">측정 기준</dt><dd className="mt-0.5 font-bold break-keep">{perf.methodology || '—'}</dd></div>
-                        <div><dt className="text-slate-400">산식 버전</dt><dd className="mt-0.5 font-bold">{perf.methodVersion || '—'}</dd></div>
-                        <div><dt className="text-slate-400">기준일</dt><dd className="mt-0.5 font-bold">{perf.dataAsOf ? new Date(perf.dataAsOf).toLocaleDateString('ko-KR') : '—'}</dd></div>
-                        <div><dt className="text-slate-400">신뢰도</dt><dd className={`mt-0.5 font-bold ${conf?.cls}`}>{conf?.label ?? '—'}</dd></div>
+                        <div><dt className="text-slate-500">측정 기준</dt><dd className="mt-0.5 font-bold break-keep">{perf.methodology || '—'}</dd></div>
+                        <div><dt className="text-slate-500">산식 버전</dt><dd className="mt-0.5 font-bold">{perf.methodVersion || '—'}</dd></div>
+                        <div><dt className="text-slate-500">기준일</dt><dd className="mt-0.5 font-bold">{perf.dataAsOf ? new Date(perf.dataAsOf).toLocaleDateString('ko-KR') : '—'}</dd></div>
+                        <div><dt className="text-slate-500">신뢰도</dt><dd className={`mt-0.5 font-bold ${conf?.cls}`}>{conf?.label ?? '—'}</dd></div>
                       </dl>
                       <p className="flex items-start gap-2 rounded-xl bg-amber-50 border border-amber-100 px-4 py-3 text-[12px] text-amber-800 break-keep">
                         <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -317,7 +317,7 @@ export default function OfferDetail() {
                           ['대회 착장', offer.offlineUse], ['온라인 이미지', offer.onlineUse],
                           ['매장 인쇄물', offer.printUse], ['2차 활용', offer.secondaryUse],
                         ].map(([label, on]) => (
-                          <span key={label as string} className={`px-3 py-1.5 rounded-lg text-[12.5px] font-bold ${on ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-400 line-through'}`}>
+                          <span key={label as string} className={`px-3 py-1.5 rounded-lg text-[12.5px] font-bold ${on ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500 line-through'}`}>
                             {label as string} {on ? '가능' : '불가'}
                           </span>
                         ))}
@@ -337,9 +337,9 @@ export default function OfferDetail() {
                       <ol className="space-y-2">
                         {(offer.executionSteps || []).map((s: any, i: number) => (
                           <li key={s.key} className="flex items-center gap-3 text-[12.5px]">
-                            <span className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-black flex items-center justify-center shrink-0">{i + 1}</span>
+                            <span className="w-6 h-6 rounded-full bg-emerald-50 text-emerald-700 text-[12px] font-black flex items-center justify-center shrink-0">{i + 1}</span>
                             <span className="font-bold">{s.label}</span>
-                            <span className="ml-auto text-slate-400">{s.at ? new Date(s.at).toLocaleDateString('ko-KR') : '일정 협의'}</span>
+                            <span className="ml-auto text-slate-500">{s.at ? new Date(s.at).toLocaleDateString('ko-KR') : '일정 협의'}</span>
                           </li>
                         ))}
                       </ol>
@@ -362,7 +362,7 @@ export default function OfferDetail() {
               </div>
             </div>
 
-            <p className="text-center text-[11.5px] text-slate-400 break-keep">
+            <p className="text-center text-[12.5px] text-slate-500 break-keep">
               본 상품은 스포츠마케팅 계약의 초안입니다. 구매 확정 시 선수 측과의 정식 계약 체결이 진행되며,
               계약 체결 전 「계약조건」 탭의 내용을 반드시 확인해 주세요.
             </p>
@@ -423,7 +423,7 @@ export default function OfferDetail() {
                       />
                     )}
                     {o.kind === 'BRAND_INPUT' && (
-                      <p className="mt-1 text-[11.5px] text-slate-400">구매 후 입력합니다</p>
+                      <p className="mt-1 text-[12.5px] text-slate-500">구매 후 입력합니다</p>
                     )}
                   </div>
                 ))}
@@ -449,7 +449,7 @@ export default function OfferDetail() {
               </div>
             </div>
             <p className="mt-1.5 flex items-center justify-between text-[12px]">
-              <span className="text-slate-400">구매 가능 수량</span>
+              <span className="text-slate-500">구매 가능 수량</span>
               <span className={`font-bold ${(offer.availableQty ?? 99) <= 3 ? 'text-rose-600' : 'text-emerald-600'}`}>
                 {offer.availableQty == null ? '제한 없음' : `${offer.availableQty}개 남음`}
               </span>
@@ -461,7 +461,7 @@ export default function OfferDetail() {
                 {quote ? `${quote.supplyAmount.toLocaleString()}원` : '-'}
               </span>
             </div>
-            <p className="mt-0.5 text-right text-[11px] text-slate-400">
+            <p className="mt-0.5 text-right text-[12px] text-slate-500">
               VAT 별도 {quote ? `· 포함 ${quote.totalAmount.toLocaleString()}원` : ''}
             </p>
 
@@ -485,7 +485,7 @@ export default function OfferDetail() {
                 <Bookmark className={`w-4 h-4 ${saved ? 'fill-current' : ''}`} /> {saved ? '보관함에 있음' : '보관함 담기'}
               </button>
               {soldOut ? (
-                <button className="w-full h-12 rounded-xl bg-slate-100 text-slate-400 text-[14px] font-bold" disabled>
+                <button className="w-full h-12 rounded-xl bg-slate-100 text-slate-500 text-[14px] font-bold" disabled>
                   재고가 소진되었습니다
                 </button>
               ) : canAdd ? (
@@ -508,13 +508,13 @@ export default function OfferDetail() {
                   경매 참여
                 </Link>
               ) : (
-                <button className="w-full h-12 rounded-xl bg-slate-100 text-slate-400 text-[14px] font-bold" disabled>
+                <button className="w-full h-12 rounded-xl bg-slate-100 text-slate-500 text-[14px] font-bold" disabled>
                   현재 구매할 수 없습니다
                 </button>
               )}
             </div>
 
-            <ul className="mt-4 pt-4 border-t border-slate-100 space-y-1.5 text-[11.5px] text-slate-500">
+            <ul className="mt-4 pt-4 border-t border-slate-100 space-y-1.5 text-[12.5px] text-slate-500">
               {[
                 '성과는 보장되지 않으며, 데이터는 변동될 수 있습니다.',
                 '환불 및 취소는 계약조건에 따릅니다.',
@@ -532,7 +532,7 @@ export default function OfferDetail() {
       {/* 모바일 하단 고정 CTA (§5.1 10번) */}
       <div className="lg:hidden fixed inset-x-0 bottom-0 z-30 bg-white border-t border-slate-200 px-5 py-3 flex items-center gap-3">
         <div className="min-w-0">
-          <p className="text-[11px] text-slate-400">총 금액</p>
+          <p className="text-[12px] text-slate-500">총 금액</p>
           <p className="text-[17px] font-black text-emerald-600 tabular-nums">{quote ? `${quote.supplyAmount.toLocaleString()}원` : '-'}</p>
         </div>
         <button onClick={toggleSave} aria-label="보관함" className="w-11 h-11 shrink-0 rounded-xl border border-slate-200 flex items-center justify-center">
@@ -566,9 +566,9 @@ function Stat({ label, value, sub, accent, valueCls }: {
 }) {
   return (
     <div>
-      <p className="text-[11px] text-slate-400">{label}</p>
+      <p className="text-[12px] text-slate-500">{label}</p>
       <p className={`mt-0.5 text-[16px] font-black ${valueCls || (accent ? 'text-emerald-600' : '')}`}>{value}</p>
-      {sub && <p className="text-[10.5px] text-slate-400">{sub}</p>}
+      {sub && <p className="text-[12.5px] text-slate-500">{sub}</p>}
     </div>
   );
 }
@@ -585,7 +585,7 @@ function Panel({ icon: Icon, title, children }: { icon: any; title: string; chil
 }
 
 function Empty({ text }: { text: string }) {
-  return <p className="py-6 text-center text-[12.5px] text-slate-400">{text}</p>;
+  return <p className="py-6 text-center text-[12.5px] text-slate-500">{text}</p>;
 }
 
 /** 선수 퀵프로필 레이어 (§5.1 4번, 시안 img_09) */
@@ -626,19 +626,19 @@ function AthleteQuickLayer({ athleteId, onClose }: { athleteId: string; onClose:
                 {a.profileImageUrl && <img src={a.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-[20px] font-black">{a.name} <span className="text-[13px] font-bold text-slate-400">프로</span></p>
+                <p className="text-[20px] font-black">{a.name} <span className="text-[13px] font-bold text-slate-500">프로</span></p>
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   {[a.tour, a.tourQualification, a.region].filter(Boolean).map((t: string) => (
-                    <span key={t} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">{t}</span>
+                    <span key={t} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold">{t}</span>
                   ))}
                 </div>
                 <div className="mt-3 flex items-center gap-6">
                   <div>
-                    <p className="text-[11px] text-slate-400 inline-flex items-center gap-1"><Thermometer className="w-3 h-3" /> 팬 온도</p>
+                    <p className="text-[12px] text-slate-500 inline-flex items-center gap-1"><Thermometer className="w-3 h-3" /> 팬 온도</p>
                     <p className="text-[20px] font-black text-emerald-600">{data.fanTemp.toFixed(1)}<span className="text-[12px]">℃</span></p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-slate-400 inline-flex items-center gap-1"><Gauge className="w-3 h-3" /> 최근 5경기</p>
+                    <p className="text-[12px] text-slate-500 inline-flex items-center gap-1"><Gauge className="w-3 h-3" /> 최근 5경기</p>
                     <p className="text-[20px] font-black">{data.recentAvgRank != null ? `${data.recentAvgRank}위` : '수집 중'}</p>
                   </div>
                 </div>
@@ -664,7 +664,7 @@ function AthleteQuickLayer({ athleteId, onClose }: { athleteId: string; onClose:
                 <p className="text-[12.5px] text-slate-600">착장 슬롯 {data.slotOpen}/{data.slotTotal}</p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {data.availableSlots.slice(0, 6).map((s: any) => (
-                    <span key={s.code} className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11.5px] font-bold">{s.name}</span>
+                    <span key={s.code} className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[12.5px] font-bold">{s.name}</span>
                   ))}
                 </div>
               </div>

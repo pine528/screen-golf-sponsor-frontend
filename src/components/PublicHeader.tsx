@@ -203,13 +203,13 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
                                   </span>
                                 )}
                               </span>
-                              <span className="block text-[12px] text-slate-400 mt-0.5 truncate">{it.desc}</span>
+                              <span className="block text-[12px] text-slate-500 mt-0.5 truncate">{it.desc}</span>
                             </span>
                             <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 shrink-0" />
                           </Link>
                         ))}
                         {m.note && (
-                          <p className="flex items-start gap-1.5 px-3.5 pt-2.5 pb-1.5 mt-1 border-t border-slate-100 text-[11px] text-slate-400 leading-relaxed">
+                          <p className="flex items-start gap-1.5 px-3.5 pt-2.5 pb-1.5 mt-1 border-t border-slate-100 text-[12px] text-slate-500 leading-relaxed">
                             <Info className="w-3.5 h-3.5 shrink-0 mt-[1px]" />
                             {m.note}
                           </p>
@@ -269,7 +269,7 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
               >
                 <Crosshair className="w-5 h-5" />
                 <span className="text-[15px] font-extrabold">직접 PICK</span>
-                <span className="text-[11px] text-emerald-100">선수·방식 직접 선택</span>
+                <span className="text-[12px] text-emerald-100">선수·방식 직접 선택</span>
               </Link>
               <Link
                 to="/sponsor/recommended"
@@ -278,7 +278,7 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
               >
                 <Sparkles className="w-5 h-5" />
                 <span className="text-[15px] font-extrabold">추천 PICK</span>
-                <span className="text-[11px] text-rose-100">목표·예산 기반 추천</span>
+                <span className="text-[12px] text-rose-100">목표·예산 기반 추천</span>
               </Link>
             </div>
 
@@ -291,7 +291,7 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
                 >
                   {m.label}
                   <ChevronDown
-                    className={`w-4 h-4 text-slate-400 transition-transform ${mobileAccordion === m.key ? 'rotate-180' : ''}`}
+                    className={`w-4 h-4 text-slate-500 transition-transform ${mobileAccordion === m.key ? 'rotate-180' : ''}`}
                   />
                 </button>
                 {mobileAccordion === m.key && (
@@ -315,7 +315,7 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
                               </span>
                             )}
                           </span>
-                          <span className="block text-[11px] text-slate-400">{it.desc}</span>
+                          <span className="block text-[12px] text-slate-500">{it.desc}</span>
                         </span>
                       </Link>
                     ))}

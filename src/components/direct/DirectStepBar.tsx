@@ -69,13 +69,13 @@ export default function DirectStepBar({
                   className={`w-7 h-7 rounded-full text-[12px] font-black flex items-center justify-center ${
                     done ? 'bg-emerald-100 text-emerald-700'
                       : active ? 'bg-emerald-500 text-white'
-                      : 'bg-slate-100 text-slate-400'
+                      : 'bg-slate-100 text-slate-500'
                   }`}
                 >
                   {done ? <Check className="w-3.5 h-3.5" /> : n}
                 </span>
                 <span className={`text-[13px] font-bold whitespace-nowrap ${
-                  active ? 'text-emerald-700' : done ? 'text-slate-600' : 'text-slate-400'
+                  active ? 'text-emerald-700' : done ? 'text-slate-600' : 'text-slate-500'
                 }`}>
                   {s}
                 </span>

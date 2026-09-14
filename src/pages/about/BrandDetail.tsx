@@ -53,7 +53,7 @@ export default function BrandDetail() {
   return (
     <AboutShell current="함께하는 브랜드">
       <div className="max-w-[1280px] mx-auto px-5 pb-20">
-        <Link to="/about/brands" className="inline-flex items-center gap-1 mt-6 text-[13px] font-semibold text-slate-400 hover:text-slate-700">
+        <Link to="/about/brands" className="inline-flex items-center gap-1 mt-6 text-[13px] font-semibold text-slate-500 hover:text-slate-700">
           <ArrowLeft className="w-4 h-4" /> 함께하는 브랜드
         </Link>
 
@@ -67,7 +67,7 @@ export default function BrandDetail() {
                   <div className="text-center">
                     <p className="text-[22px] font-extrabold text-slate-800">{data.name}</p>
                     {data.logoBlocked && (
-                      <p className="mt-2 text-[11px] text-slate-400">로고 사용권 확인 중</p>
+                      <p className="mt-2 text-[12px] text-slate-500">로고 사용권 확인 중</p>
                     )}
                   </div>
                 )}
@@ -125,18 +125,18 @@ export default function BrandDetail() {
           {/* 함께한 선수 */}
           <section className="rounded-3xl border border-slate-200 bg-white p-6">
             <h2 className="inline-flex items-center gap-1.5 text-[15px] font-extrabold text-slate-900 mb-4">
-              <Users className="w-4 h-4 text-slate-400" /> 함께한 선수
+              <Users className="w-4 h-4 text-slate-500" /> 함께한 선수
             </h2>
             {data.athletes?.length ? (
               <div className="space-y-2">
                 {data.athletes.map((a: any, i: number) => (
                   <div key={a.id ?? i} className="flex items-center gap-3 rounded-2xl bg-slate-50 px-4 py-3">
-                    <span className="w-9 h-9 rounded-full bg-white text-slate-400 text-[13px] font-bold flex items-center justify-center shrink-0">
+                    <span className="w-9 h-9 rounded-full bg-white text-slate-500 text-[13px] font-bold flex items-center justify-center shrink-0">
                       {(a.name ?? '?').slice(0, 1)}
                     </span>
                     <span className="text-[14px] font-bold text-slate-800 truncate flex-1">{a.name}</span>
                     {a.id && (
-                      <Link to={`/athletes/${a.id}`} className="text-[12px] font-bold text-slate-400 hover:text-slate-900 shrink-0">
+                      <Link to={`/athletes/${a.id}`} className="text-[12px] font-bold text-slate-500 hover:text-slate-900 shrink-0">
                         프로필
                       </Link>
                     )}
@@ -144,14 +144,14 @@ export default function BrandDetail() {
                 ))}
               </div>
             ) : (
-              <p className="text-[13px] text-slate-400 py-4">공개된 협업 선수 정보가 없습니다.</p>
+              <p className="text-[13px] text-slate-500 py-4">공개된 협업 선수 정보가 없습니다.</p>
             )}
           </section>
 
           {/* 협업 사례 */}
           <section className="lg:col-span-2 rounded-3xl border border-slate-200 bg-white p-6">
             <h2 className="inline-flex items-center gap-1.5 text-[15px] font-extrabold text-slate-900 mb-4">
-              <FileText className="w-4 h-4 text-slate-400" /> 협업 사례
+              <FileText className="w-4 h-4 text-slate-500" /> 협업 사례
             </h2>
             {data.cases?.length ? (
               <div className="grid sm:grid-cols-2 gap-3">
@@ -166,7 +166,7 @@ export default function BrandDetail() {
                         <p className="text-[14px] font-bold text-slate-900 truncate">{c.athleteName}</p>
                         {c.verified && <VerifiedBadge label="" />}
                       </div>
-                      {c.tour && <p className="text-[11.5px] text-slate-400">{c.tour}</p>}
+                      {c.tour && <p className="text-[12.5px] text-slate-500">{c.tour}</p>}
                       {c.highlights?.filter((h: any) => !h.restricted).slice(0, 2).map((h: any) => (
                         <p key={h.id} className="mt-2 text-[12.5px] text-slate-500">
                           <span className="font-extrabold text-emerald-600">{h.display}</span>
@@ -185,7 +185,7 @@ export default function BrandDetail() {
         </div>
 
         <p className="mt-6 rounded-2xl bg-slate-50 border border-slate-100 px-5 py-4 text-[12px] text-slate-500 leading-relaxed inline-flex items-start gap-2.5">
-          <ShieldCheck className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+          <ShieldCheck className="w-4 h-4 text-slate-500 mt-0.5 shrink-0" />
           {data.notice}
         </p>
       </div>

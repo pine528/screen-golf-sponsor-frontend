@@ -78,7 +78,7 @@ export default function PublicAthletes() {
       <div className="max-w-[1280px] mx-auto px-5">
         {/* breadcrumb */}
         <nav aria-label="breadcrumb" className="flex items-center gap-1.5 pt-5 text-[12.5px]">
-          <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+          <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
           <span className="text-slate-300">/</span>
           <span className="font-bold text-emerald-700">선수</span>
         </nav>
@@ -127,7 +127,7 @@ export default function PublicAthletes() {
 
         <p className="mt-5 text-[13px] text-slate-500">
           <b className="text-slate-900 tabular-nums">{loading ? '—' : athletes.length}</b>명
-          <span className="ml-2 text-slate-400">선택한 정렬 기준으로 나열됩니다</span>
+          <span className="ml-2 text-slate-500">선택한 정렬 기준으로 나열됩니다</span>
         </p>
 
         {/* 목록 */}
@@ -136,7 +136,7 @@ export default function PublicAthletes() {
         ) : athletes.length === 0 ? (
           <div className="mt-5 rounded-3xl border border-dashed border-slate-200 bg-slate-50/60 py-16 text-center">
             <p className="text-[15px] font-bold text-slate-700">조건에 맞는 선수가 없습니다</p>
-            <p className="mt-1.5 text-[13px] text-slate-400">필터를 넓히거나 추천 PICK으로 조건에 맞는 선수를 받아보세요.</p>
+            <p className="mt-1.5 text-[13px] text-slate-500">필터를 넓히거나 추천 PICK으로 조건에 맞는 선수를 받아보세요.</p>
             <div className="mt-5 flex gap-2 justify-center">
               <button onClick={reset}
                 className="inline-flex items-center gap-1.5 h-10 px-4 rounded-2xl border border-slate-200 text-[13px] font-bold text-slate-600">
@@ -160,38 +160,38 @@ export default function PublicAthletes() {
                     {a.profileImageUrl
                       ? <img src={a.profileImageUrl} alt={a.name} loading="lazy" className="w-full h-full object-cover object-top" />
                       : <span className="w-full h-full flex items-center justify-center text-[40px] font-extrabold text-slate-300">{a.name?.slice(0, 1)}</span>}
-                    <span className={`absolute top-3 left-3 px-2 py-1 rounded-lg text-[10.5px] font-extrabold ${av.cls}`}>{av.label}</span>
+                    <span className={`absolute top-3 left-3 px-2 py-1 rounded-lg text-[12.5px] font-extrabold ${av.cls}`}>{av.label}</span>
                     {a.isRecommended && (
-                      <span className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-white/90 text-emerald-700 text-[10.5px] font-extrabold">추천</span>
+                      <span className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-white/90 text-emerald-700 text-[12.5px] font-extrabold">추천</span>
                     )}
                   </Link>
 
                   <div className="p-4 flex-1 flex flex-col">
                     <Link to={`/athletes/${a.id}`} className="min-w-0">
                       <p className="text-[15px] font-extrabold text-slate-900 truncate">
-                        {a.name} <span className="text-[11.5px] font-bold text-slate-400">프로</span>
+                        {a.name} <span className="text-[12.5px] font-bold text-slate-500">프로</span>
                       </p>
-                      <p className="mt-0.5 text-[11.5px] text-slate-400 truncate">
+                      <p className="mt-0.5 text-[12.5px] text-slate-500 truncate">
                         {[a.tour, a.region].filter(Boolean).join(' · ') || '선수'}
                       </p>
                     </Link>
 
-                    <dl className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-x-3 gap-y-2 text-[11.5px]">
+                    <dl className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-x-3 gap-y-2 text-[12.5px]">
                       <div>
-                        <dt className="text-slate-400">팬온도</dt>
+                        <dt className="text-slate-500">팬온도</dt>
                         <dd className="mt-0.5 font-extrabold text-[13px] inline-flex items-center gap-1 tabular-nums">
                           <Thermometer className="w-3.5 h-3.5 text-emerald-600" />
-                          {temp !== null ? `${temp.toFixed(1)}℃` : <span className="text-slate-400 font-bold">집계 중</span>}
+                          {temp !== null ? `${temp.toFixed(1)}℃` : <span className="text-slate-500 font-bold">집계 중</span>}
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-slate-400">최근 성적</dt>
+                        <dt className="text-slate-500">최근 성적</dt>
                         <dd className="mt-0.5 font-extrabold text-[13px] tabular-nums">
-                          {a.recentAvgRank != null ? `평균 ${a.recentAvgRank}위` : <span className="text-slate-400 font-bold">확인 필요</span>}
+                          {a.recentAvgRank != null ? `평균 ${a.recentAvgRank}위` : <span className="text-slate-500 font-bold">확인 필요</span>}
                         </dd>
                       </div>
                       <div className="col-span-2">
-                        <dt className="text-slate-400">후원 현황</dt>
+                        <dt className="text-slate-500">후원 현황</dt>
                         <dd className="mt-0.5 font-extrabold text-[13px] tabular-nums">
                           슬롯 {a.slotOpen ?? 0}/{a.slotTotal ?? 0}
                           {a.offerCount > 0 && <span className="ml-1.5 font-bold text-slate-500">온라인 {a.offerCount}종</span>}
@@ -199,7 +199,7 @@ export default function PublicAthletes() {
                       </div>
                     </dl>
 
-                    <p className="mt-3 text-right text-[12.5px] text-slate-400">
+                    <p className="mt-3 text-right text-[12.5px] text-slate-500">
                       시작가 <b className="text-[15px] text-emerald-600 tabular-nums">
                         {a.minPrice != null ? `${(a.minPrice / 10000).toLocaleString()}만원` : '협의'}
                       </b>부터

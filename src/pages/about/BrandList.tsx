@@ -105,11 +105,11 @@ export default function BrandList() {
                     </p>
 
                     <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-3">
-                      <span className="inline-flex items-center gap-1 text-[11.5px] text-slate-400">
+                      <span className="inline-flex items-center gap-1 text-[12.5px] text-slate-500">
                         <FileText className="w-3 h-3" /> 매칭사례
                       </span>
                       {b.hasStore && (
-                        <span className="inline-flex items-center gap-1 text-[11.5px] text-slate-400">
+                        <span className="inline-flex items-center gap-1 text-[12.5px] text-slate-500">
                           <Store className="w-3 h-3" /> 팬스토어
                         </span>
                       )}
@@ -124,7 +124,7 @@ export default function BrandList() {
               </div>
 
               <div className="mt-8 flex items-center justify-between">
-                <span className="text-[13px] text-slate-400 tabular-nums">전체 {nf(data.total)}개 브랜드</span>
+                <span className="text-[13px] text-slate-500 tabular-nums">전체 {nf(data.total)}개 브랜드</span>
                 {totalPages > 1 && (
                   <div className="flex items-center gap-2">
                     <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}

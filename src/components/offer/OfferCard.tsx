@@ -27,11 +27,11 @@ export const OFFER_STATUS: Record<string, { label: string; cls: string }> = {
   LOW_STOCK: { label: '마감임박', cls: 'bg-amber-50 text-amber-700' },
   SOLD_OUT: { label: '품절', cls: 'bg-slate-100 text-slate-500' },
   PAUSED: { label: '일시중지', cls: 'bg-slate-100 text-slate-500' },
-  EXPIRED: { label: '판매종료', cls: 'bg-slate-100 text-slate-400' },
+  EXPIRED: { label: '판매종료', cls: 'bg-slate-100 text-slate-500' },
   DRAFT: { label: '작성 중', cls: 'bg-slate-100 text-slate-500' },
   REVIEW: { label: '검토 대기', cls: 'bg-sky-50 text-sky-700' },
   SCHEDULED: { label: '예약 발행', cls: 'bg-violet-50 text-violet-700' },
-  ARCHIVED: { label: '보관', cls: 'bg-slate-100 text-slate-400' },
+  ARCHIVED: { label: '보관', cls: 'bg-slate-100 text-slate-500' },
 };
 
 /** 가격 유형 — 승인 방식(즉시구매/선수확인)과 다른 축이므로 이름을 섞지 않는다 */
@@ -71,12 +71,12 @@ export default function OfferCard({
         {/* 1. 배지 */}
         <div className="flex flex-wrap items-center gap-1.5">
           {(offer.badges ?? []).slice(0, 3).map((b: string) => (
-            <span key={b} className={`px-2 py-0.5 rounded-md text-[10.5px] font-black ${BADGE_STYLE[b] || 'bg-slate-100 text-slate-600'}`}>
+            <span key={b} className={`px-2 py-0.5 rounded-md text-[12.5px] font-black ${BADGE_STYLE[b] || 'bg-slate-100 text-slate-600'}`}>
               {b}
             </span>
           ))}
           {offer.daysLeft != null && offer.daysLeft >= 0 && offer.daysLeft <= 14 && (
-            <span className="text-[11px] font-bold text-rose-600">{offer.daysLeft}일 남음</span>
+            <span className="text-[12px] font-bold text-rose-600">{offer.daysLeft}일 남음</span>
           )}
         </div>
 
@@ -100,7 +100,7 @@ export default function OfferCard({
               {athletes.slice(0, 2).map((a: any) => a.athlete?.name).join(' · ')}
               {athletes.length > 2 && ` 외 ${athletes.length - 2}명`}
             </span>
-            <span className="text-[11.5px] text-slate-400 truncate">{athletes[0]?.athlete?.tour}</span>
+            <span className="text-[12.5px] text-slate-500 truncate">{athletes[0]?.athlete?.tour}</span>
           </div>
         )}
 
@@ -108,7 +108,7 @@ export default function OfferCard({
         {tags.length > 0 && (
           <div className="mt-2.5 flex flex-wrap gap-1.5">
             {tags.map((c: any) => (
-              <span key={c.id} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">
+              <span key={c.id} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold">
                 {c.label}
               </span>
             ))}
@@ -116,22 +116,22 @@ export default function OfferCard({
         )}
 
         {/* 5·7. 기간 · 예상성과 */}
-        <dl className={`mt-3 grid gap-x-3 gap-y-2 text-[11.5px] pt-3 border-t border-slate-100 ${compact ? 'grid-cols-2' : 'grid-cols-3'}`}>
+        <dl className={`mt-3 grid gap-x-3 gap-y-2 text-[12.5px] pt-3 border-t border-slate-100 ${compact ? 'grid-cols-2' : 'grid-cols-3'}`}>
           <div>
-            <dt className="text-slate-400 inline-flex items-center gap-1"><Calendar className="w-3 h-3" /> 기간</dt>
+            <dt className="text-slate-500 inline-flex items-center gap-1"><Calendar className="w-3 h-3" /> 기간</dt>
             <dd className="mt-0.5 font-extrabold text-[12.5px]">
               {offer.months > 1 ? `${offer.months}개월` : offer.durationCode === 'SINGLE_EVENT' ? '대회 1회' : '30일'}
             </dd>
           </div>
           {metrics[0] && (
             <div>
-              <dt className="text-slate-400 inline-flex items-center gap-1"><Eye className="w-3 h-3" /> {metrics[0].metric}</dt>
+              <dt className="text-slate-500 inline-flex items-center gap-1"><Eye className="w-3 h-3" /> {metrics[0].metric}</dt>
               <dd className="mt-0.5 font-extrabold text-[12.5px]">{metricRange(metrics[0])}</dd>
             </div>
           )}
           {!compact && (
             <div>
-              <dt className="text-slate-400 inline-flex items-center gap-1"><Package className="w-3 h-3" /> 재고</dt>
+              <dt className="text-slate-500 inline-flex items-center gap-1"><Package className="w-3 h-3" /> 재고</dt>
               <dd className="mt-0.5 font-extrabold text-[12.5px]">
                 {offer.availableQty == null ? '제한 없음' : `${offer.availableQty} / ${offer.capacity}`}
               </dd>
@@ -140,7 +140,7 @@ export default function OfferCard({
         </dl>
 
         {metrics[0]?.basis && (
-          <p className="mt-1.5 text-[10.5px] text-slate-400 break-keep">
+          <p className="mt-1.5 text-[12.5px] text-slate-500 break-keep">
             {offer.expectedPerformance?.dataAsOf
               ? `${new Date(offer.expectedPerformance.dataAsOf).toLocaleDateString('ko-KR')} 기준 · `
               : ''}
@@ -152,7 +152,7 @@ export default function OfferCard({
         <div className="mt-3 pt-3 border-t border-slate-100 flex items-end justify-between gap-2">
           <div>
             {offer.originalPrice && offer.originalPrice > offer.supplyAmount && (
-              <p className="text-[11px] text-slate-400 line-through">{offer.originalPrice.toLocaleString()}원</p>
+              <p className="text-[12px] text-slate-500 line-through">{offer.originalPrice.toLocaleString()}원</p>
             )}
             <p className="text-[19px] font-black text-emerald-600 leading-none">
               {offer.priceType === 'NEGOTIABLE'
@@ -161,9 +161,9 @@ export default function OfferCard({
                   ? `월 ${offer.monthlyAmount.toLocaleString()}원`
                   : `${offer.supplyAmount.toLocaleString()}원`}
             </p>
-            <p className="mt-0.5 text-[10.5px] text-slate-400">VAT 별도</p>
+            <p className="mt-0.5 text-[12.5px] text-slate-500">VAT 별도</p>
           </div>
-          <span className={`px-2.5 py-1 rounded-lg text-[11.5px] font-bold ${OFFER_STATUS[offer.displayStatus]?.cls || 'bg-slate-100 text-slate-500'}`}>
+          <span className={`px-2.5 py-1 rounded-lg text-[12.5px] font-bold ${OFFER_STATUS[offer.displayStatus]?.cls || 'bg-slate-100 text-slate-500'}`}>
             {PRICE_TYPE_LABEL[offer.priceType] || offer.priceType}
           </span>
         </div>

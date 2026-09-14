@@ -112,7 +112,7 @@ export default function SponsorLanding() {
                   </span>
                   <div className="min-w-0 flex-1">
                     {p.badge && (
-                      <span className="inline-block mb-1.5 px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10.5px] font-black tracking-wide">
+                      <span className="inline-block mb-1.5 px-2 py-0.5 rounded-full bg-rose-500 text-white text-[12.5px] font-black tracking-wide">
                         {p.badge}
                       </span>
                     )}
@@ -131,7 +131,7 @@ export default function SponsorLanding() {
                     const MI = m.icon;
                     return (
                       <div key={m.k} className="flex items-start gap-2.5">
-                        <MI className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                        <MI className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
                         <dt className="w-[74px] shrink-0 text-slate-500">{m.k}</dt>
                         <dd className="font-semibold text-slate-700 break-keep">{m.v}</dd>
                       </div>

@@ -26,7 +26,7 @@ export default function FanStoreHome() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 팬 참여
       </Link>
 
@@ -42,7 +42,7 @@ export default function FanStoreHome() {
                 {s.step}
               </span>
               <p className="text-[13px] font-bold text-slate-900">{s.title}</p>
-              <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{s.desc}</p>
+              <p className="text-[12px] text-slate-500 mt-1 leading-relaxed">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -57,7 +57,7 @@ export default function FanStoreHome() {
               <div className="aspect-[16/9] bg-slate-100 relative">
                 {s.heroImageUrl && <img src={s.heroImageUrl} alt={s.title} className="w-full h-full object-cover" />}
                 {s.daysLeft !== null && s.daysLeft <= 7 && (
-                  <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-slate-900/85 px-2.5 py-1 text-[11px] font-bold text-white">
+                  <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-slate-900/85 px-2.5 py-1 text-[12px] font-bold text-white">
                     <Clock className="w-3 h-3" /> {s.daysLeft}일 남음
                   </span>
                 )}
@@ -70,7 +70,7 @@ export default function FanStoreHome() {
                   </span>
                 </div>
                 <p className="text-[15px] font-bold text-slate-900 leading-snug line-clamp-2">{s.title}</p>
-                {s.summary && <p className="text-[12px] text-slate-400 mt-1.5 line-clamp-2">{s.summary}</p>}
+                {s.summary && <p className="text-[12px] text-slate-500 mt-1.5 line-clamp-2">{s.summary}</p>}
 
                 {s.benefit && (
                   <div className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5">
@@ -81,7 +81,7 @@ export default function FanStoreHome() {
 
                 <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between">
                   <Chip size="xs">{s.responsibleLabel}</Chip>
-                  <span className="text-[12px] font-semibold text-slate-400 inline-flex items-center gap-1">
+                  <span className="text-[12px] font-semibold text-slate-500 inline-flex items-center gap-1">
                     {s.productCount !== null ? `상품 ${s.productCount}개` : '상품 보기'}
                     <ExternalLink className="w-3 h-3" />
                   </span>
@@ -99,7 +99,7 @@ export default function FanStoreHome() {
       {exits?.exits?.length > 0 && (
         <section className="mt-10">
           <h2 className="text-[15px] font-bold text-slate-900 mb-1">브랜드몰 이동 내역</h2>
-          <p className="text-[13px] text-slate-400 mb-3">SPONPIK 주문이 아닙니다. 주문 조회는 브랜드 고객센터를 이용해주세요.</p>
+          <p className="text-[13px] text-slate-500 mb-3">SPONPIK 주문이 아닙니다. 주문 조회는 브랜드 고객센터를 이용해주세요.</p>
           <Card className="divide-y divide-slate-100">
             {exits.exits.slice(0, 5).map((e: any) => (
               <div key={e.clickId} className="flex items-center gap-3 px-4 py-3.5">
@@ -110,7 +110,7 @@ export default function FanStoreHome() {
                   <p className="text-[13px] font-semibold text-slate-800 truncate">
                     {e.product?.name || e.store?.title}
                   </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[12px] text-slate-500 mt-0.5">
                     {e.store?.brandName} · {new Date(e.createdAt).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}
                   </p>
                 </div>
@@ -120,7 +120,7 @@ export default function FanStoreHome() {
               </div>
             ))}
           </Card>
-          {exits.notice && <p className="mt-2.5 text-[11px] text-slate-400 leading-relaxed">{exits.notice}</p>}
+          {exits.notice && <p className="mt-2.5 text-[12px] text-slate-500 leading-relaxed">{exits.notice}</p>}
         </section>
       )}
 

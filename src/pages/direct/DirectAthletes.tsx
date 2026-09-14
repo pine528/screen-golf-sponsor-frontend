@@ -148,7 +148,7 @@ export default function DirectAthletes() {
                     {a.profileImageUrl
                       ? <img src={a.profileImageUrl} alt={a.name} loading="lazy" className="w-full h-full object-cover object-top" />
                       : <span className="w-full h-full flex items-center justify-center text-[40px] font-extrabold text-slate-300">{a.name?.slice(0, 1)}</span>}
-                    <span className={`absolute top-3 left-3 px-2 py-1 rounded-lg text-[11px] font-extrabold ${av.cls}`}>{av.label}</span>
+                    <span className={`absolute top-3 left-3 px-2 py-1 rounded-lg text-[12px] font-extrabold ${av.cls}`}>{av.label}</span>
                   </button>
 
                   <div className="p-4 flex-1 flex flex-col">
@@ -160,7 +160,7 @@ export default function DirectAthletes() {
                     {traits.length > 0 && (
                       <div className="mt-2.5 flex flex-wrap gap-1">
                         {traits.map((m) => (
-                          <span key={m} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11.5px] font-bold">{m}</span>
+                          <span key={m} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12.5px] font-bold">{m}</span>
                         ))}
                       </div>
                     )}
@@ -227,7 +227,7 @@ export default function DirectAthletes() {
                     {a.profileImageUrl && <img src={a.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
                   </span>
                   <span className="text-[12.5px] font-bold whitespace-nowrap">{a.name}</span>
-                  <button onClick={() => toggleCompare(a)} aria-label={`${a.name} 비교 해제`} className="text-slate-400 hover:text-slate-600">
+                  <button onClick={() => toggleCompare(a)} aria-label={`${a.name} 비교 해제`} className="text-slate-500 hover:text-slate-600">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </span>
@@ -252,7 +252,7 @@ export default function DirectAthletes() {
             {compare.map((a) => (
               <div key={a.id} className="rounded-xl border border-slate-200 p-3">
                 <p className="text-[13px] font-extrabold">{a.name} 프로</p>
-                <dl className="mt-1.5 space-y-1 text-[11.5px]">
+                <dl className="mt-1.5 space-y-1 text-[12.5px]">
                   <Row k="시작가" v={a.minPrice != null ? `${(a.minPrice / 10000).toLocaleString()}만원` : '정보 확인 필요'} />
                   <Row k="가능 슬롯" v={`${a.slotOpen}/${a.slotTotal}`} />
                   <Row k="팬온도" v={a.fanTemp > 0 ? `${a.fanTemp.toFixed(1)}℃` : '집계 중'} />
@@ -285,7 +285,7 @@ export default function DirectAthletes() {
 function Row({ k, v }: { k: string; v: string }) {
   return (
     <div className="flex justify-between gap-2">
-      <dt className="text-slate-400 shrink-0">{k}</dt>
+      <dt className="text-slate-500 shrink-0">{k}</dt>
       <dd className={`font-bold text-right ${v === '정보 확인 필요' || v === '집계 중' ? 'text-slate-500' : ''}`}>{v}</dd>
     </div>
   );
@@ -341,10 +341,10 @@ function QuickProfile({ athleteId, onClose, onPick }: {
                 {a.profileImageUrl && <img src={a.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-[20px] font-black">{a.name} <span className="text-[13px] font-bold text-slate-400">프로</span></p>
+                <p className="text-[20px] font-black">{a.name} <span className="text-[13px] font-bold text-slate-500">프로</span></p>
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   {[a.tour, a.tourQualification, a.region].filter(Boolean).map((t: string) => (
-                    <span key={t} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">{t}</span>
+                    <span key={t} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold">{t}</span>
                   ))}
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-3 rounded-xl border border-slate-200 p-3">
@@ -352,7 +352,7 @@ function QuickProfile({ athleteId, onClose, onPick }: {
                   <Stat label="최근 5경기" value={data.recentAvgRank != null ? `평균 ${data.recentAvgRank}위` : '수집 중'} />
                   <Stat label="시작가" value={data.minPrice != null ? `${(data.minPrice / 10000).toLocaleString()}만원` : '협의'} />
                 </div>
-                <p className="mt-1.5 text-right text-[11px] text-slate-400">
+                <p className="mt-1.5 text-right text-[12px] text-slate-500">
                   {new Date(data.verifiedAt).toLocaleDateString('ko-KR')} 기준
                 </p>
               </div>
@@ -367,7 +367,7 @@ function QuickProfile({ athleteId, onClose, onPick }: {
                   key={t}
                   onClick={() => setTab(t)}
                   className={`px-3.5 py-2.5 text-[13px] font-bold border-b-2 whitespace-nowrap transition-colors ${
-                    tab === t ? 'border-emerald-500 text-emerald-700' : 'border-transparent text-slate-400 hover:text-slate-600'
+                    tab === t ? 'border-emerald-500 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-600'
                   }`}
                 >
                   {t}
@@ -401,7 +401,7 @@ function QuickProfile({ athleteId, onClose, onPick }: {
                 data.allResults.length ? (
                   <table className="w-full text-[12.5px]">
                     <thead>
-                      <tr className="text-slate-400 text-left border-b border-slate-100">
+                      <tr className="text-slate-500 text-left border-b border-slate-100">
                         <th className="py-2 font-bold">대회명</th>
                         <th className="py-2 font-bold w-24">일자</th>
                         <th className="py-2 font-bold w-16 text-right">순위</th>
@@ -411,7 +411,7 @@ function QuickProfile({ athleteId, onClose, onPick }: {
                       {data.allResults.map((r: any, i: number) => (
                         <tr key={i} className="border-b border-slate-50">
                           <td className="py-2 truncate">{r.eventName}</td>
-                          <td className="py-2 text-slate-400">{new Date(r.eventDate).toLocaleDateString('ko-KR')}</td>
+                          <td className="py-2 text-slate-500">{new Date(r.eventDate).toLocaleDateString('ko-KR')}</td>
                           <td className="py-2 text-right font-extrabold">{r.rank != null ? `${r.rank}위` : '—'}</td>
                         </tr>
                       ))}
@@ -506,7 +506,7 @@ function QuickProfile({ athleteId, onClose, onPick }: {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
-      <p className="text-[11px] text-slate-400">{label}</p>
+      <p className="text-[12px] text-slate-500">{label}</p>
       <p className="mt-0.5 text-[15px] font-black text-emerald-600">{value}</p>
     </div>
   );
@@ -515,7 +515,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 function Field({ k, v }: { k: string; v: string }) {
   return (
     <div>
-      <dt className="text-[11px] text-slate-400">{k}</dt>
+      <dt className="text-[12px] text-slate-500">{k}</dt>
       <dd className="mt-0.5 text-[12.5px] font-bold break-keep">{v}</dd>
     </div>
   );
@@ -523,9 +523,9 @@ function Field({ k, v }: { k: string; v: string }) {
 
 function Empty({ text }: { text: string }) {
   return (
-    <p className="py-8 text-center text-[12.5px] text-slate-400 break-keep">
+    <p className="py-8 text-center text-[12.5px] text-slate-500 break-keep">
       {text}
-      <span className="block mt-1 text-[11px]">확인되지 않은 정보는 표시하지 않습니다.</span>
+      <span className="block mt-1 text-[12px]">확인되지 않은 정보는 표시하지 않습니다.</span>
     </p>
   );
 }

@@ -47,11 +47,11 @@ export default function MobileTabBar() {
               to={t.to}
               aria-current={on ? 'page' : undefined}
               className={`flex flex-col items-center justify-center gap-0.5 ${
-                on ? 'text-emerald-600' : 'text-slate-400'
+                on ? 'text-emerald-600' : 'text-slate-500'
               }`}
             >
               <t.icon className="w-5 h-5" strokeWidth={on ? 2.4 : 2} />
-              <span className={`text-[10px] leading-none ${on ? 'font-bold' : 'font-medium'}`}>{t.label}</span>
+              <span className={`text-[12.5px] leading-none ${on ? 'font-bold' : 'font-medium'}`}>{t.label}</span>
             </Link>
           );
         })}

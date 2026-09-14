@@ -59,7 +59,7 @@ export default function DigitalPartner() {
 
           <div className="mt-8 sm:mt-10 grid lg:grid-cols-[minmax(0,1fr)_400px] gap-8 items-start">
             <div>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500 text-white text-[11px] font-black tracking-wide">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500 text-white text-[12px] font-black tracking-wide">
                 12개월 구독 · 온라인 전용
               </span>
               <h1 className="mt-4 text-[28px] sm:text-[38px] font-extrabold tracking-[-0.02em] leading-tight break-keep">
@@ -125,7 +125,7 @@ export default function DigitalPartner() {
                 }`}
               >
                 {p.recommended && (
-                  <span className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-emerald-500 text-white text-[11px] font-black">
+                  <span className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-emerald-500 text-white text-[12px] font-black">
                     추천
                   </span>
                 )}

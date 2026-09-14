@@ -94,10 +94,10 @@ export default function DigitalApplicationStatus() {
         <div className="max-w-7xl mx-auto px-5 py-3.5 flex items-center gap-2 overflow-x-auto">
           {STEPS.map((s, i) => (
             <div key={s} className="flex items-center gap-1.5 shrink-0">
-              <span className={`w-6 h-6 rounded-full text-[11px] font-black flex items-center justify-center ${
-                i < stepIdx ? 'bg-emerald-100 text-emerald-700' : i === stepIdx ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'
+              <span className={`w-6 h-6 rounded-full text-[12px] font-black flex items-center justify-center ${
+                i < stepIdx ? 'bg-emerald-100 text-emerald-700' : i === stepIdx ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-500'
               }`}>{i + 1}</span>
-              <span className={`text-[12px] font-bold ${i === stepIdx ? 'text-emerald-700' : 'text-slate-400'}`}>{s}</span>
+              <span className={`text-[12px] font-bold ${i === stepIdx ? 'text-emerald-700' : 'text-slate-500'}`}>{s}</span>
               {i < STEPS.length - 1 && <span className="w-6 h-px bg-slate-200 mx-1" />}
             </div>
           ))}
@@ -114,7 +114,7 @@ export default function DigitalApplicationStatus() {
             {active ? '디지털 파트너 구독이 시작되었습니다' : approved ? '계약과 결제를 완료해주세요' : '선수의 승인을 기다리고 있습니다'}
           </h1>
           <p className="mt-2 text-[13.5px] text-slate-500 break-keep">{ui.desc}</p>
-          <p className="mt-3 text-[12px] text-slate-400">
+          <p className="mt-3 text-[12px] text-slate-500">
             접수번호 {String(app.id).slice(0, 8).toUpperCase()}
             {app.approvalDueAt && !active && ` · 승인 기한 ${new Date(app.approvalDueAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}`}
           </p>
@@ -136,7 +136,7 @@ export default function DigitalApplicationStatus() {
                 </span>
                 <div>
                   <p className="text-[15px] font-extrabold">{app.athlete?.name} 프로</p>
-                  <p className="text-[11.5px] text-slate-400">{app.athlete?.tour}</p>
+                  <p className="text-[12.5px] text-slate-500">{app.athlete?.tour}</p>
                 </div>
                 <span className="ml-auto px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[12px] font-black">{app.planCode}</span>
               </div>
@@ -160,7 +160,7 @@ export default function DigitalApplicationStatus() {
 
             <div className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6">
               <h2 className="flex items-center gap-2 text-[15px] font-extrabold mb-3">
-                <FileText className="w-4 h-4 text-slate-400" /> 사용권과 제한
+                <FileText className="w-4 h-4 text-slate-500" /> 사용권과 제한
               </h2>
               <ul className="space-y-2 text-[12.5px] text-slate-600">
                 {[
@@ -203,7 +203,7 @@ export default function DigitalApplicationStatus() {
                   <span className="text-[13px] font-bold">이번 결제금액</span>
                   <span className="text-[22px] font-black text-emerald-600 tabular-nums">{(app.monthlyAmount + vat).toLocaleString()}원</span>
                 </div>
-                <p className="mt-1 text-right text-[11px] text-slate-400">이후 매월 동일 금액 자동결제 · 총 {app.termMonths}회</p>
+                <p className="mt-1 text-right text-[12px] text-slate-500">이후 매월 동일 금액 자동결제 · 총 {app.termMonths}회</p>
 
                 <div className="mt-4 space-y-2">
                   {AGREEMENTS.map((a, i) => (
@@ -226,7 +226,7 @@ export default function DigitalApplicationStatus() {
                   onClick={pay}
                   disabled={!canPay || paying}
                   className={`mt-4 w-full h-12 inline-flex items-center justify-center gap-2 rounded-xl text-[14px] font-bold transition-colors ${
-                    canPay ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                    canPay ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-500 cursor-not-allowed'
                   }`}
                 >
                   {paying ? '결제 처리 중…'
@@ -237,7 +237,7 @@ export default function DigitalApplicationStatus() {
             )}
 
             <Link to="/digital-partner/athletes" className="flex items-center gap-2 rounded-2xl bg-white border border-slate-200 px-5 py-4 hover:border-emerald-300 transition-colors">
-              <Calendar className="w-4 h-4 text-slate-400" />
+              <Calendar className="w-4 h-4 text-slate-500" />
               <span className="text-[13px] font-bold">다른 선수 둘러보기</span>
               <ChevronRight className="w-4 h-4 text-slate-300 ml-auto" />
             </Link>

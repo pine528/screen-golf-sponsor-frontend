@@ -15,7 +15,7 @@ import { api } from '../../services/api';
 
 const TYPE_BADGE: Record<string, { label: string; cls: string }> = {
   NOTICE: { label: '선수 소식', cls: 'text-emerald-600' },
-  CHEER: { label: '팬 응원', cls: 'text-slate-400' },
+  CHEER: { label: '팬 응원', cls: 'text-slate-500' },
   LETTER: { label: '팬레터', cls: 'text-rose-500' },
   MATCH_TALK: { label: '경기 이야기', cls: 'text-sky-600' },
   BRAND: { label: '브랜드 추천', cls: 'text-amber-600' },
@@ -147,9 +147,9 @@ export default function FanCommunity() {
       <section className="bg-gradient-to-b from-[#f2faf5] to-white border-b border-slate-100 px-5 pt-6 pb-7">
         <div className="max-w-[1400px] mx-auto">
           <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px] mb-4">
-            <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
+            <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <span className="text-slate-400">팬 참여</span>
+            <span className="text-slate-500">팬 참여</span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             <span className="font-bold text-emerald-700">선수 커뮤니티</span>
           </nav>
@@ -178,7 +178,7 @@ export default function FanCommunity() {
       {/* 선수 스트립 */}
       <section className="max-w-[1400px] mx-auto px-5 pt-5">
         <div className="flex items-center gap-3">
-          <p className="text-[12.5px] font-bold text-slate-400 shrink-0">선수 선택</p>
+          <p className="text-[12.5px] font-bold text-slate-500 shrink-0">선수 선택</p>
           <div className="flex gap-2 overflow-x-auto pb-1">
             {filteredAthletes.map((x) => {
               const on = x.id === athleteId;
@@ -195,7 +195,7 @@ export default function FanCommunity() {
                   </span>
                   <span>
                     <span className="block text-[13.5px] font-extrabold whitespace-nowrap">{x.name} 프로</span>
-                    <span className="block text-[11px] text-slate-400 inline-flex items-center gap-1">
+                    <span className="block text-[12px] text-slate-500 inline-flex items-center gap-1">
                       <Thermometer className="w-3 h-3" /> {x.celsius.toFixed(1)}℃
                     </span>
                   </span>
@@ -221,7 +221,7 @@ export default function FanCommunity() {
                 key={t.key}
                 onClick={() => setSp({ tab: t.key })}
                 className={`px-3.5 py-2.5 text-[13px] font-bold border-b-2 whitespace-nowrap transition-colors ${
-                  tab === t.key ? 'border-emerald-500 text-emerald-700' : 'border-transparent text-slate-400 hover:text-slate-600'
+                  tab === t.key ? 'border-emerald-500 text-emerald-700' : 'border-transparent text-slate-500 hover:text-slate-600'
                 }`}
               >
                 {t.label}
@@ -261,7 +261,7 @@ export default function FanCommunity() {
             </button>
           </div>
           {mode === 'LETTER' && (
-            <p className="mt-1.5 text-[11.5px] text-slate-400">팬레터는 선수와 나만 볼 수 있어요.</p>
+            <p className="mt-1.5 text-[12.5px] text-slate-500">팬레터는 선수와 나만 볼 수 있어요.</p>
           )}
           {msg && <p className="mt-2 text-[12.5px] font-bold text-emerald-700">{msg}</p>}
           {err && <p className="mt-2 text-[12.5px] font-bold text-rose-600">{err}</p>}
@@ -269,7 +269,7 @@ export default function FanCommunity() {
           {/* 글 목록 */}
           <div className="mt-5 space-y-3">
             {!board?.posts?.length ? (
-              <p className="py-12 text-center text-[13px] text-slate-400 break-keep">
+              <p className="py-12 text-center text-[13px] text-slate-500 break-keep">
                 아직 글이 없어요. 첫 응원을 남겨보세요.
               </p>
             ) : board.posts.map((p: any) => {
@@ -280,11 +280,11 @@ export default function FanCommunity() {
                     <span className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 shrink-0">
                       {p.authorRole === 'ATHLETE' && a?.profileImageUrl
                         ? <img src={a.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />
-                        : <span className="w-full h-full flex items-center justify-center text-[11px] font-bold text-slate-400">팬</span>}
+                        : <span className="w-full h-full flex items-center justify-center text-[12px] font-bold text-slate-500">팬</span>}
                     </span>
                     <p className="text-[13px] font-extrabold">{p.authorName}</p>
-                    <span className={`text-[11.5px] font-bold ${badge.cls}`}>{badge.label}</span>
-                    <span className="ml-auto text-[11.5px] text-slate-400">{ago(p.createdAt)}</span>
+                    <span className={`text-[12.5px] font-bold ${badge.cls}`}>{badge.label}</span>
+                    <span className="ml-auto text-[12.5px] text-slate-500">{ago(p.createdAt)}</span>
                   </div>
                   {p.imageUrl && (
                     <img src={p.imageUrl} alt="" loading="lazy" className="mt-3 rounded-lg max-h-64 object-cover" />
@@ -293,15 +293,15 @@ export default function FanCommunity() {
                   <div className="mt-3 flex items-center gap-4">
                     <button
                       onClick={() => like(p.id)}
-                      className={`inline-flex items-center gap-1.5 text-[12.5px] font-bold ${p.likedByMe ? 'text-rose-500' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`inline-flex items-center gap-1.5 text-[12.5px] font-bold ${p.likedByMe ? 'text-rose-500' : 'text-slate-500 hover:text-slate-600'}`}
                     >
                       <Heart className={`w-4 h-4 ${p.likedByMe ? 'fill-current' : ''}`} /> {p.likeCount}
                     </button>
-                    <span className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-400">
+                    <span className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-500">
                       <MessageCircle className="w-4 h-4" /> {p.commentCount}
                     </span>
                     {p.isPrivate && (
-                      <span className="ml-auto inline-flex items-center gap-1 text-[11.5px] font-bold text-rose-500">
+                      <span className="ml-auto inline-flex items-center gap-1 text-[12.5px] font-bold text-rose-500">
                         <Bookmark className="w-3.5 h-3.5" /> 선수와 나만 열람
                       </span>
                     )}
@@ -347,7 +347,7 @@ export default function FanCommunity() {
             {suggest?.summary?.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {suggest.summary.map((s: any) => (
-                  <span key={s.category} className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-[11.5px] font-bold">
+                  <span key={s.category} className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-[12.5px] font-bold">
                     {s.category} {s.total}표{s.accepted > 0 && ` · 반영 ${s.accepted}`}
                   </span>
                 ))}
@@ -367,7 +367,7 @@ export default function FanCommunity() {
               </span>
               <div>
                 <p className="text-[17px] font-black">{a?.name} 프로</p>
-                <p className="text-[12px] text-slate-400">{[a?.tour, a?.region].filter(Boolean).join(' · ')}</p>
+                <p className="text-[12px] text-slate-500">{[a?.tour, a?.region].filter(Boolean).join(' · ')}</p>
               </div>
             </div>
 
@@ -378,7 +378,7 @@ export default function FanCommunity() {
               </span>
             </div>
             {!!temp?.weeklyDelta && (
-              <p className="mt-1.5 inline-block px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11.5px] font-bold">
+              <p className="mt-1.5 inline-block px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[12.5px] font-bold">
                 이번 주 +{temp.weeklyDelta.toFixed(1)}℃
               </p>
             )}
@@ -386,7 +386,7 @@ export default function FanCommunity() {
             <div className="mt-4 rounded-xl bg-slate-50 p-4">
               <p className="text-[12.5px] font-extrabold">팬온도는 이렇게 만들어져요</p>
               {(temp?.breakdown || []).every((b: any) => b.share === 0) ? (
-                <p className="mt-2 text-[12px] text-slate-400 break-keep">
+                <p className="mt-2 text-[12px] text-slate-500 break-keep">
                   아직 기록된 활동이 없어요. 첫 응원이 팬온도의 시작이 됩니다.
                 </p>
               ) : (
@@ -436,7 +436,7 @@ export default function FanCommunity() {
                 </li>
               ))}
             </ul>
-            <p className="mt-3 text-[11px] text-slate-400 break-keep">
+            <p className="mt-3 text-[12px] text-slate-500 break-keep">
               팬스토어 구매는 구매금액의 1%가 팬포인트로 적립됩니다.
             </p>
           </div>

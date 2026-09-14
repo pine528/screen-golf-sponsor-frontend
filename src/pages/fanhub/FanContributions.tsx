@@ -21,7 +21,7 @@ function Meter({ label, have, need }: { label: string; have: number; need: numbe
       }`}>
         {done && <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />}
       </span>
-      <span className={`text-[12px] flex-1 ${done ? 'text-slate-700 font-semibold' : 'text-slate-400'}`}>{label}</span>
+      <span className={`text-[12px] flex-1 ${done ? 'text-slate-700 font-semibold' : 'text-slate-500'}`}>{label}</span>
       <span className="text-[12px] font-bold text-slate-500 tabular-nums">{have}/{need}</span>
     </div>
   );
@@ -42,7 +42,7 @@ export default function FanContributions() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 팬 참여
       </Link>
 
@@ -59,7 +59,7 @@ export default function FanContributions() {
                 <AthleteAvatar athlete={c.athlete} size={48} />
                 <div className="min-w-0 flex-1">
                   <p className="text-[16px] font-bold text-slate-900">{c.athlete.name}</p>
-                  <p className="text-[12px] text-slate-400">{c.athlete.tour || c.athlete.sportType || '선수'}</p>
+                  <p className="text-[12px] text-slate-500">{c.athlete.tour || c.athlete.sportType || '선수'}</p>
                 </div>
                 <Chip tone={LEVEL_TONE[c.level] || 'slate'}>{c.levelLabel}</Chip>
               </div>
@@ -74,7 +74,7 @@ export default function FanContributions() {
                 ].map((s) => (
                   <div key={s.label} className="rounded-2xl bg-slate-50 py-3 text-center">
                     <p className="text-[18px] font-extrabold text-slate-900 tabular-nums leading-none">{nf(s.v)}</p>
-                    <p className="text-[11px] text-slate-400 mt-1.5">{s.label}</p>
+                    <p className="text-[12px] text-slate-500 mt-1.5">{s.label}</p>
                   </div>
                 ))}
               </div>
@@ -84,7 +84,7 @@ export default function FanContributions() {
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[12px] font-semibold text-slate-600">활동 영역</span>
-                    <span className="text-[12px] text-slate-400 tabular-nums">{c.diversity}/{c.diversityMax}</span>
+                    <span className="text-[12px] text-slate-500 tabular-nums">{c.diversity}/{c.diversityMax}</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
                     <div className="h-full rounded-full bg-slate-900 transition-[width] duration-700"
@@ -94,7 +94,7 @@ export default function FanContributions() {
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[12px] font-semibold text-slate-600">최근 4주 중 활동</span>
-                    <span className="text-[12px] text-slate-400 tabular-nums">{c.streakWeeks}/{c.streakMax}주</span>
+                    <span className="text-[12px] text-slate-500 tabular-nums">{c.streakWeeks}/{c.streakMax}주</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
                     <div className="h-full rounded-full bg-slate-900 transition-[width] duration-700"
@@ -106,7 +106,7 @@ export default function FanContributions() {
               {/* 연말 캠페인 자격 */}
               <div className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
                 <div className="flex items-center gap-1.5 mb-3">
-                  <Megaphone className="w-3.5 h-3.5 text-slate-400" />
+                  <Megaphone className="w-3.5 h-3.5 text-slate-500" />
                   <span className="text-[12px] font-bold text-slate-500">연말 응원광고 참여 조건</span>
                   {c.campaign.met && <Chip size="xs" tone="emerald">충족</Chip>}
                 </div>

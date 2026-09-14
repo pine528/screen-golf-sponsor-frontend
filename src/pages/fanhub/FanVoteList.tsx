@@ -48,7 +48,7 @@ export default function FanVoteList() {
             }`}>
             {t.label}
             {data?.counts?.[t.key] > 0 && (
-              <span className={`ml-1.5 text-[11px] tabular-nums ${tab === t.key ? 'text-slate-400' : 'text-slate-400'}`}>
+              <span className={`ml-1.5 text-[12px] tabular-nums ${tab === t.key ? 'text-slate-500' : 'text-slate-500'}`}>
                 {data.counts[t.key]}
               </span>
             )}
@@ -97,9 +97,9 @@ export default function FanVoteList() {
                   </div>
                   <p className="text-[15px] font-bold text-slate-900 leading-snug">{v.title}</p>
                   {v.description && (
-                    <p className="text-[13px] text-slate-400 mt-1 line-clamp-1">{v.description}</p>
+                    <p className="text-[13px] text-slate-500 mt-1 line-clamp-1">{v.description}</p>
                   )}
-                  <div className="flex items-center gap-3 mt-2.5 text-[12px] text-slate-400">
+                  <div className="flex items-center gap-3 mt-2.5 text-[12px] text-slate-500">
                     {v.athlete && <span className="font-semibold text-slate-500">{v.athlete.name}</span>}
                     <span className="inline-flex items-center gap-1">
                       <Users className="w-3 h-3" />{nf(v.participants)}명

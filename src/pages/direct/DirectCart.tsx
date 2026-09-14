@@ -151,7 +151,7 @@ export default function DirectCart() {
           <div className="mt-8 rounded-2xl border border-dashed border-slate-300 py-20 text-center">
             <Package className="w-10 h-10 text-slate-300 mx-auto" />
             <p className="mt-3 text-[14px] font-bold text-slate-600">견적함이 비어 있습니다</p>
-            <p className="mt-1 text-[12.5px] text-slate-400">선수를 고르고 후원 위치를 담아보세요.</p>
+            <p className="mt-1 text-[12.5px] text-slate-500">선수를 고르고 후원 위치를 담아보세요.</p>
             <Link to="/sponsor/direct/athletes" className="mt-5 inline-flex h-11 px-5 items-center rounded-xl bg-emerald-600 text-white text-sm font-bold">
               선수 탐색으로 이동
             </Link>
@@ -162,18 +162,18 @@ export default function DirectCart() {
               {/* 헤더 요약 */}
               <div className="rounded-2xl border border-slate-200 px-5 py-4 flex flex-wrap items-center gap-x-8 gap-y-2">
                 <span className="inline-flex items-center gap-2 text-[13px] font-bold">
-                  <Users className="w-4 h-4 text-slate-400" /> 선수 {s.athleteCount}명
+                  <Users className="w-4 h-4 text-slate-500" /> 선수 {s.athleteCount}명
                 </span>
                 <span className="inline-flex items-center gap-2 text-[13px] font-bold">
-                  <Box className="w-4 h-4 text-slate-400" /> 상품 {s.itemCount}개
+                  <Box className="w-4 h-4 text-slate-500" /> 상품 {s.itemCount}개
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-[13px] font-bold text-emerald-700">
                   <CheckCircle2 className="w-4 h-4" /> 요청 가능 {tally.ready}
                 </span>
-                <span className={`inline-flex items-center gap-1.5 text-[13px] font-bold ${tally.pending ? 'text-amber-700' : 'text-slate-400'}`}>
+                <span className={`inline-flex items-center gap-1.5 text-[13px] font-bold ${tally.pending ? 'text-amber-700' : 'text-slate-500'}`}>
                   <Clock className="w-4 h-4" /> 확인 필요 {tally.pending}
                 </span>
-                <span className={`inline-flex items-center gap-1.5 text-[13px] font-bold ${tally.conflict ? 'text-rose-700' : 'text-slate-400'}`}>
+                <span className={`inline-flex items-center gap-1.5 text-[13px] font-bold ${tally.conflict ? 'text-rose-700' : 'text-slate-500'}`}>
                   <AlertTriangle className="w-4 h-4" /> 충돌 {tally.conflict}
                 </span>
                 {holdEnd != null && (
@@ -199,8 +199,8 @@ export default function DirectCart() {
                       {g.athlete.profileImageUrl && <img src={g.athlete.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[15.5px] font-extrabold">{g.athlete.name} <span className="text-[11.5px] font-bold text-slate-400">프로</span></p>
-                      <p className="text-[11.5px] text-slate-400">{[g.athlete.tour, g.athlete.region].filter(Boolean).join(' · ')}</p>
+                      <p className="text-[15.5px] font-extrabold">{g.athlete.name} <span className="text-[12.5px] font-bold text-slate-500">프로</span></p>
+                      <p className="text-[12.5px] text-slate-500">{[g.athlete.tour, g.athlete.region].filter(Boolean).join(' · ')}</p>
                     </div>
                     <Link
                       to={`/sponsor/direct/build/${g.athlete.id}`}
@@ -217,16 +217,16 @@ export default function DirectCart() {
                       return (
                         <li key={i.id} className={`rounded-xl border p-3.5 ${bad ? 'border-rose-200 bg-rose-50/40' : 'border-slate-100'}`}>
                           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">
+                            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[12px] font-bold">
                               {i.kind === 'ONLINE_PRODUCT' ? '온라인 전용' : '후원 위치'}
                             </span>
                             <span className="text-[13.5px] font-extrabold">{i.slotName}</span>
-                            <span className="text-[12px] text-slate-400">{i.months > 1 ? `${i.months}개월` : i.durationCode === 'SINGLE_EVENT' ? '대회 1회' : '30일'}</span>
+                            <span className="text-[12px] text-slate-500">{i.months > 1 ? `${i.months}개월` : i.durationCode === 'SINGLE_EVENT' ? '대회 1회' : '30일'}</span>
                             {i.status === 'NEEDS_CONFIRMATION' && (
-                              <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 text-[11px] font-bold">선수 확인 필요</span>
+                              <span className="px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 text-[12px] font-bold">선수 확인 필요</span>
                             )}
                             {i.status === 'OK' && !bad && (
-                              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-bold inline-flex items-center gap-1">
+                              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[12px] font-bold inline-flex items-center gap-1">
                                 <CheckCircle2 className="w-3 h-3" /> 재고 확보
                               </span>
                             )}
@@ -234,14 +234,14 @@ export default function DirectCart() {
                             <button
                               onClick={() => remove(i.id)}
                               aria-label={`${i.slotName} 삭제`}
-                              className="shrink-0 w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:border-rose-200"
+                              className="shrink-0 w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-rose-600 hover:border-rose-200"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
 
                           {(i.addOns as any[])?.length > 0 && (
-                            <p className="mt-1.5 text-[11.5px] text-slate-500">
+                            <p className="mt-1.5 text-[12.5px] text-slate-500">
                               추가 활동: {(i.addOns as any[]).map((a) => `${a.label} ${a.count}회`).join(' · ')}
                             </p>
                           )}
@@ -258,13 +258,13 @@ export default function DirectCart() {
 
                           {alts[i.id]?.length > 0 && (
                             <div className="mt-2.5 pt-2.5 border-t border-rose-100">
-                              <p className="text-[11.5px] font-bold text-slate-500 mb-1.5">대체 가능한 위치</p>
+                              <p className="text-[12.5px] font-bold text-slate-500 mb-1.5">대체 가능한 위치</p>
                               <div className="flex flex-wrap gap-1.5">
                                 {alts[i.id].map((alt: any) => (
                                   <Link
                                     key={alt.code}
                                     to={`/sponsor/direct/build/${g.athlete.id}?slot=${alt.code}`}
-                                    className="px-2.5 py-1.5 rounded-lg border border-emerald-300 text-emerald-700 text-[11.5px] font-bold hover:bg-emerald-50"
+                                    className="px-2.5 py-1.5 rounded-lg border border-emerald-300 text-emerald-700 text-[12.5px] font-bold hover:bg-emerald-50"
                                   >
                                     {alt.name} {(alt.price / 10000).toLocaleString()}만원
                                   </Link>
@@ -280,7 +280,7 @@ export default function DirectCart() {
               ))}
 
               <p className="flex items-start gap-2 rounded-2xl bg-slate-50 px-5 py-4 text-[12.5px] text-slate-500 break-keep">
-                <Bookmark className="w-4 h-4 shrink-0 mt-0.5 text-slate-400" />
+                <Bookmark className="w-4 h-4 shrink-0 mt-0.5 text-slate-500" />
                 <span>
                   <b className="text-slate-700">임시 보유 시간이 만료되어도 저장된 견적은 유지됩니다.</b><br />
                   단, 재고는 확보가 해제되므로 승인 요청 전 다시 확인이 필요합니다.
@@ -340,7 +340,7 @@ export default function DirectCart() {
               >
                 {busy ? '검증 중…' : <>승인 요청 준비 <ChevronRight className="w-4 h-4" /></>}
               </button>
-              <p className="mt-2 text-center text-[11px] text-slate-400">승인 요청 전까지 선수에게 노출되지 않습니다.</p>
+              <p className="mt-2 text-center text-[12px] text-slate-500">승인 요청 전까지 선수에게 노출되지 않습니다.</p>
             </aside>
           </div>
         )}

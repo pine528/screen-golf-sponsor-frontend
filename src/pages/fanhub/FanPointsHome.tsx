@@ -9,8 +9,8 @@ import { api } from '../../services/api';
 import { Card, Chip, Notice, Skeleton, EmptyState, nf } from '../../components/fanhub/FanKit';
 
 const KIND_TONE: Record<string, string> = {
-  EARN: 'text-emerald-600', PENDING: 'text-slate-400',
-  SPEND: 'text-slate-900', EXPIRE: 'text-slate-400', REVERSE: 'text-rose-500',
+  EARN: 'text-emerald-600', PENDING: 'text-slate-500',
+  SPEND: 'text-slate-900', EXPIRE: 'text-slate-500', REVERSE: 'text-rose-500',
 };
 
 export default function FanPointsHome() {
@@ -41,7 +41,7 @@ export default function FanPointsHome() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-5">
+      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
         <ArrowLeft className="w-4 h-4" /> 팬 참여
       </Link>
 
@@ -71,23 +71,23 @@ export default function FanPointsHome() {
       {/* 상태 분리 */}
       <div className="grid grid-cols-3 gap-2 mb-6">
         <Card className="px-3.5 py-4">
-          <p className="text-[11px] font-semibold text-slate-400 mb-1.5">적립 예정</p>
+          <p className="text-[12px] font-semibold text-slate-500 mb-1.5">적립 예정</p>
           <p className="text-[19px] font-extrabold text-slate-900 tabular-nums leading-none">{nf(data.pending)}P</p>
-          <p className="text-[11px] text-slate-400 mt-1.5">{data.pendingCount}건 확정 대기</p>
+          <p className="text-[12px] text-slate-500 mt-1.5">{data.pendingCount}건 확정 대기</p>
         </Card>
         <Card className="px-3.5 py-4">
-          <p className="text-[11px] font-semibold text-slate-400 mb-1.5">이번 달 적립</p>
+          <p className="text-[12px] font-semibold text-slate-500 mb-1.5">이번 달 적립</p>
           <p className="text-[19px] font-extrabold text-slate-900 tabular-nums leading-none">{nf(data.monthEarned)}P</p>
-          <p className="text-[11px] text-slate-400 mt-1.5">확정 기준</p>
+          <p className="text-[12px] text-slate-500 mt-1.5">확정 기준</p>
         </Card>
         <Card className={`px-3.5 py-4 ${data.expiringSoon > 0 ? 'border-amber-200 bg-amber-50/50' : ''}`}>
-          <p className={`text-[11px] font-semibold mb-1.5 ${data.expiringSoon > 0 ? 'text-amber-600' : 'text-slate-400'}`}>
+          <p className={`text-[12px] font-semibold mb-1.5 ${data.expiringSoon > 0 ? 'text-amber-600' : 'text-slate-500'}`}>
             30일 내 소멸
           </p>
           <p className={`text-[19px] font-extrabold tabular-nums leading-none ${data.expiringSoon > 0 ? 'text-amber-700' : 'text-slate-900'}`}>
             {nf(data.expiringSoon)}P
           </p>
-          <p className="text-[11px] text-slate-400 mt-1.5">유효기간 12개월</p>
+          <p className="text-[12px] text-slate-500 mt-1.5">유효기간 12개월</p>
         </Card>
       </div>
 
@@ -119,7 +119,7 @@ export default function FanPointsHome() {
             <div key={r.code} className="flex items-center gap-3 px-4 py-3.5">
               <div className="min-w-0 flex-1">
                 <p className="text-[14px] font-semibold text-slate-800">{r.label}</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">{r.limit}</p>
+                <p className="text-[12px] text-slate-500 mt-0.5">{r.limit}</p>
               </div>
               <span className="shrink-0 text-[13px] font-extrabold text-emerald-600 tabular-nums">
                 {r.rate ? `${r.rate * 100}%` : `+${r.points}P`}
@@ -137,10 +137,10 @@ export default function FanPointsHome() {
             <Card key={r.code} className={`p-4 ${r.available ? '' : 'bg-slate-50/60'}`}>
               <div className="flex items-center gap-1.5 mb-1">
                 {!r.available && <Lock className="w-3 h-3 text-slate-300" />}
-                <p className={`text-[13px] font-bold ${r.available ? 'text-slate-900' : 'text-slate-400'}`}>{r.label}</p>
+                <p className={`text-[13px] font-bold ${r.available ? 'text-slate-900' : 'text-slate-500'}`}>{r.label}</p>
                 {r.available && <Chip size="xs" tone="emerald">사용 가능</Chip>}
               </div>
-              <p className="text-[12px] text-slate-400 leading-relaxed">{r.desc}</p>
+              <p className="text-[12px] text-slate-500 leading-relaxed">{r.desc}</p>
             </Card>
           ))}
         </div>
@@ -160,7 +160,7 @@ export default function FanPointsHome() {
               <div key={t.id} className="flex items-center gap-3 px-4 py-3.5">
                 <div className="min-w-0 flex-1">
                   <p className="text-[14px] font-semibold text-slate-800 truncate">{t.label}</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[12px] text-slate-500 mt-0.5">
                     {new Date(t.createdAt).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })}
                     {t.status === 'PENDING' && ' · 확정 대기'}
                   </p>
