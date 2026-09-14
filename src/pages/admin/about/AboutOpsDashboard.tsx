@@ -70,11 +70,11 @@ export default function AboutOpsDashboard() {
                   <div key={p.code}>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-[13px] font-semibold text-slate-700">
-                        {p.label} <span className="text-[11px] text-slate-400 font-mono">({p.code})</span>
+                        {p.label} <span className="text-[12px] text-slate-500 font-mono">({p.code})</span>
                       </span>
                       <span className="text-[13px] font-extrabold text-slate-900 tabular-nums">
                         {nf(p.count)}
-                        <span className="text-[11px] text-slate-400 ml-1.5">
+                        <span className="text-[12px] text-slate-500 ml-1.5">
                           {p.percent === null ? '' : `${p.percent}%`}
                         </span>
                       </span>
@@ -90,7 +90,7 @@ export default function AboutOpsDashboard() {
             {/* 오늘 처리할 일 */}
             <Panel className="lg:col-span-2" title="오늘 처리할 일"
               right={
-                <span className="inline-flex h-6 px-2 rounded-lg bg-rose-50 text-rose-600 text-[11px] font-bold">
+                <span className="inline-flex h-6 px-2 rounded-lg bg-rose-50 text-rose-600 text-[12px] font-bold">
                   {nf(data.todoTotal)}건
                 </span>
               }>
@@ -98,7 +98,7 @@ export default function AboutOpsDashboard() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-[13px]">
                     <thead>
-                      <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                      <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                         <th className="text-left font-semibold px-5 py-2.5">우선순위</th>
                         <th className="text-left font-semibold py-2.5">업무</th>
                         <th className="text-left font-semibold py-2.5">소유자</th>
@@ -110,7 +110,7 @@ export default function AboutOpsDashboard() {
                       {data.todo.map((t: any) => (
                         <tr key={t.id} className="border-b border-slate-50 last:border-0">
                           <td className="px-5 py-3">
-                            <span className={`inline-flex items-center h-5 px-1.5 rounded-md border text-[11px] font-extrabold ${PRIORITY_TONE[t.priority] ?? PRIORITY_TONE['보통']}`}>
+                            <span className={`inline-flex items-center h-5 px-1.5 rounded-md border text-[12px] font-extrabold ${PRIORITY_TONE[t.priority] ?? PRIORITY_TONE['보통']}`}>
                               {t.priority}
                             </span>
                           </td>
@@ -144,7 +144,7 @@ export default function AboutOpsDashboard() {
                       <span className="text-[13.5px] font-semibold text-slate-800">{h.label}</span>
                       <span className="flex items-center gap-2">
                         <span className={`text-[15px] font-extrabold tabular-nums ${LEVEL_TONE[h.level]}`}>{nf(h.count)}건</span>
-                        <span className={`inline-flex h-5 px-1.5 rounded-md text-[10.5px] font-bold ${
+                        <span className={`inline-flex h-5 px-1.5 rounded-md text-[12.5px] font-bold ${
                           h.level === '정상' ? 'bg-emerald-50 text-emerald-600'
                             : h.level === '주의' ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-600'
                         }`}>{h.level}</span>
@@ -155,7 +155,7 @@ export default function AboutOpsDashboard() {
                         h.level === '정상' ? 'bg-emerald-400' : h.level === '주의' ? 'bg-amber-400' : 'bg-rose-400'
                       }`} style={{ width: h.count === 0 ? '4%' : `${Math.min(100, (h.count / Math.max(1, h.threshold || 5)) * 100)}%` }} />
                     </div>
-                    <p className="mt-1.5 text-[11px] text-slate-400">임계값 {h.threshold}건</p>
+                    <p className="mt-1.5 text-[12px] text-slate-500">임계값 {h.threshold}건</p>
                   </div>
                 ))}
               </div>
@@ -167,8 +167,8 @@ export default function AboutOpsDashboard() {
                 <div className="divide-y divide-slate-50">
                   {data.activities.map((a: any) => (
                     <div key={a.id} className="flex items-center gap-3 px-5 py-3">
-                      <span className="text-[11px] text-slate-400 tabular-nums w-24 shrink-0">{fmtDate(a.at, true)}</span>
-                      <span className="inline-flex h-6 px-2 rounded-lg bg-slate-100 text-slate-600 text-[11px] font-bold shrink-0">
+                      <span className="text-[12px] text-slate-500 tabular-nums w-24 shrink-0">{fmtDate(a.at, true)}</span>
+                      <span className="inline-flex h-6 px-2 rounded-lg bg-slate-100 text-slate-600 text-[12px] font-bold shrink-0">
                         {({
                           CONTENT_PAGE: '페이지', MATCHING_CASE: '사례', PARTNER_BRAND: '브랜드',
                           GUARANTEE_POLICY: '정책', RIGHTS_GRANT: '권리',
@@ -184,7 +184,7 @@ export default function AboutOpsDashboard() {
             </Panel>
           </div>
 
-          <p className="text-[11px] text-slate-400 px-1">{data.notice}</p>
+          <p className="text-[12px] text-slate-500 px-1">{data.notice}</p>
         </div>
       )}
     </AboutAdminShell>

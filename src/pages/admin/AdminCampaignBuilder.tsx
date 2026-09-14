@@ -120,11 +120,11 @@ export function AdminCampaignBuilder() {
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
                     isDone ? 'bg-emerald-500 text-white'
                     : isActive ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500'
-                    : 'bg-slate-100 text-slate-400'
+                    : 'bg-slate-100 text-slate-500'
                   }`}>
                     {isDone ? <CheckCircle className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                   </div>
-                  <span className={`text-sm font-medium hidden sm:block ${isActive ? 'text-slate-900' : 'text-slate-400'}`}>
+                  <span className={`text-sm font-medium hidden sm:block ${isActive ? 'text-slate-900' : 'text-slate-500'}`}>
                     {s.label}
                   </span>
                   {idx < STEPS.length - 1 && (

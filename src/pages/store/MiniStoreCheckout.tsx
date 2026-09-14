@@ -215,7 +215,7 @@ export default function MiniStoreCheckout() {
                     className="block bg-white rounded-lg p-1.5 hover:shadow-sm transition-shadow"
                   >
                     {p.imageUrl ? <img src={p.imageUrl} alt="" className="w-full aspect-square rounded object-cover mb-1" /> : <div className="w-full aspect-square bg-slate-100 rounded mb-1" />}
-                    <div className="text-[10px] font-semibold truncate">{p.name}</div>
+                    <div className="text-[12.5px] font-semibold truncate">{p.name}</div>
                   </Link>
                 ))}
               </div>
@@ -244,7 +244,7 @@ export default function MiniStoreCheckout() {
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
           <h2 className="text-sm font-bold mb-3">주문 요약</h2>
           {cartItems.length === 0 && (
-            <div className="text-center py-6 text-sm text-slate-400">장바구니가 비어있습니다</div>
+            <div className="text-center py-6 text-sm text-slate-500">장바구니가 비어있습니다</div>
           )}
           {cartItems.map((c: any, i: number) => (
             <div key={i} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0">

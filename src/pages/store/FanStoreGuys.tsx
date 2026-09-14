@@ -66,7 +66,7 @@ export default function FanStoreGuys() {
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,40%)_minmax(0,220px)] gap-6 items-center p-6 sm:p-8">
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-3">
-                <span className="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold">팬 전용</span>
+                <span className="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[12px] font-bold">팬 전용</span>
                 <span className="text-[12px] font-bold text-slate-500">
                   SPONPIK <span className="text-slate-300">×</span> {GUYS_STORE.brandName}
                 </span>
@@ -103,10 +103,10 @@ export default function FanStoreGuys() {
               <div className="flex flex-wrap gap-2">
                 {GUYS_STORE.milestones.map((m, i) => (
                   <div key={m.date} className="inline-flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5">
-                    {i === 0 ? <Calendar className="w-4 h-4 text-slate-400" /> : <Flag className="w-4 h-4 text-slate-400" />}
+                    {i === 0 ? <Calendar className="w-4 h-4 text-slate-500" /> : <Flag className="w-4 h-4 text-slate-500" />}
                     <div className="leading-tight">
                       <div className="text-[12px] font-bold text-slate-900">{m.date}</div>
-                      <div className="text-[11px] text-slate-400">{m.label}</div>
+                      <div className="text-[12px] text-slate-500">{m.label}</div>
                     </div>
                   </div>
                 ))}
@@ -133,16 +133,16 @@ export default function FanStoreGuys() {
             <div className="hidden lg:block rounded-2xl bg-white border border-slate-200 shadow-sm p-4">
               <div className="text-[13px] font-extrabold text-slate-900 mb-3">내 혜택</div>
               <div className="rounded-xl border border-slate-100 px-3 py-2.5 mb-2">
-                <div className="text-[11px] text-slate-400 mb-0.5">팬포인트</div>
+                <div className="text-[12px] text-slate-500 mb-0.5">팬포인트</div>
                 <div className="text-[16px] font-black text-slate-900 tabular-nums">
                   {typeof balance === 'number' ? `${balance.toLocaleString()}P` : '로그인 후 확인'}
                 </div>
               </div>
               <div className="rounded-xl border border-slate-100 px-3 py-2.5 mb-3">
-                <div className="text-[11px] text-slate-400 mb-1">팬 할인코드</div>
+                <div className="text-[12px] text-slate-500 mb-1">팬 할인코드</div>
                 <div className="flex items-center gap-1.5">
-                  <span className="px-2 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-black tracking-wide">{GUYS_STORE.fanCode}</span>
-                  <span className="text-[11px] font-bold text-emerald-700">{GUYS_STORE.fanDiscountPct}%</span>
+                  <span className="px-2 py-1 rounded-lg bg-emerald-600 text-white text-[12px] font-black tracking-wide">{GUYS_STORE.fanCode}</span>
+                  <span className="text-[12px] font-bold text-emerald-700">{GUYS_STORE.fanDiscountPct}%</span>
                 </div>
               </div>
               <Link
@@ -162,7 +162,7 @@ export default function FanStoreGuys() {
           <button onClick={copyCode} className="text-left rounded-2xl border border-slate-200 px-4 py-3.5 flex items-center gap-3 hover:border-emerald-300 transition-colors">
             <Ticket className="w-5 h-5 text-emerald-600 shrink-0" />
             <div className="min-w-0">
-              <div className="text-[11px] text-slate-400">팬 할인코드</div>
+              <div className="text-[12px] text-slate-500">팬 할인코드</div>
               <div className="text-[13px] font-extrabold text-slate-900 inline-flex items-center gap-1">
                 {GUYS_STORE.fanCode} {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3 text-slate-300" />}
               </div>
@@ -175,7 +175,7 @@ export default function FanStoreGuys() {
             <Box className="w-5 h-5 text-emerald-600 shrink-0" />
             <div className="min-w-0">
               <div className="text-[13px] font-extrabold text-slate-900">AR 선수 이미지 보기</div>
-              <div className="text-[11px] text-slate-400">AR 체험 가능</div>
+              <div className="text-[12px] text-slate-500">AR 체험 가능</div>
             </div>
           </Link>
         </div>
@@ -195,19 +195,19 @@ export default function FanStoreGuys() {
                   className="rounded-2xl border border-slate-200 bg-white overflow-hidden hover:border-emerald-300 transition-colors flex flex-col"
                 >
                   <div className="relative aspect-square bg-slate-50 flex items-center justify-center p-4">
-                    <span className="text-[11px] text-slate-400 text-center break-keep leading-relaxed">{p.name}</span>
+                    <span className="text-[12px] text-slate-500 text-center break-keep leading-relaxed">{p.name}</span>
                     {p.isNew && (
-                      <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] font-black">NEW</span>
+                      <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[12.5px] font-black">NEW</span>
                     )}
                     {off > 0 && (
-                      <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] font-black">{off}%</span>
+                      <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[12.5px] font-black">{off}%</span>
                     )}
                   </div>
                   <div className="p-3 flex flex-col flex-1">
                     <div className="text-[12px] text-slate-600 line-clamp-2 min-h-[2.1rem] mb-1.5">{p.name}</div>
                     <div className="flex items-baseline gap-1.5 mb-2.5">
                       {p.listPrice && (
-                        <span className="text-[11px] text-slate-400 line-through tabular-nums">{p.listPrice.toLocaleString()}원</span>
+                        <span className="text-[12px] text-slate-500 line-through tabular-nums">{p.listPrice.toLocaleString()}원</span>
                       )}
                       <span className="text-[15px] font-black text-slate-900 tabular-nums">{p.price.toLocaleString()}원</span>
                     </div>
@@ -235,12 +235,12 @@ export default function FanStoreGuys() {
               ].map((s, i, arr) => (
                 <div key={s.t} className="flex items-center gap-3 flex-1">
                   <div className="flex items-start gap-2.5 flex-1">
-                    <span className="w-5 h-5 rounded-md bg-emerald-600 text-white text-[11px] font-black flex items-center justify-center shrink-0 mt-0.5 tabular-nums">
+                    <span className="w-5 h-5 rounded-md bg-emerald-600 text-white text-[12px] font-black flex items-center justify-center shrink-0 mt-0.5 tabular-nums">
                       {i + 1}
                     </span>
                     <div className="min-w-0">
                       <div className="text-[12px] font-bold text-slate-900">{s.t}</div>
-                      <p className="text-[11px] text-slate-500 break-keep leading-relaxed">{s.d}</p>
+                      <p className="text-[12px] text-slate-500 break-keep leading-relaxed">{s.d}</p>
                     </div>
                   </div>
                   {i < arr.length - 1 && <ArrowRight className="hidden sm:block w-4 h-4 text-slate-300 shrink-0" />}
@@ -272,7 +272,7 @@ function BenefitTile({ icon: Icon, title, desc }: { icon: any; title: string; de
       <Icon className="w-5 h-5 text-emerald-600 shrink-0" />
       <div className="min-w-0">
         <div className="text-[13px] font-extrabold text-slate-900">{title}</div>
-        <div className="text-[11px] text-slate-400">{desc}</div>
+        <div className="text-[12px] text-slate-500">{desc}</div>
       </div>
     </div>
   );
@@ -285,7 +285,7 @@ function FanBenefit({ icon: Icon, title, desc }: { icon: any; title: string; des
         <Icon className="w-5 h-5 text-emerald-600" />
       </div>
       <div className="text-[12px] font-bold text-slate-900 break-keep">{title}</div>
-      <p className="text-[10px] text-slate-400 break-keep leading-snug mt-0.5">{desc}</p>
+      <p className="text-[12.5px] text-slate-500 break-keep leading-snug mt-0.5">{desc}</p>
     </div>
   );
 }

@@ -262,7 +262,7 @@ export function AdminAuctions() {
         <div className="card p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
                 type="text"
                 placeholder="슬롯명 또는 이벤트명 검색..."
@@ -272,7 +272,7 @@ export function AdminAuctions() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-400" />
+              <Filter className="w-5 h-5 text-slate-500" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -375,7 +375,7 @@ export function AdminAuctions() {
                         <div className="flex items-center gap-2">
                           <Clock className={cn(
                             'w-4 h-4',
-                            auction.status === 'LIVE' ? 'text-emerald-600' : 'text-slate-400'
+                            auction.status === 'LIVE' ? 'text-emerald-600' : 'text-slate-500'
                           )} />
                           <span className={cn(
                             'text-sm',
@@ -402,7 +402,7 @@ export function AdminAuctions() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => navigate(`/auctions/${auction.id}`)}
-                            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                             title="상세 보기"
                           >
                             <Eye className="w-4 h-4" />
@@ -415,7 +415,7 @@ export function AdminAuctions() {
                                 }
                               }}
                               disabled={cancelAuctionMutation.isPending}
-                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                               title="경매 취소"
                             >
                               <XCircle className="w-4 h-4" />
@@ -429,7 +429,7 @@ export function AdminAuctions() {
                                 }
                               }}
                               disabled={startAuctionMutation.isPending}
-                              className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                               title="경매 시작"
                             >
                               <Play className="w-4 h-4" />
@@ -451,7 +451,7 @@ export function AdminAuctions() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                    className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
@@ -460,7 +460,7 @@ export function AdminAuctions() {
                   </span>
                   <button
                     onClick={() => setPage((p) => p + 1)}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                    className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -483,7 +483,7 @@ export function AdminAuctions() {
                     setShowCreateModal(false);
                     setCreateError(null);
                   }}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>

@@ -286,7 +286,7 @@ export function AdminFaq() {
             <div className="flex-1 min-w-[250px]">
               <label className="label">검색</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <input
                   type="text"
                   value={searchQuery}
@@ -308,7 +308,7 @@ export function AdminFaq() {
           ) : !faqs || faqs.length === 0 ? (
             <div className="p-12 text-center">
               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <HelpCircle className="w-8 h-8 text-slate-400" />
+                <HelpCircle className="w-8 h-8 text-slate-500" />
               </div>
               <h3 className="text-lg font-semibold text-slate-900 mb-2">등록된 FAQ가 없습니다</h3>
               <p className="text-slate-500 text-sm mb-4">새로운 FAQ를 추가해보세요</p>
@@ -383,7 +383,7 @@ export function AdminFaq() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => handleOpenModal(faq)}
-                              className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                               title="수정"
                             >
                               <Edit2 className="w-4 h-4" />
@@ -391,7 +391,7 @@ export function AdminFaq() {
                             <button
                               onClick={() => handleDelete(faq.id)}
                               disabled={deleteMutation.isPending}
-                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                               title="삭제"
                             >
                               <Trash2 className="w-4 h-4" />

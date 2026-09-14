@@ -102,7 +102,7 @@ export default function AdminPerformanceSettlement() {
         </div>
 
         {isLoading ? (
-          <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
+          <div className="text-center py-12 text-sm text-slate-500">로딩 중...</div>
         ) : (
           <DetailTable data={settlements} columns={columns} pageSize={20} emptyMessage="정산 기록이 없습니다" />
         )}

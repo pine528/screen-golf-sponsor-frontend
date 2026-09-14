@@ -87,7 +87,7 @@ export default function Points() {
 
           {/* 필터 */}
           <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-slate-400" />
+            <Filter className="w-5 h-5 text-slate-500" />
             <select
               value={selectedReason}
               onChange={(e) => {
@@ -146,7 +146,7 @@ export default function Points() {
                         {tx.description && (
                           <div className="text-sm text-slate-500">{tx.description}</div>
                         )}
-                        <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
+                        <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
                           <Calendar className="w-3 h-3" />
                           {formatDate(tx.createdAt)}
                         </div>

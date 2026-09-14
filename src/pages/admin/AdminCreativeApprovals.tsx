@@ -188,7 +188,7 @@ export function AdminCreativeApprovals() {
                           onClick={() => window.open(approval.fileUrl, '_blank')}
                         />
                       ) : (
-                        <FileImage className="w-8 h-8 text-slate-400" />
+                        <FileImage className="w-8 h-8 text-slate-500" />
                       )}
                     </div>
 
@@ -272,7 +272,7 @@ export function AdminCreativeApprovals() {
                       {formatDate(selectedApproval.createdAt)}
                     </p>
                     {selectedApproval.fileName && (
-                      <p className="text-xs text-slate-400 mt-1">{selectedApproval.fileName}</p>
+                      <p className="text-xs text-slate-500 mt-1">{selectedApproval.fileName}</p>
                     )}
                   </div>
                 </div>

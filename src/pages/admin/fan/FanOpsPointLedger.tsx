@@ -110,22 +110,22 @@ export default function FanOpsPointLedger() {
               <Panel title="원장 · 정산 대사">
                 <div className="p-5 flex flex-wrap items-center gap-6">
                   <div>
-                    <p className="text-[11px] text-slate-400 font-semibold">시스템 합계</p>
+                    <p className="text-[12px] text-slate-500 font-semibold">시스템 합계</p>
                     <p className="text-[19px] font-extrabold text-slate-900 tabular-nums">{nf(rec.systemTotal)}P</p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-slate-400 font-semibold">원장 합계</p>
+                    <p className="text-[12px] text-slate-500 font-semibold">원장 합계</p>
                     <p className="text-[19px] font-extrabold text-slate-900 tabular-nums">{nf(rec.ledgerTotal)}P</p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-slate-400 font-semibold">차이</p>
+                    <p className="text-[12px] text-slate-500 font-semibold">차이</p>
                     <p className={`text-[19px] font-extrabold tabular-nums ${rec.matched ? 'text-slate-900' : 'text-rose-500'}`}>
                       {nf(rec.diff)}P
                     </p>
                   </div>
                   <div className="ml-auto text-right">
                     <StatusTag label={rec.matched ? '일치' : '불일치'} tone={rec.matched ? 'emerald' : 'rose'} />
-                    <p className="text-[11px] text-slate-400 mt-1 tabular-nums">{fmtDate(rec.checkedAt, true)}</p>
+                    <p className="text-[12px] text-slate-500 mt-1 tabular-nums">{fmtDate(rec.checkedAt, true)}</p>
                   </div>
                 </div>
                 {!rec.matched && (
@@ -163,7 +163,7 @@ export default function FanOpsPointLedger() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-[13px]">
                         <thead>
-                          <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                          <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                             <th className="text-left font-semibold px-5 py-2.5">회원</th>
                             <th className="text-left font-semibold py-2.5">출처</th>
                             <th className="text-right font-semibold py-2.5">변동</th>
@@ -177,11 +177,11 @@ export default function FanOpsPointLedger() {
                             <tr key={t.id} className="border-b border-slate-50 last:border-0">
                               <td className="px-5 py-3">
                                 <p className="font-semibold text-slate-800">{t.nickname ?? `user_${t.userId.slice(0, 6)}`}</p>
-                                <p className="font-mono text-[10px] text-slate-400">{t.id.slice(0, 8)}</p>
+                                <p className="font-mono text-[12.5px] text-slate-500">{t.id.slice(0, 8)}</p>
                               </td>
                               <td className="py-3 text-slate-600">{t.description || t.source}</td>
                               <td className={`py-3 text-right tabular-nums font-extrabold ${
-                                t.delta > 0 ? 'text-emerald-600' : t.delta < 0 ? 'text-rose-500' : 'text-slate-400'
+                                t.delta > 0 ? 'text-emerald-600' : t.delta < 0 ? 'text-rose-500' : 'text-slate-500'
                               }`}>
                                 {t.delta > 0 ? '+' : ''}{nf(t.delta)}P
                               </td>
@@ -196,7 +196,7 @@ export default function FanOpsPointLedger() {
                       </table>
                     </div>
                     <div className="flex items-center justify-between px-5 py-3.5 border-t border-slate-100">
-                      <span className="text-[12px] text-slate-400 tabular-nums">전체 {nf(data.total)}건</span>
+                      <span className="text-[12px] text-slate-500 tabular-nums">전체 {nf(data.total)}건</span>
                       {totalPages > 1 && (
                         <div className="flex items-center gap-2">
                           <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}
@@ -269,7 +269,7 @@ export default function FanOpsPointLedger() {
                     {busy ? '처리 중…' : '요청 등록'}
                   </button>
 
-                  <div className="pt-3 border-t border-slate-100 text-[11px] text-slate-400 space-y-1">
+                  <div className="pt-3 border-t border-slate-100 text-[12px] text-slate-500 space-y-1">
                     <p className="font-bold text-slate-500">승인 프로세스</p>
                     <p>· {nf(data.twoApprovalThreshold)}P 이하: 관리자 1인 승인</p>
                     <p>· {nf(data.twoApprovalThreshold)}P 초과: 관리자 2인 승인 (요청자 승인 불가)</p>
@@ -292,7 +292,7 @@ export default function FanOpsPointLedger() {
                             tone={a.status === 'APPLIED' ? 'emerald' : a.status === 'REJECTED' ? 'rose' : 'amber'} />
                         </div>
                         <p className="text-[12px] text-slate-600 truncate">{a.reason}</p>
-                        <p className="font-mono text-[10px] text-slate-400 mt-0.5">{a.caseId}</p>
+                        <p className="font-mono text-[12.5px] text-slate-500 mt-0.5">{a.caseId}</p>
                         {a.status === 'PENDING' && (
                           <div className="flex gap-1.5 mt-2">
                             <button disabled={busy} onClick={() => act(a.id, true)}

@@ -249,28 +249,28 @@ export default function AdminOps() {
                 <p className="font-medium">{contract.auction?.slotInstance?.slotTemplate?.name}</p>
               </div>
               <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-slate-400" />
+                <Building2 className="w-4 h-4 text-slate-500" />
                 <div>
                   <p className="text-sm text-slate-500">브랜드</p>
                   <p className="font-medium">{contract.brand?.name}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-slate-400" />
+                <User className="w-4 h-4 text-slate-500" />
                 <div>
                   <p className="text-sm text-slate-500">선수</p>
                   <p className="font-medium">{contract.athlete?.name}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-slate-400" />
+                <Calendar className="w-4 h-4 text-slate-500" />
                 <div>
                   <p className="text-sm text-slate-500">이벤트</p>
                   <p className="font-medium">{getEventMonthLabel(contract.auction?.slotInstance?.event)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-slate-400" />
+                <DollarSign className="w-4 h-4 text-slate-500" />
                 <div>
                   <p className="text-sm text-slate-500">금액</p>
                   <p className="font-medium">{formatCurrency(contract.priceFinal)}</p>
@@ -349,21 +349,21 @@ export default function AdminOps() {
                 <p className="font-medium">{auction.slotInstance?.slotTemplate?.name}</p>
               </div>
               <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-slate-400" />
+                <User className="w-4 h-4 text-slate-500" />
                 <div>
                   <p className="text-sm text-slate-500">선수</p>
                   <p className="font-medium">{auction.slotInstance?.athlete?.name}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-slate-400" />
+                <Calendar className="w-4 h-4 text-slate-500" />
                 <div>
                   <p className="text-sm text-slate-500">이벤트</p>
                   <p className="font-medium">{getEventMonthLabel(auction.slotInstance?.event)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-slate-400" />
+                <DollarSign className="w-4 h-4 text-slate-500" />
                 <div>
                   <p className="text-sm text-slate-500">현재가</p>
                   <p className="font-medium">{formatCurrency(auction.currentPrice)}</p>

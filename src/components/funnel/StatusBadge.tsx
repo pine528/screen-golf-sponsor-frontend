@@ -61,7 +61,7 @@ export function StatusBadge({ status, size = 'sm' }: Props) {
   const upper = status.toUpperCase();
   const cls = COLOR_MAP[upper] || 'bg-slate-100 text-slate-600 border-slate-200';
   const label = LABEL_MAP[upper] || status;
-  const sizeCls = size === 'sm' ? 'text-[10px] px-1.5 py-0.5' : 'text-xs px-2.5 py-1';
+  const sizeCls = size === 'sm' ? 'text-[12.5px] px-1.5 py-0.5' : 'text-xs px-2.5 py-1';
   return (
     <span className={`inline-flex items-center gap-1 font-semibold border rounded-full ${sizeCls} ${cls}`}>
       {label}

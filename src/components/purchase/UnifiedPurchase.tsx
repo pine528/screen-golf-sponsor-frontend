@@ -201,7 +201,7 @@ export default function UnifiedPurchase({
           ))}
         </div>
         {productType !== 'APPAREL' && (
-          <p className="mt-2 text-[11px] text-violet-700 bg-violet-50 border border-violet-100 rounded-lg px-2.5 py-2 break-keep">
+          <p className="mt-2 text-[12px] text-violet-700 bg-violet-50 border border-violet-100 rounded-lg px-2.5 py-2 break-keep">
             {productType === 'SNS' ? 'SNS' : '매장'} 상품은 선수별 조건이 달라 상담으로 구성합니다.
           </p>
         )}
@@ -211,12 +211,12 @@ export default function UnifiedPurchase({
         {selected ? (
           <div className="rounded-xl border border-slate-200 px-3 py-2.5">
             <div className="text-xs font-bold text-slate-900">{selected.name}</div>
-            <div className="text-[11px] text-slate-500 mt-0.5">
+            <div className="text-[12px] text-slate-500 mt-0.5">
               {selected.saleModeLabel} · {periodLabel}
             </div>
           </div>
         ) : (
-          <p className="text-[11px] text-slate-400">도식이나 목록에서 슬롯을 선택해 주세요.</p>
+          <p className="text-[12px] text-slate-500">도식이나 목록에서 슬롯을 선택해 주세요.</p>
         )}
       </Step>
 
@@ -236,7 +236,7 @@ export default function UnifiedPurchase({
           })}
         </div>
         {addons.length > 0 && (
-          <p className="mt-2 text-[11px] text-slate-500 break-keep">
+          <p className="mt-2 text-[12px] text-slate-500 break-keep">
             추가활동은 협의 항목으로, 아래 금액에 포함되지 않습니다.
           </p>
         )}
@@ -256,7 +256,7 @@ export default function UnifiedPurchase({
           </span>
           <span className="text-lg font-extrabold text-slate-900">{selected ? krw(selected.price) : '—'}</span>
         </div>
-        <p className="text-[10px] text-slate-400 leading-relaxed break-keep flex items-start gap-1">
+        <p className="text-[12.5px] text-slate-500 leading-relaxed break-keep flex items-start gap-1">
           <Info className="w-3 h-3 mt-0.5 shrink-0" />
           {selected?.saleMode === 'INQUIRY'
             ? '협의 슬롯은 상담을 통해 조건과 금액을 확정합니다.'
@@ -333,7 +333,7 @@ export default function UnifiedPurchase({
           </div>
 
           {inventoryLoading ? (
-            <div className="py-16 text-center text-sm text-slate-400">슬롯 정보를 불러오는 중...</div>
+            <div className="py-16 text-center text-sm text-slate-500">슬롯 정보를 불러오는 중...</div>
           ) : periodSlots.length === 0 ? (
             <EmptyPeriod onOtherPeriod={() => setPeriod('SINGLE_EVENT')} onPropose={openKakaoConsult} />
           ) : (
@@ -361,9 +361,9 @@ export default function UnifiedPurchase({
                       >
                         <div className="flex items-center gap-1.5">
                           <span className={`w-1.5 h-1.5 rounded-full ${meta.dot}`} />
-                          <span className="text-[11px] font-bold truncate">{s.name}</span>
+                          <span className="text-[12px] font-bold truncate">{s.name}</span>
                         </div>
-                        <div className={`text-[10px] mt-0.5 ${on ? 'text-slate-300' : 'text-slate-500'}`}>
+                        <div className={`text-[12.5px] mt-0.5 ${on ? 'text-slate-300' : 'text-slate-500'}`}>
                           {s.price ? krw(s.price) : meta.label}
                         </div>
                       </button>
@@ -390,13 +390,13 @@ export default function UnifiedPurchase({
           <button type="button" onClick={() => setSheetOpen(true)} className="min-w-0 flex-1 text-left">
             {selected ? (
               <>
-                <div className="text-[11px] text-slate-500 truncate">{selected.name} · {periodLabel}</div>
+                <div className="text-[12px] text-slate-500 truncate">{selected.name} · {periodLabel}</div>
                 <div className="text-sm font-extrabold text-slate-900">{krw(selected.price)}</div>
               </>
             ) : (
               <>
-                <div className="text-[11px] text-slate-500">담긴 슬롯 없음</div>
-                <div className="text-sm font-bold text-slate-400">슬롯을 선택해 주세요</div>
+                <div className="text-[12px] text-slate-500">담긴 슬롯 없음</div>
+                <div className="text-sm font-bold text-slate-500">슬롯을 선택해 주세요</div>
               </>
             )}
           </button>
@@ -427,7 +427,7 @@ export default function UnifiedPurchase({
               <div className="w-10 h-1 rounded-full bg-slate-200 mx-auto mb-2.5" />
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-slate-900">후원상품 구성</span>
-                <button type="button" onClick={() => setSheetOpen(false)} className="p-1.5 text-slate-400" aria-label="닫기">
+                <button type="button" onClick={() => setSheetOpen(false)} className="p-1.5 text-slate-500" aria-label="닫기">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -472,7 +472,7 @@ function AthleteSummaryColumn({ athlete }: { athlete: any }) {
             key={i}
             type="button"
             onClick={() => document.querySelector(`[data-section="${l.id}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-            className="block w-full text-left text-[11px] text-slate-600 hover:text-slate-900 hover:underline py-0.5"
+            className="block w-full text-left text-[12px] text-slate-600 hover:text-slate-900 hover:underline py-0.5"
           >
             {l.label}
           </button>
@@ -495,8 +495,8 @@ function SumRow({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
     <div>
-      <dt className="text-[10px] text-slate-400">{label}</dt>
-      <dd className="text-[11px] font-semibold text-slate-800 break-keep">{value}</dd>
+      <dt className="text-[12.5px] text-slate-500">{label}</dt>
+      <dd className="text-[12px] font-semibold text-slate-800 break-keep">{value}</dd>
     </div>
   );
 }
@@ -521,7 +521,7 @@ function EmptyPeriod({ onOtherPeriod, onPropose }: { onOtherPeriod: () => void; 
 function Step({ n, label, children }: { n: number; label: string; children: React.ReactNode }) {
   return (
     <div className="mb-4">
-      <div className="text-[11px] font-bold text-slate-700 mb-1.5">
+      <div className="text-[12px] font-bold text-slate-700 mb-1.5">
         {n}. {label}
       </div>
       {children}
@@ -535,7 +535,7 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       type="button"
       onClick={onClick}
       aria-pressed={on}
-      className={`px-2.5 py-2 rounded-xl text-[11px] font-semibold border transition ${
+      className={`px-2.5 py-2 rounded-xl text-[12px] font-semibold border transition ${
         on ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 text-slate-700 hover:border-slate-400'
       }`}
     >
@@ -547,8 +547,8 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
 function PriceRow({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-[11px] text-slate-500">{label}</span>
-      <span className={`text-[11px] font-semibold ${muted ? 'text-slate-400' : 'text-slate-800'}`}>{value}</span>
+      <span className="text-[12px] text-slate-500">{label}</span>
+      <span className={`text-[12px] font-semibold ${muted ? 'text-slate-500' : 'text-slate-800'}`}>{value}</span>
     </div>
   );
 }

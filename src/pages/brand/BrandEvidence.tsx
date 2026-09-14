@@ -199,7 +199,7 @@ export function BrandEvidence() {
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Filter className="w-5 h-5 text-slate-400" />
+                <Filter className="w-5 h-5 text-slate-500" />
                 <select
                   value={typeFilter}
                   onChange={(e) => setTypeFilter(e.target.value)}
@@ -349,7 +349,7 @@ export function BrandEvidence() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -359,7 +359,7 @@ export function BrandEvidence() {
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={pagination && page >= pagination.totalPages}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -377,7 +377,7 @@ export function BrandEvidence() {
                 <h2 className="text-xl font-bold text-slate-900">증빙 상세</h2>
                 <button
                   onClick={() => setSelectedEvidence(null)}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>

@@ -318,7 +318,7 @@ export default function DirectBuild() {
               {['AVAILABLE', 'NEEDS_CONFIRMATION', 'HOLD', 'RESERVED', 'SOLD', 'AUCTION', 'BLOCKED', 'EXPIRED'].map((k) => (
                 <span key={k} className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600">
                   <span className={`w-2 h-2 rounded-full ${SLOT_STATUS[k].dot}`} />
-                  <span aria-hidden className="text-[11.5px]">{SLOT_STATUS[k].icon}</span>
+                  <span aria-hidden className="text-[12.5px]">{SLOT_STATUS[k].icon}</span>
                   {SLOT_STATUS[k].label}
                 </span>
               ))}
@@ -333,7 +333,7 @@ export default function DirectBuild() {
             <div className="flex items-center justify-between gap-3 mb-3">
               <h2 className="text-[14.5px] font-extrabold">위치별 슬롯 목록</h2>
               <div className="relative w-[200px]">
-                <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-slate-400" />
+                <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-slate-500" />
                 <input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
@@ -366,10 +366,10 @@ export default function DirectBuild() {
                             }`}
                           >
                             <span className={`block text-[13px] font-bold ${s.selectable ? '' : 'text-slate-500'}`}>{s.name}</span>
-                            <span className={`mt-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11.5px] font-bold ${meta.chip}`}>
+                            <span className={`mt-1 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[12.5px] font-bold ${meta.chip}`}>
                               <span aria-hidden>{meta.icon}</span> {meta.label}
                             </span>
-                            <span className={`mt-1.5 block text-[13.5px] font-black text-right tabular-nums ${s.selectable ? '' : 'text-slate-400'}`}>
+                            <span className={`mt-1.5 block text-[13.5px] font-black text-right tabular-nums ${s.selectable ? '' : 'text-slate-500'}`}>
                               {(s.price / 10000).toLocaleString()}만원
                             </span>
                           </button>
@@ -389,7 +389,7 @@ export default function DirectBuild() {
           <div className="p-5">
             <h2 className="flex items-center gap-2 text-[15px] font-extrabold">
               선택한 항목
-              <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-[11.5px] font-black flex items-center justify-center">{count}</span>
+              <span className="w-5 h-5 rounded-full bg-emerald-500 text-white text-[12.5px] font-black flex items-center justify-center">{count}</span>
             </h2>
             <div className="mt-3">
               <p className="text-[12.5px] font-bold text-slate-500">후원 위치</p>
@@ -397,12 +397,12 @@ export default function DirectBuild() {
                 <div className="mt-1.5 rounded-xl border border-emerald-500 bg-emerald-50/40 px-3.5 py-3 flex items-center gap-2">
                   <span className="min-w-0 flex-1">
                     <span className="block text-[13.5px] font-extrabold truncate">{selectedSlot.name}</span>
-                    <span className={`mt-0.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[11.5px] font-bold ${SLOT_STATUS[selectedSlot.status].chip}`}>
+                    <span className={`mt-0.5 inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[12.5px] font-bold ${SLOT_STATUS[selectedSlot.status].chip}`}>
                       {SLOT_STATUS[selectedSlot.status].label}
                     </span>
                   </span>
                   <span className="text-[14px] font-black tabular-nums shrink-0">{(selectedSlot.price / 10000).toLocaleString()}만원</span>
-                  <button onClick={() => setSlotCode(null)} aria-label="위치 선택 해제" className="shrink-0 text-slate-400 hover:text-slate-700"><X className="w-4 h-4" /></button>
+                  <button onClick={() => setSlotCode(null)} aria-label="위치 선택 해제" className="shrink-0 text-slate-500 hover:text-slate-700"><X className="w-4 h-4" /></button>
                 </div>
               ) : (
                 <p className="mt-1.5 rounded-xl border border-dashed border-slate-200 py-4 text-center text-[13px] text-slate-500">
@@ -428,7 +428,7 @@ export default function DirectBuild() {
                       />
                       <span className="min-w-0 flex-1">
                         <span className="block text-[13px] font-bold truncate">{o.name}</span>
-                        {o.description && <span className="block text-[11.5px] text-slate-500 truncate">{o.description}</span>}
+                        {o.description && <span className="block text-[12.5px] text-slate-500 truncate">{o.description}</span>}
                       </span>
                       <span className="text-[13px] font-extrabold shrink-0 tabular-nums">{(o.price / 10000).toLocaleString()}만원</span>
                     </label>

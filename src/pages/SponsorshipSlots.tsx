@@ -353,7 +353,7 @@ export default function SponsorshipSlots() {
         <div className="rounded-2xl border border-slate-200 bg-white p-3 mb-4">
           <div className="flex flex-wrap items-center gap-2">
             <div className="relative flex-1 min-w-[180px]">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
               <input
                 value={q}
                 onChange={(e) => onFilter(setQ)(e.target.value)}
@@ -427,7 +427,7 @@ export default function SponsorshipSlots() {
             </PageBtn>
             {pageNumbers(current, totalPages).map((n, i) =>
               n === '...' ? (
-                <span key={`gap-${i}`} className="px-2 text-sm text-slate-400">
+                <span key={`gap-${i}`} className="px-2 text-sm text-slate-500">
                   …
                 </span>
               ) : (
@@ -460,8 +460,8 @@ export default function SponsorshipSlots() {
 function TypeRow({ chip, label, desc }: { chip: string; label: string; desc: string }) {
   return (
     <li className="flex items-start gap-2">
-      <span className={`shrink-0 px-2 py-0.5 rounded-md text-[10px] font-extrabold ${chip}`}>{label}</span>
-      <span className="text-[11px] text-slate-500 break-keep leading-relaxed">{desc}</span>
+      <span className={`shrink-0 px-2 py-0.5 rounded-md text-[12.5px] font-extrabold ${chip}`}>{label}</span>
+      <span className="text-[12px] text-slate-500 break-keep leading-relaxed">{desc}</span>
     </li>
   );
 }
@@ -481,9 +481,9 @@ function StatCard({ icon: Icon, tone, label, value }: { icon: any; tone: string;
         <Icon className="w-4 h-4" />
       </span>
       <div className="min-w-0">
-        <div className="text-[11px] text-slate-500 truncate">{label}</div>
+        <div className="text-[12px] text-slate-500 truncate">{label}</div>
         <div className="text-lg font-black text-slate-900 tabular-nums leading-tight">
-          {value.toLocaleString()} <span className="text-xs font-bold text-slate-400">개</span>
+          {value.toLocaleString()} <span className="text-xs font-bold text-slate-500">개</span>
         </div>
       </div>
     </div>
@@ -543,10 +543,10 @@ function SlotCard({ row, slotCount }: { row: SlotRow; slotCount: number }) {
         ) : (
           <div className="w-full h-full flex items-center justify-center text-slate-300 text-sm">이미지 없음</div>
         )}
-        <span className={`absolute top-3 left-3 px-2 py-1 rounded-lg text-[10px] font-extrabold ${meta.chip}`}>
+        <span className={`absolute top-3 left-3 px-2 py-1 rounded-lg text-[12.5px] font-extrabold ${meta.chip}`}>
           {meta.label}
         </span>
-        <span className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-white/90 text-slate-700 text-[10px] font-bold">
+        <span className="absolute top-3 right-3 px-2 py-1 rounded-lg bg-white/90 text-slate-700 text-[12.5px] font-bold">
           슬롯 {slotCount}개
         </span>
       </div>
@@ -554,14 +554,14 @@ function SlotCard({ row, slotCount }: { row: SlotRow; slotCount: number }) {
       <div className="p-4 flex flex-col flex-1">
         <div className="flex items-baseline gap-1.5 mb-0.5">
           <span className="text-base font-extrabold text-slate-900 truncate">{row.athleteName}</span>
-          <span className="text-[11px] font-semibold text-slate-400 shrink-0">{row.tour}</span>
+          <span className="text-[12px] font-semibold text-slate-500 shrink-0">{row.tour}</span>
         </div>
-        <p className="text-[11px] text-slate-400 truncate mb-3">
+        <p className="text-[12px] text-slate-500 truncate mb-3">
           {row.slotName || BODY_PART_LABEL[row.bodyPart] || '스폰서십 슬롯'}
         </p>
 
         <div className="mt-auto">
-          <div className="text-[10px] text-slate-400 mb-0.5">
+          <div className="text-[12.5px] text-slate-500 mb-0.5">
             {row.kind === 'AUCTION' ? '경매 시작가' : row.kind === 'DIRECT' ? '바로 구매가' : '협의 시작가'}
           </div>
           {row.kind === 'INQUIRY' && row.price === 0 ? (
@@ -569,26 +569,26 @@ function SlotCard({ row, slotCount }: { row: SlotRow; slotCount: number }) {
           ) : (
             <div className={`text-lg font-black tabular-nums ${meta.price}`}>
               ₩{row.price.toLocaleString()}
-              <span className="text-[10px] font-bold text-slate-400 ml-1">부터</span>
+              <span className="text-[12.5px] font-bold text-slate-500 ml-1">부터</span>
             </div>
           )}
 
           <div className="flex items-center justify-between gap-2 mt-2">
             {row.kind === 'AUCTION' && row.endAt ? (
               <span
-                className={`inline-flex items-center gap-1 text-[11px] font-semibold ${
-                  soon ? 'text-amber-600' : 'text-slate-400'
+                className={`inline-flex items-center gap-1 text-[12px] font-semibold ${
+                  soon ? 'text-amber-600' : 'text-slate-500'
                 }`}
               >
                 <Timer className="w-3 h-3" />
                 {formatTimeRemaining(row.endAt)}
               </span>
             ) : (
-              <span className="text-[11px] font-semibold text-slate-400">
+              <span className="text-[12px] font-semibold text-slate-500">
                 {row.kind === 'DIRECT' ? '바로 구매 가능' : '계약 협의 가능'}
               </span>
             )}
-            <span className="text-[11px] font-bold text-emerald-600 group-hover:underline shrink-0">{meta.cta}</span>
+            <span className="text-[12px] font-bold text-emerald-600 group-hover:underline shrink-0">{meta.cta}</span>
           </div>
         </div>
       </div>

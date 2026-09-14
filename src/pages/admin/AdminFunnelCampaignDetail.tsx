@@ -132,12 +132,12 @@ export default function AdminFunnelCampaignDetail() {
                   <div className="flex justify-between"><span className="text-slate-500">사용 횟수</span><span>{promoCode.usage_count ?? promoCode.usageCount ?? 0}회</span></div>
                 </div>
               ) : (
-                <div className="text-xs text-slate-400">발급된 코드가 없습니다</div>
+                <div className="text-xs text-slate-500">발급된 코드가 없습니다</div>
               )}
             </Section>
 
             <Section title="매칭된 선수">
-              {campaign.contracts?.length === 0 && <div className="text-xs text-slate-400">매칭된 선수가 없습니다</div>}
+              {campaign.contracts?.length === 0 && <div className="text-xs text-slate-500">매칭된 선수가 없습니다</div>}
               {campaign.contracts?.map((cc: any) => (
                 <div key={cc.id} className="flex items-center gap-2 py-1.5 border-b border-slate-100 last:border-b-0">
                   <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold">
@@ -145,7 +145,7 @@ export default function AdminFunnelCampaignDetail() {
                   </div>
                   <div>
                     <div className="text-sm font-semibold">{cc.contract.athlete.name}</div>
-                    <div className="text-[10px] text-slate-400">{cc.contract.athlete.tour}</div>
+                    <div className="text-[12.5px] text-slate-500">{cc.contract.athlete.tour}</div>
                   </div>
                 </div>
               ))}
@@ -167,7 +167,7 @@ export default function AdminFunnelCampaignDetail() {
                 rows={4}
                 className="w-full text-xs border border-slate-200 rounded p-2 resize-none"
               />
-              <div className="text-[10px] text-slate-400 mt-1">※ 임시 메모 패드</div>
+              <div className="text-[12.5px] text-slate-500 mt-1">※ 임시 메모 패드</div>
             </Section>
           </div>
 
@@ -178,15 +178,15 @@ export default function AdminFunnelCampaignDetail() {
               <h3 className="text-sm font-bold text-slate-900 mb-2">🧪 테스트 발급 로그 / 최근 이벤트</h3>
               <div className="grid grid-cols-3 gap-2 text-center text-xs">
                 <div className="bg-white p-2 rounded">
-                  <div className="text-slate-400">코드 검증</div>
+                  <div className="text-slate-500">코드 검증</div>
                   <div className="font-bold text-emerald-600">{promoCode ? '✓ OK' : '-'}</div>
                 </div>
                 <div className="bg-white p-2 rounded">
-                  <div className="text-slate-400">링크 테스트</div>
+                  <div className="text-slate-500">링크 테스트</div>
                   <div className="font-bold text-emerald-600">{trackingLink ? `✓ ${trackingLink.click_count}회` : '-'}</div>
                 </div>
                 <div className="bg-white p-2 rounded">
-                  <div className="text-slate-400">스토어 미리보기</div>
+                  <div className="text-slate-500">스토어 미리보기</div>
                   {store ? <a href={store.url} target="_blank" rel="noreferrer" className="font-bold text-sky-600 underline">열기</a> : '-'}
                 </div>
               </div>
@@ -216,11 +216,11 @@ export default function AdminFunnelCampaignDetail() {
             >
               {trackingLink ? (
                 <>
-                  <div className="mb-1 text-[10px] font-semibold text-slate-500">단축 URL</div>
+                  <div className="mb-1 text-[12.5px] font-semibold text-slate-500">단축 URL</div>
                   <div className="text-sm font-mono break-all bg-slate-50 px-3 py-2 rounded mb-3">{trackingLink.short_url}</div>
                   {trackingLink.long_url && (
                     <>
-                      <div className="mb-1 text-[10px] font-semibold text-slate-500">장(long) URL (UTM 포함)</div>
+                      <div className="mb-1 text-[12.5px] font-semibold text-slate-500">장(long) URL (UTM 포함)</div>
                       <div className="text-xs font-mono break-all bg-slate-50 px-3 py-2 rounded mb-3 text-slate-600">{trackingLink.long_url}</div>
                     </>
                   )}

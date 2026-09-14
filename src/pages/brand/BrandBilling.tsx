@@ -386,14 +386,14 @@ export default function BrandBilling() {
               {/* 직접 선택 */}
               {periodPreset === 'custom' && (
                 <div className="flex items-center gap-3 mt-4">
-                  <Calendar className="w-4 h-4 text-slate-400" />
+                  <Calendar className="w-4 h-4 text-slate-500" />
                   <input
                     type="date"
                     value={customFrom}
                     onChange={(e) => setCustomFrom(e.target.value)}
                     className="input"
                   />
-                  <span className="text-slate-400">~</span>
+                  <span className="text-slate-500">~</span>
                   <input
                     type="date"
                     value={customTo}
@@ -751,14 +751,14 @@ export default function BrandBilling() {
 
               {periodPreset === 'custom' && (
                 <div className="flex items-center gap-3 mb-4">
-                  <Calendar className="w-4 h-4 text-slate-400" />
+                  <Calendar className="w-4 h-4 text-slate-500" />
                   <input
                     type="date"
                     value={customFrom}
                     onChange={(e) => setCustomFrom(e.target.value)}
                     className="input"
                   />
-                  <span className="text-slate-400">~</span>
+                  <span className="text-slate-500">~</span>
                   <input
                     type="date"
                     value={customTo}
@@ -776,7 +776,7 @@ export default function BrandBilling() {
                   {summary && (
                     <div className="text-sm text-slate-600">
                       예상 금액: <span className="font-medium text-blue-600">{formatCurrency(Math.abs(summary.netSpend || 0))}</span>
-                      <span className="text-xs text-slate-400 ml-2">(VAT 포함)</span>
+                      <span className="text-xs text-slate-500 ml-2">(VAT 포함)</span>
                     </div>
                   )}
                 </div>

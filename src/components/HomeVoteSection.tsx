@@ -133,11 +133,11 @@ export default function HomeVoteSection() {
         </div>
 
         {cards.length === 0 && (
-          <p className="text-center text-sm text-slate-400 py-8">해당 조건의 투표가 없습니다.</p>
+          <p className="text-center text-sm text-slate-500 py-8">해당 조건의 투표가 없습니다.</p>
         )}
 
         {/* 하단 안내 */}
-        <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-slate-500">
+        <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-slate-500">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
           공정한 투표 운영을 위해 부정 투표를 모니터링하고 있습니다.
           <Link to="/guide" className="font-semibold text-slate-700 hover:underline inline-flex items-center gap-0.5">
@@ -166,13 +166,13 @@ function VoteCard({ vote }: { vote: any }) {
 
   return (
     <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-4 hover:border-slate-300 transition-colors">
-      <span className={`self-start px-2 py-0.5 rounded-md text-[10px] font-extrabold mb-2 ${badge.cls}`}>{badge.text}</span>
+      <span className={`self-start px-2 py-0.5 rounded-md text-[12.5px] font-extrabold mb-2 ${badge.cls}`}>{badge.text}</span>
 
       <h3 className="text-sm font-extrabold text-slate-900 leading-snug break-keep mb-2 line-clamp-2 min-h-[2.5rem]">
         {vote.title}
       </h3>
 
-      <div className="flex items-center gap-2 text-[11px] text-slate-400 mb-3">
+      <div className="flex items-center gap-2 text-[12px] text-slate-500 mb-3">
         {!settled && <span className={`font-bold text-${accent}-600`}>{dday(vote.closeAt)}</span>}
         <span className="inline-flex items-center gap-1">
           <Users className="w-3 h-3" />
@@ -185,7 +185,7 @@ function VoteCard({ vote }: { vote: any }) {
           <Trophy className="w-4 h-4 text-violet-500 mx-auto mb-1" />
           <div className="text-sm font-extrabold text-slate-900 truncate">{top.label}</div>
           <div className="text-xl font-black text-violet-700 tabular-nums">{top.pct}%</div>
-          <div className="text-[10px] text-slate-500">총 {totalVotes.toLocaleString()}표</div>
+          <div className="text-[12.5px] text-slate-500">총 {totalVotes.toLocaleString()}표</div>
         </div>
       ) : (
         <ul className="space-y-1.5 mb-3">
@@ -196,12 +196,12 @@ function VoteCard({ vote }: { vote: any }) {
                 style={{ width: `${r.pct}%` }}
               />
               <span className="relative flex items-center justify-between gap-2">
-                <span className="text-[11px] font-semibold text-slate-700 truncate">{r.label}</span>
-                <span className="text-[11px] font-bold text-slate-900 tabular-nums shrink-0">{r.pct}%</span>
+                <span className="text-[12px] font-semibold text-slate-700 truncate">{r.label}</span>
+                <span className="text-[12px] font-bold text-slate-900 tabular-nums shrink-0">{r.pct}%</span>
               </span>
             </li>
           ))}
-          {rows.length === 0 && <li className="text-[11px] text-slate-400">선택지 정보가 없습니다</li>}
+          {rows.length === 0 && <li className="text-[12px] text-slate-500">선택지 정보가 없습니다</li>}
         </ul>
       )}
 
@@ -218,7 +218,7 @@ function VoteCard({ vote }: { vote: any }) {
         {settled ? '결과 자세히 보기' : '투표하기'}
       </Link>
 
-      {!settled && <p className="mt-1.5 text-center text-[10px] text-slate-400">1인 1회 투표 가능</p>}
+      {!settled && <p className="mt-1.5 text-center text-[12.5px] text-slate-500">1인 1회 투표 가능</p>}
     </div>
   );
 }
@@ -234,7 +234,7 @@ function GuideCard() {
             <span className="mt-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white text-[8px] font-bold inline-flex items-center justify-center shrink-0">
               ✓
             </span>
-            <span className="text-[11px] text-slate-600 break-keep">{t}</span>
+            <span className="text-[12px] text-slate-600 break-keep">{t}</span>
           </li>
         ))}
       </ul>

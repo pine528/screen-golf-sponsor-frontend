@@ -267,7 +267,7 @@ export function Auctions() {
                 {status === 'UNSOLD' && '유찰'}
                 {count !== undefined && (
                   <span className={cn(
-                    'px-1.5 py-0.5 rounded-md text-[10px] font-bold tabular-nums',
+                    'px-1.5 py-0.5 rounded-md text-[12.5px] font-bold tabular-nums',
                     statusFilter === status ? 'bg-white/25' : 'bg-white text-slate-500'
                   )}>
                     {count}
@@ -937,10 +937,10 @@ function AuctionStat({
         <Icon className="w-4 h-4" />
       </span>
       <div className="min-w-0">
-        <div className="text-[10px] text-slate-500 truncate">{label}</div>
+        <div className="text-[12.5px] text-slate-500 truncate">{label}</div>
         <div className="text-base font-black text-slate-900 tabular-nums leading-tight">
           {value === undefined || value === null ? '-' : value.toLocaleString()}
-          <span className="text-[10px] font-bold text-slate-400 ml-0.5">{unit}</span>
+          <span className="text-[12.5px] font-bold text-slate-500 ml-0.5">{unit}</span>
         </div>
       </div>
     </div>

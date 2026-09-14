@@ -136,7 +136,7 @@ export function AdminTournamentActivation() {
           {isLoading ? (
             <div className="p-12 text-center"><Loader2 className="w-6 h-6 animate-spin text-emerald-500 mx-auto" /></div>
           ) : events.length === 0 ? (
-            <div className="p-12 text-center text-sm text-slate-400">등록된 대회가 없습니다.</div>
+            <div className="p-12 text-center text-sm text-slate-500">등록된 대회가 없습니다.</div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -204,7 +204,7 @@ export function AdminTournamentActivation() {
                               onChange={(ev) => setEditField(e.id, 'displayOrder', Number(ev.target.value) || 0)}
                               className="w-16 text-xs border rounded px-2 py-1 text-center"
                             />
-                            <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                            <ArrowUpDown className="w-3 h-3 text-slate-500" />
                           </div>
                         </td>
                         <td className="px-3 py-2 text-center">

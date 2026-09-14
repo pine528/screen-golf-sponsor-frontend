@@ -70,7 +70,7 @@ export default function FanOpsOrders() {
                 }`}>
                 {t.label}
                 {t.badge && (
-                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                  <span className={`text-[12.5px] font-bold px-1.5 py-0.5 rounded ${
                     tab === t.key ? 'bg-white/20' : 'bg-amber-100 text-amber-700'
                   }`}>{t.badge}</span>
                 )}
@@ -81,7 +81,7 @@ export default function FanOpsOrders() {
           {tab === 'INTERNAL' && (
             <Panel title="SPON Pay 주문">
               <div className="px-5 py-4 border-b border-slate-100 flex items-start gap-2.5">
-                <Info className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+                <Info className="w-4 h-4 text-slate-500 mt-0.5 shrink-0" />
                 <p className="text-[13px] text-slate-600">{data.internalOrders.notice}</p>
               </div>
               <Empty title="내부 결제 주문이 없습니다"
@@ -100,7 +100,7 @@ export default function FanOpsOrders() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-[13px]">
                     <thead>
-                      <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                      <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                         <th className="text-left font-semibold px-5 py-2.5">CLICK ID</th>
                         <th className="text-left font-semibold py-2.5">스토어 / 상품</th>
                         <th className="text-left font-semibold py-2.5">팬</th>
@@ -115,7 +115,7 @@ export default function FanOpsOrders() {
                         <tr key={i.clickId} className="border-b border-slate-50 last:border-0">
                           <td className="px-5 py-3">
                             <button onClick={() => copy(i.clickId)}
-                              className="font-mono text-[11px] text-slate-600 hover:text-slate-900 inline-flex items-center gap-1">
+                              className="font-mono text-[12px] text-slate-600 hover:text-slate-900 inline-flex items-center gap-1">
                               {i.clickId.slice(0, 16)}
                               {copied === i.clickId ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3 text-slate-300" />}
                             </button>
@@ -124,7 +124,7 @@ export default function FanOpsOrders() {
                             <p className="font-semibold text-slate-800 truncate max-w-[220px]">
                               {i.product?.name ?? i.store?.title}
                             </p>
-                            <p className="text-[11px] text-slate-400">{i.store?.brandName}</p>
+                            <p className="text-[12px] text-slate-500">{i.store?.brandName}</p>
                           </td>
                           <td className="py-3 text-slate-500 font-mono text-[12px]">{i.userId ?? '비로그인'}</td>
                           <td className="py-3">
@@ -150,12 +150,12 @@ export default function FanOpsOrders() {
 
           {tab === 'SETTLE' && (
             <Panel title="스토어별 전환 현황"
-              right={<span className="text-[11px] text-slate-400">정산 금액은 브랜드 회신 데이터가 있어야 산출됩니다</span>}>
+              right={<span className="text-[12px] text-slate-500">정산 금액은 브랜드 회신 데이터가 있어야 산출됩니다</span>}>
               {data.byStore.length ? (
                 <div className="overflow-x-auto">
                   <table className="w-full text-[13px]">
                     <thead>
-                      <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                      <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                         <th className="text-left font-semibold px-5 py-2.5">스토어</th>
                         <th className="text-left font-semibold py-2.5">브랜드 / 선수</th>
                         <th className="text-right font-semibold py-2.5">이동</th>
@@ -202,7 +202,7 @@ export default function FanOpsOrders() {
               ].map((r) => (
                 <div key={r.s} className="rounded-xl bg-slate-50 px-3.5 py-3">
                   <p className="text-[12px] font-bold text-slate-700">{r.s}</p>
-                  <p className="text-[11px] text-slate-400 mt-1">{r.who} · {r.sla}</p>
+                  <p className="text-[12px] text-slate-500 mt-1">{r.who} · {r.sla}</p>
                 </div>
               ))}
             </div>

@@ -129,7 +129,7 @@ export default function FanOpsModeration() {
             <span className="text-[13px] text-slate-600">
               P3(낮음) 항목만 일괄 승인 <b className="text-slate-900 tabular-nums">({checked.length}/{p3Ids.length})</b>
             </span>
-            <span className="text-[11px] text-slate-400">일괄 승인은 위험도 P3 항목에만 가능합니다.</span>
+            <span className="text-[12px] text-slate-500">일괄 승인은 위험도 P3 항목에만 가능합니다.</span>
             <button disabled={!checked.length || busy} onClick={bulkApprove}
               className="ml-auto h-9 px-4 rounded-xl bg-emerald-600 text-white text-[13px] font-bold hover:bg-emerald-700 disabled:bg-slate-200 disabled:text-slate-400 transition">
               일괄 승인
@@ -158,18 +158,18 @@ export default function FanOpsModeration() {
                             className="w-4 h-4 mt-1 rounded accent-emerald-600 shrink-0" />
                         )}
                         <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center shrink-0">
-                          <I className="w-4 h-4 text-slate-400" />
+                          <I className="w-4 h-4 text-slate-500" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5 mb-1">
                             <RiskTag risk={i.risk} label={i.riskLabel} />
-                            <span className="text-[11px] text-slate-400">{i.targetTypeLabel}</span>
+                            <span className="text-[12px] text-slate-500">{i.targetTypeLabel}</span>
                           </div>
                           <p className="text-[13px] text-slate-700 line-clamp-2 leading-snug">{i.excerpt || '(본문 없음)'}</p>
                           <div className="flex items-center gap-2 mt-1.5">
-                            <span className="text-[11px] text-slate-400 tabular-nums">{fmtDate(i.createdAt, true)}</span>
+                            <span className="text-[12px] text-slate-500 tabular-nums">{fmtDate(i.createdAt, true)}</span>
                             {i.slaRemainMs !== null && (
-                              <span className={`text-[11px] font-bold tabular-nums ${i.overdue ? 'text-rose-500' : 'text-slate-400'}`}>
+                              <span className={`text-[12px] font-bold tabular-nums ${i.overdue ? 'text-rose-500' : 'text-slate-500'}`}>
                                 SLA {fmtRemain(i.slaRemainMs)}
                               </span>
                             )}
@@ -193,7 +193,7 @@ export default function FanOpsModeration() {
                   <div className="flex items-center gap-2">
                     <RiskTag risk={detail.risk} label={detail.riskLabel} />
                     <StatusTag label={detail.targetTypeLabel} />
-                    <span className="ml-auto text-[11px] text-slate-400 tabular-nums">
+                    <span className="ml-auto text-[12px] text-slate-500 tabular-nums">
                       접수 {fmtDate(detail.createdAt, true)}
                     </span>
                   </div>
@@ -211,7 +211,7 @@ export default function FanOpsModeration() {
                       {detail.author ? (
                         <>
                           <p className="text-[14px] font-bold text-slate-900">{detail.author.nickname}</p>
-                          <p className="text-[11px] text-slate-400 mt-0.5">가입 {fmtDate(detail.author.joinedAt)}</p>
+                          <p className="text-[12px] text-slate-500 mt-0.5">가입 {fmtDate(detail.author.joinedAt)}</p>
                           <div className="grid grid-cols-3 gap-2 mt-3">
                             {[
                               { l: '작성 글', v: detail.author.posts },
@@ -220,12 +220,12 @@ export default function FanOpsModeration() {
                             ].map((s) => (
                               <div key={s.l} className="text-center">
                                 <p className="text-[16px] font-extrabold text-slate-900 tabular-nums">{nf(s.v)}</p>
-                                <p className="text-[10px] text-slate-400 mt-0.5">{s.l}</p>
+                                <p className="text-[12.5px] text-slate-500 mt-0.5">{s.l}</p>
                               </div>
                             ))}
                           </div>
                         </>
-                      ) : <p className="text-[13px] text-slate-400">작성자 정보 없음</p>}
+                      ) : <p className="text-[13px] text-slate-500">작성자 정보 없음</p>}
                     </div>
 
                     {/* AI 분석 */}
@@ -242,11 +242,11 @@ export default function FanOpsModeration() {
                           </div>
                         </>
                       ) : (
-                        <p className="text-[13px] text-slate-400">자동 판정 점수 없음</p>
+                        <p className="text-[13px] text-slate-500">자동 판정 점수 없음</p>
                       )}
                       {detail.policies?.length > 0 && (
                         <div className="mt-3 pt-3 border-t border-slate-100 space-y-1">
-                          <p className="text-[11px] font-bold text-slate-400">적용 정책</p>
+                          <p className="text-[12px] font-bold text-slate-500">적용 정책</p>
                           {detail.policies.map((p: string) => (
                             <p key={p} className="text-[12px] text-rose-600">{p}</p>
                           ))}
@@ -271,7 +271,7 @@ export default function FanOpsModeration() {
                       ))}
                     </div>
                     {decision && (
-                      <p className="text-[12px] text-slate-400 mb-3">
+                      <p className="text-[12px] text-slate-500 mb-3">
                         {detail.decisions.find((d: any) => d.code === decision)?.desc}
                       </p>
                     )}

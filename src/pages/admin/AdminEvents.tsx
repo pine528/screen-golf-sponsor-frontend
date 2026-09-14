@@ -106,7 +106,7 @@ export function AdminEvents() {
         <div className="card p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
                 type="text"
                 placeholder="이벤트명 또는 장소 검색..."
@@ -116,7 +116,7 @@ export function AdminEvents() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-400" />
+              <Filter className="w-5 h-5 text-slate-500" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -227,7 +227,7 @@ export function AdminEvents() {
                               setSelectedEvent(event);
                               setShowModal(true);
                             }}
-                            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                             title="보기"
                           >
                             <Eye className="w-4 h-4" />
@@ -237,7 +237,7 @@ export function AdminEvents() {
                               setSelectedEvent(event);
                               setShowModal(true);
                             }}
-                            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                             title="수정"
                           >
                             <Edit className="w-4 h-4" />
@@ -245,7 +245,7 @@ export function AdminEvents() {
                           <button
                             onClick={() => handleDelete(event)}
                             disabled={deleteMutation.isPending}
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                            className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                             title="삭제"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -267,7 +267,7 @@ export function AdminEvents() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                    className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
@@ -276,7 +276,7 @@ export function AdminEvents() {
                   </span>
                   <button
                     onClick={() => setPage((p) => p + 1)}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                    className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -590,7 +590,7 @@ function EventModal({ event, onClose, onSave }: EventModalProps) {
                 </label>
               </div>
             </div>
-            <p className="text-[10px] text-slate-500 mt-2">
+            <p className="text-[12.5px] text-slate-500 mt-2">
               관리자 우선 정책: 활성 N일 미입력 시 시스템 기본 14일 적용
             </p>
           </div>

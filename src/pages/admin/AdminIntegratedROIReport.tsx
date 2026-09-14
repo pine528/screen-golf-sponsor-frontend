@@ -141,9 +141,9 @@ export default function AdminIntegratedROIReport() {
         <GlobalFilter value={filter} onChange={setFilter} hideAthlete hideCampaign />
 
         {!campaignId ? (
-          <div className="text-center py-16 text-sm text-slate-400 bg-slate-50 rounded-xl">캠페인을 선택해주세요</div>
+          <div className="text-center py-16 text-sm text-slate-500 bg-slate-50 rounded-xl">캠페인을 선택해주세요</div>
         ) : isLoading ? (
-          <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
+          <div className="text-center py-12 text-sm text-slate-500">로딩 중...</div>
         ) : (
           <>
             {/* 상단 풀 퍼널 KPI */}
@@ -223,9 +223,9 @@ export default function AdminIntegratedROIReport() {
                 </div>
               </div>
               {compareMode === 'none' ? (
-                <div className="text-xs text-slate-400 text-center py-4">비교 기간을 선택하세요</div>
+                <div className="text-xs text-slate-500 text-center py-4">비교 기간을 선택하세요</div>
               ) : !compare || !compare.previous?.purchases ? (
-                <div className="text-xs text-slate-400 text-center py-4">비교 기간 데이터가 부족합니다</div>
+                <div className="text-xs text-slate-500 text-center py-4">비교 기간 데이터가 부족합니다</div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <DeltaCard label="유입" current={compare.current.landingViews} previous={compare.previous.landingViews} delta={compare.delta.landingViews} />
@@ -256,9 +256,9 @@ function DeltaCard({ label, current, previous, delta, format }: { label: string;
   const isDown = delta !== null && delta < 0;
   return (
     <div className="bg-slate-50 rounded-lg p-3">
-      <div className="text-[10px] font-semibold text-slate-500">{label}</div>
+      <div className="text-[12.5px] font-semibold text-slate-500">{label}</div>
       <div className="text-lg font-extrabold">{fmt(current)}</div>
-      <div className="text-[10px] text-slate-400">이전: {fmt(previous)}</div>
+      <div className="text-[12.5px] text-slate-500">이전: {fmt(previous)}</div>
       {delta !== null && (
         <div className={`text-xs font-bold inline-flex items-center gap-0.5 mt-1 ${isUp ? 'text-emerald-600' : isDown ? 'text-rose-600' : 'text-slate-500'}`}>
           {isUp ? <TrendingUp className="w-3 h-3" /> : isDown ? <TrendingDown className="w-3 h-3" /> : null}

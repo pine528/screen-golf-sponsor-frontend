@@ -239,7 +239,7 @@ export function BrandLogoTemplates() {
                           활성
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-400">비활성</span>
+                        <span className="text-xs text-slate-500">비활성</span>
                       )}
                     </div>
                   </div>
@@ -257,7 +257,7 @@ export function BrandLogoTemplates() {
                         }
                       }}
                       disabled={deleteMutation.isPending}
-                      className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       title="삭제"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -282,7 +282,7 @@ export function BrandLogoTemplates() {
                     setShowUploadModal(false);
                     resetForm();
                   }}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -323,7 +323,7 @@ export function BrandLogoTemplates() {
                       </div>
                     ) : (
                       <div>
-                        <Upload className="w-10 h-10 text-slate-400 mx-auto mb-2" />
+                        <Upload className="w-10 h-10 text-slate-500 mx-auto mb-2" />
                         <p className="text-sm text-slate-600">클릭하여 파일 선택</p>
                         <p className="text-xs text-slate-500 mt-1">PNG, JPG, SVG (권장: 500x500px 이상)</p>
                       </div>

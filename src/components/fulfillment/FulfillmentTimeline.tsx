@@ -84,7 +84,7 @@ export function FulfillmentTimeline({
                     'relative z-10 mx-auto flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all',
                     isCompleted && 'border-emerald-500 bg-emerald-500 text-white',
                     isCurrent && 'border-emerald-500 bg-white text-emerald-500 ring-4 ring-emerald-100',
-                    isPending && 'border-slate-200 bg-white text-slate-400'
+                    isPending && 'border-slate-200 bg-white text-slate-500'
                   )}
                 >
                   {isCompleted ? (
@@ -101,7 +101,7 @@ export function FulfillmentTimeline({
                   'mt-2 text-xs font-medium',
                   isCompleted && 'text-emerald-600',
                   isCurrent && 'text-emerald-600',
-                  isPending && 'text-slate-400'
+                  isPending && 'text-slate-500'
                 )}
               >
                 {step.label}
@@ -175,7 +175,7 @@ export function FulfillmentTimelineVertical({
                     'font-medium',
                     isCompleted && 'text-emerald-700',
                     isCurrent && 'text-emerald-700',
-                    isPending && 'text-slate-400'
+                    isPending && 'text-slate-500'
                   )}
                 >
                   {step.label}

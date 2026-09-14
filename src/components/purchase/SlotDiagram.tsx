@@ -14,10 +14,10 @@ export const STATUS_META: Record<string, { label: string; dot: string; fill: str
   AVAILABLE: { label: '구매 가능', dot: 'bg-emerald-500', fill: '#10b981', text: 'text-emerald-700', selectable: true },
   AUCTION_ACTIVE: { label: '경매 진행중', dot: 'bg-amber-500', fill: '#f59e0b', text: 'text-amber-700', selectable: true },
   HELD: { label: '예약중', dot: 'bg-slate-400', fill: '#94a3b8', text: 'text-slate-500', selectable: false },
-  SOLD: { label: '판매완료', dot: 'bg-slate-300', fill: '#cbd5e1', text: 'text-slate-400', selectable: false },
+  SOLD: { label: '판매완료', dot: 'bg-slate-300', fill: '#cbd5e1', text: 'text-slate-500', selectable: false },
   RESTRICTED: { label: '제한', dot: 'bg-rose-400', fill: '#fb7185', text: 'text-rose-600', selectable: false },
   PENDING_APPROVAL: { label: '승인 대기', dot: 'bg-violet-400', fill: '#a78bfa', text: 'text-violet-600', selectable: false },
-  UNAVAILABLE: { label: '판매 안함', dot: 'bg-slate-300', fill: '#cbd5e1', text: 'text-slate-400', selectable: false },
+  UNAVAILABLE: { label: '판매 안함', dot: 'bg-slate-300', fill: '#cbd5e1', text: 'text-slate-500', selectable: false },
 };
 
 export type DiagramSlot = {
@@ -95,7 +95,7 @@ export default function SlotDiagram({
       {/* 범례 */}
       <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 mt-3">
         {['AVAILABLE', 'AUCTION_ACTIVE', 'HELD', 'SOLD'].map((k) => (
-          <span key={k} className="inline-flex items-center gap-1.5 text-[11px] text-slate-500">
+          <span key={k} className="inline-flex items-center gap-1.5 text-[12px] text-slate-500">
             <span className={`w-2 h-2 rounded-full ${STATUS_META[k].dot}`} />
             {STATUS_META[k].label}
           </span>
@@ -103,12 +103,12 @@ export default function SlotDiagram({
       </div>
 
       {/* 좌·우 기준 안내 — 정면 도식이라 선수의 왼쪽이 화면에서는 오른쪽에 온다 */}
-      <p className="mt-1.5 text-center text-[10px] text-slate-400">
+      <p className="mt-1.5 text-center text-[12.5px] text-slate-500">
         슬롯명의 좌·우는 선수가 착용한 기준입니다 (정면에서 보면 좌우가 바뀝니다)
       </p>
 
       {unplaced.length > 0 && (
-        <p className="mt-2 text-center text-[11px] text-slate-400">
+        <p className="mt-2 text-center text-[12px] text-slate-500">
           도식 미표기 슬롯 {unplaced.length}개는 아래 목록에서 선택할 수 있습니다.
         </p>
       )}

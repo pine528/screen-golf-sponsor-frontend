@@ -61,7 +61,7 @@ export default function AdminReports() {
               onChange={(e) => setDateRange({ ...dateRange, startDate: e.target.value })}
               className="input w-auto"
             />
-            <span className="text-slate-400">~</span>
+            <span className="text-slate-500">~</span>
             <input
               type="date"
               value={dateRange.endDate}

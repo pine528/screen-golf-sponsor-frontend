@@ -170,8 +170,8 @@ export default function AdminMiniStoreSettings() {
                 {(store.products || []).map((p: any, idx: number) => (
                   <div key={p.id} className="flex items-center gap-2 p-2 border border-slate-100 rounded-lg">
                     <div className="flex flex-col">
-                      <button onClick={() => moveProduct(store.products, idx, 'up')} disabled={idx === 0} className="p-0.5 text-slate-400 hover:text-slate-700 disabled:opacity-20"><ArrowUp className="w-3 h-3" /></button>
-                      <button onClick={() => moveProduct(store.products, idx, 'down')} disabled={idx === (store.products.length - 1)} className="p-0.5 text-slate-400 hover:text-slate-700 disabled:opacity-20"><ArrowDown className="w-3 h-3" /></button>
+                      <button onClick={() => moveProduct(store.products, idx, 'up')} disabled={idx === 0} className="p-0.5 text-slate-500 hover:text-slate-700 disabled:opacity-20"><ArrowUp className="w-3 h-3" /></button>
+                      <button onClick={() => moveProduct(store.products, idx, 'down')} disabled={idx === (store.products.length - 1)} className="p-0.5 text-slate-500 hover:text-slate-700 disabled:opacity-20"><ArrowDown className="w-3 h-3" /></button>
                     </div>
                     <div className="relative">
                       {p.imageUrl ? <img src={p.imageUrl} alt="" className="w-12 h-12 rounded object-cover" /> : <div className="w-12 h-12 bg-slate-100 rounded" />}
@@ -182,11 +182,11 @@ export default function AdminMiniStoreSettings() {
                       <div className="text-xs text-slate-500">₩{Number(p.price).toLocaleString()} {p.discountPrice && `→ ₩${Number(p.discountPrice).toLocaleString()}`}</div>
                     </div>
                     {p.soldOut ? (
-                      <span className="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">품절</span>
+                      <span className="text-[12.5px] font-bold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">품절</span>
                     ) : p.stock <= 5 ? (
-                      <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">재고 {p.stock}</span>
+                      <span className="text-[12.5px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">재고 {p.stock}</span>
                     ) : (
-                      <span className="text-xs text-slate-400">재고 {p.stock}</span>
+                      <span className="text-xs text-slate-500">재고 {p.stock}</span>
                     )}
                     <button onClick={() => deleteProductMut.mutate(p.id)} className="p-1 text-rose-500 hover:bg-rose-50 rounded">
                       <Trash2 className="w-3 h-3" />
@@ -194,7 +194,7 @@ export default function AdminMiniStoreSettings() {
                   </div>
                 ))}
                 {(!store.products || store.products.length === 0) && (
-                  <div className="text-center py-6 text-xs text-slate-400 bg-slate-50 rounded">아직 상품이 없습니다</div>
+                  <div className="text-center py-6 text-xs text-slate-500 bg-slate-50 rounded">아직 상품이 없습니다</div>
                 )}
               </div>
               <div className="border-t border-slate-100 pt-3 space-y-2">

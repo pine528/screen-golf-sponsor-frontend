@@ -229,7 +229,7 @@ export default function Orders() {
 
                       {/* Date & Actions */}
                       <div className="flex items-center justify-between mt-3">
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-slate-500">
                           {formatDate(order.createdAt)}
                         </span>
 

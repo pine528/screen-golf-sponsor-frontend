@@ -156,7 +156,7 @@ export default function ProposalNew() {
             <>
               <Field label="희망 슬롯">
                 {slots.length === 0 ? (
-                  <p className="text-xs text-slate-400">이 선수의 슬롯 정보가 아직 없습니다. 상담으로 구성할 수 있습니다.</p>
+                  <p className="text-xs text-slate-500">이 선수의 슬롯 정보가 아직 없습니다. 상담으로 구성할 수 있습니다.</p>
                 ) : (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                     {slots.map((s) => {
@@ -171,7 +171,7 @@ export default function ProposalNew() {
                   </div>
                 )}
                 {form.desiredSlots.length > 0 && (
-                  <p className="mt-2 text-[11px] text-slate-500">선택 순서가 우선순위로 저장됩니다 ({form.desiredSlots.length}개 선택).</p>
+                  <p className="mt-2 text-[12px] text-slate-500">선택 순서가 우선순위로 저장됩니다 ({form.desiredSlots.length}개 선택).</p>
                 )}
               </Field>
               <Toggle label="대체 슬롯 허용" value={form.allowAlternative} onChange={(v) => set('allowAlternative', v)} hint="희망 슬롯이 판매된 경우 동일 등급 슬롯으로 대체합니다." />
@@ -208,10 +208,10 @@ export default function ProposalNew() {
             <>
               <Field label="총 예산">
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₩</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">₩</span>
                   <input type="number" min={0} className="w-full input pl-8" value={form.totalBudget} onChange={(e) => set('totalBudget', e.target.value)} placeholder="0" />
                 </div>
-                {form.totalBudget ? <p className="mt-1 text-[11px] text-slate-500">{krw(form.totalBudget)}</p> : null}
+                {form.totalBudget ? <p className="mt-1 text-[12px] text-slate-500">{krw(form.totalBudget)}</p> : null}
               </Field>
               <Toggle label="분할 결제 희망" value={form.installmentPlan.enabled} onChange={(v) => set('installmentPlan', { ...form.installmentPlan, enabled: v })} />
               {form.installmentPlan.enabled && (
@@ -289,7 +289,7 @@ function Toggle({ label, value, onChange, hint }: { label: string; value: boolea
       <input type="checkbox" checked={value} onChange={(e) => onChange(e.target.checked)} className="mt-0.5 w-4 h-4 accent-slate-900" />
       <span>
         <span className="text-xs font-semibold text-slate-800">{label}</span>
-        {hint && <span className="block text-[11px] text-slate-500 break-keep">{hint}</span>}
+        {hint && <span className="block text-[12px] text-slate-500 break-keep">{hint}</span>}
       </span>
     </label>
   );

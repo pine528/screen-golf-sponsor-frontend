@@ -192,7 +192,7 @@ export default function AdminTaxInvoices() {
 
         {/* 필터 */}
         <div className="card p-4 flex flex-wrap items-center gap-4">
-          <Filter className="w-4 h-4 text-slate-400" />
+          <Filter className="w-4 h-4 text-slate-500" />
           <select
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}

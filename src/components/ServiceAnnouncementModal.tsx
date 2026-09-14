@@ -68,7 +68,7 @@ export function ServiceAnnouncementModal() {
           <h2 className="text-xl font-extrabold text-slate-900 mb-2">SPONPIK 공식 오픈 일정 변경 안내</h2>
 
           {/* 상태 뱃지 */}
-          <span className="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-100">
+          <span className="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[12px] font-bold border border-emerald-100">
             9월 공식 오픈 예정
           </span>
         </div>

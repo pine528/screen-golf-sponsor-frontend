@@ -465,7 +465,7 @@ export function AgencyAthleteDetail() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <User className="w-8 h-8 text-slate-400" />
+                    <User className="w-8 h-8 text-slate-500" />
                   </div>
                 )}
               </div>
@@ -873,7 +873,7 @@ export function AgencyAthleteDetail() {
                             {getEventMonthLabel(contract.auction?.slotInstance?.event)} -{' '}
                             {contract.auction?.slotInstance?.slotTemplate?.name}
                           </p>
-                          <p className="text-xs text-slate-400 mt-1">
+                          <p className="text-xs text-slate-500 mt-1">
                             {formatDate(contract.createdAt)}
                           </p>
                         </div>

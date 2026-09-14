@@ -63,7 +63,7 @@ export default function AdminOfferDashboard() {
           <div className="ml-auto flex items-center gap-2">
             <input type="date" value={from} onChange={(e) => setFrom(e.target.value)}
               className="h-10 px-3 rounded-xl border border-slate-200 bg-white text-[12.5px]" />
-            <span className="text-slate-400">~</span>
+            <span className="text-slate-500">~</span>
             <input type="date" value={to} onChange={(e) => setTo(e.target.value)}
               className="h-10 px-3 rounded-xl border border-slate-200 bg-white text-[12.5px]" />
             <button onClick={load} aria-label="새로고침"
@@ -83,7 +83,7 @@ export default function AdminOfferDashboard() {
               <p className={`mt-1.5 text-[22px] font-black leading-tight ${x.accent ? 'text-emerald-600' : ''}`}>
                 {x.value != null ? x.fmt(x.value) : '집계 중'}
               </p>
-              {x.value === 0 && <p className="text-[10.5px] text-slate-400">아직 집계된 값이 없습니다</p>}
+              {x.value === 0 && <p className="text-[12.5px] text-slate-500">아직 집계된 값이 없습니다</p>}
             </div>
           ))}
         </div>
@@ -97,7 +97,7 @@ export default function AdminOfferDashboard() {
                 const width = Math.max(12, 100 - i * 16);
                 return (
                   <li key={f.key} className="flex items-center gap-3">
-                    <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 text-[10.5px] font-black flex items-center justify-center shrink-0">{i + 1}</span>
+                    <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 text-[12.5px] font-black flex items-center justify-center shrink-0">{i + 1}</span>
                     <span className="text-[12.5px] font-bold w-[72px] shrink-0">{f.label}</span>
                     <span className="flex-1 h-7 rounded-lg bg-slate-100 overflow-hidden">
                       <span className="block h-full bg-gradient-to-r from-indigo-500 to-indigo-400" style={{ width: `${width}%` }} />
@@ -110,7 +110,7 @@ export default function AdminOfferDashboard() {
                 );
               })}
             </ul>
-            <p className="mt-3 text-[11px] text-slate-400 break-keep">
+            <p className="mt-3 text-[12px] text-slate-500 break-keep">
               비율은 직전 단계 대비입니다. 상위 단계가 집계되지 않으면 비율을 계산하지 않습니다.
             </p>
           </div>
@@ -125,13 +125,13 @@ export default function AdminOfferDashboard() {
                     className="w-full rounded-t bg-indigo-400 group-hover:bg-indigo-600 transition-colors"
                     style={{ height: `${Math.max(2, (d.revenue / maxRevenue) * 170)}px` }}
                   />
-                  <span className="absolute -top-6 hidden group-hover:block px-1.5 py-0.5 rounded bg-slate-900 text-white text-[10px] whitespace-nowrap">
+                  <span className="absolute -top-6 hidden group-hover:block px-1.5 py-0.5 rounded bg-slate-900 text-white text-[12.5px] whitespace-nowrap">
                     {d.revenue.toLocaleString()}원
                   </span>
                 </div>
               ))}
             </div>
-            <div className="mt-1.5 flex justify-between text-[10px] text-slate-400">
+            <div className="mt-1.5 flex justify-between text-[12.5px] text-slate-500">
               <span>{data?.daily?.[0]?.date?.slice(5)}</span>
               <span>{data?.daily?.[data.daily.length - 1]?.date?.slice(5)}</span>
             </div>
@@ -144,7 +144,7 @@ export default function AdminOfferDashboard() {
             {TABS.map((t) => (
               <button key={t.key} onClick={() => setTab(t.key)}
                 className={`px-4 py-2.5 text-[13px] font-bold border-b-2 ${
-                  tab === t.key ? 'border-indigo-500 text-indigo-700' : 'border-transparent text-slate-400'
+                  tab === t.key ? 'border-indigo-500 text-indigo-700' : 'border-transparent text-slate-500'
                 }`}>
                 {t.label}
               </button>
@@ -160,8 +160,8 @@ export default function AdminOfferDashboard() {
               { label: '재고 임박 상품 비율', v: data?.rates?.lowStockRatio },
             ].map((r) => (
               <div key={r.label} className="rounded-xl border border-slate-200 p-4">
-                <p className="text-[11.5px] text-slate-500 break-keep">{r.label}</p>
-                <p className="mt-1 text-[19px] font-black">{r.v == null ? <span className="text-[13px] text-slate-400">집계 중</span> : `${r.v}%`}</p>
+                <p className="text-[12.5px] text-slate-500 break-keep">{r.label}</p>
+                <p className="mt-1 text-[19px] font-black">{r.v == null ? <span className="text-[13px] text-slate-500">집계 중</span> : `${r.v}%`}</p>
               </div>
             ))}
           </div>
@@ -179,7 +179,7 @@ export default function AdminOfferDashboard() {
                 <tbody className="divide-y divide-slate-100">
                   {(data?.byOffer || []).slice(0, 10).map((o: any, i: number) => (
                     <tr key={o.id} className="hover:bg-slate-50/60">
-                      <td className="px-3 py-2.5 font-black text-slate-400">{i + 1}</td>
+                      <td className="px-3 py-2.5 font-black text-slate-500">{i + 1}</td>
                       <td className="px-3 py-2.5">
                         <Link to={`/admin/offers/${o.id}`} className="font-bold hover:text-emerald-700 break-keep">{o.title}</Link>
                       </td>
@@ -258,12 +258,12 @@ export default function AdminOfferDashboard() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <Link to={`/admin/offers/${o.id}`} className="block text-[13px] font-extrabold hover:text-emerald-700 break-keep">{o.title}</Link>
-                    <span className="block text-[11px] text-slate-400">노출 {o.view.toLocaleString()} · 상세 {o.detail.toLocaleString()} · 구매 {o.sold}</span>
+                    <span className="block text-[12px] text-slate-500">노출 {o.view.toLocaleString()} · 상세 {o.detail.toLocaleString()} · 구매 {o.sold}</span>
                   </span>
                   <span className="text-[14px] font-black tabular-nums shrink-0">{o.revenue.toLocaleString()}원</span>
                 </li>
               ))}
-              {!data?.topOffers?.length && <p className="py-8 text-center text-[12.5px] text-slate-400">아직 판매 실적이 없습니다</p>}
+              {!data?.topOffers?.length && <p className="py-8 text-center text-[12.5px] text-slate-500">아직 판매 실적이 없습니다</p>}
             </ul>
           </div>
 
@@ -277,14 +277,14 @@ export default function AdminOfferDashboard() {
             <ul className="mt-4 space-y-2">
               {(data?.alerts || []).map((a: any, i: number) => (
                 <li key={i} className="flex items-start gap-3 rounded-xl border border-slate-100 p-3">
-                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-black shrink-0 ${
+                  <span className={`px-1.5 py-0.5 rounded text-[12.5px] font-black shrink-0 ${
                     a.severity === 'ERROR' ? 'bg-rose-100 text-rose-700' : a.severity === 'WARN' ? 'bg-amber-100 text-amber-700' : 'bg-sky-100 text-sky-700'
                   }`}>
                     {a.badge}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-[12.5px] font-bold break-keep">{a.title}</span>
-                    <span className="block text-[11px] text-slate-500 break-keep">{a.detail || a.message}</span>
+                    <span className="block text-[12px] text-slate-500 break-keep">{a.detail || a.message}</span>
                   </span>
                   {a.action && (
                     <Link to={a.action.to} aria-label={a.action.label} className="text-slate-300 hover:text-slate-700 shrink-0">
@@ -293,12 +293,12 @@ export default function AdminOfferDashboard() {
                   )}
                 </li>
               ))}
-              {!data?.alerts?.length && <p className="py-8 text-center text-[12.5px] text-slate-400">처리할 알림이 없습니다</p>}
+              {!data?.alerts?.length && <p className="py-8 text-center text-[12.5px] text-slate-500">처리할 알림이 없습니다</p>}
             </ul>
           </div>
         </div>
 
-        <p className="mt-4 flex items-center justify-between text-[11px] text-slate-400">
+        <p className="mt-4 flex items-center justify-between text-[12px] text-slate-500">
           <span>
             지표 설명 · 찜→구매 전환율: 보관(찜) 대비 구매 수 비율 | 취소율: 주문 대비 취소 수 비율
           </span>

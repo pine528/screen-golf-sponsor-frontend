@@ -87,9 +87,9 @@ function AccordionItem({
         </div>
         <div className="flex-shrink-0 mt-1">
           {isOpen ? (
-            <ChevronUp className="w-5 h-5 text-slate-400" />
+            <ChevronUp className="w-5 h-5 text-slate-500" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-slate-400" />
+            <ChevronDown className="w-5 h-5 text-slate-500" />
           )}
         </div>
       </button>
@@ -175,7 +175,7 @@ export function Faq() {
         {/* Search */}
         <div className="card p-4 mb-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
             <input
               type="text"
               value={searchQuery}
@@ -188,7 +188,7 @@ export function Faq() {
                 onClick={() => setSearchQuery('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 rounded"
               >
-                <X className="w-4 h-4 text-slate-400" />
+                <X className="w-4 h-4 text-slate-500" />
               </button>
             )}
           </div>
@@ -251,7 +251,7 @@ export function Faq() {
         ) : !faqs || faqs.length === 0 ? (
           <div className="card p-12 text-center">
             <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <HelpCircle className="w-8 h-8 text-slate-400" />
+              <HelpCircle className="w-8 h-8 text-slate-500" />
             </div>
             <h3 className="text-lg font-semibold text-slate-900 mb-2">
               {debouncedQuery ? '검색 결과가 없습니다' : '등록된 FAQ가 없습니다'}

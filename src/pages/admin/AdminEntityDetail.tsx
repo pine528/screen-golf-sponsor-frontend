@@ -292,7 +292,7 @@ export default function AdminEntityDetail() {
                     />
                   ) : (
                     <div className="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center">
-                      <Users className="w-8 h-8 text-slate-400" />
+                      <Users className="w-8 h-8 text-slate-500" />
                     </div>
                   )}
                   {/* 호버 오버레이 + 카메라 아이콘 */}
@@ -544,7 +544,7 @@ export default function AdminEntityDetail() {
                   <h3 className="text-sm font-semibold text-slate-700 mb-4">기본 정보</h3>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 text-sm">
-                      <Calendar className="w-4 h-4 text-slate-400" />
+                      <Calendar className="w-4 h-4 text-slate-500" />
                       <span className="text-slate-600">가입일:</span>
                       <span className="text-slate-900">{formatShortDate(entity.createdAt)}</span>
                     </div>
@@ -553,7 +553,7 @@ export default function AdminEntityDetail() {
                       <>
                         {entity.tour && (
                           <div className="flex items-center gap-3 text-sm">
-                            <Briefcase className="w-4 h-4 text-slate-400" />
+                            <Briefcase className="w-4 h-4 text-slate-500" />
                             <span className="text-slate-600">투어:</span>
                             <span className="text-slate-900">{entity.tour}</span>
                           </div>
@@ -561,7 +561,7 @@ export default function AdminEntityDetail() {
                         {/* SPONPIK docx 4 권장 데이터 항목 (구조화 필드) */}
                         {entity.sportType && (
                           <div className="flex items-center gap-3 text-sm">
-                            <Briefcase className="w-4 h-4 text-slate-400" />
+                            <Briefcase className="w-4 h-4 text-slate-500" />
                             <span className="text-slate-600">종목:</span>
                             <span className="text-slate-900">
                               {entity.sportType === 'GOLF' ? '🏌️ 골프' : entity.sportType === 'SCREEN_GOLF' ? '⛳ 스크린골프' : entity.sportType}
@@ -571,7 +571,7 @@ export default function AdminEntityDetail() {
                         )}
                         {entity.affiliation && (
                           <div className="flex items-center gap-3 text-sm">
-                            <Building2 className="w-4 h-4 text-slate-400" />
+                            <Building2 className="w-4 h-4 text-slate-500" />
                             <span className="text-slate-600">소속:</span>
                             <span className="text-slate-900">{entity.affiliation}</span>
                           </div>
@@ -579,28 +579,28 @@ export default function AdminEntityDetail() {
                         {/* 선수 프로필 구조화 — 학력/수상/경력 */}
                         {entity.education && (
                           <div className="flex items-start gap-3 text-sm">
-                            <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <FileText className="w-4 h-4 text-slate-500 mt-0.5" />
                             <span className="text-slate-600">학력:</span>
                             <span className="text-slate-900 flex-1">{entity.education}</span>
                           </div>
                         )}
                         {entity.awards && (
                           <div className="flex items-start gap-3 text-sm">
-                            <Trophy className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <Trophy className="w-4 h-4 text-slate-500 mt-0.5" />
                             <span className="text-slate-600">수상:</span>
                             <span className="text-slate-900 flex-1">{entity.awards}</span>
                           </div>
                         )}
                         {entity.career && (
                           <div className="flex items-start gap-3 text-sm">
-                            <Briefcase className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <Briefcase className="w-4 h-4 text-slate-500 mt-0.5" />
                             <span className="text-slate-600">경력:</span>
                             <span className="text-slate-900 flex-1">{entity.career}</span>
                           </div>
                         )}
                         {(entity.height || entity.region || entity.debutYear) && (
                           <div className="flex items-start gap-3 text-sm">
-                            <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <FileText className="w-4 h-4 text-slate-500 mt-0.5" />
                             <span className="text-slate-600">상세:</span>
                             <span className="text-slate-900 flex-1 inline-flex flex-wrap items-center gap-x-2">
                               {entity.height && <span>📏 {entity.height}cm</span>}
@@ -615,27 +615,27 @@ export default function AdminEntityDetail() {
                           }`}>
                             {entity.isActive ? '🟢 운영 활성' : '⚪ 운영 비활성'}
                           </span>
-                          <span className="text-[10px] text-slate-400">
+                          <span className="text-[12.5px] text-slate-500">
                             (공개 페이지 노출 {entity.isActive ? '대상' : '제외'})
                           </span>
                         </div>
                         {entity.bio && (
                           <div className="flex items-start gap-3 text-sm">
-                            <FileText className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <FileText className="w-4 h-4 text-slate-500 mt-0.5" />
                             <span className="text-slate-600">소개:</span>
                             <span className="text-slate-900 flex-1">{entity.bio}</span>
                           </div>
                         )}
                         {entity.primarySponsors && entity.primarySponsors.length > 0 && (
                           <div className="flex items-start gap-3 text-sm">
-                            <Building2 className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <Building2 className="w-4 h-4 text-slate-500 mt-0.5" />
                             <span className="text-slate-600">주요 스폰서:</span>
                             <span className="text-slate-900">{entity.primarySponsors.join(', ')}</span>
                           </div>
                         )}
                         {entity.blockedCategories && entity.blockedCategories.length > 0 && (
                           <div className="flex items-start gap-3 text-sm">
-                            <Ban className="w-4 h-4 text-slate-400 mt-0.5" />
+                            <Ban className="w-4 h-4 text-slate-500 mt-0.5" />
                             <span className="text-slate-600">블록 카테고리:</span>
                             <span className="text-slate-900">{entity.blockedCategories.join(', ')}</span>
                           </div>
@@ -693,7 +693,7 @@ export default function AdminEntityDetail() {
                           {editForm != null && (
                             <div className="grid grid-cols-2 gap-2 text-xs">
                               <div>
-                                <label className="block text-[10px] text-slate-500 mb-0.5">신장 (cm)</label>
+                                <label className="block text-[12.5px] text-slate-500 mb-0.5">신장 (cm)</label>
                                 <input
                                   type="number"
                                   value={editForm.height}
@@ -703,7 +703,7 @@ export default function AdminEntityDetail() {
                                 />
                               </div>
                               <div>
-                                <label className="block text-[10px] text-slate-500 mb-0.5">데뷔 연도</label>
+                                <label className="block text-[12.5px] text-slate-500 mb-0.5">데뷔 연도</label>
                                 <input
                                   type="number"
                                   value={editForm.debutYear}
@@ -713,7 +713,7 @@ export default function AdminEntityDetail() {
                                 />
                               </div>
                               <div>
-                                <label className="block text-[10px] text-slate-500 mb-0.5">거주 지역</label>
+                                <label className="block text-[12.5px] text-slate-500 mb-0.5">거주 지역</label>
                                 <input
                                   type="text"
                                   value={editForm.region}
@@ -723,7 +723,7 @@ export default function AdminEntityDetail() {
                                 />
                               </div>
                               <div>
-                                <label className="block text-[10px] text-slate-500 mb-0.5">소속</label>
+                                <label className="block text-[12.5px] text-slate-500 mb-0.5">소속</label>
                                 <input
                                   type="text"
                                   value={editForm.affiliation}
@@ -733,7 +733,7 @@ export default function AdminEntityDetail() {
                                 />
                               </div>
                               <div>
-                                <label className="block text-[10px] text-slate-500 mb-0.5">종목</label>
+                                <label className="block text-[12.5px] text-slate-500 mb-0.5">종목</label>
                                 <select
                                   value={editForm.sportType}
                                   onChange={(e) => setEditForm({ ...editForm, sportType: e.target.value })}
@@ -745,7 +745,7 @@ export default function AdminEntityDetail() {
                                 </select>
                               </div>
                               <div>
-                                <label className="block text-[10px] text-slate-500 mb-0.5">운영 활성</label>
+                                <label className="block text-[12.5px] text-slate-500 mb-0.5">운영 활성</label>
                                 <button
                                   onClick={() => setEditForm({ ...editForm, isActive: !editForm.isActive })}
                                   className={`w-full text-xs font-bold px-2 py-1 rounded ${
@@ -757,7 +757,7 @@ export default function AdminEntityDetail() {
                               </div>
                               {/* 선수 프로필 구조화 — 학력/수상/경력 (각 항목 ' · ' 로 구분 입력) */}
                               <div className="col-span-2">
-                                <label className="block text-[10px] text-slate-500 mb-0.5">학력</label>
+                                <label className="block text-[12.5px] text-slate-500 mb-0.5">학력</label>
                                 <textarea
                                   value={editForm.education}
                                   onChange={(e) => setEditForm({ ...editForm, education: e.target.value })}
@@ -767,7 +767,7 @@ export default function AdminEntityDetail() {
                                 />
                               </div>
                               <div className="col-span-2">
-                                <label className="block text-[10px] text-slate-500 mb-0.5">수상</label>
+                                <label className="block text-[12.5px] text-slate-500 mb-0.5">수상</label>
                                 <textarea
                                   value={editForm.awards}
                                   onChange={(e) => setEditForm({ ...editForm, awards: e.target.value })}
@@ -777,7 +777,7 @@ export default function AdminEntityDetail() {
                                 />
                               </div>
                               <div className="col-span-2">
-                                <label className="block text-[10px] text-slate-500 mb-0.5">경력</label>
+                                <label className="block text-[12.5px] text-slate-500 mb-0.5">경력</label>
                                 <textarea
                                   value={editForm.career}
                                   onChange={(e) => setEditForm({ ...editForm, career: e.target.value })}
@@ -797,14 +797,14 @@ export default function AdminEntityDetail() {
                       <>
                         {entity.category && (
                           <div className="flex items-center gap-3 text-sm">
-                            <Briefcase className="w-4 h-4 text-slate-400" />
+                            <Briefcase className="w-4 h-4 text-slate-500" />
                             <span className="text-slate-600">카테고리:</span>
                             <span className="text-slate-900">{entity.category}</span>
                           </div>
                         )}
                         {entity.bizNo && (
                           <div className="flex items-center gap-3 text-sm">
-                            <FileText className="w-4 h-4 text-slate-400" />
+                            <FileText className="w-4 h-4 text-slate-500" />
                             <span className="text-slate-600">사업자번호:</span>
                             <span className="text-slate-900 font-mono">{entity.bizNo}</span>
                           </div>
@@ -813,14 +813,14 @@ export default function AdminEntityDetail() {
                           <>
                             {entity.kycDetail.businessNumber && (
                               <div className="flex items-center gap-3 text-sm">
-                                <ShieldCheck className="w-4 h-4 text-slate-400" />
+                                <ShieldCheck className="w-4 h-4 text-slate-500" />
                                 <span className="text-slate-600">사업자상태:</span>
                                 <span className="text-slate-900">{entity.kycDetail.businessStatus || '-'}</span>
                               </div>
                             )}
                             {entity.kycDetail.verifiedAt && (
                               <div className="flex items-center gap-3 text-sm">
-                                <CheckCircle className="w-4 h-4 text-slate-400" />
+                                <CheckCircle className="w-4 h-4 text-slate-500" />
                                 <span className="text-slate-600">인증일:</span>
                                 <span className="text-slate-900">{formatShortDate(entity.kycDetail.verifiedAt)}</span>
                               </div>
@@ -840,28 +840,28 @@ export default function AdminEntityDetail() {
                       <>
                         {entity.contactName && (
                           <div className="flex items-center gap-3 text-sm">
-                            <Users className="w-4 h-4 text-slate-400" />
+                            <Users className="w-4 h-4 text-slate-500" />
                             <span className="text-slate-600">담당자:</span>
                             <span className="text-slate-900">{entity.contactName}</span>
                           </div>
                         )}
                         {entity.contactEmail && (
                           <div className="flex items-center gap-3 text-sm">
-                            <Mail className="w-4 h-4 text-slate-400" />
+                            <Mail className="w-4 h-4 text-slate-500" />
                             <span className="text-slate-600">담당자 이메일:</span>
                             <span className="text-slate-900">{entity.contactEmail}</span>
                           </div>
                         )}
                         {entity.contactPhone && (
                           <div className="flex items-center gap-3 text-sm">
-                            <Phone className="w-4 h-4 text-slate-400" />
+                            <Phone className="w-4 h-4 text-slate-500" />
                             <span className="text-slate-600">연락처:</span>
                             <span className="text-slate-900">{entity.contactPhone}</span>
                           </div>
                         )}
                         {entity.website && (
                           <div className="flex items-center gap-3 text-sm">
-                            <Globe className="w-4 h-4 text-slate-400" />
+                            <Globe className="w-4 h-4 text-slate-500" />
                             <span className="text-slate-600">웹사이트:</span>
                             <a
                               href={entity.website}
@@ -875,7 +875,7 @@ export default function AdminEntityDetail() {
                         )}
                         {entity.address && (
                           <div className="flex items-center gap-3 text-sm">
-                            <MapPin className="w-4 h-4 text-slate-400" />
+                            <MapPin className="w-4 h-4 text-slate-500" />
                             <span className="text-slate-600">주소:</span>
                             <span className="text-slate-900">{entity.address}</span>
                           </div>
@@ -918,7 +918,7 @@ export default function AdminEntityDetail() {
                         <p className="text-lg font-semibold text-emerald-600">₩{formatNumber(entity.wallet.available)}</p>
                       </div>
                     </div>
-                    <p className="text-xs text-slate-400 mt-2">
+                    <p className="text-xs text-slate-500 mt-2">
                       마지막 업데이트: {formatDate(entity.wallet.updatedAt)}
                     </p>
                   </div>
@@ -1138,7 +1138,7 @@ export default function AdminEntityDetail() {
                           className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
                         >
                           <div className="flex items-center gap-3">
-                            <CreditCard className="w-4 h-4 text-slate-400" />
+                            <CreditCard className="w-4 h-4 text-slate-500" />
                             <div>
                               <p className="text-sm font-medium text-slate-900">
                                 {isAthlete ? contract.brand?.name : contract.athlete?.name}
@@ -1166,7 +1166,7 @@ export default function AdminEntityDetail() {
                           className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
                         >
                           <div className="flex items-center gap-3">
-                            <Briefcase className="w-4 h-4 text-slate-400" />
+                            <Briefcase className="w-4 h-4 text-slate-500" />
                             <div>
                               <p className="text-sm font-medium text-slate-900">
                                 {slot.slotTemplate?.name || '-'}
@@ -1202,7 +1202,7 @@ export default function AdminEntityDetail() {
                           className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
                         >
                           <div className="flex items-center gap-3">
-                            <FileText className="w-4 h-4 text-slate-400" />
+                            <FileText className="w-4 h-4 text-slate-500" />
                             <div>
                               <p className="text-sm font-medium text-slate-900">{campaign.name}</p>
                               <p className="text-xs text-slate-500">
@@ -1301,14 +1301,14 @@ function AdminAthleteEventResults({ athleteId }: { athleteId: string }) {
     <div className="mt-4 pt-4 border-t border-slate-200">
       <h4 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
         🏆 경기결과
-        {pending.length > 0 && <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">승인 대기 {pending.length}</span>}
+        {pending.length > 0 && <span className="text-[12.5px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">승인 대기 {pending.length}</span>}
       </h4>
       <div className="space-y-1.5">
         {results.map((r) => (
           <div key={r.id} className={`flex items-center justify-between gap-2 py-1.5 px-2 rounded text-sm border ${r.status === 'PENDING' ? 'bg-amber-50 border-amber-200' : 'bg-white border-slate-100'}`}>
             <div className="min-w-0 flex-1">
               <div className="font-semibold truncate">{r.eventName}</div>
-              <div className="text-[10px] text-slate-400">
+              <div className="text-[12.5px] text-slate-500">
                 {r.eventDate ? new Date(r.eventDate).toLocaleDateString('ko-KR') : '-'}
                 {r.tour ? ` · ${r.tour}` : ''}{r.rank != null ? ` · ${r.rank}위` : ''}
                 {r.source === 'ATHLETE_SELF' ? ' · 선수 입력' : ''}
@@ -1317,13 +1317,13 @@ function AdminAthleteEventResults({ athleteId }: { athleteId: string }) {
             <div className="flex items-center gap-1 shrink-0">
               {r.status === 'PENDING' ? (
                 <>
-                  <button onClick={() => approveMut.mutate({ id: r.id, status: 'APPROVED' })} disabled={approveMut.isPending} className="text-[10px] font-bold px-2 py-1 bg-emerald-500 text-white rounded hover:bg-emerald-600">승인</button>
-                  <button onClick={() => approveMut.mutate({ id: r.id, status: 'REJECTED' })} disabled={approveMut.isPending} className="text-[10px] font-bold px-2 py-1 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">반려</button>
+                  <button onClick={() => approveMut.mutate({ id: r.id, status: 'APPROVED' })} disabled={approveMut.isPending} className="text-[12.5px] font-bold px-2 py-1 bg-emerald-500 text-white rounded hover:bg-emerald-600">승인</button>
+                  <button onClick={() => approveMut.mutate({ id: r.id, status: 'REJECTED' })} disabled={approveMut.isPending} className="text-[12.5px] font-bold px-2 py-1 bg-slate-200 text-slate-600 rounded hover:bg-slate-300">반려</button>
                 </>
               ) : (
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${r.status === 'REJECTED' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`}>{r.status === 'REJECTED' ? '반려' : '공개'}</span>
+                <span className={`text-[12.5px] font-bold px-1.5 py-0.5 rounded ${r.status === 'REJECTED' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`}>{r.status === 'REJECTED' ? '반려' : '공개'}</span>
               )}
-              <button onClick={() => deleteMut.mutate(r.id)} className="text-[10px] text-rose-500 hover:text-rose-700 font-bold">삭제</button>
+              <button onClick={() => deleteMut.mutate(r.id)} className="text-[12.5px] text-rose-500 hover:text-rose-700 font-bold">삭제</button>
             </div>
           </div>
         ))}

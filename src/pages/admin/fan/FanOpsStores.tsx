@@ -102,10 +102,10 @@ export default function FanOpsStores() {
                       }`}>
                       <div className="flex items-center gap-2 mb-1.5">
                         <StatusTag label={STATUS_LABEL[s.status] ?? s.status} tone={STATUS_TONE[s.status] ?? 'slate'} />
-                        <span className="text-[11px] text-slate-400">{s.responsibleLabel}</span>
+                        <span className="text-[12px] text-slate-500">{s.responsibleLabel}</span>
                       </div>
                       <p className="text-[13px] font-bold text-slate-800 truncate">{s.title}</p>
-                      <p className="text-[11px] text-slate-400 mt-0.5">
+                      <p className="text-[12px] text-slate-500 mt-0.5">
                         {s.athlete?.name} × {s.brandName} · 상품 {s.products}개 · 클릭 {nf(s.clicks)}
                       </p>
                     </button>
@@ -145,7 +145,7 @@ export default function FanOpsStores() {
                               <option key={o.code} value={o.code}>{o.label}</option>
                             ))}
                           </select>
-                          <p className="text-[11px] text-slate-400 mt-1">
+                          <p className="text-[12px] text-slate-500 mt-1">
                             {list.responsibleOptions.find((o: any) => o.code === form.responsible)?.desc}
                           </p>
                         </div>
@@ -199,17 +199,17 @@ export default function FanOpsStores() {
                               { l: 'click_id 파라미터', v: detail.tracking.clickIdParam },
                             ].map((r) => (
                               <div key={r.l} className="flex items-center justify-between">
-                                <span className="text-slate-400">{r.l}</span>
+                                <span className="text-slate-500">{r.l}</span>
                                 <span className="font-mono font-semibold text-slate-700">{r.v}</span>
                               </div>
                             ))}
                             {detail.tracking.sample && (
-                              <p className="pt-2 mt-2 border-t border-slate-200 font-mono text-[10px] text-slate-400 break-all">
+                              <p className="pt-2 mt-2 border-t border-slate-200 font-mono text-[12.5px] text-slate-500 break-all">
                                 {detail.tracking.sample}
                               </p>
                             )}
                           </div>
-                          <p className="text-[11px] text-slate-400 mt-1.5">
+                          <p className="text-[12px] text-slate-500 mt-1.5">
                             팬이 이동할 때마다 익명 click_id가 새로 발급됩니다. 관리자가 직접 만들지 않습니다.
                           </p>
                         </div>
@@ -224,7 +224,7 @@ export default function FanOpsStores() {
                             ].map((r) => (
                               <div key={r.l} className="rounded-xl bg-slate-50 px-3 py-3 text-center">
                                 <p className="text-[17px] font-extrabold text-slate-900 tabular-nums">{r.v}</p>
-                                <p className="text-[10px] text-slate-400 mt-1">{r.l}</p>
+                                <p className="text-[12.5px] text-slate-500 mt-1">{r.l}</p>
                               </div>
                             ))}
                           </div>
@@ -260,7 +260,7 @@ export default function FanOpsStores() {
                   {/* 연동 상품 */}
                   <Panel title={`연동 상품 ${detail.products.length}개`}
                     right={
-                      <span className="text-[11px] text-slate-400 inline-flex items-center gap-1">
+                      <span className="text-[12px] text-slate-500 inline-flex items-center gap-1">
                         <Plus className="w-3 h-3" /> 상품 등록은 다음 단계에서 연결됩니다
                       </span>
                     }>

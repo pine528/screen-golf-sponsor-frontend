@@ -110,14 +110,14 @@ export default function BrandOrders() {
 
   const columns: Column<any>[] = [
     { key: 'paidAt', label: '주문일시', sortable: true, render: (r) => new Date(r.paidAt).toLocaleString() },
-    { key: 'id', label: '주문번호', render: (r) => <code className="text-[10px]">{r.id?.slice(0, 8)}...</code> },
+    { key: 'id', label: '주문번호', render: (r) => <code className="text-[12.5px]">{r.id?.slice(0, 8)}...</code> },
     { key: 'items', label: '상품', render: (r) => {
       const items = Array.isArray(r.items) ? r.items : [];
       const first = items[0]?.product_id || '-';
       return items.length > 1 ? `${String(first).slice(0, 6)}... 외 ${items.length - 1}건` : String(first).slice(0, 12);
     } },
     { key: 'athlete', label: '선수', render: (r) => r.athlete?.name || '-' },
-    { key: 'promoCode', label: '코드', render: (r) => r.promoCode ? <code className="text-xs bg-emerald-50 px-1.5 py-0.5 rounded">{r.promoCode}</code> : <span className="text-slate-400">-</span> },
+    { key: 'promoCode', label: '코드', render: (r) => r.promoCode ? <code className="text-xs bg-emerald-50 px-1.5 py-0.5 rounded">{r.promoCode}</code> : <span className="text-slate-500">-</span> },
     { key: 'grossAmount', label: '결제금액', sortable: true, align: 'right',
       render: (r) => `₩${Math.round(Number(r.grossAmount)).toLocaleString()}`,
     },
@@ -126,7 +126,7 @@ export default function BrandOrders() {
     },
     { key: 'netAmount', label: '순매출', sortable: true, align: 'right', render: (r) => `₩${Math.round(Number(r.netAmount)).toLocaleString()}` },
     { key: 'attributionReason', label: '귀속', render: (r) => (
-      <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded">{r.attributionReason || 'manual'}</span>
+      <span className="text-[12.5px] bg-slate-100 px-1.5 py-0.5 rounded">{r.attributionReason || 'manual'}</span>
     ) },
     { key: 'status', label: '상태', render: (r) => <StatusBadge status={r.status} /> },
   ];
@@ -151,7 +151,7 @@ export default function BrandOrders() {
               환불/취소 포함
             </label>
             <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-2 top-2 text-slate-400" />
+              <Search className="w-3.5 h-3.5 absolute left-2 top-2 text-slate-500" />
               <input
                 type="text"
                 value={searchTerm}
@@ -208,7 +208,7 @@ export default function BrandOrders() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className={selectedOrder ? 'lg:col-span-2' : 'lg:col-span-3'}>
             {isLoading ? (
-              <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
+              <div className="text-center py-12 text-sm text-slate-500">로딩 중...</div>
             ) : (
               <DetailTable
                 data={filtered}
@@ -224,7 +224,7 @@ export default function BrandOrders() {
             <div className="bg-white border border-slate-200 rounded-xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold">주문 상세</h3>
-                <button onClick={() => setSelectedOrder(null)} className="p-1 text-slate-400 hover:text-slate-600">
+                <button onClick={() => setSelectedOrder(null)} className="p-1 text-slate-500 hover:text-slate-600">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -268,14 +268,14 @@ export default function BrandOrders() {
                 <div className="mt-4 pt-4 border-t border-slate-100">
                   <div className="text-xs font-semibold text-slate-600 mb-2">⏱️ 이벤트 로그</div>
                   {orderEvents.length === 0 ? (
-                    <div className="text-xs text-slate-400 text-center py-2">이벤트 데이터 없음</div>
+                    <div className="text-xs text-slate-500 text-center py-2">이벤트 데이터 없음</div>
                   ) : (
                     <div className="relative pl-4 space-y-1.5">
                       <div className="absolute left-1 top-1 bottom-1 w-px bg-emerald-200" />
                       {orderEvents.map((e: any, i: number) => (
                         <div key={i} className="relative">
                           <div className="absolute -left-3 top-1 w-2 h-2 rounded-full bg-emerald-500" />
-                          <div className="text-[10px] text-slate-400">{new Date(e.occurredAt).toLocaleTimeString()}</div>
+                          <div className="text-[12.5px] text-slate-500">{new Date(e.occurredAt).toLocaleTimeString()}</div>
                           <div className="text-xs font-semibold text-slate-700">
                             {e.eventName === 'PURCHASE' ? '✅ ' : ''}{e.eventName.toLowerCase().replace(/_/g, ' ')}
                           </div>

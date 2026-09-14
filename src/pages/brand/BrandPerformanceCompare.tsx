@@ -69,7 +69,7 @@ export default function BrandPerformanceCompare() {
         {r.profileImageUrl ? <img src={r.profileImageUrl} alt="" className="w-8 h-8 rounded-full object-cover" /> : <div className="w-8 h-8 rounded-full bg-slate-100" />}
         <div>
           <div className="font-semibold">{r.name}</div>
-          <div className="text-[10px] text-slate-400">{r.tour}</div>
+          <div className="text-[12.5px] text-slate-500">{r.tour}</div>
         </div>
       </div>
     ) },
@@ -202,7 +202,7 @@ export default function BrandPerformanceCompare() {
           </button>
         </div>
         {isLoading ? (
-          <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
+          <div className="text-center py-12 text-sm text-slate-500">로딩 중...</div>
         ) : (
           <DetailTable data={sortedItems} columns={columns} pageSize={20} emptyMessage="비교할 데이터가 없습니다" />
         )}

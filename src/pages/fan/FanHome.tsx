@@ -93,7 +93,7 @@ export default function FanHome() {
       case 1:
         return <Crown className="w-4 h-4 text-amber-500" />;
       case 2:
-        return <span className="text-xs font-bold text-slate-400">2</span>;
+        return <span className="text-xs font-bold text-slate-500">2</span>;
       case 3:
         return <span className="text-xs font-bold text-amber-600">3</span>;
       default:
@@ -158,7 +158,7 @@ export default function FanHome() {
             ) : !activeVotes || activeVotes.length === 0 ? (
               <div className="py-8 text-center">
                 <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Vote className="w-6 h-6 text-slate-400" />
+                  <Vote className="w-6 h-6 text-slate-500" />
                 </div>
                 <p className="text-slate-500 text-sm">진행중인 투표가 없습니다</p>
               </div>
@@ -181,7 +181,7 @@ export default function FanHome() {
                           </span>
                         )}
                       </div>
-                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                      <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-600 transition-colors" />
                     </div>
                     <h3 className="font-medium text-slate-900 mb-1 group-hover:text-emerald-600 transition-colors line-clamp-1">
                       {vote.title}
@@ -225,7 +225,7 @@ export default function FanHome() {
             ) : !rankings || rankings.length === 0 ? (
               <div className="py-8 text-center">
                 <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Trophy className="w-6 h-6 text-slate-400" />
+                  <Trophy className="w-6 h-6 text-slate-500" />
                 </div>
                 <p className="text-slate-500 text-sm">아직 랭킹 데이터가 없습니다</p>
               </div>
@@ -251,7 +251,7 @@ export default function FanHome() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Users className="w-5 h-5 text-slate-400" />
+                          <Users className="w-5 h-5 text-slate-500" />
                         </div>
                       )}
                     </div>

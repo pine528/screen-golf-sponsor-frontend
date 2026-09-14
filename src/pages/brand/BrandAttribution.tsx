@@ -69,9 +69,9 @@ export default function BrandAttribution() {
         </div>
 
         {isLoading ? (
-          <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
+          <div className="text-center py-12 text-sm text-slate-500">로딩 중...</div>
         ) : distribution.length === 0 ? (
-          <div className="text-center py-12 text-sm text-slate-400 bg-slate-50 rounded-xl">
+          <div className="text-center py-12 text-sm text-slate-500 bg-slate-50 rounded-xl">
             어트리뷰션 데이터가 없습니다. 다중 터치 포인트가 기록된 후 표시됩니다.
           </div>
         ) : (

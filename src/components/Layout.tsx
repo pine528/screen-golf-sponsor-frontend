@@ -479,7 +479,7 @@ export function Layout({ children }: LayoutProps) {
                 <div className="relative">
                   <Bell className="w-5 h-5" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[12.5px] font-bold rounded-full flex items-center justify-center">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
@@ -533,7 +533,7 @@ export function Layout({ children }: LayoutProps) {
                               <p className="text-xs text-slate-600 line-clamp-2 mt-0.5">
                                 {notification.message}
                               </p>
-                              <p className="text-xs text-slate-400 mt-1">
+                              <p className="text-xs text-slate-500 mt-1">
                                 {formatTimeAgo(notification.createdAt)}
                               </p>
                             </div>
@@ -609,8 +609,8 @@ function NavSections({ groups, isActive, onClick }: {
               type="button"
               onClick={() => g.collapsed && setOpen((o) => ({ ...o, [g.title]: !expanded }))}
               className={cn(
-                'w-full flex items-center justify-between px-3 mb-1 text-[10.5px] font-bold uppercase tracking-[0.12em]',
-                g.collapsed ? 'text-slate-400 hover:text-slate-600 cursor-pointer' : 'text-slate-400 cursor-default',
+                'w-full flex items-center justify-between px-3 mb-1 text-[12.5px] font-bold uppercase tracking-[0.12em]',
+                g.collapsed ? 'text-slate-500 hover:text-slate-600 cursor-pointer' : 'text-slate-500 cursor-default',
                 hasActive && !expanded && 'text-emerald-600',
               )}
             >
@@ -636,7 +636,7 @@ function NavSections({ groups, isActive, onClick }: {
                           : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
                       )}
                     >
-                      <Icon className={cn('w-[18px] h-[18px]', active ? 'text-emerald-600' : 'text-slate-400 group-hover:text-slate-600')} />
+                      <Icon className={cn('w-[18px] h-[18px]', active ? 'text-emerald-600' : 'text-slate-500 group-hover:text-slate-600')} />
                       <span className="truncate">{item.label}</span>
                       {item.live && <LiveBadge />}
                     </Link>

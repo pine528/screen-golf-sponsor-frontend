@@ -105,7 +105,7 @@ export default function Deliverables() {
               <Stat label="대체이행" value={String(summary.substitutedCount)} muted />
               <Stat label="기한 경과" value={String(summary.overdueCount)} danger={summary.overdueCount > 0} />
             </div>
-            <p className="mt-3 text-[11px] text-slate-400 break-keep">{summary.note}</p>
+            <p className="mt-3 text-[12px] text-slate-500 break-keep">{summary.note}</p>
           </div>
         )}
 
@@ -116,7 +116,7 @@ export default function Deliverables() {
         )}
 
         {isLoading ? (
-          <div className="py-16 text-center text-sm text-slate-400">불러오는 중...</div>
+          <div className="py-16 text-center text-sm text-slate-500">불러오는 중...</div>
         ) : items.length === 0 ? (
           <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center">
             <div className="text-sm font-bold text-slate-900 mb-1">이행 항목이 없습니다</div>
@@ -161,13 +161,13 @@ function DeliverableCard({ d, role, onSubmitEvidence, onReviewEvidence, onReques
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-1">
             <span className="text-sm font-bold text-slate-900">{d.title}</span>
-            <span className={`px-2 py-0.5 rounded-lg text-[11px] font-bold ${st.cls}`}>{st.label}</span>
+            <span className={`px-2 py-0.5 rounded-lg text-[12px] font-bold ${st.cls}`}>{st.label}</span>
             {d.substitutionStatus === 'REQUESTED' && (
-              <span className="px-2 py-0.5 rounded-lg text-[11px] font-bold bg-violet-100 text-violet-700">대체이행 요청</span>
+              <span className="px-2 py-0.5 rounded-lg text-[12px] font-bold bg-violet-100 text-violet-700">대체이행 요청</span>
             )}
-            {overdue && <span className="px-2 py-0.5 rounded-lg text-[11px] font-bold bg-rose-100 text-rose-700">기한 경과</span>}
+            {overdue && <span className="px-2 py-0.5 rounded-lg text-[12px] font-bold bg-rose-100 text-rose-700">기한 경과</span>}
           </div>
-          <div className="text-[11px] text-slate-500">
+          <div className="text-[12px] text-slate-500">
             {d.completedCount}/{d.targetCount} 이행 · 기한 {day(d.dueDate)}
             {role === 'ADMIN' && d.athlete?.name ? ` · ${d.athlete.name}` : ''}
             {role !== 'BRAND' && d.brand?.name ? ` · ${d.brand.name}` : ''}
@@ -175,26 +175,26 @@ function DeliverableCard({ d, role, onSubmitEvidence, onReviewEvidence, onReques
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           {role === 'ATHLETE' && !['APPROVED', 'SUBSTITUTED', 'CANCELLED'].includes(d.status) && (
-            <button type="button" onClick={() => setOpen((v) => !v)} className="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-[11px] font-bold inline-flex items-center gap-1">
+            <button type="button" onClick={() => setOpen((v) => !v)} className="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-[12px] font-bold inline-flex items-center gap-1">
               <Upload className="w-3 h-3" /> 증빙 등록
             </button>
           )}
           {['ATHLETE', 'BRAND'].includes(role) && !d.substitutionStatus && d.status !== 'APPROVED' && (
-            <button type="button" onClick={() => setSubOpen((v) => !v)} className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-700 text-[11px] font-semibold inline-flex items-center gap-1">
+            <button type="button" onClick={() => setSubOpen((v) => !v)} className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-700 text-[12px] font-semibold inline-flex items-center gap-1">
               <RefreshCw className="w-3 h-3" /> 대체이행
             </button>
           )}
           {role === 'ADMIN' && d.substitutionStatus === 'REQUESTED' && (
             <>
-              <button type="button" disabled={busy} onClick={() => onReviewSub(true)} className="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-[11px] font-bold">대체 승인</button>
-              <button type="button" disabled={busy} onClick={() => onReviewSub(false)} className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-700 text-[11px] font-semibold">거절</button>
+              <button type="button" disabled={busy} onClick={() => onReviewSub(true)} className="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-[12px] font-bold">대체 승인</button>
+              <button type="button" disabled={busy} onClick={() => onReviewSub(false)} className="px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-700 text-[12px] font-semibold">거절</button>
             </>
           )}
         </div>
       </div>
 
       {d.substitutionType && (
-        <div className="mt-2 text-[11px] text-violet-700 bg-violet-50 border border-violet-100 rounded-lg px-2.5 py-2 break-keep">
+        <div className="mt-2 text-[12px] text-violet-700 bg-violet-50 border border-violet-100 rounded-lg px-2.5 py-2 break-keep">
           대체이행: {SUBSTITUTION.find((s) => s.key === d.substitutionType)?.label}
           {d.substitutionStatus === 'APPROVED' ? ' (승인됨)' : d.substitutionStatus === 'REJECTED' ? ' (거절됨)' : ' (검토 대기)'}
           {d.substitutionNote ? ` — ${d.substitutionNote}` : ''}
@@ -203,10 +203,10 @@ function DeliverableCard({ d, role, onSubmitEvidence, onReviewEvidence, onReques
 
       {subOpen && (
         <div className="mt-3 border-t border-slate-100 pt-3">
-          <div className="text-[11px] font-bold text-slate-700 mb-1.5">대체이행 수단</div>
+          <div className="text-[12px] font-bold text-slate-700 mb-1.5">대체이행 수단</div>
           <div className="flex flex-wrap gap-1.5 mb-2">
             {SUBSTITUTION.map((s) => (
-              <button key={s.key} type="button" onClick={() => setSubType(s.key)} className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold border ${subType === s.key ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-700'}`}>
+              <button key={s.key} type="button" onClick={() => setSubType(s.key)} className={`px-2.5 py-1.5 rounded-lg text-[12px] font-semibold border ${subType === s.key ? 'bg-slate-900 text-white border-slate-900' : 'border-slate-200 text-slate-700'}`}>
                 {s.label}
               </button>
             ))}
@@ -236,29 +236,29 @@ function DeliverableCard({ d, role, onSubmitEvidence, onReviewEvidence, onReques
 
       {(d.evidence || []).length > 0 && (
         <div className="mt-3 border-t border-slate-100 pt-3">
-          <div className="text-[11px] font-bold text-slate-700 mb-1.5">증빙 {d.evidence.length}건</div>
+          <div className="text-[12px] font-bold text-slate-700 mb-1.5">증빙 {d.evidence.length}건</div>
           <ul className="space-y-1.5">
             {d.evidence.map((e: any) => (
               <li key={e.id} className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <a href={e.linkUrl || e.fileUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] text-slate-700 hover:underline truncate block">
+                  <a href={e.linkUrl || e.fileUrl} target="_blank" rel="noopener noreferrer" className="text-[12px] text-slate-700 hover:underline truncate block">
                     {e.note || e.linkUrl || e.fileUrl}
                   </a>
-                  <span className={`text-[10px] ${e.status === 'APPROVED' ? 'text-emerald-600' : e.status === 'REJECTED' ? 'text-rose-600' : 'text-amber-600'}`}>
+                  <span className={`text-[12.5px] ${e.status === 'APPROVED' ? 'text-emerald-600' : e.status === 'REJECTED' ? 'text-rose-600' : 'text-amber-600'}`}>
                     {e.status === 'APPROVED' ? '승인' : e.status === 'REJECTED' ? `반려${e.reviewNote ? ` · ${e.reviewNote}` : ''}` : '검수 대기'}
                   </span>
                 </div>
                 {role === 'ADMIN' && e.status === 'SUBMITTED' && (
                   <div className="flex gap-1 shrink-0">
-                    <button type="button" disabled={busy} onClick={() => onReviewEvidence(e.id, true)} className="px-2 py-1 rounded-lg bg-slate-900 text-white text-[10px] font-bold">승인</button>
-                    <button type="button" disabled={busy} onClick={() => onReviewEvidence(e.id, false, prompt('반려 사유를 입력하세요') || undefined)} className="px-2 py-1 rounded-lg border border-slate-200 text-slate-700 text-[10px] font-semibold">반려</button>
+                    <button type="button" disabled={busy} onClick={() => onReviewEvidence(e.id, true)} className="px-2 py-1 rounded-lg bg-slate-900 text-white text-[12.5px] font-bold">승인</button>
+                    <button type="button" disabled={busy} onClick={() => onReviewEvidence(e.id, false, prompt('반려 사유를 입력하세요') || undefined)} className="px-2 py-1 rounded-lg border border-slate-200 text-slate-700 text-[12.5px] font-semibold">반려</button>
                   </div>
                 )}
               </li>
             ))}
           </ul>
           {role === 'ADMIN' && pendingEvidence.length > 0 && (
-            <p className="mt-2 text-[10px] text-amber-600">검수 대기 {pendingEvidence.length}건</p>
+            <p className="mt-2 text-[12.5px] text-amber-600">검수 대기 {pendingEvidence.length}건</p>
           )}
         </div>
       )}
@@ -270,7 +270,7 @@ function Stat({ label, value, muted, danger }: { label: string; value: string; m
   return (
     <div className="rounded-xl bg-slate-50 px-2 py-2">
       <div className={`text-sm font-extrabold ${danger ? 'text-rose-600' : muted ? 'text-slate-500' : 'text-slate-900'}`}>{value}</div>
-      <div className="text-[10px] text-slate-500">{label}</div>
+      <div className="text-[12.5px] text-slate-500">{label}</div>
     </div>
   );
 }

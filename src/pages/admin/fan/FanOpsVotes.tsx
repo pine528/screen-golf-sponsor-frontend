@@ -121,7 +121,7 @@ export default function FanOpsVotes() {
               <div className="overflow-x-auto">
                 <table className="w-full text-[13px]">
                   <thead>
-                    <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                    <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                       <th className="text-left font-semibold px-5 py-3">문항</th>
                       <th className="text-left font-semibold py-3">선수</th>
                       <th className="text-left font-semibold py-3 whitespace-nowrap">공개 기간</th>
@@ -135,7 +135,7 @@ export default function FanOpsVotes() {
                       <tr key={v.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
                         <td className="px-5 py-3.5">
                           <p className="font-semibold text-slate-800 max-w-[320px] truncate">{v.title}</p>
-                          <p className="text-[11px] text-slate-400 mt-0.5 font-mono">{v.id.slice(0, 8)}</p>
+                          <p className="text-[12px] text-slate-500 mt-0.5 font-mono">{v.id.slice(0, 8)}</p>
                         </td>
                         <td className="py-3.5 text-slate-600 whitespace-nowrap">{v.athlete?.name ?? '—'}</td>
                         <td className="py-3.5 text-slate-500 tabular-nums whitespace-nowrap text-[12px]">
@@ -173,7 +173,7 @@ export default function FanOpsVotes() {
           <div className="p-4">
             <div className="grid grid-cols-7 gap-1 mb-2">
               {['월', '화', '수', '목', '금', '토', '일'].map((d) => (
-                <div key={d} className="text-center text-[11px] font-bold text-slate-400 py-1">{d}</div>
+                <div key={d} className="text-center text-[12px] font-bold text-slate-500 py-1">{d}</div>
               ))}
             </div>
             <div className="grid grid-cols-7 gap-1">
@@ -183,11 +183,11 @@ export default function FanOpsVotes() {
                 }`}>
                   {d && (
                     <>
-                      <p className="text-[11px] font-semibold text-slate-400 mb-1">{d.getDate()}</p>
+                      <p className="text-[12px] font-semibold text-slate-500 mb-1">{d.getDate()}</p>
                       <div className="space-y-1">
                         {votesOn(d).slice(0, 2).map((v: any) => (
                           <button key={v.id} onClick={() => setSettleId(v.id)}
-                            className={`w-full text-left px-1.5 py-1 rounded-md text-[10px] font-semibold leading-tight truncate ${
+                            className={`w-full text-left px-1.5 py-1 rounded-md text-[12.5px] font-semibold leading-tight truncate ${
                               v.status === 'OPEN' ? 'bg-emerald-50 text-emerald-700'
                                 : v.status === 'SETTLED' ? 'bg-violet-50 text-violet-700' : 'bg-slate-100 text-slate-500'
                             }`}>
@@ -195,7 +195,7 @@ export default function FanOpsVotes() {
                           </button>
                         ))}
                         {votesOn(d).length > 2 && (
-                          <p className="text-[10px] text-slate-400 px-1.5">+{votesOn(d).length - 2}</p>
+                          <p className="text-[12.5px] text-slate-500 px-1.5">+{votesOn(d).length - 2}</p>
                         )}
                       </div>
                     </>
@@ -209,7 +209,7 @@ export default function FanOpsVotes() {
                 { label: '결과확정', cls: 'bg-violet-500' },
                 { label: '종료', cls: 'bg-slate-300' },
               ].map((l) => (
-                <span key={l.label} className="inline-flex items-center gap-1.5 text-[11px] text-slate-500">
+                <span key={l.label} className="inline-flex items-center gap-1.5 text-[12px] text-slate-500">
                   <span className={`w-2 h-2 rounded-full ${l.cls}`} /> {l.label}
                 </span>
               ))}
@@ -225,7 +225,7 @@ export default function FanOpsVotes() {
             <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex items-center justify-between">
               <h2 className="text-[16px] font-bold text-slate-900">결과 확인 및 확정</h2>
               <button onClick={() => setSettleId(null)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center">
-                <X className="w-4 h-4 text-slate-400" />
+                <X className="w-4 h-4 text-slate-500" />
               </button>
             </div>
 
@@ -233,16 +233,16 @@ export default function FanOpsVotes() {
               <div className="p-6 space-y-5">
                 <div>
                   <p className="text-[16px] font-bold text-slate-900 leading-snug">{settlement.title}</p>
-                  <p className="text-[12px] text-slate-400 mt-1">마감 {fmtDate(settlement.closeAt, true)}</p>
+                  <p className="text-[12px] text-slate-500 mt-1">마감 {fmtDate(settlement.closeAt, true)}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div className="rounded-xl bg-slate-50 px-4 py-3">
-                    <p className="text-[11px] text-slate-400 font-semibold">유효 참여</p>
+                    <p className="text-[12px] text-slate-500 font-semibold">유효 참여</p>
                     <p className="text-[19px] font-extrabold text-slate-900 tabular-nums">{nf(settlement.validParticipants)}명</p>
                   </div>
                   <div className="rounded-xl bg-amber-50 px-4 py-3">
-                    <p className="text-[11px] text-amber-600 font-semibold">보류·의심 표</p>
+                    <p className="text-[12px] text-amber-600 font-semibold">보류·의심 표</p>
                     <p className="text-[19px] font-extrabold text-amber-700 tabular-nums">{nf(settlement.suspiciousCount)}건</p>
                   </div>
                 </div>
@@ -261,7 +261,7 @@ export default function FanOpsVotes() {
                         <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
                           <div className="h-full rounded-full bg-slate-900" style={{ width: `${r.percent ?? 0}%` }} />
                         </div>
-                        <p className="text-[11px] text-slate-400 mt-1 tabular-nums">{nf(r.count)}표</p>
+                        <p className="text-[12px] text-slate-500 mt-1 tabular-nums">{nf(r.count)}표</p>
                       </div>
                     ))}
                   </div>
@@ -285,7 +285,7 @@ export default function FanOpsVotes() {
                         ))}
                       </ul>
                     </div>
-                    <p className="text-[12px] text-slate-400 leading-relaxed">
+                    <p className="text-[12px] text-slate-500 leading-relaxed">
                       결과 확정은 공식 기록 출처를 등록한 뒤 진행합니다. 출처 등록·확정 처리는 다음 단계에서 연결됩니다.
                     </p>
                   </>

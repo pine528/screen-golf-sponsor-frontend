@@ -370,13 +370,13 @@ export default function BrandSponsoredVotes() {
 
           {loadingVotes ? (
             <div className="p-8 text-center">
-              <Loader2 className="w-8 h-8 animate-spin text-slate-400 mx-auto" />
+              <Loader2 className="w-8 h-8 animate-spin text-slate-500 mx-auto" />
             </div>
           ) : sponsoredVotes.length === 0 ? (
             <div className="p-8 text-center">
               <Award className="w-12 h-12 text-slate-300 mx-auto mb-4" />
               <p className="text-slate-500">아직 후원한 투표가 없습니다</p>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 팬 투표를 후원하고 브랜드를 홍보해보세요
               </p>
             </div>
@@ -419,9 +419,9 @@ export default function BrandSponsoredVotes() {
                         </div>
                       )}
                       {expandedId === vote.id ? (
-                        <ChevronUp className="w-5 h-5 text-slate-400" />
+                        <ChevronUp className="w-5 h-5 text-slate-500" />
                       ) : (
-                        <ChevronDown className="w-5 h-5 text-slate-400" />
+                        <ChevronDown className="w-5 h-5 text-slate-500" />
                       )}
                     </div>
                   </div>
@@ -475,7 +475,7 @@ export default function BrandSponsoredVotes() {
                           <div className="space-y-2 text-sm">
                             {vote.sponsorBannerUrl && (
                               <div className="flex items-start gap-2">
-                                <Image className="w-4 h-4 text-slate-400 mt-0.5" />
+                                <Image className="w-4 h-4 text-slate-500 mt-0.5" />
                                 <a
                                   href={vote.sponsorBannerUrl}
                                   target="_blank"
@@ -488,7 +488,7 @@ export default function BrandSponsoredVotes() {
                             )}
                             {vote.sponsorMessage && (
                               <div className="flex items-start gap-2">
-                                <MessageSquare className="w-4 h-4 text-slate-400 mt-0.5" />
+                                <MessageSquare className="w-4 h-4 text-slate-500 mt-0.5" />
                                 <span className="text-slate-700">
                                   {vote.sponsorMessage}
                                 </span>
@@ -496,7 +496,7 @@ export default function BrandSponsoredVotes() {
                             )}
                             {vote.sponsorLinkUrl && (
                               <div className="flex items-start gap-2">
-                                <Link2 className="w-4 h-4 text-slate-400 mt-0.5" />
+                                <Link2 className="w-4 h-4 text-slate-500 mt-0.5" />
                                 <a
                                   href={vote.sponsorLinkUrl}
                                   target="_blank"
@@ -510,7 +510,7 @@ export default function BrandSponsoredVotes() {
                             {!vote.sponsorBannerUrl &&
                               !vote.sponsorMessage &&
                               !vote.sponsorLinkUrl && (
-                                <p className="text-slate-400">등록된 소재 없음</p>
+                                <p className="text-slate-500">등록된 소재 없음</p>
                               )}
                           </div>
                         </div>

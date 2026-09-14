@@ -73,7 +73,7 @@ export default function FanOpsPointPolicy() {
               </button>
             ))}
             <span className="ml-auto inline-flex items-center gap-2">
-              <span className="font-mono text-[12px] text-slate-400">{data.current.version}</span>
+              <span className="font-mono text-[12px] text-slate-500">{data.current.version}</span>
               <StatusTag label={data.current.status === 'PUBLISHED' ? '게시됨' : data.current.status} tone="emerald" />
             </span>
           </div>
@@ -84,11 +84,11 @@ export default function FanOpsPointPolicy() {
           <div className="grid lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2 space-y-4">
               {tab === 'EARN' && (
-                <Panel title="적립 규칙" right={<span className="text-[11px] text-slate-400">일일·월간 상한은 모든 활동에 합산 적용됩니다</span>}>
+                <Panel title="적립 규칙" right={<span className="text-[12px] text-slate-500">일일·월간 상한은 모든 활동에 합산 적용됩니다</span>}>
                   <div className="overflow-x-auto">
                     <table className="w-full text-[13px]">
                       <thead>
-                        <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                        <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                           <th className="text-left font-semibold px-5 py-2.5">활동</th>
                           <th className="text-right font-semibold py-2.5">적립</th>
                           <th className="text-left font-semibold py-2.5 pl-6">한도</th>
@@ -124,10 +124,10 @@ export default function FanOpsPointPolicy() {
                     {spend.map((r: any) => (
                       <div key={r.code} className={`rounded-2xl border p-4 ${r.available ? 'border-slate-200' : 'border-slate-100 bg-slate-50/60'}`}>
                         <div className="flex items-center gap-2 mb-1.5">
-                          <p className={`text-[14px] font-bold ${r.available ? 'text-slate-900' : 'text-slate-400'}`}>{r.label}</p>
+                          <p className={`text-[14px] font-bold ${r.available ? 'text-slate-900' : 'text-slate-500'}`}>{r.label}</p>
                           {r.available && <StatusTag label="사용 가능" tone="emerald" />}
                         </div>
-                        <p className="text-[12px] text-slate-400 leading-relaxed">{r.desc}</p>
+                        <p className="text-[12px] text-slate-500 leading-relaxed">{r.desc}</p>
                       </div>
                     ))}
                   </div>
@@ -151,7 +151,7 @@ export default function FanOpsPointPolicy() {
                         ))}
                       </div>
                     </div>
-                    <p className="text-[12px] text-slate-400 leading-relaxed">
+                    <p className="text-[12px] text-slate-500 leading-relaxed">
                       포인트는 적립일로부터 {expiry.months ?? 12}개월 후 자동 만료됩니다. 만료도 원장에 거래로 기록됩니다.
                     </p>
                   </div>
@@ -165,7 +165,7 @@ export default function FanOpsPointPolicy() {
                       <div className="overflow-x-auto">
                         <table className="w-full text-[13px]">
                           <thead>
-                            <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                            <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                               <th className="text-left font-semibold px-5 py-2.5">캠페인</th>
                               <th className="text-left font-semibold py-2.5">기간</th>
                               <th className="text-right font-semibold py-2.5">예산</th>
@@ -178,7 +178,7 @@ export default function FanOpsPointPolicy() {
                               <tr key={c.id} className="border-b border-slate-50 last:border-0">
                                 <td className="px-5 py-3">
                                   <p className="font-semibold text-slate-800">{c.name}</p>
-                                  <p className="text-[11px] text-slate-400">1인 최대 {nf(c.perUserCap)}P</p>
+                                  <p className="text-[12px] text-slate-500">1인 최대 {nf(c.perUserCap)}P</p>
                                 </td>
                                 <td className="py-3 text-slate-500 tabular-nums text-[12px]">
                                   {fmtDate(c.startAt)} ~ {fmtDate(c.endAt)}
@@ -186,7 +186,7 @@ export default function FanOpsPointPolicy() {
                                 <td className="py-3 text-right tabular-nums font-semibold">{nf(c.totalBudget)}P</td>
                                 <td className="py-3 text-right tabular-nums">
                                   {nf(c.spent)}P
-                                  <span className="text-[11px] text-slate-400 ml-1">
+                                  <span className="text-[12px] text-slate-500 ml-1">
                                     ({c.usedRate === null ? '—' : `${c.usedRate}%`})
                                   </span>
                                 </td>
@@ -258,7 +258,7 @@ export default function FanOpsPointPolicy() {
                         : <XCircle className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />}
                       <div className="min-w-0">
                         <p className="text-[13px] font-semibold text-slate-800">{v.label}</p>
-                        <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">{v.desc}</p>
+                        <p className="text-[12px] text-slate-500 mt-0.5 leading-relaxed">{v.desc}</p>
                       </div>
                     </div>
                   ))}
@@ -274,7 +274,7 @@ export default function FanOpsPointPolicy() {
                           <span className="font-mono text-[12px] text-slate-700">{v.version}</span>
                           <StatusTag label={v.status === 'PUBLISHED' ? '게시됨' : '종료'} tone={v.status === 'PUBLISHED' ? 'emerald' : 'slate'} />
                         </div>
-                        <p className="text-[11px] text-slate-400 mt-1">
+                        <p className="text-[12px] text-slate-500 mt-1">
                           {v.summary ?? '변경 사유 없음'} · {fmtDate(v.publishedAt ?? v.createdAt)}
                         </p>
                       </div>
@@ -285,7 +285,7 @@ export default function FanOpsPointPolicy() {
                 )}
               </Panel>
 
-              <p className="text-[11px] text-slate-400 px-1 leading-relaxed">{data.notice}</p>
+              <p className="text-[12px] text-slate-500 px-1 leading-relaxed">{data.notice}</p>
             </div>
           </div>
         </div>

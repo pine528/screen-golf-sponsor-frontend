@@ -96,8 +96,8 @@ export default function AboutOpsPages() {
                           ({ DRAFT: '작성 중', PUBLISHED: '게시 중', SCHEDULED: '예약', ARCHIVED: '보관' } as any)[p.status] ?? p.status
                         } />
                       </div>
-                      <p className="font-mono text-[11px] text-slate-400">/{p.slug}</p>
-                      <p className="text-[11px] text-slate-400 mt-0.5">블록 {p.blocks}개 · v{p.version}</p>
+                      <p className="font-mono text-[12px] text-slate-500">/{p.slug}</p>
+                      <p className="text-[12px] text-slate-500 mt-0.5">블록 {p.blocks}개 · v{p.version}</p>
                     </button>
                   ))}
                 </div>
@@ -115,7 +115,7 @@ export default function AboutOpsPages() {
                   <Panel title={form.title}
                     right={
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-[12px] text-slate-400">/{form.slug}</span>
+                        <span className="font-mono text-[12px] text-slate-500">/{form.slug}</span>
                         <button disabled={busy} onClick={() => save(false)}
                           className="h-9 px-4 rounded-xl border border-slate-200 text-[13px] font-bold text-slate-600 hover:border-slate-400 inline-flex items-center gap-1.5">
                           <Save className="w-3.5 h-3.5" /> 저장
@@ -138,7 +138,7 @@ export default function AboutOpsPages() {
                           <input value={form[f.k] ?? ''}
                             onChange={(e) => { setForm({ ...form, [f.k]: e.target.value.slice(0, f.max) }); setDirty(true); }}
                             className="w-full h-10 px-3 rounded-xl border border-slate-200 text-[13px] focus:outline-none focus:border-slate-400" />
-                          <p className="mt-1 text-right text-[10.5px] text-slate-400 tabular-nums">
+                          <p className="mt-1 text-right text-[12.5px] text-slate-500 tabular-nums">
                             {(form[f.k] ?? '').length} / {f.max}
                           </p>
                         </div>
@@ -171,16 +171,16 @@ export default function AboutOpsPages() {
                                 <div className="flex items-center gap-3">
                                   <span className="flex flex-col gap-0.5">
                                     <button onClick={() => move(i, -1)} disabled={i === 0}
-                                      className="text-slate-300 hover:text-slate-600 disabled:opacity-30 text-[10px] leading-none">▲</button>
+                                      className="text-slate-300 hover:text-slate-600 disabled:opacity-30 text-[12.5px] leading-none">▲</button>
                                     <button onClick={() => move(i, 1)} disabled={i === blocks.length - 1}
-                                      className="text-slate-300 hover:text-slate-600 disabled:opacity-30 text-[10px] leading-none">▼</button>
+                                      className="text-slate-300 hover:text-slate-600 disabled:opacity-30 text-[12.5px] leading-none">▼</button>
                                   </span>
                                   <span className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 text-[12px] font-bold flex items-center justify-center shrink-0">
                                     {i + 1}
                                   </span>
                                   <div className="min-w-0 flex-1">
                                     <p className="text-[13.5px] font-bold text-slate-800">{def?.label ?? b.type}</p>
-                                    <p className="text-[11px] text-slate-400 mt-0.5">{def?.rule}</p>
+                                    <p className="text-[12px] text-slate-500 mt-0.5">{def?.rule}</p>
                                   </div>
                                   <button onClick={() => {
                                     const next = [...blocks];
@@ -188,7 +188,7 @@ export default function AboutOpsPages() {
                                     setBlocks(next); setDirty(true);
                                   }}
                                     className={`inline-flex items-center gap-1 h-8 px-2.5 rounded-lg text-[12px] font-bold ${
-                                      b.visible ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-400'
+                                      b.visible ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'
                                     }`}>
                                     {b.visible ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                                     {b.visible ? '표시' : '숨김'}
@@ -203,7 +203,7 @@ export default function AboutOpsPages() {
                                 <div className="mt-3 pt-3 border-t border-slate-100 grid sm:grid-cols-2 gap-2.5">
                                   {['title', 'description', 'ctaLabel', 'ctaTo'].map((k) => (
                                     <div key={k}>
-                                      <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                                      <label className="block text-[12px] font-semibold text-slate-500 mb-1">
                                         {({ title: '제목', description: '설명', ctaLabel: '버튼 라벨', ctaTo: '링크 (내부 경로)' } as any)[k]}
                                       </label>
                                       <input value={b.payload?.[k] ?? ''}
@@ -214,7 +214,7 @@ export default function AboutOpsPages() {
                                         }}
                                         className="w-full h-9 px-2.5 rounded-lg border border-slate-200 text-[12.5px] focus:outline-none focus:border-slate-400" />
                                       {k === 'ctaTo' && b.payload?.ctaTo && !String(b.payload.ctaTo).startsWith('/') && (
-                                        <p className="mt-1 text-[10.5px] text-rose-500">내부 경로는 /로 시작해야 합니다</p>
+                                        <p className="mt-1 text-[12.5px] text-rose-500">내부 경로는 /로 시작해야 합니다</p>
                                       )}
                                     </div>
                                   ))}
@@ -249,7 +249,7 @@ export default function AboutOpsPages() {
                           ))}
                         </div>
                         {!detail.canPublish && (
-                          <p className="px-4 pb-4 text-[11.5px] text-rose-500">
+                          <p className="px-4 pb-4 text-[12.5px] text-rose-500">
                             필수 검증 항목을 통과해야 게시할 수 있습니다.
                           </p>
                         )}
@@ -264,7 +264,7 @@ export default function AboutOpsPages() {
                               const I = d.icon;
                               return (
                                 <button key={d.k} onClick={() => setDevice(d.k as any)}
-                                  className={`h-7 px-2.5 rounded-md text-[11.5px] font-bold inline-flex items-center gap-1 ${
+                                  className={`h-7 px-2.5 rounded-md text-[12.5px] font-bold inline-flex items-center gap-1 ${
                                     device === d.k ? 'bg-emerald-600 text-white' : 'text-slate-500'
                                   }`}>
                                   <I className="w-3 h-3" /> {d.k === 'PC' ? 'PC' : '모바일'}
@@ -283,20 +283,20 @@ export default function AboutOpsPages() {
                             <div className="p-4 space-y-2">
                               {blocks.filter((b) => b.visible).map((b, i) => (
                                 <div key={i} className="rounded-xl bg-white border border-slate-200 px-3 py-2.5">
-                                  <p className="text-[11px] font-bold text-slate-700 truncate">
+                                  <p className="text-[12px] font-bold text-slate-700 truncate">
                                     {b.payload?.title || b.name || b.type}
                                   </p>
                                   {b.payload?.description && (
-                                    <p className="text-[10px] text-slate-400 mt-0.5 line-clamp-2">{b.payload.description}</p>
+                                    <p className="text-[12.5px] text-slate-500 mt-0.5 line-clamp-2">{b.payload.description}</p>
                                   )}
                                 </div>
                               ))}
                               {blocks.filter((b) => b.visible).length === 0 && (
-                                <p className="text-[11px] text-slate-400 text-center py-6">표시할 블록이 없습니다</p>
+                                <p className="text-[12px] text-slate-500 text-center py-6">표시할 블록이 없습니다</p>
                               )}
                             </div>
                           </div>
-                          <p className="mt-3 text-[11px] text-slate-400 text-center">실제 사이트와 다를 수 있습니다.</p>
+                          <p className="mt-3 text-[12px] text-slate-500 text-center">실제 사이트와 다를 수 있습니다.</p>
                         </div>
                       </Panel>
 
@@ -308,7 +308,7 @@ export default function AboutOpsPages() {
                             { l: '게시 일시', v: fmtDate(form.publishedAt, true) },
                           ].map((r) => (
                             <div key={r.l} className="flex items-center justify-between">
-                              <span className="text-slate-400">{r.l}</span>
+                              <span className="text-slate-500">{r.l}</span>
                               <span className="font-semibold text-slate-700 tabular-nums">{r.v}</span>
                             </div>
                           ))}

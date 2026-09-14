@@ -183,7 +183,7 @@ export default function AdminMediaExposure() {
           {statusMsg && (
             <div className="mt-2 text-xs text-emerald-900 bg-white border border-emerald-200 rounded px-2 py-1">{statusMsg}</div>
           )}
-          <p className="text-[10px] text-emerald-700 mt-2 leading-relaxed">
+          <p className="text-[12.5px] text-emerald-700 mt-2 leading-relaxed">
             ※ 네이버 뉴스 자동 수집은 <code className="bg-white px-1 rounded">NAVER_CLIENT_ID</code> + <code className="bg-white px-1 rounded">NAVER_CLIENT_SECRET</code> 환경변수 필요 (
             <a href="https://developers.naver.com/apps/#/list" target="_blank" rel="noreferrer" className="underline">발급</a>, 무료 일 25,000건)
             <br />
@@ -243,7 +243,7 @@ export default function AdminMediaExposure() {
                   <FormField label="기사/외부 언급 (수동)" type="number" value={form.articleMentions} onChange={(v) => setForm({ ...form, articleMentions: v === '' ? '' : Number(v) })} hint="자동 수집은 별도, 추가 수기만" />
                   <FormField label="하이라이트 노출" type="number" value={form.highlightCount} onChange={(v) => setForm({ ...form, highlightCount: v === '' ? '' : Number(v) })} />
                   <div>
-                    <label className="text-[11px] font-bold text-slate-700 block mb-1">데이터 출처</label>
+                    <label className="text-[12px] font-bold text-slate-700 block mb-1">데이터 출처</label>
                     <select
                       value={form.source}
                       onChange={(e) => setForm({ ...form, source: e.target.value as any })}
@@ -256,7 +256,7 @@ export default function AdminMediaExposure() {
                     </select>
                   </div>
                   <div className="col-span-2">
-                    <label className="text-[11px] font-bold text-slate-700 block mb-1">메모 (선택)</label>
+                    <label className="text-[12px] font-bold text-slate-700 block mb-1">메모 (선택)</label>
                     <textarea
                       value={form.notes}
                       onChange={(e) => setForm({ ...form, notes: e.target.value })}
@@ -278,14 +278,14 @@ export default function AdminMediaExposure() {
             {/* 기록 리스트 */}
             <div className="space-y-2">
               {exposures.length === 0 ? (
-                <div className="bg-white border border-slate-200 rounded-xl p-8 text-center text-sm text-slate-400">
+                <div className="bg-white border border-slate-200 rounded-xl p-8 text-center text-sm text-slate-500">
                   등록된 미디어 노출 기록이 없습니다. "새 기록 추가" 또는 자동 수집 트리거를 사용하세요.
                 </div>
               ) : exposures.map((e: any) => (
                 <div key={e.id} className="bg-white border border-slate-200 rounded-lg p-3 flex items-start gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-[10px] font-bold text-slate-500">
+                      <span className="text-[12.5px] font-bold text-slate-500">
                         {new Date(e.periodStart).toLocaleDateString('ko-KR')} ~ {new Date(e.periodEnd).toLocaleDateString('ko-KR')}
                       </span>
                       <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
@@ -301,15 +301,15 @@ export default function AdminMediaExposure() {
                       {e.articleMentions > 0 && <span><b className="text-rose-600">기사:</b> {e.articleMentions}건</span>}
                       {e.highlightCount > 0 && <span><b className="text-rose-600">하이라이트:</b> {e.highlightCount}회</span>}
                     </div>
-                    {e.notes && <p className="text-[11px] text-slate-500 mt-1">📝 {e.notes}</p>}
+                    {e.notes && <p className="text-[12px] text-slate-500 mt-1">📝 {e.notes}</p>}
                   </div>
                   <div className="flex gap-1">
-                    <button onClick={() => startEdit(e)} className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded">
+                    <button onClick={() => startEdit(e)} className="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded">
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => { if (confirm('이 기록을 삭제하시겠습니까?')) deleteMut.mutate(e.id); }}
-                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded"
+                      className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -336,10 +336,10 @@ function SumCard({ icon, label, value, hint }: { icon: React.ReactNode; label: s
     <div className="bg-white border border-slate-200 rounded-lg p-3">
       <div className="flex items-center gap-1.5 mb-1">
         {icon}
-        <span className="text-[10px] font-bold text-slate-600">{label}</span>
+        <span className="text-[12.5px] font-bold text-slate-600">{label}</span>
       </div>
       <div className="text-lg font-extrabold text-slate-900 tabular-nums">{value.toLocaleString()}</div>
-      {hint && <div className="text-[9px] text-slate-400">{hint}</div>}
+      {hint && <div className="text-[9px] text-slate-500">{hint}</div>}
     </div>
   );
 }
@@ -347,14 +347,14 @@ function SumCard({ icon, label, value, hint }: { icon: React.ReactNode; label: s
 function FormField({ label, type, value, onChange, hint }: { label: string; type: string; value: any; onChange: (v: string) => void; hint?: string }) {
   return (
     <div>
-      <label className="text-[11px] font-bold text-slate-700 block mb-1">{label}</label>
+      <label className="text-[12px] font-bold text-slate-700 block mb-1">{label}</label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full border border-slate-300 rounded px-2 py-1.5 text-sm"
       />
-      {hint && <p className="text-[9px] text-slate-400 mt-0.5">{hint}</p>}
+      {hint && <p className="text-[9px] text-slate-500 mt-0.5">{hint}</p>}
     </div>
   );
 }

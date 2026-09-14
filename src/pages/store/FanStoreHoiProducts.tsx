@@ -76,7 +76,7 @@ export default function FanStoreHoiProducts() {
               <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
                 <Ticket className="w-4 h-4 text-emerald-700 shrink-0" />
                 <div className="leading-tight">
-                  <div className="text-[10px] text-slate-400">팬 할인코드</div>
+                  <div className="text-[12.5px] text-slate-500">팬 할인코드</div>
                   <div className="text-[12px] font-black text-slate-900 tracking-wide">{HOI_STORE.fanCode}</div>
                 </div>
               </div>
@@ -84,17 +84,17 @@ export default function FanStoreHoiProducts() {
                 <span className="w-4 h-4 rounded-full bg-emerald-700 text-white text-[9px] font-black flex items-center justify-center shrink-0">P</span>
                 <div className="leading-tight">
                   <div className="text-[12px] font-bold text-slate-900">팬포인트</div>
-                  <div className="text-[10px] text-slate-400">사용 가능</div>
+                  <div className="text-[12.5px] text-slate-500">사용 가능</div>
                 </div>
               </div>
               <Link
                 to={`${HOI_STORE.path}/ar`}
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 hover:border-emerald-300 transition-colors"
               >
-                <Box className="w-4 h-4 text-slate-400 shrink-0" />
+                <Box className="w-4 h-4 text-slate-500 shrink-0" />
                 <div className="leading-tight">
                   <div className="text-[12px] font-bold text-slate-900">선수 AR 이미지</div>
-                  <div className="text-[10px] text-slate-400">보기</div>
+                  <div className="text-[12.5px] text-slate-500">보기</div>
                 </div>
               </Link>
             </div>
@@ -124,7 +124,7 @@ export default function FanStoreHoiProducts() {
                     className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
                   />
                   <span className="text-xs text-slate-600 flex-1">{c}</span>
-                  <span className="text-[11px] text-slate-400 tabular-nums">{n}</span>
+                  <span className="text-[12px] text-slate-500 tabular-nums">{n}</span>
                 </label>
               ))}
             </div>
@@ -135,7 +135,7 @@ export default function FanStoreHoiProducts() {
                 <button
                   key={r.label}
                   onClick={() => setPriceIdx(priceIdx === i ? null : i)}
-                  className={`px-2 py-1.5 rounded-lg border text-[11px] font-medium transition-colors ${
+                  className={`px-2 py-1.5 rounded-lg border text-[12px] font-medium transition-colors ${
                     priceIdx === i ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-slate-200 text-slate-500 hover:border-slate-300'
                   }`}
                 >
@@ -148,14 +148,14 @@ export default function FanStoreHoiProducts() {
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value.replace(/\D/g, ''))}
                 placeholder="최소"
-                className="w-full h-8 px-2 rounded-lg border border-slate-200 text-[11px] text-right tabular-nums focus:outline-none focus:border-emerald-400"
+                className="w-full h-8 px-2 rounded-lg border border-slate-200 text-[12px] text-right tabular-nums focus:outline-none focus:border-emerald-400"
               />
               <span className="text-slate-300 text-xs shrink-0">~</span>
               <input
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value.replace(/\D/g, ''))}
                 placeholder="최대"
-                className="w-full h-8 px-2 rounded-lg border border-slate-200 text-[11px] text-right tabular-nums focus:outline-none focus:border-emerald-400"
+                className="w-full h-8 px-2 rounded-lg border border-slate-200 text-[12px] text-right tabular-nums focus:outline-none focus:border-emerald-400"
               />
             </div>
 

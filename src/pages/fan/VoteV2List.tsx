@@ -243,10 +243,10 @@ function VoteCard({ vote, onOpen }: { vote: VoteV2; onOpen: () => void }) {
       className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 cursor-pointer hover:border-violet-300 hover:shadow-sm transition-all"
     >
       <div className="flex items-center gap-1.5 mb-2">
-        <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-violet-50 text-violet-700">
+        <span className="px-2 py-0.5 rounded-md text-[12.5px] font-extrabold bg-violet-50 text-violet-700">
           {TEMPLATE_LABEL[vote.templateCode] || vote.templateCode}
         </span>
-        <span className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold ${badge.cls}`}>{badge.label}</span>
+        <span className={`px-2 py-0.5 rounded-md text-[12.5px] font-extrabold ${badge.cls}`}>{badge.label}</span>
       </div>
 
       <h3 className="text-base font-extrabold text-slate-900 leading-snug break-keep line-clamp-2 min-h-[2.75rem]">
@@ -254,7 +254,7 @@ function VoteCard({ vote, onOpen }: { vote: VoteV2; onOpen: () => void }) {
       </h3>
       {vote.description && <p className="text-xs text-slate-500 mt-1 line-clamp-1">{vote.description}</p>}
 
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-[11px] text-slate-500">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-[12px] text-slate-500">
         <span className="inline-flex items-center gap-1">
           <Users className="w-3.5 h-3.5" />
           {participants.toLocaleString()}명 참여
@@ -274,13 +274,13 @@ function VoteCard({ vote, onOpen }: { vote: VoteV2; onOpen: () => void }) {
           {options.slice(0, 4).map((o: any, i: number) => (
             <span
               key={o.id ?? i}
-              className="px-2 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[11px] text-slate-600 max-w-full truncate"
+              className="px-2 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[12px] text-slate-600 max-w-full truncate"
             >
               {o.label ?? o.name ?? `선택 ${i + 1}`}
             </span>
           ))}
           {options.length > 4 && (
-            <span className="px-2 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[11px] text-slate-400">
+            <span className="px-2 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[12px] text-slate-500">
               +{options.length - 4}
             </span>
           )}
@@ -289,7 +289,7 @@ function VoteCard({ vote, onOpen }: { vote: VoteV2; onOpen: () => void }) {
 
       <div className="mt-4 pt-3 border-t border-slate-100 flex items-end justify-between gap-2">
         <div>
-          <div className="text-[10px] text-slate-400">예상 보상</div>
+          <div className="text-[12.5px] text-slate-500">예상 보상</div>
           <div className="text-lg font-black text-violet-600 tabular-nums leading-tight">
             {Number(vote.escrowEp || 0).toLocaleString()} <span className="text-xs font-bold">EP</span>
           </div>
@@ -306,7 +306,7 @@ function VoteCard({ vote, onOpen }: { vote: VoteV2; onOpen: () => void }) {
       </div>
 
       {vote.status === 'OPEN' && (
-        <p className="mt-2 inline-flex items-center gap-1 text-[10px] text-slate-400">
+        <p className="mt-2 inline-flex items-center gap-1 text-[12.5px] text-slate-500">
           <CheckCircle2 className="w-3 h-3 text-emerald-400" />1인 1회 참여 가능
         </p>
       )}

@@ -99,7 +99,7 @@ export default function MiniStoreProduct() {
               {current ? (
                 <img src={current} alt={product.name} className="w-full aspect-square object-cover" />
               ) : (
-                <div className="w-full aspect-square bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>
+                <div className="w-full aspect-square bg-slate-100 flex items-center justify-center text-slate-500">No Image</div>
               )}
               {allImages.length > 1 && (
                 <div className="flex gap-2 px-4 py-3 overflow-x-auto bg-white border-b border-slate-100">
@@ -123,7 +123,7 @@ export default function MiniStoreProduct() {
           <div className="flex items-baseline gap-3 mb-2">
             <span className="text-2xl font-extrabold text-emerald-600">₩{finalPrice.toLocaleString()}</span>
             {product.discountPrice && (
-              <span className="text-base text-slate-400 line-through">₩{Number(product.price).toLocaleString()}</span>
+              <span className="text-base text-slate-500 line-through">₩{Number(product.price).toLocaleString()}</span>
             )}
           </div>
           {/* 재고 상태 (wireframe TABLE 34: In Stock / Low Stock / Sold Out) */}
@@ -176,7 +176,7 @@ export default function MiniStoreProduct() {
               <span className="px-4 py-2 text-sm font-semibold">{qty}</span>
               <button onClick={() => setQty(Math.min(product.stock, qty + 1))} className="p-2 hover:bg-slate-50"><Plus className="w-3 h-3" /></button>
             </div>
-            <span className="text-xs text-slate-400">재고 {product.stock}</span>
+            <span className="text-xs text-slate-500">재고 {product.stock}</span>
           </div>
 
           {/* 혜택 */}
@@ -189,7 +189,7 @@ export default function MiniStoreProduct() {
           {/* 리뷰 (docx 2-1: 하드코딩 제거 — 실 리뷰 시스템 도입 전까지 - 표기) */}
           <div className="mt-6 mb-6">
             <h3 className="text-sm font-bold text-slate-900 mb-3">⭐ 고객 리뷰</h3>
-            <div className="p-4 bg-slate-50 rounded-lg text-center text-sm text-slate-400">
+            <div className="p-4 bg-slate-50 rounded-lg text-center text-sm text-slate-500">
               아직 등록된 리뷰가 없습니다.
             </div>
           </div>
@@ -206,7 +206,7 @@ export default function MiniStoreProduct() {
                 <details key={i} className="p-3 group">
                   <summary className="cursor-pointer text-xs font-semibold flex items-center justify-between">
                     {f.q}
-                    <span className="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                    <span className="text-slate-500 group-open:rotate-180 transition-transform">▾</span>
                   </summary>
                   <p className="text-xs text-slate-600 mt-2">{f.a}</p>
                 </details>
@@ -263,7 +263,7 @@ export default function MiniStoreProduct() {
               <h3 className="text-base font-bold inline-flex items-center gap-2">
                 <ShoppingCart className="w-4 h-4" /> 장바구니
               </h3>
-              <button onClick={() => setDrawerOpen(false)} className="p-1 text-slate-400"><X className="w-4 h-4" /></button>
+              <button onClick={() => setDrawerOpen(false)} className="p-1 text-slate-500"><X className="w-4 h-4" /></button>
             </div>
             <div className="p-4 space-y-3 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 200px)' }}>
               {cartItems.map((c: any, i: number) => {
@@ -280,7 +280,7 @@ export default function MiniStoreProduct() {
                       <div className="text-sm font-bold">₩{(c.price * c.qty).toLocaleString()}</div>
                     </div>
                     {discount > 0 && (
-                      <div className="flex justify-between text-[11px] text-emerald-600">
+                      <div className="flex justify-between text-[12px] text-emerald-600">
                         <span>할인</span>
                         <span>-₩{Math.round(discount).toLocaleString()}</span>
                       </div>

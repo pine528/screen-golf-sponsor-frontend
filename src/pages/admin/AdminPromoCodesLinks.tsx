@@ -146,7 +146,7 @@ export default function AdminPromoCodesLinks() {
 
   const linkColumns: Column<any>[] = [
     { key: 'shortCode', label: '단축코드', render: (r) => <code className="font-mono">{r.shortCode}</code> },
-    { key: 'contentId', label: '콘텐츠 ID', render: (r) => r.contentId || <span className="text-slate-400">기본</span> },
+    { key: 'contentId', label: '콘텐츠 ID', render: (r) => r.contentId || <span className="text-slate-500">기본</span> },
     { key: 'clickCount', label: '클릭', sortable: true, align: 'right' },
     { key: 'status', label: '상태', render: (r) => <StatusBadge status={r.status} /> },
     { key: 'action', label: '액션', align: 'right',
@@ -183,7 +183,7 @@ export default function AdminPromoCodesLinks() {
         </div>
 
         {!campaignId ? (
-          <div className="text-center py-16 text-sm text-slate-400 bg-slate-50 rounded-xl">캠페인을 선택해주세요</div>
+          <div className="text-center py-16 text-sm text-slate-500 bg-slate-50 rounded-xl">캠페인을 선택해주세요</div>
         ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[200px_1fr_280px] gap-4">
           {/* 좌측 필터 패널 (wireframe TABLE 11: 선수/콘텐츠 유형/상태/발급일) */}
@@ -191,7 +191,7 @@ export default function AdminPromoCodesLinks() {
             <h3 className="text-xs font-bold text-slate-500 mb-2">필터</h3>
 
             <div className="mb-3">
-              <label className="text-[10px] font-semibold text-slate-500">선수</label>
+              <label className="text-[12.5px] font-semibold text-slate-500">선수</label>
               <select value={athleteFilter} onChange={(e) => setAthleteFilter(e.target.value)} className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1">
                 <option value="">전체 ({athleteOptions.length}명)</option>
                 {athleteOptions.map((a: any) => <option key={a.id} value={a.id}>{a.name}</option>)}
@@ -200,7 +200,7 @@ export default function AdminPromoCodesLinks() {
 
             {tab === 'links' && (
               <div className="mb-3">
-                <label className="text-[10px] font-semibold text-slate-500">콘텐츠 유형</label>
+                <label className="text-[12.5px] font-semibold text-slate-500">콘텐츠 유형</label>
                 <select value={contentTypeFilter} onChange={(e) => setContentTypeFilter(e.target.value)} className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1">
                   <option value="">전체</option>
                   <option value="INSTAGRAM">Instagram</option>
@@ -213,7 +213,7 @@ export default function AdminPromoCodesLinks() {
             )}
 
             <div className="mb-3">
-              <label className="text-[10px] font-semibold text-slate-500">상태</label>
+              <label className="text-[12.5px] font-semibold text-slate-500">상태</label>
               <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1">
                 <option value="">전체</option>
                 <option value="ACTIVE">Active</option>
@@ -224,18 +224,18 @@ export default function AdminPromoCodesLinks() {
             </div>
 
             <div className="mb-3">
-              <label className="text-[10px] font-semibold text-slate-500">발급일 이후</label>
+              <label className="text-[12.5px] font-semibold text-slate-500">발급일 이후</label>
               <input type="date" value={issuedAfter} onChange={(e) => setIssuedAfter(e.target.value)} className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1" />
             </div>
 
             {tab === 'links' && (
               <div className="mb-3">
-                <label className="text-[10px] font-semibold text-slate-500">콘텐츠 ID 검색</label>
+                <label className="text-[12.5px] font-semibold text-slate-500">콘텐츠 ID 검색</label>
                 <input type="text" value={contentFilter} onChange={(e) => setContentFilter(e.target.value)} placeholder="instagram_..." className="w-full text-xs border border-slate-200 rounded p-1.5 mt-1" />
               </div>
             )}
 
-            <div className="text-[10px] text-slate-400 pt-2 border-t border-slate-100">
+            <div className="text-[12.5px] text-slate-500 pt-2 border-t border-slate-100">
               총 {tab === 'codes' ? codes.length : links.length}건
             </div>
           </div>
@@ -278,10 +278,10 @@ export default function AdminPromoCodesLinks() {
               <div key={l.id} className="bg-white border border-slate-200 rounded-xl p-4 text-center">
                 <img src={l.qrUrl} alt={l.shortCode} className="w-full aspect-square mb-2 rounded" />
                 <code className="text-xs font-mono">{l.shortCode}</code>
-                <div className="text-[10px] text-slate-400 mt-1">{l.clickCount}회 클릭</div>
+                <div className="text-[12.5px] text-slate-500 mt-1">{l.clickCount}회 클릭</div>
               </div>
             ))}
-            {links.filter(l => l.qrUrl).length === 0 && <div className="col-span-full text-center py-12 text-sm text-slate-400">QR 자산이 없습니다</div>}
+            {links.filter(l => l.qrUrl).length === 0 && <div className="col-span-full text-center py-12 text-sm text-slate-500">QR 자산이 없습니다</div>}
           </div>
         )}
           </div>
@@ -301,7 +301,7 @@ export default function AdminPromoCodesLinks() {
                   {allCodes.slice(0, 3).map((c) => (
                     <div key={c.id} className="text-xs py-1">
                       <code className="font-mono">{c.code}</code>
-                      <span className="text-slate-400 ml-2">{c.usageCount}회</span>
+                      <span className="text-slate-500 ml-2">{c.usageCount}회</span>
                     </div>
                   ))}
                 </div>
@@ -317,7 +317,7 @@ export default function AdminPromoCodesLinks() {
                 <div className="mt-4 pt-3 border-t border-slate-100">
                   <h4 className="text-xs font-bold text-slate-500 mb-2">📈 일자별 클릭/유입 추이</h4>
                   {timeseries.length === 0 ? (
-                    <div className="text-xs text-slate-400 text-center py-4">데이터 없음</div>
+                    <div className="text-xs text-slate-500 text-center py-4">데이터 없음</div>
                   ) : (
                     <div style={{ width: '100%', height: 120 }}>
                       <ResponsiveContainer>

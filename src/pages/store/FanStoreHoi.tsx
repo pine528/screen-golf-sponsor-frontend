@@ -62,7 +62,7 @@ export default function FanStoreHoi() {
         <div className="max-w-7xl mx-auto rounded-3xl bg-gradient-to-br from-amber-50/70 via-white to-emerald-50/40 border border-amber-100/80 overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,34%)_minmax(0,240px)] gap-6 items-center p-6 sm:p-8">
             <div className="min-w-0">
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-700 text-white text-[11px] font-bold mb-3">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-700 text-white text-[12px] font-bold mb-3">
                 ★ 팬 전용
               </span>
               <h1 className="text-[26px] sm:text-3xl font-black text-slate-900 leading-snug mb-3 break-keep">
@@ -74,7 +74,7 @@ export default function FanStoreHoi() {
 
               <div className="flex items-center gap-3 mb-5">
                 <span className="text-[15px] italic font-bold text-slate-700">
-                  Bae Jinri <span className="text-[10px] not-italic font-black text-slate-400 align-top">PRO</span>
+                  Bae Jinri <span className="text-[12.5px] not-italic font-black text-slate-500 align-top">PRO</span>
                 </span>
                 <span className="text-slate-300 font-bold">×</span>
                 <img src={HOI_STORE.brandLogo} alt={HOI_STORE.brandName} className="h-9 object-contain" />
@@ -111,7 +111,7 @@ export default function FanStoreHoi() {
                   className="w-full h-full object-cover object-top"
                 />
               </div>
-              <span className="absolute top-3 right-3 px-2.5 py-1.5 rounded-xl bg-white/90 backdrop-blur text-[11px] font-bold text-slate-700 shadow-sm">
+              <span className="absolute top-3 right-3 px-2.5 py-1.5 rounded-xl bg-white/90 backdrop-blur text-[12px] font-bold text-slate-700 shadow-sm">
                 좋은 기운을 굽는 빵집
               </span>
             </div>
@@ -126,21 +126,21 @@ export default function FanStoreHoi() {
                 {typeof balance === 'number' ? `${balance.toLocaleString()}P` : '로그인 후 확인'}
               </div>
               <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 px-3 py-2.5 mb-2">
-                <div className="text-[11px] text-slate-500 mb-1">팬 할인코드</div>
+                <div className="text-[12px] text-slate-500 mb-1">팬 할인코드</div>
                 <div className="flex items-center gap-2">
                   <span className="font-black text-slate-900 tracking-wider text-[14px]">{HOI_STORE.fanCode}</span>
                   <button
                     onClick={copyCode}
-                    className="ml-auto px-2 h-6 inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white text-[10px] font-bold text-slate-600 hover:bg-slate-50"
+                    className="ml-auto px-2 h-6 inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white text-[12.5px] font-bold text-slate-600 hover:bg-slate-50"
                   >
                     {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />} 복사
                   </button>
                 </div>
               </div>
               <div className="rounded-xl border border-slate-100 px-3 py-2.5 mb-3">
-                <div className="text-[11px] text-slate-400 mb-0.5">팬 전용 할인 혜택</div>
+                <div className="text-[12px] text-slate-500 mb-0.5">팬 전용 할인 혜택</div>
                 <div className="text-[16px] font-black text-emerald-700">{HOI_STORE.fanDiscountPct}%</div>
-                <div className="text-[10px] text-slate-400">{HOI_STORE.fanCode} 코드 입력 시 적용</div>
+                <div className="text-[12.5px] text-slate-500">{HOI_STORE.fanCode} 코드 입력 시 적용</div>
               </div>
               <Link
                 to={`${HOI_STORE.path}/products`}
@@ -196,12 +196,12 @@ export default function FanStoreHoi() {
               ].map((s, i, arr) => (
                 <div key={s.t} className="flex items-center gap-3 flex-1">
                   <div className="flex items-start gap-2.5 flex-1">
-                    <span className="w-5 h-5 rounded-full bg-emerald-700 text-white text-[11px] font-black flex items-center justify-center shrink-0 mt-0.5 tabular-nums">
+                    <span className="w-5 h-5 rounded-full bg-emerald-700 text-white text-[12px] font-black flex items-center justify-center shrink-0 mt-0.5 tabular-nums">
                       {i + 1}
                     </span>
                     <div className="min-w-0">
                       <div className="text-[12px] font-bold text-slate-900">{s.t}</div>
-                      <p className="text-[11px] text-slate-500 break-keep">{s.d}</p>
+                      <p className="text-[12px] text-slate-500 break-keep">{s.d}</p>
                     </div>
                   </div>
                   {i < arr.length - 1 && <ArrowRight className="hidden sm:block w-4 h-4 text-slate-300 shrink-0" />}
@@ -243,7 +243,7 @@ function FanBenefit({ icon: Icon, title, desc }: { icon: any; title: string; des
         <Icon className="w-5 h-5 text-emerald-700" />
       </div>
       <div className="text-[12px] font-bold text-slate-900 break-keep">{title}</div>
-      <p className="text-[10px] text-slate-400 break-keep leading-snug mt-0.5">{desc}</p>
+      <p className="text-[12.5px] text-slate-500 break-keep leading-snug mt-0.5">{desc}</p>
     </div>
   );
 }
@@ -257,18 +257,18 @@ export function HoiProductCard({ product: p }: { product: import('../../data/hoi
       className="rounded-2xl border border-slate-200 bg-white overflow-hidden hover:border-emerald-300 transition-colors flex flex-col"
     >
       <div className="relative aspect-square bg-amber-50/50 flex items-center justify-center p-4">
-        <span className="text-[11px] text-slate-400 text-center break-keep leading-relaxed">{p.name}</span>
+        <span className="text-[12px] text-slate-500 text-center break-keep leading-relaxed">{p.name}</span>
         {off > 0 && (
-          <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-700 text-white text-[10px] font-black">{off}%</span>
+          <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-700 text-white text-[12.5px] font-black">{off}%</span>
         )}
       </div>
       <div className="p-3 flex flex-col flex-1">
         <div className="text-[12px] text-slate-600 line-clamp-2 min-h-[2.1rem] mb-1.5">{p.name}</div>
         <div className="flex items-baseline gap-1.5 mb-1">
-          <span className="text-[11px] text-slate-400 line-through tabular-nums">{p.listPrice.toLocaleString()}원</span>
+          <span className="text-[12px] text-slate-500 line-through tabular-nums">{p.listPrice.toLocaleString()}원</span>
           <span className="text-[15px] font-black text-emerald-800 tabular-nums">{p.price.toLocaleString()}원</span>
         </div>
-        <div className="text-[10px] text-slate-400 mb-2.5">
+        <div className="text-[12.5px] text-slate-500 mb-2.5">
           {p.shipping === '냉동 배송' ? '❄️' : p.shipping === '냉장 배송' ? '🧊' : '📦'} {p.shipping}
         </div>
         <span className="mt-auto inline-flex items-center justify-center gap-1.5 h-8 rounded-lg bg-emerald-700 text-white text-[12px] font-bold">

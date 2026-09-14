@@ -102,7 +102,7 @@ export default function BrandPixelInstall() {
                     </button>
                   </div>
                 ))}
-                {domains.length === 0 && <span className="text-xs text-slate-400">도메인 없음 (모든 도메인 허용)</span>}
+                {domains.length === 0 && <span className="text-xs text-slate-500">도메인 없음 (모든 도메인 허용)</span>}
               </div>
               <div className="flex gap-2">
                 <input

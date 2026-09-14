@@ -329,7 +329,7 @@ export function AdminDisputes() {
             <div className="flex-1 min-w-[250px]">
               <label className="label">검색</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <input
                   type="text"
                   value={searchQuery}
@@ -351,7 +351,7 @@ export function AdminDisputes() {
           ) : !reports || reports.length === 0 ? (
             <div className="p-12 text-center">
               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Flag className="w-8 h-8 text-slate-400" />
+                <Flag className="w-8 h-8 text-slate-500" />
               </div>
               <h3 className="text-lg font-semibold text-slate-900 mb-2">신고가 없습니다</h3>
               <p className="text-slate-500 text-sm">조건에 맞는 신고가 없습니다</p>
@@ -422,7 +422,7 @@ export function AdminDisputes() {
                           <div className="flex items-center justify-end gap-2">
                             <Link
                               to={`/admin/disputes/${report.id}`}
-                              className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                               title="상세 보기"
                             >
                               <Eye className="w-4 h-4" />
@@ -430,7 +430,7 @@ export function AdminDisputes() {
                             {report.status === 'OPEN' && (
                               <button
                                 onClick={() => handleQuickStatusChange(report.id, 'IN_REVIEW')}
-                                className="p-2 text-slate-400 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                                className="p-2 text-slate-500 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
                                 title="검토 시작"
                                 disabled={updateStatusMutation.isPending}
                               >

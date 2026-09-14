@@ -99,10 +99,10 @@ function AiMatchProposalInner() {
                     <Row label="선호 방식" value={labelOf(METHODS, input?.preferredMethod)} />
                   </dl>
                   <div className="mt-4 rounded-xl bg-slate-50 border border-slate-100 px-3.5 py-3">
-                    <div className="text-[11px] font-bold text-slate-500 mb-1">추천 사유</div>
+                    <div className="text-[12px] font-bold text-slate-500 mb-1">추천 사유</div>
                     <ul className="space-y-1">
                       {(rec.reasons || []).map((r: any) => (
-                        <li key={r.code} className="text-[11px] text-slate-600 break-keep leading-relaxed flex items-start gap-1.5">
+                        <li key={r.code} className="text-[12px] text-slate-600 break-keep leading-relaxed flex items-start gap-1.5">
                           <Check className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" /> {r.text}
                         </li>
                       ))}
@@ -111,7 +111,7 @@ function AiMatchProposalInner() {
                 </div>
 
                 <div className="min-w-0">
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold mb-2">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[12px] font-bold mb-2">
                     ♥ 최종 추천 조합
                   </span>
                   <h3 className="text-lg font-black text-slate-900 mb-4 break-keep">
@@ -142,7 +142,7 @@ function AiMatchProposalInner() {
                       </ul>
                     </div>
                   </div>
-                  <p className="mt-4 text-[11px] text-slate-400 break-keep">
+                  <p className="mt-4 text-[12px] text-slate-500 break-keep">
                     ⓘ 위 내용은 추천 기반 제안으로, 협의 후 세부 조건이 조정될 수 있습니다.
                     {pkg.priceNote && ` ${pkg.priceNote}.`}
                   </p>
@@ -153,7 +153,7 @@ function AiMatchProposalInner() {
             {/* 예산 배분 + 실데이터 지표 */}
             <div className="rounded-2xl border border-slate-200 p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <h3 className="text-[14px] font-extrabold text-slate-900 mb-4">권장 예산 배분 <span className="text-[11px] font-bold text-slate-400">(목적 기준)</span></h3>
+                <h3 className="text-[14px] font-extrabold text-slate-900 mb-4">권장 예산 배분 <span className="text-[12px] font-bold text-slate-500">(목적 기준)</span></h3>
                 <div className="flex items-center gap-5">
                   <div
                     className="w-32 h-32 rounded-full shrink-0"
@@ -163,7 +163,7 @@ function AiMatchProposalInner() {
                   >
                     <div className="w-full h-full rounded-full flex items-center justify-center" style={{ background: 'radial-gradient(circle at center, white 52%, transparent 53%)' }}>
                       <div className="text-center">
-                        <div className="text-[9px] text-slate-400">확정 슬롯가</div>
+                        <div className="text-[9px] text-slate-500">확정 슬롯가</div>
                         <div className="text-[13px] font-black text-slate-900 tabular-nums">₩{pkg.priceConfirmed?.toLocaleString()}</div>
                       </div>
                     </div>
@@ -177,14 +177,14 @@ function AiMatchProposalInner() {
                 </div>
               </div>
               <div>
-                <h3 className="text-[14px] font-extrabold text-slate-900 mb-4">선수 실측 지표 <span className="text-[11px] font-bold text-slate-400">(기준일 {data.dataAsOf ? new Date(data.dataAsOf).toLocaleDateString('ko-KR') : '-'})</span></h3>
+                <h3 className="text-[14px] font-extrabold text-slate-900 mb-4">선수 실측 지표 <span className="text-[12px] font-bold text-slate-500">(기준일 {data.dataAsOf ? new Date(data.dataAsOf).toLocaleDateString('ko-KR') : '-'})</span></h3>
                 <div className="grid grid-cols-2 gap-2.5">
                   <MetricTile icon={Instagram} label="SNS 팔로워" value={rec.metrics?.followers ? `${rec.metrics.followers.toLocaleString()}명` : '수집 중'} />
                   <MetricTile icon={Users} label="팬 관심 등록" value={`${rec.metrics?.favoriteCount ?? 0}명`} />
                   <MetricTile icon={Box} label="가용 슬롯" value={`${rec.metrics?.availableSlots}개`} />
                   <MetricTile icon={Store} label="팬스토어" value={rec.metrics?.growthMarketBrands?.length ? `${rec.metrics.growthMarketBrands.length}개 운영` : '—'} />
                 </div>
-                <p className="mt-3 text-[10px] text-slate-400 break-keep">
+                <p className="mt-3 text-[12.5px] text-slate-500 break-keep">
                   ※ SPONPIK은 확인된 실데이터만 표기합니다. '수집 중' 지표는 매칭 신뢰도({CONFIDENCE_LABEL[rec.confidence]})에 반영되어 있습니다.
                 </p>
               </div>
@@ -196,7 +196,7 @@ function AiMatchProposalInner() {
                 {rec.subScores && (
                   <div>
                     <h3 className="text-[14px] font-extrabold text-slate-900 mb-1">채널 적합도</h3>
-                    <p className="text-[11px] text-slate-400 mb-3.5">
+                    <p className="text-[12px] text-slate-500 mb-3.5">
                       후보군 내 상대 평가 · 전략 역할 <b className="text-slate-700">{rec.roleLabel}</b>
                     </p>
                     <div className="space-y-2.5">
@@ -209,11 +209,11 @@ function AiMatchProposalInner() {
                         ['장기 계약', rec.subScores.longTerm],
                       ].map(([label, v]) => (
                         <div key={label as string} className="flex items-center gap-3">
-                          <span className="w-24 shrink-0 text-[11px] text-slate-500">{label}</span>
+                          <span className="w-24 shrink-0 text-[12px] text-slate-500">{label}</span>
                           <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
                             <div className="h-full rounded-full bg-emerald-500" style={{ width: `${v}%` }} />
                           </div>
-                          <span className="w-8 text-right text-[11px] font-black text-slate-800 tabular-nums">{v}</span>
+                          <span className="w-8 text-right text-[12px] font-black text-slate-800 tabular-nums">{v}</span>
                         </div>
                       ))}
                     </div>
@@ -234,7 +234,7 @@ function AiMatchProposalInner() {
                   )}
                   {rec.alternative && (
                     <div className="rounded-xl bg-slate-50 border border-slate-100 px-4 py-3">
-                      <div className="text-[11px] font-bold text-slate-500 mb-1">대안 플랜</div>
+                      <div className="text-[12px] font-bold text-slate-500 mb-1">대안 플랜</div>
                       <Link
                         to={`/ai-match/${requestId}/proposal/${rec.alternative.athleteId}`}
                         className="text-[12px] font-bold text-emerald-700 hover:underline break-keep"
@@ -251,13 +251,13 @@ function AiMatchProposalInner() {
             {rec.evidence?.length > 0 && (
               <div className="rounded-2xl border border-slate-200 p-5">
                 <h3 className="text-[14px] font-extrabold text-slate-900 mb-1">근거 보기</h3>
-                <p className="text-[11px] text-slate-400 mb-3.5">
+                <p className="text-[12px] text-slate-500 mb-3.5">
                   추천에 사용된 실측 데이터 · 출처 SPONPIK 내부(S등급) · 기준일 {data.dataAsOf ? new Date(data.dataAsOf).toLocaleDateString('ko-KR') : '-'}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                   {rec.evidence.map((e: any) => (
                     <div key={e.evidenceId} className="flex items-baseline gap-2 text-[12px] border-b border-slate-50 pb-1.5">
-                      <span className="text-slate-400 shrink-0">{e.label}</span>
+                      <span className="text-slate-500 shrink-0">{e.label}</span>
                       <span className="ml-auto font-bold text-slate-800 text-right break-keep">{e.value}</span>
                     </div>
                   ))}
@@ -270,7 +270,7 @@ function AiMatchProposalInner() {
               <div className="rounded-2xl border border-slate-200 p-5 print:hidden">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-[14px] font-extrabold text-slate-900">추가 추천 옵션</h3>
-                  <Link to={`/ai-match/${requestId}`} className="text-[12px] font-bold text-slate-400 hover:text-slate-700">전체 보기 ›</Link>
+                  <Link to={`/ai-match/${requestId}`} className="text-[12px] font-bold text-slate-500 hover:text-slate-700">전체 보기 ›</Link>
                 </div>
                 <div className="space-y-2">
                   {others.map((o) => (
@@ -280,15 +280,15 @@ function AiMatchProposalInner() {
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="text-[13px] font-bold text-slate-900">
-                          {o.name} 프로 <span className="ml-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-black">{o.matchScore}점</span>
+                          {o.name} 프로 <span className="ml-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[12.5px] font-black">{o.matchScore}점</span>
                         </div>
-                        <div className="text-[11px] text-slate-400 truncate">
+                        <div className="text-[12px] text-slate-500 truncate">
                           {o.package?.methodLabel || METHOD_LABEL[o.package?.method]} · ₩{o.package?.priceConfirmed?.toLocaleString()}~
                         </div>
                       </div>
                       <Link
                         to={`/ai-match/${requestId}/proposal/${o.athleteId}`}
-                        className="shrink-0 h-8 px-3 inline-flex items-center rounded-lg border border-slate-200 text-[11px] font-bold text-slate-600 hover:bg-slate-50"
+                        className="shrink-0 h-8 px-3 inline-flex items-center rounded-lg border border-slate-200 text-[12px] font-bold text-slate-600 hover:bg-slate-50"
                       >
                         선택
                       </Link>
@@ -311,9 +311,9 @@ function AiMatchProposalInner() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-[14px] font-extrabold text-slate-900">{rec.name} 프로</div>
-                  <div className="text-[11px] text-slate-400">{rec.tour}</div>
+                  <div className="text-[12px] text-slate-500">{rec.tour}</div>
                   {rec.roleLabel && (
-                    <span className="inline-flex mt-1 px-1.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-bold">{rec.roleLabel}</span>
+                    <span className="inline-flex mt-1 px-1.5 py-0.5 rounded bg-slate-900 text-white text-[12.5px] font-bold">{rec.roleLabel}</span>
                   )}
                 </div>
                 <ScoreGauge score={rec.matchScore} size={56} />
@@ -335,9 +335,9 @@ function AiMatchProposalInner() {
               </ul>
 
               <div className="rounded-xl bg-white border border-slate-100 px-4 py-3 mb-4">
-                <div className="text-[11px] text-slate-400 mb-0.5">확정 슬롯 후원가 (VAT 별도)</div>
+                <div className="text-[12px] text-slate-500 mb-0.5">확정 슬롯 후원가 (VAT 별도)</div>
                 <div className="text-[22px] font-black text-slate-900 tabular-nums">₩{pkg.priceConfirmed?.toLocaleString()}~</div>
-                {pkg.priceNote && <div className="text-[10px] text-slate-400 break-keep mt-0.5">{pkg.priceNote}</div>}
+                {pkg.priceNote && <div className="text-[12.5px] text-slate-500 break-keep mt-0.5">{pkg.priceNote}</div>}
               </div>
 
               <button
@@ -358,12 +358,12 @@ function AiMatchProposalInner() {
               >
                 <Zap className="w-4 h-4" /> 바로 계약 시작 <ArrowRight className="w-4 h-4" />
               </Link>
-              <p className="text-center text-[10px] text-slate-400 mt-2 print:hidden">선수 상세의 통합 구매 화면으로 연결됩니다</p>
+              <p className="text-center text-[12.5px] text-slate-500 mt-2 print:hidden">선수 상세의 통합 구매 화면으로 연결됩니다</p>
             </div>
 
             <div className="rounded-2xl bg-slate-50 border border-slate-100 px-4 py-3.5 flex items-start gap-2.5 print:hidden">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-slate-500 break-keep leading-relaxed">
+              <p className="text-[12px] text-slate-500 break-keep leading-relaxed">
                 결제는 SPONPIK 에스크로로 보호되며, 계약 이행 증빙 리포트가 제공됩니다.
               </p>
             </div>
@@ -389,7 +389,7 @@ function Shell({ title, children }: { title: string; children: React.ReactNode }
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start gap-3">
-      <dt className="w-20 shrink-0 text-slate-400">{label}</dt>
+      <dt className="w-20 shrink-0 text-slate-500">{label}</dt>
       <dd className="font-bold text-slate-800 break-keep">{value}</dd>
     </div>
   );
@@ -408,7 +408,7 @@ function AllocRow({ color, label, pct }: { color: string; label: string; pct: nu
 function MetricTile({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
     <div className="rounded-xl border border-slate-100 px-3 py-2.5">
-      <div className="flex items-center gap-1.5 text-[10px] text-slate-400 mb-0.5">
+      <div className="flex items-center gap-1.5 text-[12.5px] text-slate-500 mb-0.5">
         <Icon className="w-3 h-3" /> {label}
       </div>
       <div className="text-[14px] font-black text-slate-900 tabular-nums break-keep">{value}</div>

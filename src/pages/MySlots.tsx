@@ -247,7 +247,7 @@ export function MySlots() {
         <div className="card p-3 sm:p-4">
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-500" />
               <input
                 type="text"
                 placeholder="슬롯명, 이벤트 검색..."
@@ -376,7 +376,7 @@ export function MySlots() {
                               <span className="text-slate-500">판매방식:</span>
                               <span className={cn(
                                 'font-medium',
-                                (slot.enableAuction || slot.enableDirectBuy) ? 'text-violet-600' : 'text-slate-400'
+                                (slot.enableAuction || slot.enableDirectBuy) ? 'text-violet-600' : 'text-slate-500'
                               )}>
                                 {getSaleModeLabel(slot)}
                               </span>
@@ -412,7 +412,7 @@ export function MySlots() {
                               <span className="text-slate-600">
                                 계약금: <strong>{formatCurrency(slot.auction.contract.priceFinal || 0)}</strong>
                               </span>
-                              <span className="text-slate-400 hidden sm:inline">|</span>
+                              <span className="text-slate-500 hidden sm:inline">|</span>
                               <span className="text-slate-600 truncate">
                                 브랜드: {slot.auction.contract.brand?.name}
                               </span>
@@ -454,14 +454,14 @@ export function MySlots() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                className="p-1.5 sm:p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
               >
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               <span className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-slate-600">페이지 {page}</span>
               <button
                 onClick={() => setPage((p) => p + 1)}
-                className="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
@@ -645,11 +645,11 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                 <h3 className="text-xs sm:text-sm font-semibold text-slate-900 mb-2 sm:mb-3">슬롯 정보</h3>
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
                   <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                    <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">위치</p>
+                    <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">위치</p>
                     <p className="font-medium text-slate-900 text-sm sm:text-base">{slot.slotTemplate?.bodyPart || '-'}</p>
                   </div>
                   <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                    <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최대 크기</p>
+                    <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최대 크기</p>
                     <p className="font-medium text-slate-900 text-sm sm:text-base">
                       {slot.slotTemplate?.sizeMaxWMm && slot.slotTemplate?.sizeMaxHMm
                         ? `${slot.slotTemplate.sizeMaxWMm}×${slot.slotTemplate.sizeMaxHMm}mm`
@@ -657,13 +657,13 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                     </p>
                   </div>
                   <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                    <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최소가</p>
+                    <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최소가</p>
                     <p className="font-medium text-slate-900 text-sm sm:text-base">
                       {slot.reservePrice ? formatCurrency(slot.reservePrice) : formatCurrency(slot.slotTemplate?.defaultReservePrice || 0)}
                     </p>
                   </div>
                   <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                    <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">이벤트 기간</p>
+                    <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">이벤트 기간</p>
                     <p className="font-medium text-slate-900 text-sm sm:text-base">
                       {formatDate(slot.event?.dateStart)} - {formatDate(slot.event?.dateEnd)}
                     </p>
@@ -745,7 +745,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                           )}
                         >
                           <div className="text-sm font-bold text-slate-900 mb-0.5">{m.icon} {m.label}</div>
-                          <div className="text-[11px] text-slate-500 leading-snug">{m.desc}</div>
+                          <div className="text-[12px] text-slate-500 leading-snug">{m.desc}</div>
                         </button>
                       ))}
                     </div>
@@ -800,7 +800,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                             onClick={() => setIsPublic(!isPublic)}
                             className={cn(
                               'flex items-center gap-1 text-sm font-medium transition-colors',
-                              isPublic ? 'text-blue-600' : 'text-slate-400'
+                              isPublic ? 'text-blue-600' : 'text-slate-500'
                             )}
                           >
                             {isPublic ? (
@@ -859,17 +859,17 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                   {/* Auction Status */}
                   <div className="grid grid-cols-3 gap-2 sm:gap-4">
                     <div className="p-2.5 sm:p-4 bg-emerald-50 rounded-lg sm:rounded-xl border border-emerald-200">
-                      <p className="text-[10px] sm:text-xs text-emerald-600 mb-0.5 sm:mb-1">시작가</p>
+                      <p className="text-[12.5px] sm:text-xs text-emerald-600 mb-0.5 sm:mb-1">시작가</p>
                       <p className="text-sm sm:text-xl font-bold text-emerald-700">
                         {formatCurrency(slot.auctionMinBid || slot.reservePrice || 0)}
                       </p>
                     </div>
                     <div className="p-2.5 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                      <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">입찰 수</p>
+                      <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">입찰 수</p>
                       <p className="text-sm sm:text-xl font-bold text-slate-900">{slot.auction._count?.bids || 0}건</p>
                     </div>
                     <div className="p-2.5 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                      <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">마감</p>
+                      <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">마감</p>
                       <p className="text-sm sm:text-xl font-bold text-slate-900">
                         {slot.auction.endTime
                           ? new Date(slot.auction.endTime).toLocaleString('ko-KR', {
@@ -892,7 +892,7 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                           <div key={index} className="flex items-center justify-between p-2.5 sm:p-3 bg-slate-50 rounded-lg sm:rounded-xl">
                             <div className="flex items-center gap-2 sm:gap-3">
                               <span className={cn(
-                                'w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold',
+                                'w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[12.5px] sm:text-xs font-bold',
                                 index === 0 ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-600'
                               )}>
                                 {index + 1}
@@ -935,13 +935,13 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
 
               <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">슬롯 위치</p>
+                  <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">슬롯 위치</p>
                   <p className="text-sm sm:text-xl font-bold text-slate-900">
                     {slot.slotTemplate?.bodyPart || '-'}
                   </p>
                 </div>
                 <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최대 크기</p>
+                  <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최대 크기</p>
                   <p className="text-sm sm:text-xl font-bold text-slate-900">
                     {slot.slotTemplate?.sizeMaxWMm && slot.slotTemplate?.sizeMaxHMm
                       ? `${slot.slotTemplate.sizeMaxWMm}×${slot.slotTemplate.sizeMaxHMm}mm`
@@ -949,13 +949,13 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate, onUpdate }
                   </p>
                 </div>
                 <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최소가</p>
+                  <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">최소가</p>
                   <p className="text-sm sm:text-xl font-bold text-slate-900">
                     {formatCurrency(slot.reservePrice || slot.slotTemplate?.defaultReservePrice || 0)}
                   </p>
                 </div>
                 <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                  <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">이벤트 상태</p>
+                  <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">이벤트 상태</p>
                   <p className="text-sm sm:text-xl font-bold text-slate-900">
                     {slot.event?.status || '-'}
                   </p>

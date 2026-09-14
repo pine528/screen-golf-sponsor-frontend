@@ -218,7 +218,7 @@ export function Settlements() {
         <div className="card p-3 sm:p-4">
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-500" />
               <input
                 type="text"
                 placeholder="슬롯명, 브랜드명 검색..."
@@ -315,13 +315,13 @@ export function Settlements() {
                       </div>
                     </div>
                     <div className="text-left sm:text-right pl-13 sm:pl-0 flex-shrink-0">
-                      <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">
+                      <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">
                         {settlement.status === 'PAID' ? '정산 완료' : '정산 예정'}
                       </p>
                       <p className="text-lg sm:text-xl font-bold text-emerald-600">
                         {formatCurrency(settlement.payoutAmount || 0)}
                       </p>
-                      <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">
+                      <p className="text-[12.5px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1">
                         {settlement.status === 'PAID'
                           ? formatDate(settlement.paidAt)
                           : `예정: ${formatDate(settlement.createdAt)}`}
@@ -342,14 +342,14 @@ export function Settlements() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                className="p-1.5 sm:p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
               >
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               <span className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-slate-600">페이지 {page}</span>
               <button
                 onClick={() => setPage((p) => p + 1)}
-                className="p-1.5 sm:p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
@@ -387,7 +387,7 @@ export function Settlements() {
                   <div className="text-right">
                     <p className="font-bold text-slate-900 text-sm sm:text-base">{formatCurrency(item.amount)}</p>
                     <p className={cn(
-                      'text-[10px] sm:text-xs',
+                      'text-[12.5px] sm:text-xs',
                       item.status === 'completed' ? 'text-emerald-600' : 'text-amber-600'
                     )}>
                       {item.status === 'completed' ? '정산 완료' : '정산 예정'}

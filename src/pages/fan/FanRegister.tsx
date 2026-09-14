@@ -104,7 +104,7 @@ export default function FanRegister() {
 
             <div>
               <label htmlFor="nickname" className="label">
-                닉네임 <span className="text-slate-400">(선택)</span>
+                닉네임 <span className="text-slate-500">(선택)</span>
               </label>
               <input
                 id="nickname"

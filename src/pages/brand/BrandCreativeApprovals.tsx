@@ -141,7 +141,7 @@ export function BrandCreativeApprovals() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <FileImage className="w-8 h-8 text-slate-400" />
+                        <FileImage className="w-8 h-8 text-slate-500" />
                       )}
                     </div>
 
@@ -254,11 +254,11 @@ export function BrandCreativeApprovals() {
                     </div>
                   ) : (
                     <label className="cursor-pointer">
-                      <FileImage className="w-12 h-12 text-slate-400 mx-auto mb-2" />
+                      <FileImage className="w-12 h-12 text-slate-500 mx-auto mb-2" />
                       <p className="text-sm text-slate-600 mb-1">
                         클릭하여 파일 선택
                       </p>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-slate-500">
                         PNG, JPG, PDF (최대 10MB)
                       </p>
                       <input

@@ -31,7 +31,7 @@ const STATUS: Record<string, { label: string; cls: string }> = {
 
 function Badge({ status }: { status: string }) {
   const s = STATUS[status] || { label: status, cls: 'bg-slate-100 text-slate-600' };
-  return <span className={`px-2 py-0.5 rounded-lg text-[11px] font-bold ${s.cls}`}>{s.label}</span>;
+  return <span className={`px-2 py-0.5 rounded-lg text-[12px] font-bold ${s.cls}`}>{s.label}</span>;
 }
 
 export default function Proposals() {
@@ -57,7 +57,7 @@ function ProposalList() {
         <p className="text-sm text-slate-500 mb-5">6개월·12개월 장기 파트너십은 제안을 통해 조건을 맞춘 뒤 계약합니다.</p>
 
         {isLoading ? (
-          <div className="py-16 text-center text-sm text-slate-400">불러오는 중...</div>
+          <div className="py-16 text-center text-sm text-slate-500">불러오는 중...</div>
         ) : list.length === 0 ? (
           <div className="bg-white border border-slate-200 rounded-2xl p-12 text-center">
             <div className="text-sm font-bold text-slate-900 mb-1">아직 제안이 없습니다</div>
@@ -80,7 +80,7 @@ function ProposalList() {
                       </span>
                       <Badge status={p.status} />
                     </div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-[12px] text-slate-500">
                       {p.durationType === 'MONTHS_6' ? '6개월' : '12개월'} · {day(p.startDate)} ~ {day(p.endDate)}
                     </div>
                   </div>
@@ -119,7 +119,7 @@ function ProposalDetail({ id }: { id: string }) {
     },
   });
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center text-sm text-slate-400">불러오는 중...</div>;
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center text-sm text-slate-500">불러오는 중...</div>;
   if (!p) return <div className="min-h-screen flex items-center justify-center text-sm text-slate-500">제안을 찾을 수 없습니다</div>;
 
   const role = user?.role;
@@ -211,10 +211,10 @@ function ProposalDetail({ id }: { id: string }) {
                 <div className="min-w-0">
                   <div className="text-xs font-semibold text-slate-800">
                     {STATUS[h.toStatus]?.label || h.toStatus}
-                    {h.actorRole && <span className="ml-1.5 text-[10px] text-slate-400">{h.actorRole}</span>}
+                    {h.actorRole && <span className="ml-1.5 text-[12.5px] text-slate-500">{h.actorRole}</span>}
                   </div>
-                  {h.note && <div className="text-[11px] text-slate-600 break-keep">{h.note}</div>}
-                  <div className="text-[10px] text-slate-400">{new Date(h.createdAt).toLocaleString('ko-KR')}</div>
+                  {h.note && <div className="text-[12px] text-slate-600 break-keep">{h.note}</div>}
+                  <div className="text-[12.5px] text-slate-500">{new Date(h.createdAt).toLocaleString('ko-KR')}</div>
                 </div>
               </li>
             ))}

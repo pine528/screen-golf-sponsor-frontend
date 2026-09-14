@@ -312,7 +312,7 @@ export function AgencyDashboard() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Users className="w-6 h-6 text-slate-400" />
+                        <Users className="w-6 h-6 text-slate-500" />
                       </div>
                     )}
                   </div>
@@ -337,7 +337,7 @@ export function AgencyDashboard() {
                       ? 'KYC 심사중'
                       : 'KYC 미제출'}
                   </span>
-                  <ChevronRight className="w-5 h-5 text-slate-400" />
+                  <ChevronRight className="w-5 h-5 text-slate-500" />
                 </div>
               </Link>
             ))}

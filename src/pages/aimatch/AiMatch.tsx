@@ -108,7 +108,7 @@ export function AiMatchBrandGate() {
             브랜드 등록하기
           </a>
         </div>
-        <p className="text-[11px] text-slate-400 mt-6">선수·팬 회원은 라이브 경매와 성장마켓을 이용해보세요.</p>
+        <p className="text-[12px] text-slate-500 mt-6">선수·팬 회원은 라이브 경매와 성장마켓을 이용해보세요.</p>
       </div>
     </div>
   );
@@ -370,7 +370,7 @@ function AiMatchForm() {
       {/* 헤더 */}
       <section className="px-5 sm:px-8 pt-2 pb-6 bg-gradient-to-b from-emerald-50/50 to-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-[11px] font-black tracking-widest text-emerald-600 mb-1">SPONPIK AI DEEP MATCH</div>
+          <div className="text-[12px] font-black tracking-widest text-emerald-600 mb-1">SPONPIK AI DEEP MATCH</div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 mb-2 break-keep">
             브랜드를 먼저 이해하고, <span className="text-emerald-600">선수의 역할까지 설계</span>합니다
           </h1>
@@ -388,7 +388,7 @@ function AiMatchForm() {
               { icon: Star, label: '전략 추천' },
             ].map((s, i, arr) => (
               <div key={s.label} className="flex items-center gap-2 shrink-0">
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-bold ${s.active ? 'bg-emerald-600 text-white' : 'text-slate-400'}`}>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-bold ${s.active ? 'bg-emerald-600 text-white' : 'text-slate-500'}`}>
                   <s.icon className="w-3.5 h-3.5" /> {i + 1} {s.label}
                 </span>
                 {i < arr.length - 1 && <span className="w-6 sm:w-12 h-px bg-slate-200" />}
@@ -469,7 +469,7 @@ function AiMatchForm() {
                       {i === productUrls.length - 1 && productUrls.length < 3 ? (
                         <button onClick={() => setProductUrls([...productUrls, ''])} className="shrink-0 h-10 px-3 rounded-xl border border-slate-200 text-xs font-bold text-slate-600">+ 추가</button>
                       ) : (
-                        <button onClick={() => setProductUrls(productUrls.filter((_, j) => j !== i))} className="shrink-0 h-10 px-3 rounded-xl border border-slate-200 text-slate-400"><X className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => setProductUrls(productUrls.filter((_, j) => j !== i))} className="shrink-0 h-10 px-3 rounded-xl border border-slate-200 text-slate-500"><X className="w-3.5 h-3.5" /></button>
                       )}
                     </div>
                   ))}
@@ -497,7 +497,7 @@ function AiMatchForm() {
                     <span className="text-[13px] font-extrabold text-slate-900 inline-flex items-center gap-1.5">
                       <Sparkles className="w-4 h-4 text-emerald-600" /> AI 브랜드 자동분석
                     </span>
-                    <span className="text-[11px] font-bold text-slate-400">
+                    <span className="text-[12px] font-bold text-slate-500">
                       {analysis ? `URL ${analysis.urls?.filter((u: any) => u.status === 'OK').length}/${analysis.urls?.length}개 분석` : '저장된 프로필'}
                       {analysis?.urls?.some((u: any) => u.status === 'FAILED') && ' · 일부 실패(수동입력 가능)'}
                     </span>
@@ -506,7 +506,7 @@ function AiMatchForm() {
                     <ReviewField label="브랜드 키워드" value={profileKeywords} onChange={(v) => { setProfileKeywords(v); setProfileApproved(false); }} placeholder="쉼표로 구분" />
                     <ReviewField label="제품 가격대" value={profilePriceTier} onChange={(v) => { setProfilePriceTier(v); setProfileApproved(false); }} placeholder="예) 중가~프리미엄" />
                   </div>
-                  <p className="text-[11px] text-slate-400 break-keep mb-3">
+                  <p className="text-[12px] text-slate-500 break-keep mb-3">
                     공개 메타데이터 기반 규칙 추출 결과입니다. 확인·수정 후 승인한 값만 매칭에 반영됩니다.
                   </p>
                   {profileApproved ? (
@@ -578,7 +578,7 @@ function AiMatchForm() {
                   })}
                 </div>
                 {(brandCtx?.excludedAthleteIds || []).length > 0 && (
-                  <p className="mt-2 text-[11px] text-slate-400">제외 처리된 선수 {brandCtx.excludedAthleteIds.length}명은 추천에서 빠집니다.</p>
+                  <p className="mt-2 text-[12px] text-slate-500">제외 처리된 선수 {brandCtx.excludedAthleteIds.length}명은 추천에서 빠집니다.</p>
                 )}
               </Field>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -586,7 +586,7 @@ function AiMatchForm() {
                 <Toggle label="팬스토어 연계" on={includeGrowthMarket} onClick={() => setIncludeGrowthMarket(!includeGrowthMarket)} />
                 <Toggle label="성과보장 50 우선" on={guarantee} onClick={() => setGuarantee(!guarantee)} />
               </div>
-              <p className="flex items-center gap-1.5 text-[11px] text-slate-400 pt-3 mt-1 border-t border-slate-100">
+              <p className="flex items-center gap-1.5 text-[12px] text-slate-500 pt-3 mt-1 border-t border-slate-100">
                 <Info className="w-3.5 h-3.5 shrink-0" /> 입력하신 정보는 AI 매칭 분석에만 사용되며, 외부에 공개되지 않습니다.
               </p>
             </Card>
@@ -598,8 +598,8 @@ function AiMatchForm() {
 
             <div className="rounded-xl bg-emerald-50/60 border border-emerald-100 px-4 py-3 mb-4">
               <div className="flex items-baseline justify-between mb-1.5">
-                <span className="text-[11px] font-bold text-slate-500">분석 준비도</span>
-                {readiness >= 70 && <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-black">심층매칭 가능</span>}
+                <span className="text-[12px] font-bold text-slate-500">분석 준비도</span>
+                {readiness >= 70 && <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[12.5px] font-black">심층매칭 가능</span>}
               </div>
               <div className="text-2xl font-black text-emerald-700 tabular-nums mb-1.5">{readiness}%</div>
               <div className="h-1.5 rounded-full bg-white overflow-hidden">
@@ -620,12 +620,12 @@ function AiMatchForm() {
 
             <div className="rounded-xl bg-slate-900 text-white px-4 py-3.5 mb-4">
               <div className="text-[12px] font-extrabold mb-1.5">SPONPIK SIE가 추가로 분석합니다</div>
-              <p className="text-[11px] text-slate-300 break-keep leading-relaxed mb-2">
+              <p className="text-[12px] text-slate-300 break-keep leading-relaxed mb-2">
                 등록 선수의 최신 프로필과 실제 가용 슬롯을 먼저 확인한 뒤, 조건에 맞는 후보만 대회·팬·성장마켓 데이터로 심층 비교합니다.
               </p>
               <div className="flex flex-wrap gap-1">
                 {['선수 DB', '대회/성적', '팬지수', '성장마켓', '슬롯 재고'].map((t) => (
-                  <span key={t} className="px-1.5 py-0.5 rounded bg-white/10 text-[10px] font-bold">{t}</span>
+                  <span key={t} className="px-1.5 py-0.5 rounded bg-white/10 text-[12.5px] font-bold">{t}</span>
                 ))}
               </div>
             </div>
@@ -639,12 +639,12 @@ function AiMatchForm() {
               onClick={submit}
               disabled={!valid || submitting}
               className={`hidden lg:inline-flex w-full h-12 items-center justify-center gap-2 rounded-xl text-sm font-bold transition-colors ${
-                valid ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                valid ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-500 cursor-not-allowed'
               }`}
             >
               <Sparkles className="w-4 h-4 shrink-0" /> <span className="truncate">{submitLabel || 'AI 심층 매칭 시작 →'}</span>
             </button>
-            <p className="hidden lg:block text-center text-[11px] text-slate-400 mt-2 break-keep">
+            <p className="hidden lg:block text-center text-[12px] text-slate-500 mt-2 break-keep">
               패치 특화 · SNS 특화 · 혼합 · 디스커버리 역할로 결과를 분리합니다.
             </p>
           </div>
@@ -657,7 +657,7 @@ function AiMatchForm() {
           onClick={submit}
           disabled={!valid || submitting}
           className={`w-full h-[52px] inline-flex items-center justify-center gap-2 rounded-xl text-sm font-bold ${
-            valid ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'
+            valid ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'
           }`}
         >
           <Sparkles className="w-4 h-4 shrink-0" />
@@ -674,7 +674,7 @@ function Card({ title, sub, children }: { title: string; sub?: string; children:
   return (
     <div className="rounded-2xl border border-slate-200 p-5 sm:p-6">
       <h2 className="text-[16px] font-extrabold text-slate-900">{title}</h2>
-      {sub && <p className="text-[12px] text-slate-400 mt-0.5 mb-4 break-keep">{sub}</p>}
+      {sub && <p className="text-[12px] text-slate-500 mt-0.5 mb-4 break-keep">{sub}</p>}
       <div className="space-y-5">{children}</div>
     </div>
   );
@@ -686,7 +686,7 @@ function Field({ label, required, hint, children }: { label: string; required?: 
       <div className="flex items-baseline gap-1.5 mb-2">
         <span className="text-[13px] font-bold text-slate-800">{label}</span>
         {required && <span className="text-rose-500 text-[12px]">*</span>}
-        {hint && <span className="text-[11px] text-slate-400">({hint})</span>}
+        {hint && <span className="text-[12px] text-slate-500">({hint})</span>}
       </div>
       {children}
     </div>
@@ -712,7 +712,7 @@ function LabeledInput({ icon: Icon, label, required, value, onChange, placeholde
 function ReviewField({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) {
   return (
     <div className="rounded-xl bg-white border border-slate-200 px-3 py-2">
-      <div className="text-[10px] font-bold text-slate-400 mb-0.5">{label}</div>
+      <div className="text-[12.5px] font-bold text-slate-500 mb-0.5">{label}</div>
       <input value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
         className="w-full text-[13px] font-bold text-slate-800 focus:outline-none" />
     </div>
@@ -753,7 +753,7 @@ function SummaryRow({ icon: Icon, label, value }: { icon: any; label: string; va
   return (
     <div className="flex items-start gap-2.5">
       <Icon className="w-4 h-4 text-slate-300 shrink-0 mt-0.5" />
-      <dt className="w-16 shrink-0 text-[12px] text-slate-400">{label}</dt>
+      <dt className="w-16 shrink-0 text-[12px] text-slate-500">{label}</dt>
       <dd className="text-[12px] font-bold text-slate-800 break-keep text-right flex-1">{value}</dd>
     </div>
   );

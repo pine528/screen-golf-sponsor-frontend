@@ -25,22 +25,22 @@ export function SummaryCard({ label, value, unit, delta, icon: Icon, hint, varia
   return (
     <div className={`bg-white border rounded-xl p-4 ${variant === 'highlight' ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200'}`}>
       <div className="flex items-start justify-between mb-2">
-        <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
-        {Icon && <Icon className={`w-4 h-4 ${variant === 'highlight' ? 'text-emerald-500' : 'text-slate-400'}`} />}
+        <span className="text-[12px] font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
+        {Icon && <Icon className={`w-4 h-4 ${variant === 'highlight' ? 'text-emerald-500' : 'text-slate-500'}`} />}
       </div>
       <div className="flex items-baseline gap-1">
         <span className={`text-2xl font-extrabold ${variant === 'highlight' ? 'text-emerald-700' : 'text-slate-900'}`}>{formatted}</span>
         {unit && <span className="text-xs text-slate-500">{unit}</span>}
       </div>
       {(delta !== undefined || hint) && (
-        <div className="mt-2 flex items-center gap-2 text-[11px]">
+        <div className="mt-2 flex items-center gap-2 text-[12px]">
           {delta !== undefined && (
             <span className={`inline-flex items-center gap-0.5 font-semibold ${isUp ? 'text-emerald-600' : isDown ? 'text-rose-600' : 'text-slate-500'}`}>
               {isUp ? <TrendingUp className="w-3 h-3" /> : isDown ? <TrendingDown className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
               {Math.abs(delta).toFixed(1)}%
             </span>
           )}
-          {hint && <span className="text-slate-400">{hint}</span>}
+          {hint && <span className="text-slate-500">{hint}</span>}
         </div>
       )}
     </div>

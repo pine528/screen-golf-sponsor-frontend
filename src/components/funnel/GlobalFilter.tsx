@@ -87,7 +87,7 @@ export function GlobalFilter({ value, onChange, campaigns = [], athletes = [], h
           {/* 입력 그리드 */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
-              <label className="block text-[10px] font-semibold text-slate-500 mb-1">시작일</label>
+              <label className="block text-[12.5px] font-semibold text-slate-500 mb-1">시작일</label>
               <input
                 type="date"
                 value={value.from || ''}
@@ -96,7 +96,7 @@ export function GlobalFilter({ value, onChange, campaigns = [], athletes = [], h
               />
             </div>
             <div>
-              <label className="block text-[10px] font-semibold text-slate-500 mb-1">종료일</label>
+              <label className="block text-[12.5px] font-semibold text-slate-500 mb-1">종료일</label>
               <input
                 type="date"
                 value={value.to || ''}
@@ -106,7 +106,7 @@ export function GlobalFilter({ value, onChange, campaigns = [], athletes = [], h
             </div>
             {!hideCampaign && (
               <div>
-                <label className="block text-[10px] font-semibold text-slate-500 mb-1">캠페인</label>
+                <label className="block text-[12.5px] font-semibold text-slate-500 mb-1">캠페인</label>
                 <select
                   value={value.campaignId || ''}
                   onChange={(e) => onChange({ ...value, campaignId: e.target.value || undefined })}
@@ -121,7 +121,7 @@ export function GlobalFilter({ value, onChange, campaigns = [], athletes = [], h
             )}
             {!hideAthlete && (
               <div>
-                <label className="block text-[10px] font-semibold text-slate-500 mb-1">선수</label>
+                <label className="block text-[12.5px] font-semibold text-slate-500 mb-1">선수</label>
                 <select
                   value={value.athleteId || ''}
                   onChange={(e) => onChange({ ...value, athleteId: e.target.value || undefined })}

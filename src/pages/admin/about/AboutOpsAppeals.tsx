@@ -123,14 +123,14 @@ export default function AboutOpsAppeals() {
                       }`}>
                       <div className="flex items-center gap-2 mb-1.5">
                         <Tag tone={STATUS_TONE[a.status] ?? 'slate'}>{a.status}</Tag>
-                        <span className="font-mono text-[11px] text-slate-400">#{a.code}</span>
-                        {a.overdue && <span className="text-[11px] font-bold text-rose-500">SLA 경과</span>}
+                        <span className="font-mono text-[12px] text-slate-500">#{a.code}</span>
+                        {a.overdue && <span className="text-[12px] font-bold text-rose-500">SLA 경과</span>}
                       </div>
                       <p className="text-[13.5px] font-bold text-slate-800 truncate">{a.reason}</p>
-                      <p className="text-[11.5px] text-slate-400 mt-0.5 truncate">
+                      <p className="text-[12.5px] text-slate-500 mt-0.5 truncate">
                         {a.brandName} · {a.athleteName}
                       </p>
-                      <p className="text-[11px] text-slate-400 mt-1 tabular-nums">
+                      <p className="text-[12px] text-slate-500 mt-1 tabular-nums">
                         접수 {fmtDate(a.createdAt, true)}
                         {a.slaDueAt && ` · SLA ${fmtRemain(a.slaRemainMs)}`}
                       </p>
@@ -162,7 +162,7 @@ export default function AboutOpsAppeals() {
                           { l: '계약 금액', v: selected.contractAmount ? `${nf(selected.contractAmount)}원` : '—' },
                         ].map((r) => (
                           <div key={r.l}>
-                            <p className="text-[11px] text-slate-400 font-semibold">{r.l}</p>
+                            <p className="text-[12px] text-slate-500 font-semibold">{r.l}</p>
                             <p className="mt-0.5 font-semibold text-slate-800 tabular-nums">{r.v ?? '—'}</p>
                           </div>
                         ))}
@@ -198,7 +198,7 @@ export default function AboutOpsAppeals() {
                                 decisionType === d.code ? 'border-slate-900 bg-slate-50' : 'border-slate-200 hover:border-slate-300'
                               }`}>
                               <p className="text-[13.5px] font-bold text-slate-900">{d.label}</p>
-                              <p className="text-[11px] text-slate-400 mt-0.5">{d.desc}</p>
+                              <p className="text-[12px] text-slate-500 mt-0.5">{d.desc}</p>
                             </button>
                           ))}
                         </div>
@@ -229,7 +229,7 @@ export default function AboutOpsAppeals() {
                               <label className="block text-[12px] font-semibold text-slate-500 mb-1.5">지원 적용률 (%)</label>
                               <input type="number" value={ratio} onChange={(e) => setRatio(Number(e.target.value))}
                                 className="w-full h-10 px-3 rounded-xl border border-slate-200 text-[13px] text-right tabular-nums focus:outline-none" />
-                              <p className="mt-1 text-[10.5px] text-slate-400">권장 범위 0~15%</p>
+                              <p className="mt-1 text-[12.5px] text-slate-500">권장 범위 0~15%</p>
                             </div>
                             <div>
                               <label className="block text-[12px] font-semibold text-slate-500 mb-1.5">지원 한도 (원)</label>
@@ -237,7 +237,7 @@ export default function AboutOpsAppeals() {
                                 className="w-full h-10 px-3 rounded-xl border border-slate-200 text-[13px] text-right tabular-nums focus:outline-none" />
                             </div>
                             <div className="rounded-2xl bg-emerald-50 border border-emerald-100 px-4 py-3">
-                              <p className="text-[11px] font-semibold text-emerald-700">예상 지원액</p>
+                              <p className="text-[12px] font-semibold text-emerald-700">예상 지원액</p>
                               <p className="mt-1 text-[18px] font-extrabold text-emerald-700 tabular-nums">
                                 {estimate === null ? '계약금액 없음' : `${nf(estimate)}원`}
                               </p>
@@ -246,7 +246,7 @@ export default function AboutOpsAppeals() {
 
                           <div>
                             <label className="block text-[12px] font-semibold text-slate-500 mb-1.5">
-                              승인자 ID * <span className="text-slate-400">(요청자와 달라야 합니다)</span>
+                              승인자 ID * <span className="text-slate-500">(요청자와 달라야 합니다)</span>
                             </label>
                             <input value={approverId} onChange={(e) => setApproverId(e.target.value)}
                               placeholder="다른 관리자의 사용자 ID"
@@ -255,11 +255,11 @@ export default function AboutOpsAppeals() {
 
                           <div className="rounded-2xl bg-slate-50 border border-slate-100 px-4 py-3.5 space-y-1.5">
                             <p className="text-[12px] text-slate-600 leading-relaxed inline-flex items-start gap-2">
-                              <ShieldCheck className="w-3.5 h-3.5 text-slate-400 mt-0.5 shrink-0" />
+                              <ShieldCheck className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
                               본 지원은 현금이 아닌 SPONPIK 보장 지원으로 지급됩니다.
                             </p>
                             <p className="text-[12px] text-slate-600 leading-relaxed inline-flex items-start gap-2">
-                              <ShieldCheck className="w-3.5 h-3.5 text-slate-400 mt-0.5 shrink-0" />
+                              <ShieldCheck className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
                               타인 양도 및 현금 전환은 불가합니다.
                             </p>
                             <p className="text-[12px] text-rose-600 leading-relaxed inline-flex items-start gap-2">

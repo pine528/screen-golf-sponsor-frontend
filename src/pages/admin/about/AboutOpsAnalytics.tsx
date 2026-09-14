@@ -65,14 +65,14 @@ export default function AboutOpsAnalytics() {
                   <div key={f.step}>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-[13px] font-semibold text-slate-700">
-                        <span className="inline-flex w-5 h-5 rounded-md bg-slate-100 text-slate-500 text-[11px] font-bold items-center justify-center mr-2">
+                        <span className="inline-flex w-5 h-5 rounded-md bg-slate-100 text-slate-500 text-[12px] font-bold items-center justify-center mr-2">
                           {f.step}
                         </span>
                         {f.label}
                       </span>
                       <span className="text-[13px] font-extrabold text-slate-900 tabular-nums">
                         {nf(f.value)}
-                        {f.ofTotal !== null && <span className="text-[11px] text-slate-400 ml-1.5">({f.ofTotal}%)</span>}
+                        {f.ofTotal !== null && <span className="text-[12px] text-slate-500 ml-1.5">({f.ofTotal}%)</span>}
                       </span>
                     </div>
                     <div className="h-7 rounded-lg bg-slate-100 overflow-hidden">
@@ -80,7 +80,7 @@ export default function AboutOpsAnalytics() {
                         style={{ width: `${Math.max(2, (f.value / maxFunnel) * 100)}%` }} />
                     </div>
                     {f.dropRate !== null && (
-                      <p className="mt-1 text-[11px] text-slate-400">
+                      <p className="mt-1 text-[12px] text-slate-500">
                         전환율 {f.stepRate === null ? '집계 중' : `${f.stepRate}%`}
                         <span className="text-rose-400 ml-2">이탈 {f.dropRate}%</span>
                       </p>
@@ -88,7 +88,7 @@ export default function AboutOpsAnalytics() {
                   </div>
                 ))}
                 {data.funnel.every((f: any) => f.value === 0) && (
-                  <p className="text-[12.5px] text-slate-400 text-center py-4">
+                  <p className="text-[12.5px] text-slate-500 text-center py-4">
                     선택 기간에 수집된 이벤트가 없습니다.
                   </p>
                 )}
@@ -101,7 +101,7 @@ export default function AboutOpsAnalytics() {
                 {data.pages.length ? (
                   <table className="w-full text-[13px]">
                     <thead>
-                      <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                      <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                         <th className="text-left font-semibold px-5 py-2.5">페이지</th>
                         <th className="text-right font-semibold px-5 py-2.5">조회</th>
                       </tr>
@@ -129,7 +129,7 @@ export default function AboutOpsAnalytics() {
                       { l: '게시 사례', v: data.seo.publishedCases },
                     ].map((r) => (
                       <div key={r.l} className="rounded-2xl bg-slate-50 px-4 py-3">
-                        <p className="text-[11px] text-slate-400 font-semibold">{r.l}</p>
+                        <p className="text-[12px] text-slate-500 font-semibold">{r.l}</p>
                         <p className="text-[19px] font-extrabold text-slate-900 tabular-nums">{nf(r.v)}</p>
                       </div>
                     ))}
@@ -140,7 +140,7 @@ export default function AboutOpsAnalytics() {
                         ? <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                         : <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />}
                       <span className="text-[13px] font-semibold text-slate-700">{c.label}</span>
-                      <span className={`ml-auto text-[12.5px] ${c.ok ? 'text-slate-400' : 'text-amber-600 font-semibold'}`}>
+                      <span className={`ml-auto text-[12.5px] ${c.ok ? 'text-slate-500' : 'text-amber-600 font-semibold'}`}>
                         {c.detail}
                       </span>
                     </div>
@@ -150,7 +150,7 @@ export default function AboutOpsAnalytics() {
             </div>
           </div>
 
-          <p className="text-[11.5px] text-slate-400 px-1">
+          <p className="text-[12.5px] text-slate-500 px-1">
             집계 기간 {fmtDate(data.period.from)} ~ {fmtDate(data.period.to)} ({data.period.days}일) ·
             분석 ID는 내부 사용자 ID가 아닌 가명 ID를 사용합니다.
           </p>

@@ -40,14 +40,14 @@ export default function AboutAdminShell({
         <div className="h-16 flex items-center px-5 border-b border-white/5">
           <Link to="/admin/about" className="leading-tight">
             <span className="block text-[15px] font-extrabold text-white tracking-tight">SPONPIK</span>
-            <span className="block text-[10px] font-bold tracking-[0.2em] text-emerald-400">ADMIN</span>
+            <span className="block text-[12.5px] font-bold tracking-[0.2em] text-emerald-400">ADMIN</span>
           </Link>
         </div>
 
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
           {GROUPS.map((g) => (
             <div key={g}>
-              <p className="px-3 mb-1.5 text-[10px] font-bold tracking-[0.12em] text-slate-500 uppercase">{g}</p>
+              <p className="px-3 mb-1.5 text-[12.5px] font-bold tracking-[0.12em] text-slate-500 uppercase">{g}</p>
               <div className="space-y-0.5">
                 {NAV.filter((n) => n.group === g).map((n) => {
                   const active = pathname === n.to || (n.to !== '/admin/about' && pathname.startsWith(n.to));
@@ -55,7 +55,7 @@ export default function AboutAdminShell({
                   return (
                     <Link key={n.key} to={n.to} onClick={() => setOpen(false)}
                       className={`flex items-center gap-2.5 h-9 px-3 rounded-xl text-[13px] font-semibold transition ${
-                        active ? 'bg-emerald-500/15 text-emerald-300' : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        active ? 'bg-emerald-500/15 text-emerald-300' : 'text-slate-500 hover:text-white hover:bg-white/5'
                       }`}>
                       <I className="w-4 h-4 shrink-0" /> {n.label}
                     </Link>
@@ -67,7 +67,7 @@ export default function AboutAdminShell({
         </nav>
 
         <div className="p-3 border-t border-white/5">
-          <Link to="/about/service" className="flex items-center gap-2 h-9 px-3 rounded-xl text-[12px] font-semibold text-slate-400 hover:text-white hover:bg-white/5">
+          <Link to="/about/service" className="flex items-center gap-2 h-9 px-3 rounded-xl text-[12px] font-semibold text-slate-500 hover:text-white hover:bg-white/5">
             사이트 바로가기
           </Link>
         </div>
@@ -80,7 +80,7 @@ export default function AboutAdminShell({
           <button onClick={() => setOpen(true)} className="lg:hidden w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center">
             <Menu className="w-4 h-4 text-slate-500" />
           </button>
-          <nav className="flex items-center gap-1.5 text-[13px] text-slate-400 min-w-0">
+          <nav className="flex items-center gap-1.5 text-[13px] text-slate-500 min-w-0">
             {(breadcrumb ?? ['소개 운영', title]).map((b, i, arr) => (
               <span key={i} className="flex items-center gap-1.5 truncate">
                 {i > 0 && <span className="text-slate-300">/</span>}
@@ -135,7 +135,7 @@ export function Metric({ value, unit, empty = '집계 중' }: { value: number | 
   if (value === null || value === undefined) {
     return <span className="text-[15px] font-semibold text-slate-300">{empty}</span>;
   }
-  return <span className="tabular-nums">{nf(value)}<span className="text-[0.6em] text-slate-400 ml-0.5">{unit}</span></span>;
+  return <span className="tabular-nums">{nf(value)}<span className="text-[0.6em] text-slate-500 ml-0.5">{unit}</span></span>;
 }
 
 export function KpiCard({ label, value, unit, sub, tone }: {
@@ -149,7 +149,7 @@ export function KpiCard({ label, value, unit, sub, tone }: {
       <p className={`text-[24px] font-extrabold leading-none ${color}`}>
         <Metric value={value} unit={unit} />
       </p>
-      {sub && <p className="mt-2 text-[11px] text-slate-400">{sub}</p>}
+      {sub && <p className="mt-2 text-[12px] text-slate-500">{sub}</p>}
     </div>
   );
 }
@@ -177,13 +177,13 @@ export const STATUS_TONE: Record<string, string> = {
   APPROVED: 'bg-emerald-50 text-emerald-700',
   SCHEDULED: 'bg-violet-50 text-violet-700',
   PUBLISHED: 'bg-emerald-600 text-white',
-  ARCHIVED: 'bg-slate-100 text-slate-400',
+  ARCHIVED: 'bg-slate-100 text-slate-500',
   ON_HOLD: 'bg-rose-50 text-rose-600',
 };
 
 export function Status({ code, label }: { code: string; label?: string }) {
   return (
-    <span className={`inline-flex items-center h-6 px-2 rounded-lg text-[11px] font-bold ${STATUS_TONE[code] ?? 'bg-slate-100 text-slate-600'}`}>
+    <span className={`inline-flex items-center h-6 px-2 rounded-lg text-[12px] font-bold ${STATUS_TONE[code] ?? 'bg-slate-100 text-slate-600'}`}>
       {label ?? code}
     </span>
   );
@@ -200,14 +200,14 @@ export function Tag({ children, tone = 'slate' }: {
     rose: 'bg-rose-50 text-rose-600',
     violet: 'bg-violet-50 text-violet-700',
   };
-  return <span className={`inline-flex items-center gap-1 h-6 px-2 rounded-lg text-[11px] font-bold ${tones[tone]}`}>{children}</span>;
+  return <span className={`inline-flex items-center gap-1 h-6 px-2 rounded-lg text-[12px] font-bold ${tones[tone]}`}>{children}</span>;
 }
 
 export function Empty({ title, desc }: { title: string; desc?: string }) {
   return (
     <div className="px-6 py-14 text-center">
       <p className="text-[14px] font-bold text-slate-600">{title}</p>
-      {desc && <p className="mt-1.5 text-[12px] text-slate-400 whitespace-pre-line">{desc}</p>}
+      {desc && <p className="mt-1.5 text-[12px] text-slate-500 whitespace-pre-line">{desc}</p>}
     </div>
   );
 }
@@ -218,7 +218,7 @@ export function Loading() {
 
 export function BackLink({ to, label }: { to: string; label: string }) {
   return (
-    <Link to={to} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-4">
+    <Link to={to} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-4">
       <ChevronLeft className="w-4 h-4" /> {label}
     </Link>
   );

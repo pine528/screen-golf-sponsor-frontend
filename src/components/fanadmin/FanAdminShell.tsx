@@ -48,7 +48,7 @@ export default function FanAdminShell({
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
           {GROUPS.map((g) => (
             <div key={g}>
-              <p className="px-3 mb-1.5 text-[10px] font-bold tracking-[0.12em] text-slate-500 uppercase">{g}</p>
+              <p className="px-3 mb-1.5 text-[12.5px] font-bold tracking-[0.12em] text-slate-500 uppercase">{g}</p>
               <div className="space-y-0.5">
                 {NAV.filter((n) => n.group === g).map((n) => {
                   const active = pathname === n.to || (n.to !== '/admin/fan' && pathname.startsWith(n.to));
@@ -56,7 +56,7 @@ export default function FanAdminShell({
                   return (
                     <Link key={n.key} to={n.to} onClick={() => setOpen(false)}
                       className={`flex items-center gap-2.5 h-9 px-3 rounded-xl text-[13px] font-semibold transition ${
-                        active ? 'bg-emerald-500/15 text-emerald-300' : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        active ? 'bg-emerald-500/15 text-emerald-300' : 'text-slate-500 hover:text-white hover:bg-white/5'
                       }`}>
                       <I className="w-4 h-4 shrink-0" />
                       {n.label}
@@ -69,7 +69,7 @@ export default function FanAdminShell({
         </nav>
 
         <div className="p-3 border-t border-white/5">
-          <Link to="/fan" className="flex items-center gap-2 h-9 px-3 rounded-xl text-[12px] font-semibold text-slate-400 hover:text-white hover:bg-white/5">
+          <Link to="/fan" className="flex items-center gap-2 h-9 px-3 rounded-xl text-[12px] font-semibold text-slate-500 hover:text-white hover:bg-white/5">
             <ExternalLink className="w-3.5 h-3.5" /> 팬 화면 보기
           </Link>
         </div>
@@ -83,7 +83,7 @@ export default function FanAdminShell({
           <button onClick={() => setOpen(true)} className="lg:hidden w-9 h-9 rounded-xl hover:bg-slate-100 flex items-center justify-center">
             <Menu className="w-4.5 h-4.5 text-slate-500" />
           </button>
-          <nav className="flex items-center gap-1.5 text-[13px] text-slate-400 min-w-0">
+          <nav className="flex items-center gap-1.5 text-[13px] text-slate-500 min-w-0">
             {(breadcrumb ?? ['팬 운영', title]).map((b, i, arr) => (
               <span key={i} className="flex items-center gap-1.5 truncate">
                 {i > 0 && <span className="text-slate-300">/</span>}
@@ -129,7 +129,7 @@ export function Metric({ value, unit, empty = '집계 중' }: { value: number | 
   }
   return (
     <span className="tabular-nums">
-      {nf(value)}<span className="text-[0.6em] text-slate-400 ml-0.5">{unit}</span>
+      {nf(value)}<span className="text-[0.6em] text-slate-500 ml-0.5">{unit}</span>
     </span>
   );
 }
@@ -143,7 +143,7 @@ export function KpiCard({ label, value, unit, delta, sub, empty }: {
       <p className="text-[24px] font-extrabold text-slate-900 leading-none">
         <Metric value={value} unit={unit} empty={empty} />
       </p>
-      <p className="mt-2 text-[11px] text-slate-400">
+      <p className="mt-2 text-[12px] text-slate-500">
         {delta !== null && delta !== undefined && (
           <span className={`font-bold ${delta >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}>
             {delta >= 0 ? '▲' : '▼'} {Math.abs(delta)}%{' '}
@@ -180,7 +180,7 @@ export const RISK_STYLE: Record<string, string> = {
 
 export function RiskTag({ risk, label }: { risk: string; label?: string }) {
   return (
-    <span className={`inline-flex items-center h-5 px-1.5 rounded-md border text-[11px] font-extrabold ${RISK_STYLE[risk] ?? RISK_STYLE.P2}`}>
+    <span className={`inline-flex items-center h-5 px-1.5 rounded-md border text-[12px] font-extrabold ${RISK_STYLE[risk] ?? RISK_STYLE.P2}`}>
       {risk}{label ? ` ${label}` : ''}
     </span>
   );
@@ -197,14 +197,14 @@ export function StatusTag({ label, tone = 'slate' }: {
     rose: 'bg-rose-50 text-rose-600',
     violet: 'bg-violet-50 text-violet-700',
   };
-  return <span className={`inline-flex items-center h-6 px-2 rounded-lg text-[11px] font-bold ${tones[tone]}`}>{label}</span>;
+  return <span className={`inline-flex items-center h-6 px-2 rounded-lg text-[12px] font-bold ${tones[tone]}`}>{label}</span>;
 }
 
 export function Empty({ title, desc }: { title: string; desc?: string }) {
   return (
     <div className="px-6 py-14 text-center">
       <p className="text-[14px] font-bold text-slate-600">{title}</p>
-      {desc && <p className="mt-1.5 text-[12px] text-slate-400 whitespace-pre-line">{desc}</p>}
+      {desc && <p className="mt-1.5 text-[12px] text-slate-500 whitespace-pre-line">{desc}</p>}
     </div>
   );
 }
@@ -219,7 +219,7 @@ export function Loading() {
 
 export function BackLink({ to, label }: { to: string; label: string }) {
   return (
-    <Link to={to} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-400 hover:text-slate-700 mb-4">
+    <Link to={to} className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-4">
       <ChevronLeft className="w-4 h-4" /> {label}
     </Link>
   );

@@ -249,7 +249,7 @@ export function AdminDetectionQA() {
         <div className="card p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-400" />
+              <Filter className="w-5 h-5 text-slate-500" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -344,7 +344,7 @@ export function AdminDetectionQA() {
                             />
                           ) : (
                             <div className="w-16 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
-                              <Image className="w-5 h-5 text-slate-400" />
+                              <Image className="w-5 h-5 text-slate-500" />
                             </div>
                           )}
                           <div>
@@ -411,7 +411,7 @@ export function AdminDetectionQA() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => openDetailModal(exposure)}
-                            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                             title="상세 보기"
                           >
                             <Eye className="w-4 h-4" />
@@ -426,7 +426,7 @@ export function AdminDetectionQA() {
                                   });
                                 }}
                                 disabled={reviewMutation.isPending}
-                                className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                                className="p-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                                 title="승인"
                               >
                                 <ThumbsUp className="w-4 h-4" />
@@ -439,7 +439,7 @@ export function AdminDetectionQA() {
                                   });
                                 }}
                                 disabled={reviewMutation.isPending}
-                                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                 title="거부"
                               >
                                 <ThumbsDown className="w-4 h-4" />
@@ -449,7 +449,7 @@ export function AdminDetectionQA() {
                           <button
                             onClick={() => screenshotMutation.mutate(exposure.id)}
                             disabled={screenshotMutation.isPending}
-                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                             title="스크린샷 생성"
                           >
                             <Image className="w-4 h-4" />
@@ -457,7 +457,7 @@ export function AdminDetectionQA() {
                           <button
                             onClick={() => clipMutation.mutate(exposure.id)}
                             disabled={clipMutation.isPending}
-                            className="p-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                             title="클립 생성"
                           >
                             <Play className="w-4 h-4" />
@@ -478,7 +478,7 @@ export function AdminDetectionQA() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                    className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
@@ -488,7 +488,7 @@ export function AdminDetectionQA() {
                   <button
                     onClick={() => setPage((p) => p + 1)}
                     disabled={pagination && page >= pagination.totalPages}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                    className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -508,7 +508,7 @@ export function AdminDetectionQA() {
                 <h2 className="text-xl font-bold text-slate-900">노출 상세 정보</h2>
                 <button
                   onClick={() => setSelectedExposure(null)}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -536,7 +536,7 @@ export function AdminDetectionQA() {
                   <div className="w-full h-full flex items-center justify-center">
                     <div className="text-center">
                       <Image className="w-12 h-12 text-slate-600 mx-auto mb-2" />
-                      <p className="text-slate-400">증빙 자료 없음</p>
+                      <p className="text-slate-500">증빙 자료 없음</p>
                     </div>
                   </div>
                 )}

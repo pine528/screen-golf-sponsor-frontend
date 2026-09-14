@@ -55,7 +55,7 @@ export default function FanStoreHoiAr() {
               alt={`${HOI_STORE.athleteName} 프로`}
               className="max-h-[520px] w-auto object-contain"
             />
-            <span className="absolute bottom-3 left-4 text-[11px] text-slate-400">*AR로 제작된 이미지입니다.</span>
+            <span className="absolute bottom-3 left-4 text-[12px] text-slate-500">*AR로 제작된 이미지입니다.</span>
             <a
               href={HOI_STORE.arPack[0].file}
               download={`${HOI_STORE.athleteName}-프로-AR.jpg`}
@@ -78,7 +78,7 @@ export default function FanStoreHoiAr() {
                   <span className="px-3 py-2.5 text-[12px] text-slate-500 truncate flex-1">{link}</span>
                   <button
                     onClick={() => copyLink(link, i)}
-                    className="px-3 py-2.5 border-l border-slate-100 text-slate-400 hover:text-slate-700 hover:bg-slate-50 shrink-0"
+                    className="px-3 py-2.5 border-l border-slate-100 text-slate-500 hover:text-slate-700 hover:bg-slate-50 shrink-0"
                   >
                     {copiedIdx === i ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
                   </button>
@@ -129,7 +129,7 @@ function MiniTile({ icon: Icon, title }: { icon: any; title: string }) {
   return (
     <div className="rounded-xl border border-slate-200 px-2 py-3.5 text-center">
       <Icon className="w-5 h-5 text-emerald-700 mx-auto mb-1.5" />
-      <div className="text-[11px] font-bold text-slate-700 break-keep">{title}</div>
+      <div className="text-[12px] font-bold text-slate-700 break-keep">{title}</div>
     </div>
   );
 }
@@ -141,7 +141,7 @@ function BottomTile({ icon: Icon, title, desc }: { icon: any; title: string; des
         <Icon className="w-4 h-4 text-emerald-700" />
       </div>
       <div className="min-w-0">
-        <div className="text-[11px] text-slate-400">{title}</div>
+        <div className="text-[12px] text-slate-500">{title}</div>
         <div className="text-[13px] font-extrabold text-slate-900 truncate">{desc}</div>
       </div>
     </div>
@@ -188,7 +188,7 @@ export function FanStoreHoiArDownload() {
                     </span>
                   )}
                   <img src={a.file} alt={a.label} className="w-full aspect-[4/3] object-cover object-top" />
-                  <div className="px-1 py-1.5 text-[10px] font-bold text-slate-600 bg-white">
+                  <div className="px-1 py-1.5 text-[12.5px] font-bold text-slate-600 bg-white">
                     {a.label} ({a.dim})
                   </div>
                 </button>
@@ -223,7 +223,7 @@ export function FanStoreHoiArDownload() {
                     />
                     <div className="text-center leading-tight">
                       <div className="text-[12px] font-bold text-slate-900">{a.label}</div>
-                      <div className="text-[10px] text-slate-400 tabular-nums">{a.dim}</div>
+                      <div className="text-[12.5px] text-slate-500 tabular-nums">{a.dim}</div>
                     </div>
                   </button>
                 ))}
@@ -251,7 +251,7 @@ export function FanStoreHoiArDownload() {
 
       <section className="px-5 sm:px-8 pb-16">
         <div className="max-w-5xl mx-auto rounded-2xl bg-slate-50 border border-slate-100 px-5 py-3.5 flex items-center gap-3">
-          <HelpCircle className="w-4 h-4 text-slate-400 shrink-0" />
+          <HelpCircle className="w-4 h-4 text-slate-500 shrink-0" />
           <span className="text-[12px] text-slate-500 flex-1">이미지 사용 관련 문의는 고객센터를 이용해주세요.</span>
           <Link to="/contact" className="shrink-0 inline-flex items-center px-3 h-8 rounded-lg border border-slate-200 bg-white text-[12px] font-bold text-slate-600 hover:bg-slate-50">
             고객센터 바로가기 ›
@@ -270,7 +270,7 @@ function GuideRow({ icon: Icon, title, desc }: { icon: any; title: string; desc:
       </div>
       <div className="min-w-0">
         <div className="text-[12px] font-bold text-slate-900">{title}</div>
-        <p className="text-[11px] text-slate-500 break-keep leading-relaxed">{desc}</p>
+        <p className="text-[12px] text-slate-500 break-keep leading-relaxed">{desc}</p>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const STATUS_UI: Record<string, { label: string; cls: string; icon: any }> = {
   APPROVED: { label: '승인 완료', cls: 'bg-emerald-50 text-emerald-700', icon: CheckCircle2 },
   NEEDS_REVISION: { label: '수정 요청함', cls: 'bg-sky-50 text-sky-700', icon: Pencil },
   REJECTED: { label: '거절함', cls: 'bg-slate-100 text-slate-500', icon: XCircle },
-  EXPIRED: { label: '기간 만료', cls: 'bg-slate-100 text-slate-400', icon: Clock },
+  EXPIRED: { label: '기간 만료', cls: 'bg-slate-100 text-slate-500', icon: Clock },
 };
 
 const REASONS = [
@@ -108,7 +108,7 @@ export default function AthleteRequests() {
           <div className="mt-8 rounded-2xl border border-dashed border-slate-300 py-16 text-center">
             <Inbox className="w-10 h-10 text-slate-300 mx-auto" />
             <p className="mt-3 text-[14px] font-bold text-slate-600">아직 도착한 후원 요청이 없습니다</p>
-            <p className="mt-1 text-[12.5px] text-slate-400">프로필과 판매 슬롯을 완성하면 추천에 더 자주 노출됩니다.</p>
+            <p className="mt-1 text-[12.5px] text-slate-500">프로필과 판매 슬롯을 완성하면 추천에 더 자주 노출됩니다.</p>
             <Link to="/my-slots" className="mt-5 inline-flex h-11 px-5 items-center rounded-xl bg-emerald-600 text-white text-sm font-bold">
               내 슬롯 관리
             </Link>
@@ -126,33 +126,33 @@ export default function AthleteRequests() {
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[12px] font-black ${ui.cls}`}>
                       <ui.icon className="w-3.5 h-3.5" /> {ui.label}
                     </span>
-                    {app.planName && <span className="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-[11.5px] font-bold">{app.planName}</span>}
-                    <span className="ml-auto text-[11.5px] text-slate-400">
+                    {app.planName && <span className="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-[12.5px] font-bold">{app.planName}</span>}
+                    <span className="ml-auto text-[12.5px] text-slate-500">
                       신청번호 {String(it.applicationId).slice(0, 8).toUpperCase()}
                     </span>
                   </div>
 
                   <div className="mt-4 grid sm:grid-cols-3 gap-4">
                     <div>
-                      <p className="text-[11.5px] text-slate-400 font-bold">후원 위치</p>
+                      <p className="text-[12.5px] text-slate-500 font-bold">후원 위치</p>
                       <p className="mt-1 text-[14px] font-extrabold inline-flex items-center gap-1.5">
-                        <Shirt className="w-4 h-4 text-slate-400" /> {it.slotName || '-'}
+                        <Shirt className="w-4 h-4 text-slate-500" /> {it.slotName || '-'}
                       </p>
-                      {it.role && <p className="text-[11.5px] text-slate-400 mt-0.5">{it.role}</p>}
+                      {it.role && <p className="text-[12.5px] text-slate-500 mt-0.5">{it.role}</p>}
                     </div>
                     <div>
-                      <p className="text-[11.5px] text-slate-400 font-bold">기간 · 금액</p>
+                      <p className="text-[12.5px] text-slate-500 font-bold">기간 · 금액</p>
                       <p className="mt-1 text-[14px] font-extrabold inline-flex items-center gap-1.5">
-                        <Wallet className="w-4 h-4 text-slate-400" /> 월 {(it.price / 10000).toLocaleString()}만원
+                        <Wallet className="w-4 h-4 text-slate-500" /> 월 {(it.price / 10000).toLocaleString()}만원
                       </p>
-                      <p className="text-[11.5px] text-slate-400 mt-0.5">{app.durationMonths || 1}개월 · VAT 별도</p>
+                      <p className="text-[12.5px] text-slate-500 mt-0.5">{app.durationMonths || 1}개월 · VAT 별도</p>
                     </div>
                     <div>
-                      <p className="text-[11.5px] text-slate-400 font-bold">승인 기한</p>
+                      <p className="text-[12.5px] text-slate-500 font-bold">승인 기한</p>
                       <p className={`mt-1 text-[14px] font-extrabold ${expired ? 'text-rose-500' : ''}`}>
                         {due ? due.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '-'}
                       </p>
-                      <p className="text-[11.5px] text-slate-400 mt-0.5">{expired ? '기한이 지났습니다' : '기한 내 응답해 주세요'}</p>
+                      <p className="text-[12.5px] text-slate-500 mt-0.5">{expired ? '기한이 지났습니다' : '기한 내 응답해 주세요'}</p>
                     </div>
                   </div>
 
@@ -162,7 +162,7 @@ export default function AthleteRequests() {
                         <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-4">
                           <p className="text-[13px] font-extrabold mb-2.5">
                             {open!.action === 'REJECT' ? '거절 사유를 알려주세요' : '어떤 조정이 필요한가요?'}
-                            <span className="ml-1 text-[11px] font-bold text-rose-500">필수</span>
+                            <span className="ml-1 text-[12px] font-bold text-rose-500">필수</span>
                           </p>
                           <div className="flex flex-wrap gap-2 mb-3">
                             {REASONS.map((r) => (
@@ -227,7 +227,7 @@ export default function AthleteRequests() {
 
                   {(it.status === 'NEEDS_REVISION' || it.status === 'REJECTED') && it.comment && (
                     <p className="mt-4 flex items-start gap-2 rounded-xl bg-slate-50 px-3.5 py-3 text-[12.5px] text-slate-600">
-                      <AlertTriangle className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                      <AlertTriangle className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
                       내가 보낸 사유: {it.comment}
                     </p>
                   )}
@@ -241,7 +241,7 @@ export default function AthleteRequests() {
         {digital.length > 0 && (
           <div className="mt-10">
             <h2 className="flex items-center gap-2 text-[16px] font-extrabold">
-              <Monitor className="w-4 h-4 text-slate-400" /> 디지털 파트너 월 구독 요청
+              <Monitor className="w-4 h-4 text-slate-500" /> 디지털 파트너 월 구독 요청
               {digitalPending.length > 0 && <span className="text-[12px] font-bold text-emerald-600">{digitalPending.length}건 대기</span>}
             </h2>
             <p className="mt-1 text-[12.5px] text-slate-500">경기복 부착이 없는 온라인 · 매장 POP 전용 구독입니다.</p>
@@ -262,29 +262,29 @@ export default function AthleteRequests() {
                   <article key={d.id} className="rounded-2xl bg-white border border-slate-200 p-5">
                     <div className="flex flex-wrap items-center gap-2.5">
                       <span className={`px-2.5 py-1 rounded-lg text-[12px] font-black ${cls}`}>{label}</span>
-                      <span className="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-[11.5px] font-bold">{d.planCode}</span>
-                      <span className="ml-auto text-[11.5px] text-slate-400">신청번호 {String(d.id).slice(0, 8).toUpperCase()}</span>
+                      <span className="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-[12.5px] font-bold">{d.planCode}</span>
+                      <span className="ml-auto text-[12.5px] text-slate-500">신청번호 {String(d.id).slice(0, 8).toUpperCase()}</span>
                     </div>
 
                     <div className="mt-4 grid sm:grid-cols-3 gap-4">
                       <div>
-                        <p className="text-[11.5px] text-slate-400 font-bold">구독 상품</p>
+                        <p className="text-[12.5px] text-slate-500 font-bold">구독 상품</p>
                         <p className="mt-1 text-[14px] font-extrabold">{d.plan?.name || d.planCode}</p>
-                        <p className="text-[11.5px] text-slate-400 mt-0.5">경기복 부착 미포함</p>
+                        <p className="text-[12.5px] text-slate-500 mt-0.5">경기복 부착 미포함</p>
                       </div>
                       <div>
-                        <p className="text-[11.5px] text-slate-400 font-bold">금액 · 기간</p>
+                        <p className="text-[12.5px] text-slate-500 font-bold">금액 · 기간</p>
                         <p className="mt-1 text-[14px] font-extrabold inline-flex items-center gap-1.5">
-                          <Wallet className="w-4 h-4 text-slate-400" /> 월 {d.monthlyAmount.toLocaleString()}원
+                          <Wallet className="w-4 h-4 text-slate-500" /> 월 {d.monthlyAmount.toLocaleString()}원
                         </p>
-                        <p className="text-[11.5px] text-slate-400 mt-0.5">{d.termMonths}개월 약정 · VAT 별도</p>
+                        <p className="text-[12.5px] text-slate-500 mt-0.5">{d.termMonths}개월 약정 · VAT 별도</p>
                       </div>
                       <div>
-                        <p className="text-[11.5px] text-slate-400 font-bold">승인 기한</p>
+                        <p className="text-[12.5px] text-slate-500 font-bold">승인 기한</p>
                         <p className={`mt-1 text-[14px] font-extrabold ${expired ? 'text-rose-500' : ''}`}>
                           {due ? due.toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }) : '-'}
                         </p>
-                        <p className="text-[11.5px] text-slate-400 mt-0.5">{d.category || '업종 미기재'}</p>
+                        <p className="text-[12.5px] text-slate-500 mt-0.5">{d.category || '업종 미기재'}</p>
                       </div>
                     </div>
 
@@ -293,7 +293,7 @@ export default function AthleteRequests() {
                         <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-4">
                           <p className="text-[13px] font-extrabold mb-2.5">
                             {open.action === 'REJECT' ? '거절 사유를 알려주세요' : '어떤 조정이 필요한가요?'}
-                            <span className="ml-1 text-[11px] font-bold text-rose-500">필수</span>
+                            <span className="ml-1 text-[12px] font-bold text-rose-500">필수</span>
                           </p>
                           <div className="flex flex-wrap gap-2 mb-3">
                             {REASONS.map((r) => (
@@ -355,7 +355,7 @@ export default function AthleteRequests() {
 
                     {(d.status === 'NEEDS_REVISION' || d.status === 'REJECTED') && d.comment && (
                       <p className="mt-4 flex items-start gap-2 rounded-xl bg-slate-50 px-3.5 py-3 text-[12.5px] text-slate-600">
-                        <AlertTriangle className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                        <AlertTriangle className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
                         내가 보낸 사유: {d.comment}
                       </p>
                     )}

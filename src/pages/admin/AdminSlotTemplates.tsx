@@ -118,7 +118,7 @@ export function AdminSlotTemplates() {
         <div className="card p-4">
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
-              <Filter className="w-4 h-4 text-slate-400" />
+              <Filter className="w-4 h-4 text-slate-500" />
               <select
                 value={phaseFilter}
                 onChange={(e) => setPhaseFilter(e.target.value)}
@@ -235,7 +235,7 @@ export function AdminSlotTemplates() {
                               활성
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-xs text-slate-400">
+                            <span className="inline-flex items-center gap-1 text-xs text-slate-500">
                               <XCircle className="w-3.5 h-3.5" />
                               비활성
                             </span>
@@ -245,7 +245,7 @@ export function AdminSlotTemplates() {
                           <div className="flex items-center justify-end gap-1">
                             <button
                               onClick={() => handleEdit(template)}
-                              className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg"
+                              className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg"
                               title="수정"
                             >
                               <Edit className="w-4 h-4" />

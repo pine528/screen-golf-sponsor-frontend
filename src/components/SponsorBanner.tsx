@@ -64,7 +64,7 @@ export function SponsorBanner({
           alt={brandName ? `${brandName} 스폰서 배너` : '스폰서 배너'}
           className="w-full h-auto object-cover"
         />
-        <div className="absolute top-1 right-1 px-1.5 py-0.5 bg-black/50 text-white text-[10px] rounded">
+        <div className="absolute top-1 right-1 px-1.5 py-0.5 bg-black/50 text-white text-[12.5px] rounded">
           AD
         </div>
       </div>
@@ -155,7 +155,7 @@ export function SponsorBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-medium rounded',
+        'inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[12.5px] font-medium rounded',
         className
       )}
     >

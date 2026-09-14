@@ -188,7 +188,7 @@ export function AdminFeaturedAuctions() {
                         <span className="text-sm font-medium text-slate-900">
                           {auction.slotInstance?.athlete?.name}
                         </span>
-                        <span className="text-sm text-slate-400">-</span>
+                        <span className="text-sm text-slate-500">-</span>
                         <span className="text-sm text-slate-600">
                           {auction.slotInstance?.slotTemplate?.name}
                         </span>
@@ -228,7 +228,7 @@ export function AdminFeaturedAuctions() {
               <div className="flex items-center justify-between p-4 border-b border-slate-100">
                 <h3 className="text-lg font-semibold text-slate-900">추천 경매 등록</h3>
                 <button onClick={() => { setShowCreateModal(false); resetForm(); }}>
-                  <X className="w-5 h-5 text-slate-400" />
+                  <X className="w-5 h-5 text-slate-500" />
                 </button>
               </div>
 

@@ -130,12 +130,12 @@ export default function AdminOfferBuilder() {
             <ArrowLeft className="w-4 h-4" /> 상품 목록
           </Link>
           <h1 className="text-[20px] font-black">상품 빌더</h1>
-          <span className="px-2 py-0.5 rounded-md bg-slate-900 text-white text-[11px] font-black">
+          <span className="px-2 py-0.5 rounded-md bg-slate-900 text-white text-[12px] font-black">
             A{String(step + 1).padStart(2, '0')}
           </span>
-          {offer && <span className="text-[12.5px] font-mono text-slate-400">{offer.code}</span>}
+          {offer && <span className="text-[12.5px] font-mono text-slate-500">{offer.code}</span>}
           {savedAt && (
-            <span className="ml-auto text-[11.5px] text-emerald-600 inline-flex items-center gap-1">
+            <span className="ml-auto text-[12.5px] text-emerald-600 inline-flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5" /> {savedAt.toLocaleTimeString('ko-KR')} 저장됨
             </span>
           )}
@@ -151,13 +151,13 @@ export default function AdminOfferBuilder() {
                 <button
                   onClick={() => !isNew && setStep(n)}
                   disabled={isNew && n > 1}
-                  className={`w-7 h-7 rounded-full text-[11.5px] font-black flex items-center justify-center ${
+                  className={`w-7 h-7 rounded-full text-[12.5px] font-black flex items-center justify-center ${
                     done ? 'bg-emerald-100 text-emerald-700' : active ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-500'
                   } disabled:opacity-50`}
                 >
                   {done ? <Check className="w-3.5 h-3.5" /> : n}
                 </button>
-                <span className={`text-[12.5px] font-bold whitespace-nowrap ${active ? 'text-emerald-700' : done ? 'text-slate-600' : 'text-slate-400'}`}>{s}</span>
+                <span className={`text-[12.5px] font-bold whitespace-nowrap ${active ? 'text-emerald-700' : done ? 'text-slate-600' : 'text-slate-500'}`}>{s}</span>
                 {n < STEPS.length && <span className={`w-8 h-px mx-1 ${done ? 'bg-emerald-300' : 'bg-slate-200'}`} />}
               </li>
             );
@@ -196,7 +196,7 @@ export default function AdminOfferBuilder() {
             <div className="rounded-2xl bg-white border border-slate-200 p-5">
               <h2 className="text-[14px] font-extrabold">완성도</h2>
               {isNew ? (
-                <p className="mt-3 text-[12.5px] text-slate-400">기본 정보를 저장하면 완성도가 계산됩니다.</p>
+                <p className="mt-3 text-[12.5px] text-slate-500">기본 정보를 저장하면 완성도가 계산됩니다.</p>
               ) : (
                 <>
                   <div className="mt-4 flex items-center justify-center">
@@ -223,7 +223,7 @@ export default function AdminOfferBuilder() {
                           ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                           : <AlertTriangle className="w-3.5 h-3.5 text-rose-500 shrink-0" />}
                         <span className={it.done ? 'text-slate-600' : 'font-bold text-rose-600'}>{it.label}</span>
-                        <span className="ml-auto text-[10.5px] text-slate-400">{it.group}</span>
+                        <span className="ml-auto text-[12.5px] text-slate-500">{it.group}</span>
                       </li>
                     ))}
                   </ul>
@@ -244,7 +244,7 @@ export default function AdminOfferBuilder() {
                   </div>
                 </dl>
                 {offer.margin < 0 && (
-                  <p className="mt-2 text-[11.5px] font-bold text-rose-600 break-keep">마진이 음수면 발행할 수 없습니다.</p>
+                  <p className="mt-2 text-[12.5px] font-bold text-rose-600 break-keep">마진이 음수면 발행할 수 없습니다.</p>
                 )}
               </div>
             )}
@@ -320,8 +320,8 @@ function Step1({ templates, template, setTemplate, draft, onChange, isNew }: any
                     <span className="text-[13.5px] font-extrabold">{t.name}</span>
                     {on && <Check className="w-4 h-4 text-emerald-600 ml-auto" />}
                   </span>
-                  <span className="mt-1.5 block text-[11px] text-slate-500">필수 입력 {t.requiredFields}개 · 리드타임 {t.leadTimeDays}일</span>
-                  <span className="mt-1 block text-[11px] text-slate-400 break-keep">고정: {t.fixed}</span>
+                  <span className="mt-1.5 block text-[12px] text-slate-500">필수 입력 {t.requiredFields}개 · 리드타임 {t.leadTimeDays}일</span>
+                  <span className="mt-1 block text-[12px] text-slate-500 break-keep">고정: {t.fixed}</span>
                 </button>
               </li>
             );
@@ -344,7 +344,7 @@ function Step1({ templates, template, setTemplate, draft, onChange, isNew }: any
               placeholder="상품이 제공하는 노출과 활동을 한두 문장으로 적어주세요."
               className="mt-1.5 w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-[13px] focus:outline-none focus:border-emerald-400 resize-none"
             />
-            <span className="mt-1 block text-right text-[11px] text-slate-400">{(form.summary || '').length} / 300</span>
+            <span className="mt-1 block text-right text-[12px] text-slate-500">{(form.summary || '').length} / 300</span>
           </label>
 
           <Chips label="타겟 브랜드 카테고리" required options={CATEGORY_OPTIONS} selected={form.categories || []} onToggle={(v: string) => toggle('categories', v)} />
@@ -459,7 +459,7 @@ function Step2({ offer, patch }: any) {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block text-[12.5px] font-extrabold truncate">{a.name} 프로</span>
-                    <span className="block text-[10.5px] text-slate-400 truncate">{a.tour}</span>
+                    <span className="block text-[12.5px] text-slate-500 truncate">{a.tour}</span>
                   </span>
                   {on && <Check className="w-4 h-4 text-emerald-600 shrink-0" />}
                 </button>
@@ -467,7 +467,7 @@ function Step2({ offer, patch }: any) {
             );
           })}
         </ul>
-        <p className="mt-2 text-center text-[11px] text-slate-400">{athletes.length}명</p>
+        <p className="mt-2 text-center text-[12px] text-slate-500">{athletes.length}명</p>
       </div>
 
       {/* 슬롯 */}
@@ -486,7 +486,7 @@ function Step2({ offer, patch }: any) {
           </div>
         </div>
 
-        <p className="mt-2 text-[11.5px] text-slate-500">슬롯을 클릭하면 패키지 구성에 추가됩니다.</p>
+        <p className="mt-2 text-[12.5px] text-slate-500">슬롯을 클릭하면 패키지 구성에 추가됩니다.</p>
 
         {!slots ? (
           <div className="py-16 text-center"><Loader2 className="w-6 h-6 text-emerald-500 animate-spin mx-auto" /></div>
@@ -509,21 +509,21 @@ function Step2({ offer, patch }: any) {
                       <tr key={s.code} className={picked ? 'bg-emerald-50/40' : ''}>
                         <td className="px-3 py-2.5 font-bold whitespace-nowrap">{s.name}</td>
                         <td className="px-3 py-2.5 whitespace-nowrap">
-                          <span className={`px-1.5 py-0.5 rounded text-[10.5px] font-bold ${meta.chip}`}>{meta.label}</span>
+                          <span className={`px-1.5 py-0.5 rounded text-[12.5px] font-bold ${meta.chip}`}>{meta.label}</span>
                         </td>
                         <td className="px-3 py-2.5">
                           {s.conflicts?.length ? (
-                            <span className="text-[11px] font-bold text-rose-600 break-keep">
+                            <span className="text-[12px] font-bold text-rose-600 break-keep">
                               {s.conflicts[0].title}와 기간 겹침
                             </span>
-                          ) : <span className="text-[11px] text-slate-400">충돌 없음</span>}
+                          ) : <span className="text-[12px] text-slate-500">충돌 없음</span>}
                         </td>
                         <td className="px-3 py-2.5 font-bold whitespace-nowrap">{s.price.toLocaleString()}원</td>
                         <td className="px-3 py-2.5">
                           <button
                             onClick={() => addSlot(s)}
                             disabled={picked || !s.selectable || busy}
-                            className="h-8 px-3 rounded-lg bg-emerald-600 text-white text-[11.5px] font-bold disabled:bg-slate-100 disabled:text-slate-400"
+                            className="h-8 px-3 rounded-lg bg-emerald-600 text-white text-[12.5px] font-bold disabled:bg-slate-100 disabled:text-slate-400"
                           >
                             {picked ? '선택됨' : '추가'}
                           </button>
@@ -561,7 +561,7 @@ function Step2({ offer, patch }: any) {
       <div className="rounded-2xl bg-white border border-slate-200 p-5">
         <h2 className="text-[13.5px] font-extrabold">패키지 구성 요약</h2>
         {components.length === 0 ? (
-          <p className="py-10 text-center text-[12px] text-slate-400 break-keep">슬롯이나 활동을 추가하세요</p>
+          <p className="py-10 text-center text-[12px] text-slate-500 break-keep">슬롯이나 활동을 추가하세요</p>
         ) : (
           <ul className="mt-3 space-y-2">
             {components.map((c, i) => (
@@ -569,7 +569,7 @@ function Step2({ offer, patch }: any) {
                 <div className="flex items-start gap-2">
                   <span className="min-w-0 flex-1">
                     <span className="block text-[12.5px] font-bold break-keep">{c.label}</span>
-                    <span className="block text-[10.5px] text-slate-400">{c.componentType}</span>
+                    <span className="block text-[12.5px] text-slate-500">{c.componentType}</span>
                   </span>
                   <button onClick={() => remove(i)} aria-label="삭제" className="text-slate-300 hover:text-rose-600 shrink-0">
                     <Trash2 className="w-3.5 h-3.5" />
@@ -598,15 +598,15 @@ function Step2({ offer, patch }: any) {
           <span className="text-[12.5px] font-bold">구성 합계</span>
           <span className="text-[17px] font-black text-emerald-600">{total.toLocaleString()}원</span>
         </div>
-        <p className="mt-1 text-right text-[10.5px] text-slate-400">판매가는 3단계에서 정합니다</p>
+        <p className="mt-1 text-right text-[12.5px] text-slate-500">판매가는 3단계에서 정합니다</p>
 
         {conflicts.length > 0 ? (
-          <p className="mt-3 flex items-start gap-1.5 rounded-xl bg-rose-50 border border-rose-100 px-3 py-2.5 text-[11.5px] text-rose-700 break-keep">
+          <p className="mt-3 flex items-start gap-1.5 rounded-xl bg-rose-50 border border-rose-100 px-3 py-2.5 text-[12.5px] text-rose-700 break-keep">
             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             <span><b>기간 충돌 경고</b><br />{conflicts[0].title}와 기간이 겹칩니다.</span>
           </p>
         ) : components.some((c) => c.slotCode) && (
-          <p className="mt-3 flex items-center gap-1.5 rounded-xl bg-emerald-50 px-3 py-2.5 text-[11.5px] text-emerald-700">
+          <p className="mt-3 flex items-center gap-1.5 rounded-xl bg-emerald-50 px-3 py-2.5 text-[12.5px] text-emerald-700">
             <CheckCircle2 className="w-3.5 h-3.5 shrink-0" /> 기간 충돌 없음
           </p>
         )}
@@ -700,13 +700,13 @@ function Step3({ offer, patch }: any) {
               </button>
             </div>
             {options.length === 0 ? (
-              <p className="mt-3 text-[12px] text-slate-400">브랜드가 바꿀 수 있는 항목이 없습니다 (전부 고정).</p>
+              <p className="mt-3 text-[12px] text-slate-500">브랜드가 바꿀 수 있는 항목이 없습니다 (전부 고정).</p>
             ) : (
               <ul className="mt-3 space-y-2">
                 {options.map((o, i) => (
                   <li key={i} className="rounded-xl border border-slate-100 p-3 grid grid-cols-[100px_minmax(0,1fr)_100px_auto] gap-2 items-center">
                     <select value={o.kind} onChange={(e) => saveOptions(options.map((x, k) => k === i ? { ...x, kind: e.target.value } : x))}
-                      className="h-9 px-2 rounded-lg border border-slate-200 text-[11.5px] font-bold">
+                      className="h-9 px-2 rounded-lg border border-slate-200 text-[12.5px] font-bold">
                       <option value="ADD_ON">추가</option>
                       <option value="SELECT_ONE">택1</option>
                       <option value="QUANTITY">수량</option>
@@ -759,7 +759,7 @@ function Step3({ offer, patch }: any) {
               </tr>
             </tbody>
           </table>
-          <p className="mt-2 text-right text-[11px] text-slate-400">VAT 별도 · 부가세 {vat.toLocaleString()}원</p>
+          <p className="mt-2 text-right text-[12px] text-slate-500">VAT 별도 · 부가세 {vat.toLocaleString()}원</p>
 
           <div className="mt-4 rounded-xl bg-slate-50 p-4">
             <p className="text-[12.5px] font-extrabold">마진 시뮬레이터</p>
@@ -772,12 +772,12 @@ function Step3({ offer, patch }: any) {
               </div>
             </dl>
             {margin < 0 && (
-              <p className="mt-2 flex items-start gap-1.5 text-[11.5px] font-bold text-rose-600 break-keep">
+              <p className="mt-2 flex items-start gap-1.5 text-[12.5px] font-bold text-rose-600 break-keep">
                 <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" /> 마진이 음수입니다. 발행이 차단됩니다.
               </p>
             )}
             {componentTotal > 0 && f.supplyAmount < componentTotal && (
-              <p className="mt-2 text-[11.5px] text-amber-700 break-keep">
+              <p className="mt-2 text-[12.5px] text-amber-700 break-keep">
                 판매가가 구성 합계({componentTotal.toLocaleString()}원)보다 낮습니다.
               </p>
             )}
@@ -822,33 +822,33 @@ function Step4({ offer, patch, validation, onValidate, busy }: any) {
           </div>
 
           {metrics.length === 0 ? (
-            <p className="mt-4 text-[12.5px] text-slate-400">지표를 1개 이상 등록해야 발행할 수 있습니다.</p>
+            <p className="mt-4 text-[12.5px] text-slate-500">지표를 1개 이상 등록해야 발행할 수 있습니다.</p>
           ) : (
             <ul className="mt-4 space-y-3">
               {metrics.map((m, i) => (
                 <li key={i} className="rounded-xl border border-slate-100 p-4 grid sm:grid-cols-[minmax(0,140px)_100px_100px_70px_minmax(0,1fr)_auto] gap-2 items-end">
                   <label className="block">
-                    <span className="text-[11px] text-slate-400">지표명</span>
+                    <span className="text-[12px] text-slate-500">지표명</span>
                     <input value={m.metric} onChange={(e) => saveMetrics(metrics.map((x, k) => k === i ? { ...x, metric: e.target.value } : x))}
                       className="mt-1 w-full h-9 px-2.5 rounded-lg border border-slate-200 text-[12.5px]" />
                   </label>
                   <label className="block">
-                    <span className="text-[11px] text-slate-400">최소</span>
+                    <span className="text-[12px] text-slate-500">최소</span>
                     <input type="number" value={m.minValue} onChange={(e) => saveMetrics(metrics.map((x, k) => k === i ? { ...x, minValue: Number(e.target.value) } : x))}
                       className="mt-1 w-full h-9 px-2.5 rounded-lg border border-slate-200 text-[12.5px] text-right" />
                   </label>
                   <label className="block">
-                    <span className="text-[11px] text-slate-400">최대</span>
+                    <span className="text-[12px] text-slate-500">최대</span>
                     <input type="number" value={m.maxValue} onChange={(e) => saveMetrics(metrics.map((x, k) => k === i ? { ...x, maxValue: Number(e.target.value) } : x))}
                       className="mt-1 w-full h-9 px-2.5 rounded-lg border border-slate-200 text-[12.5px] text-right" />
                   </label>
                   <label className="block">
-                    <span className="text-[11px] text-slate-400">단위</span>
+                    <span className="text-[12px] text-slate-500">단위</span>
                     <input value={m.unit} onChange={(e) => saveMetrics(metrics.map((x, k) => k === i ? { ...x, unit: e.target.value } : x))}
                       className="mt-1 w-full h-9 px-2.5 rounded-lg border border-slate-200 text-[12.5px]" />
                   </label>
                   <label className="block">
-                    <span className="text-[11px] text-slate-400">근거</span>
+                    <span className="text-[12px] text-slate-500">근거</span>
                     <input value={m.basis} onChange={(e) => saveMetrics(metrics.map((x, k) => k === i ? { ...x, basis: e.target.value } : x))}
                       placeholder="최근 5경기 중계 도달"
                       className="mt-1 w-full h-9 px-2.5 rounded-lg border border-slate-200 text-[12.5px]" />
@@ -960,7 +960,7 @@ function Step4({ offer, patch, validation, onValidate, busy }: any) {
           </div>
 
           {!validation ? (
-            <p className="mt-4 text-[12.5px] text-slate-400">자동 검증을 실행하면 결과가 표시됩니다.</p>
+            <p className="mt-4 text-[12.5px] text-slate-500">자동 검증을 실행하면 결과가 표시됩니다.</p>
           ) : (
             <>
               <ul className="mt-4 space-y-2">
@@ -973,12 +973,12 @@ function Step4({ offer, patch, validation, onValidate, busy }: any) {
                     <p className="flex items-center gap-2 text-[12.5px] font-extrabold">
                       {c.status === 'OK' ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertTriangle className={`w-4 h-4 ${c.status === 'ERROR' ? 'text-rose-600' : 'text-amber-600'}`} />}
                       {c.group}
-                      <span className={`ml-auto text-[11px] ${c.status === 'OK' ? 'text-emerald-700' : c.status === 'ERROR' ? 'text-rose-700' : 'text-amber-700'}`}>
+                      <span className={`ml-auto text-[12px] ${c.status === 'OK' ? 'text-emerald-700' : c.status === 'ERROR' ? 'text-rose-700' : 'text-amber-700'}`}>
                         {c.status === 'OK' ? '통과' : c.status === 'ERROR' ? '오류' : '주의'}
                       </span>
                     </p>
                     {c.issues.slice(0, 2).map((i: any, k: number) => (
-                      <p key={k} className="mt-1.5 text-[11.5px] text-slate-600 break-keep">• {i.message}</p>
+                      <p key={k} className="mt-1.5 text-[12.5px] text-slate-600 break-keep">• {i.message}</p>
                     ))}
                   </li>
                 ))}
@@ -1025,14 +1025,14 @@ function Step5({ offer, validation, onValidate, onPublish, busy }: any) {
             ))}
           </div>
         </div>
-        <p className="mt-1 text-[11.5px] text-slate-400">실제 고객이 상품을 확인하는 화면입니다.</p>
+        <p className="mt-1 text-[12.5px] text-slate-500">실제 고객이 상품을 확인하는 화면입니다.</p>
 
         <div className={`mt-4 mx-auto ${mode === 'MOBILE' ? 'max-w-[300px]' : ''}`}>
           <div className="rounded-2xl border border-slate-200 overflow-hidden">
             <div className="aspect-[16/9] bg-slate-800 relative">
               {offer.heroImageUrl && <img src={offer.heroImageUrl} alt="" className="w-full h-full object-cover object-top opacity-80" />}
               <div className="absolute inset-0 p-4 flex flex-col justify-end">
-                <span className="self-start px-2 py-0.5 rounded bg-white/90 text-slate-800 text-[10px] font-black">
+                <span className="self-start px-2 py-0.5 rounded bg-white/90 text-slate-800 text-[12.5px] font-black">
                   {offer.type === 'EVENT_SLOT' ? '대회 노출' : offer.type}
                 </span>
                 <p className="mt-2 text-white text-[16px] font-black break-keep">{offer.title}</p>
@@ -1041,10 +1041,10 @@ function Step5({ offer, validation, onValidate, onPublish, busy }: any) {
             <div className="p-4">
               <p className="text-[12px] text-slate-500">{(offer.athletes || []).map((a: any) => a.athlete.name).join(' · ')}</p>
               <p className="mt-1.5 text-[19px] font-black text-emerald-600">
-                {offer.supplyAmount.toLocaleString()}원 <span className="text-[11px] font-bold text-slate-400">(VAT 별도)</span>
+                {offer.supplyAmount.toLocaleString()}원 <span className="text-[12px] font-bold text-slate-500">(VAT 별도)</span>
               </p>
               <p className="mt-2 text-[12px] text-slate-600 break-keep">{offer.summary}</p>
-              <dl className="mt-3 space-y-1.5 text-[11.5px]">
+              <dl className="mt-3 space-y-1.5 text-[12.5px]">
                 <Preview k="노출 위치" v={(offer.components || []).map((c: any) => c.label).join(', ') || '—'} />
                 <Preview k="노출 기간" v={offer.executionFrom ? `${new Date(offer.executionFrom).toLocaleDateString('ko-KR')} ~ ${new Date(offer.executionTo).toLocaleDateString('ko-KR')}` : '—'} />
                 <Preview k="예상 도달" v={(offer.expectedMetrics as any[])?.[0]
@@ -1054,7 +1054,7 @@ function Step5({ offer, validation, onValidate, onPublish, busy }: any) {
               </dl>
             </div>
           </div>
-          <p className="mt-3 rounded-xl bg-slate-50 px-3.5 py-3 text-[11px] text-slate-500 break-keep">
+          <p className="mt-3 rounded-xl bg-slate-50 px-3.5 py-3 text-[12px] text-slate-500 break-keep">
             위 예상 수치는 선수의 최근 데이터를 기반으로 한 추정치이며, 실제 결과는 변동될 수 있습니다.
           </p>
         </div>
@@ -1066,12 +1066,12 @@ function Step5({ offer, validation, onValidate, onPublish, busy }: any) {
           <div className="flex items-center justify-between">
             <h2 className="text-[14px] font-extrabold">검토 체크리스트</h2>
             {validation && !canPublish && (
-              <span className="px-2 py-1 rounded-md bg-amber-100 text-amber-700 text-[11px] font-black">
+              <span className="px-2 py-1 rounded-md bg-amber-100 text-amber-700 text-[12px] font-black">
                 {validation.issues.filter((i: any) => i.severity === 'ERROR').length}건 해결 필요
               </span>
             )}
           </div>
-          <p className="mt-1 text-[11.5px] text-slate-400">발행 전 필수 항목을 모두 확인해주세요.</p>
+          <p className="mt-1 text-[12.5px] text-slate-500">발행 전 필수 항목을 모두 확인해주세요.</p>
 
           {!validation ? (
             <div className="py-10 text-center"><Loader2 className="w-6 h-6 text-emerald-500 animate-spin mx-auto" /></div>
@@ -1091,12 +1091,12 @@ function Step5({ offer, validation, onValidate, onPublish, busy }: any) {
                       }`}>
                         {c.status === 'OK' ? '모두 완료' : c.status === 'ERROR' ? '오류 있음' : '확인 필요'}
                       </span>
-                      <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 text-slate-500 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
                     </button>
                     {open && c.issues.length > 0 && (
                       <ul className="px-4 pb-3 space-y-1.5 border-t border-slate-100 pt-2.5">
                         {c.issues.map((i: any, k: number) => (
-                          <li key={k} className="text-[11.5px] break-keep">
+                          <li key={k} className="text-[12.5px] break-keep">
                             <span className={i.severity === 'ERROR' ? 'font-bold text-rose-700' : 'font-bold text-amber-700'}>{i.message}</span>
                             <span className="block text-slate-500">→ {i.resolution}</span>
                           </li>
@@ -1133,26 +1133,26 @@ function Step5({ offer, validation, onValidate, onPublish, busy }: any) {
             onClick={() => onPublish(useSchedule && scheduled ? new Date(scheduled).toISOString() : undefined)}
             disabled={busy || !canPublish}
             className={`mt-4 w-full h-12 inline-flex items-center justify-center gap-2 rounded-xl text-[14.5px] font-bold ${
-              canPublish ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+              canPublish ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-500 cursor-not-allowed'
             }`}
           >
             {busy ? '처리 중…' : canPublish ? <><Send className="w-4 h-4" /> 발행하기</> : '검증 통과 후 발행할 수 있습니다'}
           </button>
-          <p className="mt-2 text-center text-[11px] text-slate-400">모든 항목을 확인해야 발행이 가능합니다.</p>
+          <p className="mt-2 text-center text-[12px] text-slate-500">모든 항목을 확인해야 발행이 가능합니다.</p>
         </div>
 
         {/* 변경 이력 */}
         <div className="rounded-2xl bg-white border border-slate-200 p-5">
           <h2 className="flex items-center gap-2 text-[14px] font-extrabold">
-            <FileText className="w-4 h-4 text-slate-400" /> 변경 이력
+            <FileText className="w-4 h-4 text-slate-500" /> 변경 이력
           </h2>
           {!offer.audits?.length ? (
-            <p className="mt-3 text-[12px] text-slate-400">기록이 없습니다</p>
+            <p className="mt-3 text-[12px] text-slate-500">기록이 없습니다</p>
           ) : (
             <ul className="mt-3 space-y-2">
               {offer.audits.slice(0, 6).map((a: any) => (
                 <li key={a.id} className="flex items-center gap-3 text-[12px]">
-                  <span className="text-slate-400 shrink-0 tabular-nums">
+                  <span className="text-slate-500 shrink-0 tabular-nums">
                     {new Date(a.createdAt).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                   </span>
                   <span className="font-bold shrink-0">{a.actorName}</span>
@@ -1183,9 +1183,9 @@ function Field({ label, value, onChange, required, max, placeholder, hint, disab
           disabled={disabled}
           className="mt-1.5 w-full h-11 px-3.5 rounded-xl border border-slate-200 text-[13px] focus:outline-none focus:border-emerald-400 disabled:bg-slate-50"
         />
-        {max && <span className="absolute right-3 top-4 text-[11px] text-slate-400">{(value || '').length} / {max}</span>}
+        {max && <span className="absolute right-3 top-4 text-[12px] text-slate-500">{(value || '').length} / {max}</span>}
       </div>
-      {hint && <span className="mt-1 block text-[11px] text-slate-400">{hint}</span>}
+      {hint && <span className="mt-1 block text-[12px] text-slate-500">{hint}</span>}
     </label>
   );
 }
@@ -1226,7 +1226,7 @@ function Chips({ label, options, selected, onToggle, required }: any) {
 function Preview({ k, v }: { k: string; v: string }) {
   return (
     <div className="flex justify-between gap-3">
-      <dt className="text-slate-400 shrink-0">{k}</dt>
+      <dt className="text-slate-500 shrink-0">{k}</dt>
       <dd className="font-bold text-right break-keep">{v}</dd>
     </div>
   );

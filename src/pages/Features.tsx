@@ -36,7 +36,7 @@ function AuctionIllustration() {
         <div className="bg-white rounded-xl shadow-lg p-4 mb-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium text-slate-500">입찰 추이</span>
-            <span className="text-xs text-slate-400 font-bold">예시</span>
+            <span className="text-xs text-slate-500 font-bold">예시</span>
           </div>
           <div className="flex items-end gap-1 h-16">
             {[40, 55, 45, 60, 50, 70, 65, 80, 75, 90, 85, 100].map((h, i) => (
@@ -57,10 +57,10 @@ function AuctionIllustration() {
             </div>
             <div className="flex-1">
               <p className="text-xs text-slate-500">현재 최고가</p>
-              <p className="text-lg font-bold text-slate-400">예: ₩XXX</p>
+              <p className="text-lg font-bold text-slate-500">예: ₩XXX</p>
             </div>
             <div className="text-right">
-              <span className="text-xs text-slate-400 font-medium">예시</span>
+              <span className="text-xs text-slate-500 font-medium">예시</span>
             </div>
           </div>
         </div>
@@ -177,7 +177,7 @@ function AnalyticsIllustration() {
         <div className="bg-white rounded-xl shadow-lg p-4 mb-3">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-medium text-slate-500">노출 분석</span>
-            <span className="text-xs text-slate-400 font-bold">예시</span>
+            <span className="text-xs text-slate-500 font-bold">예시</span>
           </div>
           {/* Area chart simulation */}
           <svg viewBox="0 0 200 60" className="w-full h-12">
@@ -207,14 +207,14 @@ function AnalyticsIllustration() {
               <Eye className="w-4 h-4 text-amber-500" />
               <span className="text-xs text-slate-500">노출수</span>
             </div>
-            <p className="text-sm font-bold text-slate-400">예: 노출 누적</p>
+            <p className="text-sm font-bold text-slate-500">예: 노출 누적</p>
           </div>
           <div className="bg-white rounded-xl shadow-lg p-3">
             <div className="flex items-center gap-2 mb-1">
               <PieChart className="w-4 h-4 text-amber-500" />
               <span className="text-xs text-slate-500">ROI</span>
             </div>
-            <p className="text-sm font-bold text-slate-400">예: ROAS</p>
+            <p className="text-sm font-bold text-slate-500">예: ROAS</p>
           </div>
         </div>
 

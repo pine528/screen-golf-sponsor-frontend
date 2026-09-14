@@ -22,7 +22,7 @@ interface Props {
 
 export function TimeSeriesChart({ data, height = 320, showRevenue = true }: Props) {
   if (data.length === 0) {
-    return <div className="h-40 flex items-center justify-center text-sm text-slate-400">기간 내 데이터가 없습니다</div>;
+    return <div className="h-40 flex items-center justify-center text-sm text-slate-500">기간 내 데이터가 없습니다</div>;
   }
 
   return (

@@ -130,9 +130,9 @@ export default function FanOpsReports() {
                   {data.appeals.map((a: any) => (
                     <div key={a.id} className="px-5 py-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="font-mono text-[12px] text-slate-400">{a.code}</span>
+                        <span className="font-mono text-[12px] text-slate-500">{a.code}</span>
                         <StatusTag label={a.status === 'RECEIVED' ? '접수' : '검토 중'} tone="sky" />
-                        <span className="ml-auto text-[11px] text-slate-400 tabular-nums">{fmtDate(a.createdAt, true)}</span>
+                        <span className="ml-auto text-[12px] text-slate-500 tabular-nums">{fmtDate(a.createdAt, true)}</span>
                       </div>
                       <p className="text-[13px] text-slate-700 leading-relaxed">{a.statement}</p>
                       <div className="flex flex-wrap items-center gap-2 mt-3">
@@ -170,11 +170,11 @@ export default function FanOpsReports() {
                         }`}>
                         <div className="flex items-center gap-2 mb-1.5">
                           <RiskTag risk={r.risk} />
-                          <span className="font-mono text-[11px] text-slate-400">{r.code}</span>
-                          {r.overdue && <span className="text-[11px] font-bold text-rose-500">SLA 초과</span>}
+                          <span className="font-mono text-[12px] text-slate-500">{r.code}</span>
+                          {r.overdue && <span className="text-[12px] font-bold text-rose-500">SLA 초과</span>}
                         </div>
                         <p className="text-[13px] font-semibold text-slate-800">{r.reason}</p>
-                        <p className="text-[11px] text-slate-400 mt-0.5">
+                        <p className="text-[12px] text-slate-500 mt-0.5">
                           {r.targetTypeLabel}{r.targetUser ? ` · ${r.targetUser}` : ''} · {fmtDate(r.createdAt, true)}
                         </p>
                       </button>
@@ -189,24 +189,24 @@ export default function FanOpsReports() {
                   <>
                     <Panel title="신고 상세"
                       right={
-                        <span className={`text-[12px] font-bold tabular-nums ${detail.slaRemainMs !== null && detail.slaRemainMs < 0 ? 'text-rose-500' : 'text-slate-400'}`}>
+                        <span className={`text-[12px] font-bold tabular-nums ${detail.slaRemainMs !== null && detail.slaRemainMs < 0 ? 'text-rose-500' : 'text-slate-500'}`}>
                           SLA {fmtRemain(detail.slaRemainMs)}
                         </span>
                       }>
                       <div className="p-5 space-y-4">
                         <div className="flex flex-wrap items-center gap-2">
                           <RiskTag risk={detail.risk} />
-                          <span className="font-mono text-[12px] text-slate-400">{detail.code}</span>
+                          <span className="font-mono text-[12px] text-slate-500">{detail.code}</span>
                           <StatusTag label={detail.targetTypeLabel} />
                         </div>
 
                         <div className="grid sm:grid-cols-2 gap-3 text-[13px]">
                           <div>
-                            <p className="text-[11px] font-semibold text-slate-400 mb-1">신고 사유</p>
+                            <p className="text-[12px] font-semibold text-slate-500 mb-1">신고 사유</p>
                             <p className="font-semibold text-slate-800">{detail.reason}</p>
                           </div>
                           <div>
-                            <p className="text-[11px] font-semibold text-slate-400 mb-1">신고 시각</p>
+                            <p className="text-[12px] font-semibold text-slate-500 mb-1">신고 시각</p>
                             <p className="text-slate-600 tabular-nums">{fmtDate(detail.createdAt, true)}</p>
                           </div>
                         </div>
@@ -219,10 +219,10 @@ export default function FanOpsReports() {
 
                         {/* 신고자 보호 */}
                         <div className="rounded-2xl border border-slate-200 px-4 py-3 flex items-start gap-2.5">
-                          <Shield className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+                          <Shield className="w-4 h-4 text-slate-500 mt-0.5 shrink-0" />
                           <div>
                             <p className="text-[12px] font-bold text-slate-600">신고자 정보는 비공개 처리되었습니다</p>
-                            <p className="text-[11px] text-slate-400 mt-0.5">
+                            <p className="text-[12px] text-slate-500 mt-0.5">
                               신고자 보호 정책에 따라 익명 처리된 정보는 열람할 수 없습니다. ({detail.reporter})
                             </p>
                           </div>
@@ -235,10 +235,10 @@ export default function FanOpsReports() {
                             <div className="space-y-1.5">
                               {detail.history.map((h: any) => (
                                 <div key={h.id} className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-2">
-                                  <span className="text-[11px] text-slate-400 tabular-nums w-16">{fmtDate(h.createdAt)}</span>
+                                  <span className="text-[12px] text-slate-500 tabular-nums w-16">{fmtDate(h.createdAt)}</span>
                                   <StatusTag label={h.levelLabel} tone={h.level === 'PERMANENT' ? 'rose' : 'slate'} />
                                   <span className="text-[12px] text-slate-500 truncate flex-1">{h.reason}</span>
-                                  <span className="text-[11px] text-slate-400">{h.status === 'ACTIVE' ? '적용 중' : '만료'}</span>
+                                  <span className="text-[12px] text-slate-500">{h.status === 'ACTIVE' ? '적용 중' : '만료'}</span>
                                 </div>
                               ))}
                             </div>
@@ -252,22 +252,22 @@ export default function FanOpsReports() {
                             <div className="rounded-2xl bg-slate-50 border border-slate-100 divide-y divide-slate-100">
                               {detail.auditLogs.map((l: any, i: number) => (
                                 <div key={i} className="flex items-center gap-3 px-3 py-2">
-                                  <span className="text-[11px] text-slate-400 tabular-nums w-28">{fmtDate(l.at, true)}</span>
-                                  <span className="text-[11px] text-slate-500 font-mono">{l.actor.slice(0, 8)}</span>
+                                  <span className="text-[12px] text-slate-500 tabular-nums w-28">{fmtDate(l.at, true)}</span>
+                                  <span className="text-[12px] text-slate-500 font-mono">{l.actor.slice(0, 8)}</span>
                                   <span className="text-[12px] text-slate-600 truncate flex-1">{l.reason || l.action}</span>
                                 </div>
                               ))}
                             </div>
-                            <p className="text-[11px] text-slate-400 mt-1.5">{detail.notice}</p>
+                            <p className="text-[12px] text-slate-500 mt-1.5">{detail.notice}</p>
                           </div>
                         )}
                       </div>
                     </Panel>
 
                     {/* 조치 결정 */}
-                    <Panel title="조치 결정" right={<span className="text-[11px] text-rose-500 font-bold">필수: 사유 입력</span>}>
+                    <Panel title="조치 결정" right={<span className="text-[12px] text-rose-500 font-bold">필수: 사유 입력</span>}>
                       <div className="p-5 space-y-3">
-                        <p className="text-[11px] text-slate-400">제재 단계 (누적 적용)</p>
+                        <p className="text-[12px] text-slate-500">제재 단계 (누적 적용)</p>
                         {detail.sanctionLevels.map((l: any) => {
                           const I = LEVEL_ICON[l.code] ?? AlertTriangle;
                           return (
@@ -277,10 +277,10 @@ export default function FanOpsReports() {
                                   ? l.code === 'PERMANENT' ? 'border-rose-400 bg-rose-50' : 'border-slate-900 bg-slate-50'
                                   : 'border-slate-200 hover:border-slate-300'
                               }`}>
-                              <I className={`w-4 h-4 shrink-0 ${l.code === 'PERMANENT' ? 'text-rose-500' : 'text-slate-400'}`} />
+                              <I className={`w-4 h-4 shrink-0 ${l.code === 'PERMANENT' ? 'text-rose-500' : 'text-slate-500'}`} />
                               <span className="min-w-0 flex-1">
                                 <span className="block text-[14px] font-bold text-slate-900">{l.label}</span>
-                                <span className="block text-[11px] text-slate-400 mt-0.5">{l.desc}</span>
+                                <span className="block text-[12px] text-slate-500 mt-0.5">{l.desc}</span>
                               </span>
                               {l.needsDays && level === l.code && (
                                 <select value={days} onClick={(e) => e.stopPropagation()}

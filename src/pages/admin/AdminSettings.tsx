@@ -207,7 +207,7 @@ export function AdminSettings() {
                     >
                       <Icon className={cn(
                         'w-5 h-5',
-                        activeTab === tab.id ? 'text-emerald-600' : 'text-slate-400'
+                        activeTab === tab.id ? 'text-emerald-600' : 'text-slate-500'
                       )} />
                       {tab.label}
                     </button>
@@ -268,7 +268,7 @@ export function AdminSettings() {
                         disabled={isSaving}
                         className={cn(
                           'p-1 rounded-full transition-colors',
-                          kycAutoApproveEnabled ? 'text-sky-600' : 'text-slate-400'
+                          kycAutoApproveEnabled ? 'text-sky-600' : 'text-slate-500'
                         )}
                       >
                         {kycAutoApproveEnabled ? (
@@ -295,7 +295,7 @@ export function AdminSettings() {
                           'p-1 rounded-full transition-colors',
                           generalSettings.allowNewRegistrations
                             ? 'text-emerald-600'
-                            : 'text-slate-400'
+                            : 'text-slate-500'
                         )}
                       >
                         {generalSettings.allowNewRegistrations ? (
@@ -325,7 +325,7 @@ export function AdminSettings() {
                         }
                         className={cn(
                           'p-1 rounded-full transition-colors',
-                          generalSettings.maintenanceMode ? 'text-amber-600' : 'text-slate-400'
+                          generalSettings.maintenanceMode ? 'text-amber-600' : 'text-slate-500'
                         )}
                       >
                         {generalSettings.maintenanceMode ? (
@@ -445,7 +445,7 @@ export function AdminSettings() {
                           'p-1 rounded-full transition-colors',
                           auctionSettings.autoStartAuctions
                             ? 'text-emerald-600'
-                            : 'text-slate-400'
+                            : 'text-slate-500'
                         )}
                       >
                         {auctionSettings.autoStartAuctions ? (
@@ -600,7 +600,7 @@ export function AdminSettings() {
                             'p-1 rounded-full transition-colors',
                             notificationSettings[item.key as keyof typeof notificationSettings]
                               ? 'text-emerald-600'
-                              : 'text-slate-400'
+                              : 'text-slate-500'
                           )}
                         >
                           {notificationSettings[item.key as keyof typeof notificationSettings] ? (
@@ -634,7 +634,7 @@ export function AdminSettings() {
                             'p-1 rounded-full transition-colors',
                             notificationSettings.slackEnabled
                               ? 'text-emerald-600'
-                              : 'text-slate-400'
+                              : 'text-slate-500'
                           )}
                         >
                           {notificationSettings.slackEnabled ? (

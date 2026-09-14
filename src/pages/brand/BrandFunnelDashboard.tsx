@@ -165,7 +165,7 @@ export default function BrandFunnelDashboard() {
         )}
 
         {isLoading ? (
-          <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
+          <div className="text-center py-12 text-sm text-slate-500">로딩 중...</div>
         ) : tab === 'predict' ? (
           <PredictPanel predict={predict} campaign={firstActiveCampaign} />
         ) : tab === 'segments' ? (
@@ -219,14 +219,14 @@ export default function BrandFunnelDashboard() {
                     return athletes.map((a: any, i: number) => (
                       <div key={a.id} className="py-2 border-b border-slate-100 last:border-b-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[10px] flex items-center justify-center">{i + 1}</span>
+                          <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-bold text-[12.5px] flex items-center justify-center">{i + 1}</span>
                           {a.profileImageUrl ? (
                             <img src={a.profileImageUrl} alt="" className="w-6 h-6 rounded-full object-cover" />
                           ) : (
-                            <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px]">{a.name.charAt(0)}</div>
+                            <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[12.5px]">{a.name.charAt(0)}</div>
                           )}
                           <div className="flex-1 min-w-0">
-                            <div className="text-xs font-semibold truncate">{a.name} <span className="text-[10px] text-slate-400 font-normal">{a.tour}</span></div>
+                            <div className="text-xs font-semibold truncate">{a.name} <span className="text-[12.5px] text-slate-500 font-normal">{a.tour}</span></div>
                           </div>
                           <div className="text-right">
                             <div className="text-xs font-bold">₩{Math.round(a.netRevenue).toLocaleString()}</div>
@@ -244,7 +244,7 @@ export default function BrandFunnelDashboard() {
                     ));
                   })()}
                   {(report?.breakdown?.athletes || []).length === 0 && (
-                    <div className="text-center py-8 text-xs text-slate-400">데이터가 없습니다</div>
+                    <div className="text-center py-8 text-xs text-slate-500">데이터가 없습니다</div>
                   )}
                 </div>
               </div>
@@ -258,12 +258,12 @@ export default function BrandFunnelDashboard() {
                       <div className="flex-1" />
                       <div className="text-right">
                         <div className="text-sm font-bold">₩{Math.round(c.netRevenue).toLocaleString()}</div>
-                        <div className="text-[10px] text-slate-500">사용 {c.purchases}건</div>
+                        <div className="text-[12.5px] text-slate-500">사용 {c.purchases}건</div>
                       </div>
                     </div>
                   ))}
                   {(report?.breakdown?.codes || []).length === 0 && (
-                    <div className="text-center py-8 text-xs text-slate-400">데이터가 없습니다</div>
+                    <div className="text-center py-8 text-xs text-slate-500">데이터가 없습니다</div>
                   )}
                 </div>
               </div>
@@ -273,14 +273,14 @@ export default function BrandFunnelDashboard() {
             <div className="bg-white border border-slate-200 rounded-xl p-5 mt-6">
               <h3 className="text-sm font-bold text-slate-900 mb-3">콘텐츠/유입 채널별 성과</h3>
               {contents.length === 0 ? (
-                <div className="text-center py-6 text-xs text-slate-400">데이터가 없습니다</div>
+                <div className="text-center py-6 text-xs text-slate-500">데이터가 없습니다</div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                   {contents.map((c: any) => (
                     <div key={c.referrer} className="text-center bg-slate-50 rounded p-2">
-                      <div className="text-[10px] text-slate-500 truncate">{c.referrer}</div>
+                      <div className="text-[12.5px] text-slate-500 truncate">{c.referrer}</div>
                       <div className="text-sm font-bold text-emerald-600">{c.visits}</div>
-                      <div className="text-[9px] text-slate-400">방문</div>
+                      <div className="text-[9px] text-slate-500">방문</div>
                     </div>
                   ))}
                 </div>
@@ -291,16 +291,16 @@ export default function BrandFunnelDashboard() {
             <div className="bg-white border border-slate-200 rounded-xl p-5 mt-6">
               <h3 className="text-sm font-bold text-slate-900 mb-3">최근 주문 / 특이사항</h3>
               {recentOrders.length === 0 ? (
-                <div className="text-center py-6 text-xs text-slate-400">최근 주문이 없습니다</div>
+                <div className="text-center py-6 text-xs text-slate-500">최근 주문이 없습니다</div>
               ) : (
                 <div className="space-y-2">
                   {recentOrders.slice(0, 5).map((o: any) => (
                     <div key={o.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-b-0 text-sm">
                       <div className="flex items-center gap-3">
-                        <span className="text-xs text-slate-400">{new Date(o.paidAt).toLocaleString().slice(5)}</span>
+                        <span className="text-xs text-slate-500">{new Date(o.paidAt).toLocaleString().slice(5)}</span>
                         <span className="font-semibold">{o.athlete?.name || o.athleteId.slice(0, 8)}</span>
-                        {o.promoCode && <code className="text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded">{o.promoCode}</code>}
-                        {o.status === 'REFUNDED' && <span className="text-[10px] text-rose-600 font-bold">환불</span>}
+                        {o.promoCode && <code className="text-[12.5px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded">{o.promoCode}</code>}
+                        {o.status === 'REFUNDED' && <span className="text-[12.5px] text-rose-600 font-bold">환불</span>}
                       </div>
                       <span className="font-bold">₩{Math.round(Number(o.netAmount)).toLocaleString()}</span>
                     </div>
@@ -372,7 +372,7 @@ function BrandSummaryComment({ summary, delta, breakdown }: { summary: any; delt
     <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-5 mb-6">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-xs font-bold text-emerald-300 uppercase tracking-wider">📊 자동 해석</span>
-        <span className="text-[10px] text-slate-400">실시간 KPI 기반 자동 생성</span>
+        <span className="text-[12.5px] text-slate-500">실시간 KPI 기반 자동 생성</span>
       </div>
       <div className="space-y-2">
         {messages.slice(0, 4).map((m, i) => (
@@ -403,10 +403,10 @@ function TabBtn({ active, onClick, children }: any) {
 
 function PredictPanel({ predict, campaign }: { predict: any; campaign: any }) {
   if (!campaign) {
-    return <div className="text-center py-12 text-sm text-slate-400 bg-slate-50 rounded-xl">활성 캠페인이 없습니다</div>;
+    return <div className="text-center py-12 text-sm text-slate-500 bg-slate-50 rounded-xl">활성 캠페인이 없습니다</div>;
   }
   if (!predict) {
-    return <div className="text-center py-12 text-sm text-slate-400">예측 계산 중...</div>;
+    return <div className="text-center py-12 text-sm text-slate-500">예측 계산 중...</div>;
   }
   return (
     <div className="space-y-4">
@@ -431,7 +431,7 @@ function PredictPanel({ predict, campaign }: { predict: any; campaign: any }) {
 }
 
 function SegmentPanel({ segments }: { segments: any }) {
-  if (!segments) return <div className="text-center py-12 text-sm text-slate-400">세그먼트 데이터 로딩 중...</div>;
+  if (!segments) return <div className="text-center py-12 text-sm text-slate-500">세그먼트 데이터 로딩 중...</div>;
   const { newReturning = { new: { count: 0, revenue: 0 }, returning: { count: 0, revenue: 0 } }, byDevice = [], byReferrer = [] } = segments;
 
   return (
@@ -456,7 +456,7 @@ function SegmentPanel({ segments }: { segments: any }) {
         <div className="bg-white border border-slate-200 rounded-xl p-5">
           <h3 className="text-sm font-bold mb-3 inline-flex items-center gap-2"><Smartphone className="w-4 h-4 text-emerald-500" /> 디바이스별</h3>
           <div className="space-y-2">
-            {byDevice.length === 0 && <div className="text-xs text-slate-400">데이터 없음</div>}
+            {byDevice.length === 0 && <div className="text-xs text-slate-500">데이터 없음</div>}
             {byDevice.map((d: any) => (
               <div key={d.device} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0">
                 <span className="text-sm capitalize">{d.device}</span>
@@ -470,7 +470,7 @@ function SegmentPanel({ segments }: { segments: any }) {
       <div className="bg-white border border-slate-200 rounded-xl p-5">
         <h3 className="text-sm font-bold mb-3 inline-flex items-center gap-2"><Globe className="w-4 h-4 text-emerald-500" /> 유입 경로 TOP 10</h3>
         <div className="space-y-2">
-          {byReferrer.length === 0 && <div className="text-xs text-slate-400">데이터 없음</div>}
+          {byReferrer.length === 0 && <div className="text-xs text-slate-500">데이터 없음</div>}
           {byReferrer.map((r: any, i: number) => (
             <div key={i} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0">
               <code className="text-xs bg-slate-100 px-2 py-0.5 rounded">{r.referrer}</code>

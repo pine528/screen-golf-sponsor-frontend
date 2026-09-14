@@ -54,10 +54,10 @@ export default function FanStoreGuysAr() {
               alt={`${GUYS_STORE.athleteName} 프로`}
               className="max-h-[560px] w-auto object-contain"
             />
-            <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/80 text-white text-[11px] font-bold">
+            <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/80 text-white text-[12px] font-bold">
               <Box className="w-3.5 h-3.5" /> AR 모드 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             </span>
-            <span className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-slate-900/80 text-white text-[11px] font-bold">
+            <span className="absolute top-4 right-4 px-3 py-1.5 rounded-full bg-slate-900/80 text-white text-[12px] font-bold">
               팬 전용 콘텐츠
             </span>
 
@@ -71,8 +71,8 @@ export default function FanStoreGuysAr() {
               </div>
               <div className="leading-tight pr-1">
                 <div className="text-[12px] font-extrabold text-slate-900">{GUYS_STORE.athleteName} 프로</div>
-                <div className="text-[10px] text-slate-400">{GUYS_STORE.brandName} 전속 프로</div>
-                <div className="text-[10px] font-bold text-emerald-700">상품 보기 ›</div>
+                <div className="text-[12.5px] text-slate-500">{GUYS_STORE.brandName} 전속 프로</div>
+                <div className="text-[12.5px] font-bold text-emerald-700">상품 보기 ›</div>
               </div>
             </Link>
 
@@ -87,7 +87,7 @@ export default function FanStoreGuysAr() {
                 <span className="w-11 h-11 rounded-full border-4 border-white flex items-center justify-center">
                   <span className="w-6 h-6 rounded-full bg-emerald-500" />
                 </span>
-                <span className="text-[10px] font-bold">촬영</span>
+                <span className="text-[12.5px] font-bold">촬영</span>
               </a>
               <ControlBtn icon={RotateCw} label="360° 회전" disabled />
               <ControlBtn icon={ZoomIn} label="확대/축소" disabled />
@@ -112,7 +112,7 @@ export default function FanStoreGuysAr() {
                     <span className="w-4 h-4 rounded-full bg-emerald-600 text-white text-[9px] font-black flex items-center justify-center shrink-0 mt-0.5 tabular-nums">
                       {i + 1}
                     </span>
-                    <span className="text-[11px] text-slate-600 break-keep">{g}</span>
+                    <span className="text-[12px] text-slate-600 break-keep">{g}</span>
                   </div>
                 ))}
               </div>
@@ -124,7 +124,7 @@ export default function FanStoreGuysAr() {
                 <Download className="w-4 h-4 text-emerald-600 shrink-0" />
                 <div className="min-w-0">
                   <div className="text-[12px] font-bold text-slate-900">다운로드</div>
-                  <div className="text-[11px] text-slate-400">AR 파일을 내려받아 보관하세요.</div>
+                  <div className="text-[12px] text-slate-500">AR 파일을 내려받아 보관하세요.</div>
                 </div>
               </Link>
               <button
@@ -134,7 +134,7 @@ export default function FanStoreGuysAr() {
                 {copiedWhat === 'share' ? <Check className="w-4 h-4 text-emerald-600 shrink-0" /> : <Share2 className="w-4 h-4 text-emerald-600 shrink-0" />}
                 <div className="min-w-0">
                   <div className="text-[12px] font-bold text-slate-900">공유하기</div>
-                  <div className="text-[11px] text-slate-400">{copiedWhat === 'share' ? '링크가 복사되었습니다.' : 'SNS로 친구들과 공유해보세요.'}</div>
+                  <div className="text-[12px] text-slate-500">{copiedWhat === 'share' ? '링크가 복사되었습니다.' : 'SNS로 친구들과 공유해보세요.'}</div>
                 </div>
               </button>
               <button
@@ -144,7 +144,7 @@ export default function FanStoreGuysAr() {
                 {copiedWhat === 'code' ? <Check className="w-4 h-4 text-emerald-600 shrink-0" /> : <Code2 className="w-4 h-4 text-emerald-600 shrink-0" />}
                 <div className="min-w-0">
                   <div className="text-[12px] font-bold text-slate-900">코드 복사</div>
-                  <div className="text-[11px] text-slate-400">
+                  <div className="text-[12px] text-slate-500">
                     {copiedWhat === 'code' ? `${GUYS_STORE.fanCode} 복사됨` : `팬 할인코드 ${GUYS_STORE.fanCode}를 복사해보세요.`}
                   </div>
                 </div>
@@ -152,8 +152,8 @@ export default function FanStoreGuysAr() {
             </div>
 
             <div className="rounded-2xl bg-slate-50 border border-slate-100 px-4 py-3.5 flex items-start gap-2.5">
-              <Sparkles className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-              <p className="text-[11px] text-slate-500 break-keep leading-relaxed">
+              <Sparkles className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
+              <p className="text-[12px] text-slate-500 break-keep leading-relaxed">
                 본 콘텐츠는 팬 전용 콘텐츠입니다. 상업적 이용 및 무단 배포를 금지합니다.
               </p>
             </div>
@@ -170,7 +170,7 @@ function ControlBtn({ icon: Icon, label, disabled = false }: { icon: any; label:
       <span className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center">
         <Icon className="w-4 h-4" />
       </span>
-      <span className="text-[10px] font-bold">{label}</span>
+      <span className="text-[12.5px] font-bold">{label}</span>
     </span>
   );
 }
@@ -204,8 +204,8 @@ export function FanStoreGuysArDownload() {
               <div className="flex flex-col sm:flex-row items-center gap-6">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[11px] font-bold">팬 전용</span>
-                    <span className="px-2.5 py-1 rounded-full border border-emerald-600 text-emerald-700 text-[11px] font-bold">AR 이미지팩</span>
+                    <span className="px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[12px] font-bold">팬 전용</span>
+                    <span className="px-2.5 py-1 rounded-full border border-emerald-600 text-emerald-700 text-[12px] font-bold">AR 이미지팩</span>
                   </div>
                   <h1 className="flex items-center flex-wrap gap-2 mb-2">
                     <img src={GUYS_STORE.brandLogo} alt={GUYS_STORE.brandName} className="h-8 object-contain" />
@@ -242,11 +242,11 @@ export function FanStoreGuysArDownload() {
                     {a.file ? (
                       <img src={a.file} alt={a.label} className="w-full h-full object-cover object-top" />
                     ) : (
-                      <span className="text-[10px] text-slate-400 text-center px-2 break-keep">{a.label}<br />준비중</span>
+                      <span className="text-[12.5px] text-slate-500 text-center px-2 break-keep">{a.label}<br />준비중</span>
                     )}
                   </div>
                   <div className="text-[12px] font-extrabold text-slate-900 break-keep">{a.label}</div>
-                  <div className="text-[10px] text-slate-400 tabular-nums mb-2.5">
+                  <div className="text-[12.5px] text-slate-500 tabular-nums mb-2.5">
                     {a.dim} · {a.format}
                   </div>
                   {a.file ? (
@@ -258,7 +258,7 @@ export function FanStoreGuysArDownload() {
                       <Download className="w-3.5 h-3.5" /> 다운로드
                     </a>
                   ) : (
-                    <span className="mt-auto h-9 inline-flex items-center justify-center rounded-lg bg-slate-100 text-slate-400 text-[12px] font-bold">
+                    <span className="mt-auto h-9 inline-flex items-center justify-center rounded-lg bg-slate-100 text-slate-500 text-[12px] font-bold">
                       준비 중
                     </span>
                   )}
@@ -277,7 +277,7 @@ export function FanStoreGuysArDownload() {
                     ['공유', '저장한 콘텐츠를 SNS, 프로필, 배경화면 등 자유롭게 활용하세요.'],
                   ].map(([t, d], i) => (
                     <div key={t} className="flex items-start gap-2.5">
-                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5 tabular-nums">
+                      <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[12.5px] font-black flex items-center justify-center shrink-0 mt-0.5 tabular-nums">
                         {i + 1}
                       </span>
                       <div className="min-w-0">
@@ -291,7 +291,7 @@ export function FanStoreGuysArDownload() {
                   <div className="text-[12px] font-extrabold text-slate-900 mb-2">💡 활용 TIP</div>
                   <ul className="space-y-1">
                     {['프로필 이미지로 설정해 보세요.', '스토리에 올려 응원의 메시지를 전해보세요.', '배경화면으로 설정해 매일 응원해 보세요.'].map((t) => (
-                      <li key={t} className="flex items-start gap-2 text-[11px] text-slate-600">
+                      <li key={t} className="flex items-start gap-2 text-[12px] text-slate-600">
                         <span className="w-1 h-1 rounded-full bg-amber-400 mt-1.5 shrink-0" />
                         {t}
                       </li>
@@ -307,32 +307,32 @@ export function FanStoreGuysArDownload() {
             <div className="rounded-2xl border border-slate-200 p-5">
               <dl className="text-[12px] mb-4">
                 <div className="flex items-center gap-4 py-1.5">
-                  <dt className="w-14 shrink-0 text-slate-400">선수</dt>
+                  <dt className="w-14 shrink-0 text-slate-500">선수</dt>
                   <dd className="font-bold text-slate-900">{GUYS_STORE.athleteName} 프로</dd>
                 </div>
                 <div className="flex items-center gap-4 py-1.5">
-                  <dt className="w-14 shrink-0 text-slate-400">브랜드</dt>
+                  <dt className="w-14 shrink-0 text-slate-500">브랜드</dt>
                   <dd>
                     <img src={GUYS_STORE.brandLogo} alt={GUYS_STORE.brandName} className="h-5 object-contain" />
                   </dd>
                 </div>
               </dl>
               <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 px-3.5 py-3 mb-4">
-                <div className="text-[11px] text-slate-500 mb-1">팬 전용 할인코드</div>
+                <div className="text-[12px] text-slate-500 mb-1">팬 전용 할인코드</div>
                 <div className="flex items-center gap-2">
                   <span className="font-black text-slate-900 tracking-wider">{GUYS_STORE.fanCode}</span>
-                  <span className="text-[11px] font-bold text-emerald-700">{GUYS_STORE.fanDiscountPct}%</span>
-                  <button onClick={() => copy(GUYS_STORE.fanCode, 'code')} className="ml-auto text-slate-400 hover:text-slate-700">
+                  <span className="text-[12px] font-bold text-emerald-700">{GUYS_STORE.fanDiscountPct}%</span>
+                  <button onClick={() => copy(GUYS_STORE.fanCode, 'code')} className="ml-auto text-slate-500 hover:text-slate-700">
                     {copiedWhat === 'code' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
                 </div>
-                <div className="text-[10px] text-slate-400 mt-1">{GUYS_STORE.brandName} 팬 스토어 전용</div>
+                <div className="text-[12.5px] text-slate-500 mt-1">{GUYS_STORE.brandName} 팬 스토어 전용</div>
               </div>
 
               <div className="text-[12px] font-bold text-slate-600 mb-1.5">AR 미리보기</div>
               <Link to={`${GUYS_STORE.path}/ar`} className="block relative rounded-xl overflow-hidden bg-slate-50 border border-slate-100 mb-4">
                 <img src={GUYS_STORE.arPack[0].file!} alt="AR 미리보기" className="w-full aspect-[4/3] object-cover object-top" />
-                <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-600 text-white text-[10px] font-bold">
+                <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-600 text-white text-[12.5px] font-bold">
                   <Box className="w-3 h-3" /> AR
                 </span>
               </Link>
@@ -341,14 +341,14 @@ export function FanStoreGuysArDownload() {
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => copy(window.location.href, 'share')}
-                  className="h-9 inline-flex items-center justify-center gap-1 rounded-lg border border-slate-200 text-[11px] font-bold text-slate-600 hover:bg-slate-50"
+                  className="h-9 inline-flex items-center justify-center gap-1 rounded-lg border border-slate-200 text-[12px] font-bold text-slate-600 hover:bg-slate-50"
                 >
                   {copiedWhat === 'share' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Link2 className="w-3.5 h-3.5" />} 링크 복사
                 </button>
-                <span title="준비 중" className="h-9 inline-flex items-center justify-center gap-1 rounded-lg border border-slate-100 text-[11px] font-bold text-slate-300">
+                <span title="준비 중" className="h-9 inline-flex items-center justify-center gap-1 rounded-lg border border-slate-100 text-[12px] font-bold text-slate-300">
                   <MessageCircle className="w-3.5 h-3.5" /> 카카오톡
                 </span>
-                <span title="준비 중" className="h-9 inline-flex items-center justify-center gap-1 rounded-lg border border-slate-100 text-[11px] font-bold text-slate-300">
+                <span title="준비 중" className="h-9 inline-flex items-center justify-center gap-1 rounded-lg border border-slate-100 text-[12px] font-bold text-slate-300">
                   <Instagram className="w-3.5 h-3.5" /> 인스타
                 </span>
               </div>
@@ -358,7 +358,7 @@ export function FanStoreGuysArDownload() {
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <div className="min-w-0">
                 <div className="text-[12px] font-extrabold text-slate-900 mb-0.5">팬 전용 다운로드</div>
-                <p className="text-[11px] text-slate-500 break-keep leading-relaxed">
+                <p className="text-[12px] text-slate-500 break-keep leading-relaxed">
                   본 콘텐츠는 팬을 위한 전용 콘텐츠입니다. 상업적 이용 및 무단 배포를 금지합니다.
                 </p>
               </div>
@@ -382,7 +382,7 @@ function RelatedProducts() {
       {GUYS_PRODUCTS.slice(0, 4).map((p) => (
         <Link key={p.id} to={`${GUYS_STORE.path}/${p.id}`} className="rounded-xl border border-slate-100 overflow-hidden hover:border-emerald-300 transition-colors">
           <div className="aspect-square bg-slate-50 flex items-center justify-center p-2">
-            <span className="text-[9px] text-slate-400 text-center break-keep leading-snug">{p.name}</span>
+            <span className="text-[9px] text-slate-500 text-center break-keep leading-snug">{p.name}</span>
           </div>
           <div className="p-2">
             <div className="text-[12px] font-black text-slate-900 tabular-nums">{p.price.toLocaleString()}원</div>

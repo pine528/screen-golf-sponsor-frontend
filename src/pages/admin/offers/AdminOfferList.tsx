@@ -79,7 +79,7 @@ export default function AdminOfferList() {
       <div className="max-w-[1600px] mx-auto px-5 py-6">
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <p className="text-[12px] font-bold text-slate-400">ADMIN SCREEN A01 · 상품 목록 · 필터 · 운영경보</p>
+            <p className="text-[12px] font-bold text-slate-500">ADMIN SCREEN A01 · 상품 목록 · 필터 · 운영경보</p>
             <h1 className="mt-1 text-[26px] font-black tracking-tight">
               지금 가능한 <span className="text-emerald-600">후원 상품관리</span>
             </h1>
@@ -109,7 +109,7 @@ export default function AdminOfferList() {
                   <div className="min-w-0">
                     <p className="text-[12px] text-slate-500">{k.label}</p>
                     <p className="text-[26px] font-black leading-tight">{k.value}</p>
-                    <p className="text-[11px] text-slate-400">{k.sub}</p>
+                    <p className="text-[12px] text-slate-500">{k.sub}</p>
                   </div>
                 </div>
               ))}
@@ -186,10 +186,10 @@ export default function AdminOfferList() {
                         const low = o.availableQty != null && o.capacity > 0 && o.availableQty / o.capacity <= 0.34;
                         return (
                           <tr key={o.id} className="hover:bg-slate-50/60">
-                            <td className="px-4 py-3 font-mono text-[11.5px] text-slate-500 whitespace-nowrap">{o.code}</td>
+                            <td className="px-4 py-3 font-mono text-[12.5px] text-slate-500 whitespace-nowrap">{o.code}</td>
                             <td className="px-4 py-3">
                               <Link to={`/admin/offers/${o.id}`} className="font-bold hover:text-emerald-700 break-keep">{o.title}</Link>
-                              {o.stale && <span className="ml-1.5 px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 text-[10px] font-bold">stale</span>}
+                              {o.stale && <span className="ml-1.5 px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 text-[12.5px] font-bold">stale</span>}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
                               <span className="flex items-center gap-2">
@@ -198,7 +198,7 @@ export default function AdminOfferList() {
                                 </span>
                                 <span>
                                   <span className="block font-bold">{o.athletes[0]?.name ?? '—'}</span>
-                                  <span className="block text-[10.5px] text-slate-400">{o.athletes[0]?.tour ?? ''}</span>
+                                  <span className="block text-[12.5px] text-slate-500">{o.athletes[0]?.tour ?? ''}</span>
                                 </span>
                               </span>
                             </td>
@@ -209,9 +209,9 @@ export default function AdminOfferList() {
                                 : `${o.supplyAmount.toLocaleString()}원`}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              {o.stockMode === 'UNLIMITED' ? <span className="text-slate-400">—</span> : (
+                              {o.stockMode === 'UNLIMITED' ? <span className="text-slate-500">—</span> : (
                                 <span className={low ? 'font-black text-rose-600' : 'font-bold text-emerald-600'}>
-                                  {o.availableQty} <span className="text-slate-400 font-normal">/ {o.capacity}</span>
+                                  {o.availableQty} <span className="text-slate-500 font-normal">/ {o.capacity}</span>
                                 </span>
                               )}
                             </td>
@@ -220,21 +220,21 @@ export default function AdminOfferList() {
                               <br />~ {o.salesTo ? new Date(o.salesTo).toLocaleDateString('ko-KR') : '—'}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap">
-                              <span className={`px-2 py-1 rounded-md text-[11px] font-bold ${st.cls}`}>{st.label}</span>
+                              <span className={`px-2 py-1 rounded-md text-[12px] font-bold ${st.cls}`}>{st.label}</span>
                             </td>
                             <td className="px-4 py-3 text-slate-500 whitespace-nowrap">{o.ownerName ?? '—'}</td>
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-1 relative">
                                 <Link to={`/sponsor/available/${o.id}`} target="_blank" aria-label="미리보기"
-                                  className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-emerald-600">
+                                  className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-emerald-600">
                                   <Eye className="w-3.5 h-3.5" />
                                 </Link>
                                 <Link to={`/admin/offers/${o.id}`} aria-label="수정"
-                                  className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-emerald-600">
+                                  className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-emerald-600">
                                   <Pencil className="w-3.5 h-3.5" />
                                 </Link>
                                 <button onClick={() => setMenu(menu === o.id ? null : o.id)} aria-label="더보기" disabled={busy === o.id}
-                                  className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-700">
+                                  className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-700">
                                   {busy === o.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MoreVertical className="w-3.5 h-3.5" />}
                                 </button>
                                 {menu === o.id && (
@@ -291,24 +291,24 @@ export default function AdminOfferList() {
                 <AlertTriangle className="w-4 h-4 text-rose-500" />
                 <h2 className="text-[15px] font-extrabold">운영 경보</h2>
                 {alerts?.counts?.total > 0 && (
-                  <span className="px-2 py-0.5 rounded-md bg-rose-100 text-rose-700 text-[11px] font-black">{alerts.counts.total}</span>
+                  <span className="px-2 py-0.5 rounded-md bg-rose-100 text-rose-700 text-[12px] font-black">{alerts.counts.total}</span>
                 )}
               </div>
 
               {!alerts?.alerts?.length ? (
-                <p className="py-10 text-center text-[12.5px] text-slate-400">처리할 경보가 없습니다</p>
+                <p className="py-10 text-center text-[12.5px] text-slate-500">처리할 경보가 없습니다</p>
               ) : (
                 <ul className="mt-4 space-y-3">
                   {alerts.alerts.slice(0, 6).map((a: any, i: number) => (
                     <li key={i} className={`rounded-xl border p-4 ${ALERT_TONE[a.severity]}`}>
                       <div className="flex items-start justify-between gap-2">
                         <p className="text-[13px] font-extrabold break-keep">{a.title}</p>
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-black shrink-0 ${BADGE_TONE[a.severity]}`}>{a.badge}</span>
+                        <span className={`px-1.5 py-0.5 rounded text-[12.5px] font-black shrink-0 ${BADGE_TONE[a.severity]}`}>{a.badge}</span>
                       </div>
                       <p className="mt-1.5 text-[12px] text-slate-600 break-keep">{a.message}</p>
-                      {a.detail && <p className="mt-1 text-[11.5px] text-slate-500 break-keep">{a.detail}</p>}
+                      {a.detail && <p className="mt-1 text-[12.5px] text-slate-500 break-keep">{a.detail}</p>}
                       {a.period && (
-                        <p className="mt-1 text-[11px] text-slate-500">
+                        <p className="mt-1 text-[12px] text-slate-500">
                           충돌 기간 {new Date(a.period.from).toLocaleDateString('ko-KR')} ~ {new Date(a.period.to).toLocaleDateString('ko-KR')}
                         </p>
                       )}
@@ -322,9 +322,9 @@ export default function AdminOfferList() {
                 </ul>
               )}
 
-              <p className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+              <p className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[12px] text-slate-500">
                 최근 업데이트 {new Date().toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                <button onClick={load} aria-label="새로고침" className="text-slate-400 hover:text-slate-700">
+                <button onClick={load} aria-label="새로고침" className="text-slate-500 hover:text-slate-700">
                   <RotateCcw className="w-3.5 h-3.5" />
                 </button>
               </p>

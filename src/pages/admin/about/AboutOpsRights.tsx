@@ -117,7 +117,7 @@ export default function AboutOpsRights() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-[13px]">
                       <thead>
-                        <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                        <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                           <th className="text-left font-semibold px-5 py-2.5">에셋</th>
                           <th className="text-left font-semibold py-2.5">권리 보유자</th>
                           <th className="text-left font-semibold py-2.5">허용 채널</th>
@@ -138,7 +138,7 @@ export default function AboutOpsRights() {
                                 </div>
                                 <div className="min-w-0">
                                   <p className="font-semibold text-slate-800 truncate max-w-[180px]">{r.assetName}</p>
-                                  <p className="text-[10.5px] text-slate-400">{r.assetType}</p>
+                                  <p className="text-[12.5px] text-slate-500">{r.assetType}</p>
                                 </div>
                               </div>
                             </td>
@@ -149,7 +149,7 @@ export default function AboutOpsRights() {
                             <td className="py-3 tabular-nums text-[12px]">
                               <p className="text-slate-600">{fmtDate(r.validFrom)} ~ {fmtDate(r.validTo)}</p>
                               {r.remainDays !== null && (
-                                <p className={`text-[11px] ${r.remainDays < 0 ? 'text-rose-500' : r.remainDays <= 30 ? 'text-amber-600' : 'text-slate-400'}`}>
+                                <p className={`text-[12px] ${r.remainDays < 0 ? 'text-rose-500' : r.remainDays <= 30 ? 'text-amber-600' : 'text-slate-500'}`}>
                                   {r.remainDays < 0 ? `만료됨 (${Math.abs(r.remainDays)}일 경과)` : `D-${r.remainDays}`}
                                 </p>
                               )}
@@ -181,7 +181,7 @@ export default function AboutOpsRights() {
             <Panel title="권리 상세"
               right={selected && (
                 <button onClick={() => setSelected(null)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center">
-                  <X className="w-4 h-4 text-slate-400" />
+                  <X className="w-4 h-4 text-slate-500" />
                 </button>
               )}>
               {!selected ? (
@@ -194,7 +194,7 @@ export default function AboutOpsRights() {
                     </div>
                     <div className="min-w-0">
                       <p className="text-[14px] font-bold text-slate-900">{selected.assetName}</p>
-                      <p className="text-[11.5px] text-slate-400 mt-0.5">{selected.assetType}</p>
+                      <p className="text-[12.5px] text-slate-500 mt-0.5">{selected.assetType}</p>
                       <span className="mt-1.5 inline-block">
                         <Tag tone={STATUS_TONE[selected.statusLabel] ?? 'slate'}>{selected.statusLabel}</Tag>
                       </span>
@@ -205,13 +205,13 @@ export default function AboutOpsRights() {
                     <div className={`rounded-2xl px-4 py-3.5 text-center ${
                       selected.remainDays < 0 ? 'bg-rose-50' : selected.remainDays <= 30 ? 'bg-amber-50' : 'bg-slate-50'
                     }`}>
-                      <p className="text-[11px] font-semibold text-slate-500">종료까지 남은 기간</p>
+                      <p className="text-[12px] font-semibold text-slate-500">종료까지 남은 기간</p>
                       <p className={`text-[24px] font-extrabold tabular-nums ${
                         selected.remainDays < 0 ? 'text-rose-600' : selected.remainDays <= 30 ? 'text-amber-600' : 'text-slate-700'
                       }`}>
                         {selected.remainDays < 0 ? '만료' : `D-${selected.remainDays}`}
                       </p>
-                      <p className="text-[11px] text-slate-400 mt-0.5 tabular-nums">{fmtDate(selected.validTo)} 까지</p>
+                      <p className="text-[12px] text-slate-500 mt-0.5 tabular-nums">{fmtDate(selected.validTo)} 까지</p>
                     </div>
                   )}
 
@@ -225,7 +225,7 @@ export default function AboutOpsRights() {
                       { l: '소유팀', v: selected.ownerTeam ?? '—' },
                     ].map((r) => (
                       <div key={r.l} className="flex items-start justify-between gap-3">
-                        <dt className="text-slate-400 shrink-0">{r.l}</dt>
+                        <dt className="text-slate-500 shrink-0">{r.l}</dt>
                         <dd className="font-semibold text-slate-700 text-right">{r.v}</dd>
                       </div>
                     ))}
@@ -248,7 +248,7 @@ export default function AboutOpsRights() {
                       <div className="space-y-1.5">
                         {selected.usedIn.slice(0, 4).map((u: any, i: number) => (
                           <div key={i} className="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2">
-                            <Lock className="w-3 h-3 text-slate-400 shrink-0" />
+                            <Lock className="w-3 h-3 text-slate-500 shrink-0" />
                             <span className="text-[12px] text-slate-600 truncate flex-1">{u.title ?? u.url}</span>
                           </div>
                         ))}

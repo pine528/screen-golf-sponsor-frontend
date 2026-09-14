@@ -161,7 +161,7 @@ export default function BrandVotes() {
 
                     {/* Sponsor Engagement Stats */}
                     {event.sponsorEngagement && (event.status === 'ACTIVE' || event.status === 'CLOSED' || event.status === 'SETTLED') && (
-                      <div className="mt-3 flex items-center gap-4 text-xs text-slate-400">
+                      <div className="mt-3 flex items-center gap-4 text-xs text-slate-500">
                         <span className="flex items-center gap-1">
                           <Eye className="w-3 h-3" />
                           노출 {event.sponsorEngagement.bannerImpressions}

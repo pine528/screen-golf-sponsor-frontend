@@ -58,15 +58,15 @@ export default function FanStoreGuysProduct() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,38%)_minmax(0,24%)_minmax(0,1fr)] gap-4 items-stretch">
           {/* 좌: 상품 이미지 */}
           <div className="relative rounded-2xl border border-slate-200 bg-slate-50 min-h-[320px] flex items-center justify-center p-8">
-            <span className="absolute top-4 left-4 px-2 py-1 rounded-md bg-slate-900 text-white text-[10px] font-black">
+            <span className="absolute top-4 left-4 px-2 py-1 rounded-md bg-slate-900 text-white text-[12.5px] font-black">
               {product.limited ? '한정판' : 'BEST'}
             </span>
-            <span className="text-sm text-slate-400 text-center break-keep leading-relaxed">
+            <span className="text-sm text-slate-500 text-center break-keep leading-relaxed">
               {product.name}
               <br />
               (상품 이미지 준비중)
             </span>
-            <button className="absolute top-4 right-4 w-9 h-9 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-rose-500">
+            <button className="absolute top-4 right-4 w-9 h-9 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-rose-500">
               <Heart className="w-4 h-4" />
             </button>
           </div>
@@ -74,7 +74,7 @@ export default function FanStoreGuysProduct() {
           {/* 중: 브랜드 카드 */}
           <div className="rounded-2xl border border-emerald-100 bg-gradient-to-b from-emerald-50/60 to-white p-4 flex flex-col items-center text-center">
             <img src={GUYS_STORE.brandLogo} alt={GUYS_STORE.brandName} className="h-9 object-contain mb-1" />
-            <div className="text-[11px] text-slate-400 mb-2">× {GUYS_STORE.athleteName} 프로</div>
+            <div className="text-[12px] text-slate-500 mb-2">× {GUYS_STORE.athleteName} 프로</div>
             <div className="w-full aspect-[4/5] rounded-xl overflow-hidden bg-white mb-3">
               <img src={GUYS_STORE.athletePhoto} alt={`${GUYS_STORE.athleteName} 프로`} className="w-full h-full object-cover object-top" />
             </div>
@@ -90,36 +90,36 @@ export default function FanStoreGuysProduct() {
           {/* 우: 가격·결제 */}
           <div className="rounded-2xl border border-slate-200 p-5 flex flex-col">
             {product.limited && (
-              <span className="self-start px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold mb-2">
+              <span className="self-start px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[12px] font-bold mb-2">
                 팬 스토어 · 한정판
               </span>
             )}
             <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 break-keep mb-1">{product.name}</h1>
-            <div className="text-[12px] text-slate-400 mb-3">
+            <div className="text-[12px] text-slate-500 mb-3">
               {GUYS_STORE.athleteName} 프로 × {GUYS_STORE.brandName}
             </div>
             {base && base > finalPrice && (
               <div className="flex items-center gap-2">
-                <span className="text-[13px] text-slate-400 line-through tabular-nums">{base.toLocaleString()}원</span>
-                <span className="px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[11px] font-black">{off}%</span>
+                <span className="text-[13px] text-slate-500 line-through tabular-nums">{base.toLocaleString()}원</span>
+                <span className="px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[12px] font-black">{off}%</span>
               </div>
             )}
             <div className="flex items-center gap-2 mb-4">
               <span className="text-[26px] font-black text-slate-900 tabular-nums">{finalPrice.toLocaleString()}원</span>
-              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11px] font-bold">팬 할인가</span>
+              <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[12px] font-bold">팬 할인가</span>
             </div>
 
             {/* 할인코드 + 팬포인트 */}
             <div className="grid grid-cols-2 gap-2 mb-4">
               <div className="rounded-xl border border-slate-200 px-3 py-2.5">
-                <div className="text-[11px] text-slate-400 mb-0.5">팬 할인코드</div>
+                <div className="text-[12px] text-slate-500 mb-0.5">팬 할인코드</div>
                 <div className="flex items-center gap-1.5">
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[11px] font-black tracking-wide">{GUYS_STORE.fanCode}</span>
-                  <span className="text-[11px] font-bold text-emerald-700">{GUYS_STORE.fanDiscountPct}%</span>
+                  <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[12px] font-black tracking-wide">{GUYS_STORE.fanCode}</span>
+                  <span className="text-[12px] font-bold text-emerald-700">{GUYS_STORE.fanDiscountPct}%</span>
                 </div>
               </div>
               <div className="rounded-xl border border-slate-200 px-3 py-2.5">
-                <div className="text-[11px] text-slate-400 mb-0.5">보유 팬포인트</div>
+                <div className="text-[12px] text-slate-500 mb-0.5">보유 팬포인트</div>
                 <div className="text-[13px] font-black text-slate-900 tabular-nums">
                   {typeof balance === 'number' ? `${balance.toLocaleString()}P` : '로그인 후 확인'}
                 </div>
@@ -147,7 +147,7 @@ export default function FanStoreGuysProduct() {
               <>
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[12px] font-bold text-slate-700">사이즈</span>
-                  <span className="text-[11px] text-slate-400">사이즈 가이드 ›</span>
+                  <span className="text-[12px] text-slate-500">사이즈 가이드 ›</span>
                 </div>
                 <div className="flex gap-2 mb-4">
                   {product.sizes.map((s, i) => (
@@ -194,7 +194,7 @@ export default function FanStoreGuysProduct() {
                 장바구니 담기
               </button>
             </div>
-            <p className="text-[11px] text-slate-400 mt-2">
+            <p className="text-[12px] text-slate-500 mt-2">
               {notice ? (
                 <span className="font-bold text-emerald-700">정식 오픈 준비 중입니다. 곧 구매하실 수 있어요.</span>
               ) : (
@@ -236,7 +236,7 @@ export default function FanStoreGuysProduct() {
             )}
             <div className="flex flex-wrap gap-1.5">
               {product.hashtags.map((h) => (
-                <span key={h} className="px-2 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[11px] font-bold text-slate-500">
+                <span key={h} className="px-2 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[12px] font-bold text-slate-500">
                   {h}
                 </span>
               ))}
@@ -256,13 +256,13 @@ export default function FanStoreGuysProduct() {
                 return (
                   <Link key={p.id} to={`${GUYS_STORE.path}/${p.id}`} className="rounded-2xl border border-slate-200 overflow-hidden hover:border-emerald-300 transition-colors">
                     <div className="relative aspect-square bg-slate-50 flex items-center justify-center p-3">
-                      <span className="text-[10px] text-slate-400 text-center break-keep leading-relaxed">{p.name}</span>
-                      {p.isNew && <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] font-black">NEW</span>}
-                      {pOff > 0 && <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] font-black">{pOff}%</span>}
+                      <span className="text-[12.5px] text-slate-500 text-center break-keep leading-relaxed">{p.name}</span>
+                      {p.isNew && <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[12.5px] font-black">NEW</span>}
+                      {pOff > 0 && <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[12.5px] font-black">{pOff}%</span>}
                     </div>
                     <div className="p-2.5">
-                      <div className="text-[11px] text-slate-600 line-clamp-2 min-h-[2rem] mb-1">{p.name}</div>
-                      {p.listPrice && <div className="text-[10px] text-slate-400 line-through tabular-nums">{p.listPrice.toLocaleString()}원</div>}
+                      <div className="text-[12px] text-slate-600 line-clamp-2 min-h-[2rem] mb-1">{p.name}</div>
+                      {p.listPrice && <div className="text-[12.5px] text-slate-500 line-through tabular-nums">{p.listPrice.toLocaleString()}원</div>}
                       <div className="text-[13px] font-black text-slate-900 tabular-nums">{p.price.toLocaleString()}원</div>
                     </div>
                   </Link>
@@ -276,8 +276,8 @@ export default function FanStoreGuysProduct() {
       {/* 모바일 하단 고정 구매 바 (모바일 전면 개편) */}
       <div className="lg:hidden fixed bottom-14 inset-x-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex items-center gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
         <div className="min-w-0 flex-1">
-          <div className="text-[11px] text-slate-500 truncate">{product.name}</div>
-          <div className="text-sm font-extrabold text-slate-900 tabular-nums">{finalPrice.toLocaleString()}원 <span className="text-[10px] font-bold text-emerald-700">팬 할인가</span></div>
+          <div className="text-[12px] text-slate-500 truncate">{product.name}</div>
+          <div className="text-sm font-extrabold text-slate-900 tabular-nums">{finalPrice.toLocaleString()}원 <span className="text-[12.5px] font-bold text-emerald-700">팬 할인가</span></div>
         </div>
         <button onClick={comingSoon} className="shrink-0 h-10 px-4 rounded-xl bg-emerald-600 text-white text-sm font-bold">
           팬 할인가로 구매
@@ -295,7 +295,7 @@ function InfoTile({ icon: Icon, title, desc, chevron = false }: { icon: any; tit
       </div>
       <div className="min-w-0 flex-1">
         <div className="text-[12px] font-extrabold text-slate-900 break-keep">{title}</div>
-        <div className="text-[11px] text-slate-400 break-keep">{desc}</div>
+        <div className="text-[12px] text-slate-500 break-keep">{desc}</div>
       </div>
       {chevron && <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />}
     </div>

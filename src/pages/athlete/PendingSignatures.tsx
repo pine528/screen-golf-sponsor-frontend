@@ -168,9 +168,9 @@ export default function AthletePendingSignatures() {
 
                 {/* Brand Info */}
                 <div className="flex items-center gap-2 text-sm text-slate-600 mb-3">
-                  <Building2 className="w-4 h-4 text-slate-400" />
+                  <Building2 className="w-4 h-4 text-slate-500" />
                   <span className="font-medium text-slate-800">{contract.brandName}</span>
-                  <span className="text-slate-400">·</span>
+                  <span className="text-slate-500">·</span>
                   <span className="text-slate-500">{contract.brandCategory}</span>
                 </div>
 
@@ -198,7 +198,7 @@ export default function AthletePendingSignatures() {
                       className={cn(
                         'w-4 h-4',
                         contract.isExpired
-                          ? 'text-slate-400'
+                          ? 'text-slate-500'
                           : contract.isUrgent
                           ? 'text-red-600'
                           : 'text-amber-600'

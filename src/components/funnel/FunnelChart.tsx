@@ -21,7 +21,7 @@ const DEFAULT_COLORS = ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#fb923c', '
 
 export function FunnelChart({ steps, height = 360 }: Props) {
   if (steps.length === 0) {
-    return <div className="h-40 flex items-center justify-center text-sm text-slate-400">데이터가 없습니다</div>;
+    return <div className="h-40 flex items-center justify-center text-sm text-slate-500">데이터가 없습니다</div>;
   }
 
   const max = Math.max(...steps.map((s) => s.value), 1);

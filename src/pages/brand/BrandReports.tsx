@@ -368,7 +368,7 @@ export function BrandReports() {
                             <a
                               href={report.fileUrl}
                               download
-                              className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                               title="PDF 다운로드"
                             >
                               <Download className="w-4 h-4" />
@@ -376,7 +376,7 @@ export function BrandReports() {
                           )}
                           <button
                             onClick={() => setSelectedReport(report)}
-                            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                             title="상세 보기"
                           >
                             <Eye className="w-4 h-4" />
@@ -395,14 +395,14 @@ export function BrandReports() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                    className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <span className="px-3 py-1 text-sm text-slate-600">페이지 {page}</span>
                   <button
                     onClick={() => setPage((p) => p + 1)}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                    className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -422,7 +422,7 @@ export function BrandReports() {
                 <h2 className="text-xl font-bold text-slate-900">리포트 생성</h2>
                 <button
                   onClick={() => setShowCreateModal(false)}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -515,7 +515,7 @@ export function BrandReports() {
                 <h2 className="text-xl font-bold text-slate-900">리포트 상세</h2>
                 <button
                   onClick={() => setSelectedReport(null)}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>

@@ -129,7 +129,7 @@ export default function AboutOpsCases() {
                 className={`rounded-2xl border px-4 py-3.5 text-left transition ${
                   status === s.code ? 'border-slate-900 bg-slate-50' : 'border-slate-200 bg-white hover:border-slate-300'
                 }`}>
-                <p className="text-[11.5px] font-semibold text-slate-500">{s.label}</p>
+                <p className="text-[12.5px] font-semibold text-slate-500">{s.label}</p>
                 <p className="mt-1 text-[20px] font-extrabold text-slate-900 tabular-nums leading-none">{nf(s.count)}</p>
               </button>
             ))}
@@ -163,10 +163,10 @@ export default function AboutOpsCases() {
                         }`}>
                         <div className="flex items-center gap-2 mb-1.5">
                           <Status code={c.status} label={c.statusLabel} />
-                          <span className="font-mono text-[11px] text-slate-400">{c.code}</span>
+                          <span className="font-mono text-[12px] text-slate-500">{c.code}</span>
                         </div>
                         <p className="text-[13.5px] font-bold text-slate-800 truncate">{c.title}</p>
-                        <p className="text-[11.5px] text-slate-400 mt-0.5 truncate">
+                        <p className="text-[12.5px] text-slate-500 mt-0.5 truncate">
                           {c.brandName} · {c.athleteName}
                         </p>
                         <div className="flex flex-wrap items-center gap-1.5 mt-2">
@@ -213,7 +213,7 @@ export default function AboutOpsCases() {
                               : <XCircle className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />}
                             <span className="min-w-0">
                               <span className={`block text-[13px] ${c.ok ? 'text-slate-600' : 'font-semibold text-slate-800'}`}>{c.label}</span>
-                              {c.detail && <span className="block text-[11.5px] text-rose-500 mt-0.5">{c.detail}</span>}
+                              {c.detail && <span className="block text-[12.5px] text-rose-500 mt-0.5">{c.detail}</span>}
                             </span>
                           </div>
                         ))}
@@ -274,7 +274,7 @@ export default function AboutOpsCases() {
                           <textarea value={form.summary ?? ''} onChange={(e) => setForm({ ...form, summary: e.target.value.slice(0, 300) })}
                             rows={2}
                             className="w-full rounded-xl border border-slate-200 p-3 text-[13px] resize-none focus:outline-none focus:border-slate-400" />
-                          <p className="mt-1 text-right text-[10.5px] text-slate-400 tabular-nums">{(form.summary ?? '').length} / 300</p>
+                          <p className="mt-1 text-right text-[12.5px] text-slate-500 tabular-nums">{(form.summary ?? '').length} / 300</p>
                         </div>
                         <div className="sm:col-span-2">
                           <label className="block text-[12px] font-semibold text-slate-500 mb-1.5">브랜드 목표 · 배경</label>
@@ -311,7 +311,7 @@ export default function AboutOpsCases() {
                             <div className="overflow-x-auto">
                               <table className="w-full text-[13px]">
                                 <thead>
-                                  <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                                  <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                                     <th className="text-left font-semibold px-5 py-2.5">지표</th>
                                     <th className="text-right font-semibold py-2.5">표시 값</th>
                                     <th className="text-left font-semibold py-2.5 pl-4">출처</th>
@@ -324,7 +324,7 @@ export default function AboutOpsCases() {
                                     <tr key={m.id} className="border-b border-slate-50 last:border-0">
                                       <td className="px-5 py-3">
                                         <p className="font-semibold text-slate-800">{m.label}</p>
-                                        <p className="text-[11px] text-slate-400 font-mono">{m.metricCode}</p>
+                                        <p className="text-[12px] text-slate-500 font-mono">{m.metricCode}</p>
                                       </td>
                                       <td className="py-3 text-right tabular-nums font-bold text-slate-900">
                                         {m.displayValue ?? `${nf(m.value)}${m.unit}`}
@@ -352,7 +352,7 @@ export default function AboutOpsCases() {
                                           ))}
                                         </select>
                                         {m.lockReason && (
-                                          <p className="mt-1 text-[10.5px] text-rose-500 max-w-[220px] leading-tight">{m.lockReason}</p>
+                                          <p className="mt-1 text-[12.5px] text-rose-500 max-w-[220px] leading-tight">{m.lockReason}</p>
                                         )}
                                       </td>
                                     </tr>
@@ -360,7 +360,7 @@ export default function AboutOpsCases() {
                                 </tbody>
                               </table>
                             </div>
-                            <p className="px-5 py-3.5 border-t border-slate-100 text-[11.5px] text-slate-400">{evidence.notice}</p>
+                            <p className="px-5 py-3.5 border-t border-slate-100 text-[12.5px] text-slate-500">{evidence.notice}</p>
                           </>
                         ) : (
                           <Empty title="등록된 성과 지표가 없습니다" desc="지표를 추가하면 이곳에서 출처와 공개범위를 검수합니다." />
@@ -399,7 +399,7 @@ export default function AboutOpsCases() {
                                 </div>
                                 <p className="text-[15px] font-bold text-slate-900">{p.name ?? '—'}</p>
                                 {p.comment && <p className="mt-2 text-[12.5px] text-slate-600 leading-relaxed">{p.comment}</p>}
-                                <p className="mt-2 text-[11px] text-slate-400 tabular-nums">
+                                <p className="mt-2 text-[12px] text-slate-500 tabular-nums">
                                   요청 {fmtDate(p.requestedAt, true)}
                                   {p.respondedAt && ` · 응답 ${fmtDate(p.respondedAt, true)}`}
                                 </p>
@@ -437,7 +437,7 @@ export default function AboutOpsCases() {
                             </div>
                           </div>
 
-                          <p className="text-[11.5px] text-slate-400">{approval.notice}</p>
+                          <p className="text-[12.5px] text-slate-500">{approval.notice}</p>
                         </div>
                       )}
                     </Panel>

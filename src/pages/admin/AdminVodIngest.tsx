@@ -293,7 +293,7 @@ export function AdminVodIngest() {
         <div className="card p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
                 type="text"
                 placeholder="VOD 제목 또는 이벤트명 검색..."
@@ -303,7 +303,7 @@ export function AdminVodIngest() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-400" />
+              <Filter className="w-5 h-5 text-slate-500" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -391,7 +391,7 @@ export function AdminVodIngest() {
                             <p className="text-xs text-slate-500">{vod.campaign.name}</p>
                           )}
                           {!vod.event && !vod.campaign && (
-                            <p className="text-sm text-slate-400">-</p>
+                            <p className="text-sm text-slate-500">-</p>
                           )}
                         </div>
                       </td>
@@ -440,7 +440,7 @@ export function AdminVodIngest() {
                               <button
                                 onClick={() => extractFramesMutation.mutate(vod.id)}
                                 disabled={extractFramesMutation.isPending}
-                                className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                 title="프레임 추출"
                               >
                                 <Image className="w-4 h-4" />
@@ -448,7 +448,7 @@ export function AdminVodIngest() {
                               <button
                                 onClick={() => detectLogosMutation.mutate(vod.id)}
                                 disabled={detectLogosMutation.isPending}
-                                className="p-2 text-slate-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+                                className="p-2 text-slate-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
                                 title="로고 검출"
                               >
                                 <ScanLine className="w-4 h-4" />
@@ -456,7 +456,7 @@ export function AdminVodIngest() {
                               <button
                                 onClick={() => mergeExposuresMutation.mutate(vod.id)}
                                 disabled={mergeExposuresMutation.isPending}
-                                className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                                className="p-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                                 title="노출 병합"
                               >
                                 <Zap className="w-4 h-4" />
@@ -468,7 +468,7 @@ export function AdminVodIngest() {
                               href={vod.videoUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                              className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                               title="영상 보기"
                             >
                               <Play className="w-4 h-4" />
@@ -481,7 +481,7 @@ export function AdminVodIngest() {
                               }
                             }}
                             disabled={deleteMutation.isPending}
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="삭제"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -500,14 +500,14 @@ export function AdminVodIngest() {
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                    className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <span className="px-3 py-1 text-sm text-slate-600">페이지 {page}</span>
                   <button
                     onClick={() => setPage((p) => p + 1)}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                    className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -527,7 +527,7 @@ export function AdminVodIngest() {
                 <h2 className="text-xl font-bold text-slate-900">VOD 파일 업로드</h2>
                 <button
                   onClick={() => { setShowUploadModal(false); resetForm(); }}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -557,7 +557,7 @@ export function AdminVodIngest() {
                       </div>
                     ) : (
                       <div>
-                        <Upload className="w-10 h-10 text-slate-400 mx-auto mb-2" />
+                        <Upload className="w-10 h-10 text-slate-500 mx-auto mb-2" />
                         <p className="text-sm text-slate-600">클릭하여 파일 선택</p>
                         <p className="text-xs text-slate-500 mt-1">MP4, MOV, AVI (최대 2GB)</p>
                       </div>
@@ -646,7 +646,7 @@ export function AdminVodIngest() {
                 <h2 className="text-xl font-bold text-slate-900">YouTube 인제스트</h2>
                 <button
                   onClick={() => { setShowYoutubeModal(false); resetForm(); }}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -660,7 +660,7 @@ export function AdminVodIngest() {
                   YouTube URL <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <Link className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                   <input
                     type="url"
                     value={youtubeUrl}

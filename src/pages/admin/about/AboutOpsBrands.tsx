@@ -93,7 +93,7 @@ export default function AboutOpsBrands() {
               <div className="px-4 py-3 border-b border-slate-100 flex flex-wrap gap-1.5">
                 {list.statuses.map((s: any) => (
                   <button key={s.code} onClick={() => setStatus(s.code)}
-                    className={`h-7 px-2.5 rounded-lg text-[11.5px] font-bold border transition ${
+                    className={`h-7 px-2.5 rounded-lg text-[12.5px] font-bold border transition ${
                       status === s.code ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200'
                     }`}>
                     {s.label}
@@ -110,14 +110,14 @@ export default function AboutOpsBrands() {
                       <div className="w-11 h-11 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden">
                         {b.logoUrl
                           ? <img src={b.logoUrl} alt="" className="max-w-full max-h-full object-contain p-1" />
-                          : <span className="text-[11px] font-bold text-slate-400">{b.name.slice(0, 2)}</span>}
+                          : <span className="text-[12px] font-bold text-slate-500">{b.name.slice(0, 2)}</span>}
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-1.5">
                           <p className="text-[13.5px] font-bold text-slate-800 truncate">{b.name}</p>
                           <Tag tone={b.status === 'ACTIVE_PARTNER' ? 'emerald' : 'slate'}>{b.statusLabel}</Tag>
                         </div>
-                        <p className="text-[11.5px] text-slate-400 mt-0.5">
+                        <p className="text-[12.5px] text-slate-500 mt-0.5">
                           {b.category} · 사례 {b.cases}건
                         </p>
                       </div>
@@ -179,7 +179,7 @@ export default function AboutOpsBrands() {
                               onChange={(e) => setForm({ ...form, description: e.target.value.slice(0, 300) })}
                               rows={3}
                               className="w-full rounded-xl border border-slate-200 p-3 text-[13px] resize-none focus:outline-none focus:border-slate-400" />
-                            <p className="mt-1 text-right text-[10.5px] text-slate-400 tabular-nums">
+                            <p className="mt-1 text-right text-[12.5px] text-slate-500 tabular-nums">
                               {(form.description ?? '').length} / 300
                             </p>
                           </div>
@@ -213,7 +213,7 @@ export default function AboutOpsBrands() {
                             <div className="rounded-2xl border border-slate-200 p-5 flex items-center justify-center bg-white min-h-[100px]">
                               {form.logoLight
                                 ? <img src={form.logoLight} alt="" className="max-h-12 max-w-full object-contain" />
-                                : <span className="text-[12px] text-slate-400">라이트 모드 미리보기</span>}
+                                : <span className="text-[12px] text-slate-500">라이트 모드 미리보기</span>}
                             </div>
                             <div className="rounded-2xl border border-slate-800 p-5 flex items-center justify-center bg-slate-900 min-h-[100px]">
                               {form.logoDark
@@ -225,23 +225,23 @@ export default function AboutOpsBrands() {
                           {detail?.logoRight ? (
                             <div className="rounded-2xl border border-slate-200 p-4">
                               <div className="flex items-center gap-2 mb-2.5">
-                                <ShieldCheck className="w-4 h-4 text-slate-400" />
+                                <ShieldCheck className="w-4 h-4 text-slate-500" />
                                 <span className="text-[13px] font-bold text-slate-700">로고 사용권</span>
                                 <Tag tone={detail.logoRight.status === 'VALID' ? 'emerald' : 'rose'}>{detail.logoRight.status}</Tag>
                               </div>
                               <div className="grid sm:grid-cols-3 gap-3 text-[12.5px]">
                                 <div>
-                                  <p className="text-[11px] text-slate-400">사용 권한 기간</p>
+                                  <p className="text-[12px] text-slate-500">사용 권한 기간</p>
                                   <p className="font-semibold text-slate-700 tabular-nums">
                                     {fmtDate(detail.logoRight.validFrom)} ~ {fmtDate(detail.logoRight.validTo)}
                                   </p>
                                 </div>
                                 <div>
-                                  <p className="text-[11px] text-slate-400">허용 채널</p>
+                                  <p className="text-[12px] text-slate-500">허용 채널</p>
                                   <p className="font-semibold text-slate-700">{detail.logoRight.allowedScopes?.join(', ') || '—'}</p>
                                 </div>
                                 <div>
-                                  <p className="text-[11px] text-slate-400">증빙</p>
+                                  <p className="text-[12px] text-slate-500">증빙</p>
                                   <p className="font-semibold text-slate-700">{detail.logoRight.evidenceName ?? '미등록'}</p>
                                 </div>
                               </div>
@@ -255,7 +255,7 @@ export default function AboutOpsBrands() {
                             </div>
                           )}
 
-                          <p className="text-[11.5px] text-slate-400 leading-relaxed">
+                          <p className="text-[12.5px] text-slate-500 leading-relaxed">
                             로고 색상·비율·문구를 임의로 변형하지 않습니다. 만료 또는 철회 시 자동으로 노출에서 제외됩니다.
                           </p>
                         </div>
@@ -268,10 +268,10 @@ export default function AboutOpsBrands() {
                               <div key={c.id} className="flex items-center gap-3 px-5 py-3.5">
                                 <div className="min-w-0 flex-1">
                                   <p className="text-[13.5px] font-bold text-slate-800 truncate">{c.title}</p>
-                                  <p className="text-[11.5px] text-slate-400 mt-0.5">{c.athleteName}</p>
+                                  <p className="text-[12.5px] text-slate-500 mt-0.5">{c.athleteName}</p>
                                 </div>
                                 <Tag tone={c.status === 'PUBLISHED' ? 'emerald' : 'slate'}>{c.status}</Tag>
-                                <span className="text-[11.5px] text-slate-400 tabular-nums shrink-0">
+                                <span className="text-[12.5px] text-slate-500 tabular-nums shrink-0">
                                   {fmtDate(c.publishedAt)}
                                 </span>
                               </div>
@@ -340,7 +340,7 @@ export default function AboutOpsBrands() {
                                 유사한 브랜드가 존재할 수 있습니다.
                               </p>
                               <p className="text-[13px] font-bold text-slate-800">{detail.duplicateWarning.name}</p>
-                              <p className="text-[11.5px] text-slate-400 mt-0.5 tabular-nums">
+                              <p className="text-[12.5px] text-slate-500 mt-0.5 tabular-nums">
                                 등록일 {fmtDate(detail.duplicateWarning.createdAt)} · 상태 {detail.duplicateWarning.status}
                               </p>
                             </div>
@@ -355,10 +355,10 @@ export default function AboutOpsBrands() {
                               {form.logoLight
                                 ? <img src={form.logoLight} alt="" className="max-h-10 mx-auto object-contain mb-3" />
                                 : <p className="text-[16px] font-extrabold text-slate-800 mb-3">{form.displayName}</p>}
-                              <p className="text-[11.5px] text-slate-500 leading-relaxed line-clamp-3">
+                              <p className="text-[12.5px] text-slate-500 leading-relaxed line-clamp-3">
                                 {form.description ?? '브랜드 소개가 입력되지 않았습니다'}
                               </p>
-                              <p className="mt-2 text-[11px] text-slate-400">{form.category}</p>
+                              <p className="mt-2 text-[12px] text-slate-500">{form.category}</p>
                             </div>
                           </div>
                           {form.website && (

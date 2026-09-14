@@ -19,7 +19,7 @@ export default function HomeGrowthMarket() {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-end justify-between gap-3 mb-1">
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 inline-flex items-center gap-2">
-            <span className="text-emerald-500">*</span> 프로 <span className="text-slate-400">×</span> 브랜드 성장마켓
+            <span className="text-emerald-500">*</span> 프로 <span className="text-slate-500">×</span> 브랜드 성장마켓
           </h2>
           <Link
             to="/growth-market"

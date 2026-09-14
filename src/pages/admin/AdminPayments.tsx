@@ -238,9 +238,9 @@ export default function AdminPayments() {
                     <div className="flex flex-col items-center">
                       <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mb-4">
                         {topupType === 'WALLET' ? (
-                          <Wallet className="w-8 h-8 text-slate-400" />
+                          <Wallet className="w-8 h-8 text-slate-500" />
                         ) : (
-                          <Coins className="w-8 h-8 text-slate-400" />
+                          <Coins className="w-8 h-8 text-slate-500" />
                         )}
                       </div>
                       <p className="text-slate-500">

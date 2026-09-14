@@ -194,7 +194,7 @@ export default function AdminFunnelCampaigns() {
         {/* 헤더: 검색/상태칩/신규 */}
         <div className="bg-white border border-slate-200 rounded-xl p-3 mb-4 flex flex-wrap items-center gap-2">
           <div className="relative flex-1 min-w-[200px]">
-            <Search className="w-3.5 h-3.5 absolute left-2 top-2.5 text-slate-400" />
+            <Search className="w-3.5 h-3.5 absolute left-2 top-2.5 text-slate-500" />
             <input
               type="text"
               value={search}
@@ -245,7 +245,7 @@ export default function AdminFunnelCampaigns() {
         </div>
 
         {isLoading ? (
-          <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
+          <div className="text-center py-12 text-sm text-slate-500">로딩 중...</div>
         ) : (
           <DetailTable data={filtered} columns={columns} pageSize={20}
             onRowClick={(r) => navigate(`/admin/funnel/campaigns/${r.id}`)}

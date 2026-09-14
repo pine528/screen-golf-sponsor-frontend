@@ -93,7 +93,7 @@ export default function MyBadges() {
         ) : badges.length === 0 ? (
           <div className="card p-12 text-center">
             <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Award className="w-8 h-8 text-slate-400" />
+              <Award className="w-8 h-8 text-slate-500" />
             </div>
             <h3 className="text-lg font-semibold text-slate-900 mb-2">
               아직 획득한 뱃지가 없습니다

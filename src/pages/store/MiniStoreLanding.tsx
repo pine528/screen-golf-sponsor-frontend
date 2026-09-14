@@ -121,14 +121,14 @@ export default function MiniStoreLanding() {
               {p.imageUrl ? (
                 <img src={p.imageUrl} alt={p.name} className="w-full aspect-square object-cover" />
               ) : (
-                <div className="w-full aspect-square bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>
+                <div className="w-full aspect-square bg-slate-100 flex items-center justify-center text-slate-500">No Image</div>
               )}
               <div className="p-3">
                 <div className="text-sm font-semibold text-slate-900 truncate">{p.name}</div>
                 <div className="flex items-baseline gap-2 mt-1">
                   <span className="text-base font-extrabold text-emerald-600">₩{Number(p.discountPrice || p.price).toLocaleString()}</span>
                   {p.discountPrice && (
-                    <span className="text-xs text-slate-400 line-through">₩{Number(p.price).toLocaleString()}</span>
+                    <span className="text-xs text-slate-500 line-through">₩{Number(p.price).toLocaleString()}</span>
                   )}
                 </div>
                 {p.soldOut && <div className="mt-1 text-xs text-rose-600 font-bold">품절</div>}
@@ -136,7 +136,7 @@ export default function MiniStoreLanding() {
             </Link>
           ))}
           {(!store.products || store.products.length === 0) && (
-            <div className="col-span-full text-center py-12 text-sm text-slate-400">아직 등록된 상품이 없습니다</div>
+            <div className="col-span-full text-center py-12 text-sm text-slate-500">아직 등록된 상품이 없습니다</div>
           )}
         </div>
 
@@ -169,7 +169,7 @@ export default function MiniStoreLanding() {
               <details key={i} className="p-4 group">
                 <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between">
                   {f.q}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform">▾</span>
+                  <span className="text-slate-500 group-open:rotate-180 transition-transform">▾</span>
                 </summary>
                 <p className="text-sm text-slate-600 mt-2 leading-relaxed">{f.a}</p>
               </details>

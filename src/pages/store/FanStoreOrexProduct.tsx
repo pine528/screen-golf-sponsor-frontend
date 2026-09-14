@@ -65,27 +65,27 @@ export default function FanStoreOrexProduct() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,38%)_minmax(0,24%)_minmax(0,1fr)] gap-4 items-stretch">
           {/* 좌: 상품 이미지 */}
           <div className="relative rounded-2xl border border-slate-200 bg-slate-50 min-h-[320px] flex items-center justify-center p-8">
-            <span className="text-sm text-slate-400 text-center break-keep leading-relaxed">{product.name}<br />(상품 이미지 준비중)</span>
-            <button className="absolute top-4 right-4 w-9 h-9 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-400 hover:text-rose-500">
+            <span className="text-sm text-slate-500 text-center break-keep leading-relaxed">{product.name}<br />(상품 이미지 준비중)</span>
+            <button className="absolute top-4 right-4 w-9 h-9 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-rose-500">
               <Heart className="w-4 h-4" />
             </button>
           </div>
 
           {/* 중: 선수·브랜드 협업 카드 */}
           <div className="rounded-2xl border border-slate-200 p-4 flex flex-col items-center text-center">
-            <span className="px-3 py-1 rounded-full border border-emerald-600 text-emerald-700 text-[11px] font-bold mb-3">
+            <span className="px-3 py-1 rounded-full border border-emerald-600 text-emerald-700 text-[12px] font-bold mb-3">
               선수·브랜드 협업 상품
             </span>
             <div className="w-full aspect-[4/5] rounded-xl overflow-hidden bg-slate-50 mb-3">
               <img src={OREX_STORE.athletePhoto} alt={`${OREX_STORE.athleteName} 프로`} className="w-full h-full object-cover object-top" />
             </div>
             <div className="text-[15px] font-extrabold text-slate-900">{OREX_STORE.athleteName} 프로</div>
-            <div className="text-[11px] text-slate-400 mb-3">{OREX_STORE.athleteTitle}</div>
+            <div className="text-[12px] text-slate-500 mb-3">{OREX_STORE.athleteTitle}</div>
             <img src={OREX_STORE.brandLogo} alt={OREX_STORE.brandName} className="h-9 object-contain mb-2" />
             <div className="text-[12px] font-bold text-slate-900 mb-1">
               {OREX_STORE.athleteName} 프로 × {OREX_STORE.brandName} 팬스토어
             </div>
-            <p className="text-[11px] text-slate-500 break-keep leading-relaxed mb-3">{OREX_STORE.description}</p>
+            <p className="text-[12px] text-slate-500 break-keep leading-relaxed mb-3">{OREX_STORE.description}</p>
             <Link
               to={`${OREX_STORE.path}/ar`}
               className="mt-auto w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-lg border border-emerald-600 text-emerald-700 text-[12px] font-bold hover:bg-emerald-50"
@@ -97,27 +97,27 @@ export default function FanStoreOrexProduct() {
           {/* 우: 가격·결제 */}
           <div className="rounded-2xl border border-slate-200 p-5 flex flex-col">
             <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 break-keep mb-1">{product.name}</h1>
-            <div className="text-[12px] text-slate-400 mb-3">
+            <div className="text-[12px] text-slate-500 mb-3">
               {OREX_STORE.athleteName} 프로 × {OREX_STORE.brandName} 팬스토어
             </div>
             {product.listPrice && (
-              <div className="text-[13px] text-slate-400 line-through tabular-nums">{product.listPrice.toLocaleString()}원</div>
+              <div className="text-[13px] text-slate-500 line-through tabular-nums">{product.listPrice.toLocaleString()}원</div>
             )}
             <div className="flex items-center gap-2 mb-4">
               <span className="text-[26px] font-black text-slate-900 tabular-nums">{product.price.toLocaleString()}원</span>
               {off > 0 && (
-                <span className="px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[11px] font-black">{off}%</span>
+                <span className="px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[12px] font-black">{off}%</span>
               )}
             </div>
 
             {/* 팬 할인코드 */}
             <div className="flex items-center rounded-xl border border-emerald-200 bg-emerald-50/50 overflow-hidden mb-2.5">
-              <span className="px-3 py-2.5 text-[11px] font-bold text-slate-500 border-r border-emerald-100 shrink-0">팬 할인코드</span>
+              <span className="px-3 py-2.5 text-[12px] font-bold text-slate-500 border-r border-emerald-100 shrink-0">팬 할인코드</span>
               <span className="px-3 font-black text-slate-900 tracking-wider flex-1">{OREX_STORE.fanCode}</span>
               <span className="text-[12px] font-bold text-emerald-700 tabular-nums">{OREX_STORE.fanDiscountPct}%</span>
               <button
                 onClick={copyCode}
-                className="ml-2 mr-2 my-1.5 px-2.5 h-7 inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white text-[11px] font-bold text-slate-600 hover:bg-slate-50 shrink-0"
+                className="ml-2 mr-2 my-1.5 px-2.5 h-7 inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white text-[12px] font-bold text-slate-600 hover:bg-slate-50 shrink-0"
               >
                 {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />} {copied ? '복사됨' : '복사'}
               </button>
@@ -148,7 +148,7 @@ export default function FanStoreOrexProduct() {
                   }`}
                 >
                   <div className="text-[12px] font-extrabold text-slate-900">{m.t}</div>
-                  <div className="text-[10px] text-slate-400">{m.d}</div>
+                  <div className="text-[12.5px] text-slate-500">{m.d}</div>
                 </button>
               ))}
             </div>
@@ -179,7 +179,7 @@ export default function FanStoreOrexProduct() {
                 장바구니 담기
               </button>
             </div>
-            <p className="text-[11px] text-slate-400 mt-2">
+            <p className="text-[12px] text-slate-500 mt-2">
               {notice ? (
                 <span className="font-bold text-emerald-700">정식 오픈 준비 중입니다. 곧 구매하실 수 있어요.</span>
               ) : (
@@ -225,11 +225,11 @@ export default function FanStoreOrexProduct() {
             <h3 className="text-sm font-extrabold text-slate-900 mb-2">상품 정보</h3>
             <dl className="text-[12px]">
               <div className="flex gap-4 py-1.5 border-t border-slate-100">
-                <dt className="w-24 shrink-0 text-slate-400">구성</dt>
+                <dt className="w-24 shrink-0 text-slate-500">구성</dt>
                 <dd className="text-slate-700">{product.composition}</dd>
               </div>
               <div className="flex gap-4 py-1.5 border-t border-slate-100">
-                <dt className="w-24 shrink-0 text-slate-400">제조사 / 브랜드</dt>
+                <dt className="w-24 shrink-0 text-slate-500">제조사 / 브랜드</dt>
                 <dd className="text-slate-700">{OREX_STORE.brandName}</dd>
               </div>
             </dl>
@@ -248,15 +248,15 @@ export default function FanStoreOrexProduct() {
                 return (
                   <Link key={p.id} to={`${OREX_STORE.path}/${p.id}`} className="rounded-2xl border border-slate-200 overflow-hidden hover:border-emerald-300 transition-colors">
                     <div className="relative aspect-square bg-slate-50 flex items-center justify-center p-3">
-                      <span className="text-[10px] text-slate-400 text-center break-keep leading-relaxed">{p.name}</span>
+                      <span className="text-[12.5px] text-slate-500 text-center break-keep leading-relaxed">{p.name}</span>
                       {pOff > 0 && (
-                        <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-rose-500 text-white text-[10px] font-black">{pOff}%</span>
+                        <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-rose-500 text-white text-[12.5px] font-black">{pOff}%</span>
                       )}
                     </div>
                     <div className="p-2.5">
-                      <div className="text-[11px] text-slate-600 line-clamp-2 min-h-[2rem] mb-1">{p.name}</div>
+                      <div className="text-[12px] text-slate-600 line-clamp-2 min-h-[2rem] mb-1">{p.name}</div>
                       <div className="text-[13px] font-black text-slate-900 tabular-nums mb-0.5">{p.price.toLocaleString()}원</div>
-                      <div className="text-[10px] font-bold text-amber-500 tabular-nums">{Math.round(p.price * OREX_STORE.earnRate).toLocaleString()}P 적립</div>
+                      <div className="text-[12.5px] font-bold text-amber-500 tabular-nums">{Math.round(p.price * OREX_STORE.earnRate).toLocaleString()}P 적립</div>
                     </div>
                   </Link>
                 );
@@ -269,7 +269,7 @@ export default function FanStoreOrexProduct() {
       {/* 모바일 하단 고정 구매 바 (모바일 전면 개편) */}
       <div className="lg:hidden fixed bottom-14 inset-x-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex items-center gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
         <div className="min-w-0 flex-1">
-          <div className="text-[11px] text-slate-500 truncate">{product.name}</div>
+          <div className="text-[12px] text-slate-500 truncate">{product.name}</div>
           <div className="text-sm font-extrabold text-slate-900 tabular-nums">{product.price.toLocaleString()}원</div>
         </div>
         <button onClick={comingSoon} className="shrink-0 h-10 px-4 rounded-xl bg-emerald-600 text-white text-sm font-bold">
@@ -288,7 +288,7 @@ function InfoTile({ icon: Icon, title, desc, chevron = false }: { icon: any; tit
       </div>
       <div className="min-w-0 flex-1">
         <div className="text-[12px] font-extrabold text-slate-900 break-keep">{title}</div>
-        <div className="text-[11px] text-slate-400 break-keep">{desc}</div>
+        <div className="text-[12px] text-slate-500 break-keep">{desc}</div>
       </div>
       {chevron && <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />}
     </div>

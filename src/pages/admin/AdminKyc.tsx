@@ -168,7 +168,7 @@ export function AdminKyc() {
         <div className="card p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
                 type="text"
                 placeholder="이름 또는 회사명 검색..."
@@ -178,7 +178,7 @@ export function AdminKyc() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-400" />
+              <Filter className="w-5 h-5 text-slate-500" />
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
@@ -437,7 +437,7 @@ function KycReviewModal({ item, onClose, onApprove, onReject, notes, setNotes, i
 
                   return (
                     <div key={index} className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                      <FileText className="w-5 h-5 text-slate-400" />
+                      <FileText className="w-5 h-5 text-slate-500" />
                       <span className="text-sm text-slate-700">{docTypeName}</span>
                       <div className="ml-auto flex items-center gap-2">
                         <a

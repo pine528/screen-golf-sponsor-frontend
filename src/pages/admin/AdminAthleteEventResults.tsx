@@ -146,7 +146,7 @@ export default function AdminAthleteEventResults() {
         </div>
 
         {!athleteId ? (
-          <div className="text-center py-16 text-sm text-slate-400 bg-slate-50 rounded-xl">선수를 선택해주세요</div>
+          <div className="text-center py-16 text-sm text-slate-500 bg-slate-50 rounded-xl">선수를 선택해주세요</div>
         ) : (
           <>
             {/* 폼 */}
@@ -199,7 +199,7 @@ export default function AdminAthleteEventResults() {
 
             {/* 결과 목록 (연도별) */}
             {results.length === 0 ? (
-              <div className="text-center py-16 text-sm text-slate-400 bg-slate-50 rounded-xl">등록된 경기결과가 없습니다. "신규 등록"으로 추가하세요.</div>
+              <div className="text-center py-16 text-sm text-slate-500 bg-slate-50 rounded-xl">등록된 경기결과가 없습니다. "신규 등록"으로 추가하세요.</div>
             ) : (
               <div className="space-y-6">
                 {years.map((y) => (
@@ -216,14 +216,14 @@ export default function AdminAthleteEventResults() {
                                 {r.rank}<span className="text-xs">위</span>
                               </div>
                             ) : (
-                              <div className="text-base text-slate-400">-</div>
+                              <div className="text-base text-slate-500">-</div>
                             )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <h4 className="text-sm font-extrabold text-slate-900">{r.eventName}</h4>
-                              {r.category && <span className="text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">{r.category}</span>}
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded ${r.source === 'MANUAL' ? 'bg-slate-100 text-slate-600' : r.source === 'GTOUR_API' ? 'bg-emerald-50 text-emerald-700' : 'bg-violet-50 text-violet-700'}`}>{r.source}</span>
+                              {r.category && <span className="text-[12.5px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded">{r.category}</span>}
+                              <span className={`text-[12.5px] px-1.5 py-0.5 rounded ${r.source === 'MANUAL' ? 'bg-slate-100 text-slate-600' : r.source === 'GTOUR_API' ? 'bg-emerald-50 text-emerald-700' : 'bg-violet-50 text-violet-700'}`}>{r.source}</span>
                             </div>
                             <div className="text-xs text-slate-500 mb-1">
                               {new Date(r.eventDate).toLocaleDateString('ko-KR')}

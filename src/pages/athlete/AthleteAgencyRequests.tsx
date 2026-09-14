@@ -183,11 +183,11 @@ export function AthleteAgencyRequests() {
                           <p className="text-sm text-slate-500">{request.agency.user.email}</p>
                           <div className="flex items-center gap-2 mt-1">
                             {request.agency.bizNo && (
-                              <span className="text-xs text-slate-400">
+                              <span className="text-xs text-slate-500">
                                 사업자번호: {request.agency.bizNo}
                               </span>
                             )}
-                            <span className="text-xs text-slate-400">
+                            <span className="text-xs text-slate-500">
                               요청일: {formatDate(request.createdAt)}
                             </span>
                           </div>

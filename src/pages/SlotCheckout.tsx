@@ -105,7 +105,7 @@ export default function SlotCheckout() {
     );
   }
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center text-sm text-slate-400">불러오는 중...</div>;
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center text-sm text-slate-500">불러오는 중...</div>;
   if (!quote) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
@@ -211,7 +211,7 @@ export default function SlotCheckout() {
             <span className="text-sm font-bold text-slate-700">총 결제 예정금액</span>
             <span className="text-xl font-extrabold text-slate-900">{krw(quote.price?.total)}</span>
           </div>
-          {quote.price?.note && <p className="mt-2 text-[11px] text-slate-400 break-keep">{quote.price.note}</p>}
+          {quote.price?.note && <p className="mt-2 text-[12px] text-slate-500 break-keep">{quote.price.note}</p>}
         </div>
 
         <LegalNotice className="mb-4" />
@@ -262,7 +262,7 @@ function PriceRow({ label, value, muted }: { label: string; value: string; muted
   return (
     <div className="flex items-center justify-between">
       <span className="text-xs text-slate-500">{label}</span>
-      <span className={`text-xs font-semibold ${muted ? 'text-slate-400' : 'text-slate-800'}`}>{value}</span>
+      <span className={`text-xs font-semibold ${muted ? 'text-slate-500' : 'text-slate-800'}`}>{value}</span>
     </div>
   );
 }

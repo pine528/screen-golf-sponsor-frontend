@@ -166,7 +166,7 @@ export default function BrandCampaigns() {
         {campaigns.length === 0 ? (
           <div className="card p-12 text-center">
             <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Target className="w-8 h-8 text-slate-400" />
+              <Target className="w-8 h-8 text-slate-500" />
             </div>
             <h3 className="text-lg font-semibold text-slate-900 mb-2">등록된 캠페인이 없습니다</h3>
             <p className="text-slate-500 mb-6">첫 번째 캠페인을 만들어 광고를 시작하세요</p>

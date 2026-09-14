@@ -215,7 +215,7 @@ export function AdminReviews() {
         <div className="card p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
                 type="text"
                 placeholder="슬롯명 또는 브랜드명 검색..."
@@ -225,7 +225,7 @@ export function AdminReviews() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-400" />
+              <Filter className="w-5 h-5 text-slate-500" />
               <select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
@@ -446,7 +446,7 @@ function ReviewDetailModal({ review, onClose, onApprove, onReject, notes, setNot
                     <Video className="w-12 h-12 text-slate-300 mx-auto mb-2" />
                     <p className="text-sm text-slate-500">비디오 파일</p>
                     {review.fileName && (
-                      <p className="text-xs text-slate-400 mt-1">{review.fileName}</p>
+                      <p className="text-xs text-slate-500 mt-1">{review.fileName}</p>
                     )}
                     {review.fileUrl && (
                       <a href={review.fileUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-600 underline mt-2 block">

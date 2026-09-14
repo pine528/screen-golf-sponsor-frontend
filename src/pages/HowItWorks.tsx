@@ -277,7 +277,7 @@ export function HowItWorks() {
                     </div>
                     {i < athleteSteps.length - 1 && (
                       <div className="hidden lg:flex absolute -right-4 top-24 z-10">
-                        <ArrowRight className="w-8 h-8 text-slate-400" />
+                        <ArrowRight className="w-8 h-8 text-slate-500" />
                       </div>
                     )}
                   </div>

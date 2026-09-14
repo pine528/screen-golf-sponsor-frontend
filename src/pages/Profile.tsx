@@ -628,7 +628,7 @@ export function Profile() {
                     >
                       <Icon className={cn(
                         'w-4 h-4 lg:w-5 lg:h-5',
-                        activeTab === tab.id ? 'text-emerald-600' : 'text-slate-400'
+                        activeTab === tab.id ? 'text-emerald-600' : 'text-slate-500'
                       )} />
                       {tab.label}
                     </button>
@@ -882,7 +882,7 @@ export function Profile() {
                             />
                           </div>
                         </div>
-                        <p className="text-[10px] sm:text-xs text-slate-500 mt-2">
+                        <p className="text-[12.5px] sm:text-xs text-slate-500 mt-2">
                           이 항목들은 선수 둘러보기 카드와 상세 페이지에 표시됩니다. 비워두면 "-"로 표기됩니다.
                         </p>
                       </div>
@@ -913,7 +913,7 @@ export function Profile() {
                         disabled
                         className="input bg-slate-50 text-sm sm:text-base"
                       />
-                      <p className="text-[10px] sm:text-xs text-slate-500 mt-1">이메일 변경은 고객센터에 문의해주세요</p>
+                      <p className="text-[12.5px] sm:text-xs text-slate-500 mt-1">이메일 변경은 고객센터에 문의해주세요</p>
                     </div>
 
                     <div className="pt-3 sm:pt-4 border-t border-slate-200">
@@ -1013,7 +1013,7 @@ export function Profile() {
                             'p-1 rounded-full transition-colors flex-shrink-0',
                             notifications[item.key as keyof typeof notifications]
                               ? 'text-emerald-600'
-                              : 'text-slate-400'
+                              : 'text-slate-500'
                           )}
                         >
                           {notifications[item.key as keyof typeof notifications] ? (
@@ -1120,9 +1120,9 @@ function AthleteEventResultsSection() {
   });
 
   const statusBadge = (s: string) => {
-    if (s === 'APPROVED') return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">공개</span>;
-    if (s === 'REJECTED') return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">반려</span>;
-    return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">승인 대기</span>;
+    if (s === 'APPROVED') return <span className="text-[12.5px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700">공개</span>;
+    if (s === 'REJECTED') return <span className="text-[12.5px] font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-700">반려</span>;
+    return <span className="text-[12.5px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">승인 대기</span>;
   };
 
   const submit = () => {
@@ -1138,7 +1138,7 @@ function AthleteEventResultsSection() {
           {open ? '닫기' : '+ 결과 추가'}
         </button>
       </div>
-      <p className="text-[10px] sm:text-xs text-slate-500 mb-3">직접 등록한 결과는 <b>관리자 승인 후</b> 공개 페이지에 표시됩니다.</p>
+      <p className="text-[12.5px] sm:text-xs text-slate-500 mb-3">직접 등록한 결과는 <b>관리자 승인 후</b> 공개 페이지에 표시됩니다.</p>
 
       {open && (
         <div className="mb-3 p-3 bg-slate-50 rounded-lg grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -1158,9 +1158,9 @@ function AthleteEventResultsSection() {
       )}
 
       {isLoading ? (
-        <div className="text-xs text-slate-400 py-2">불러오는 중...</div>
+        <div className="text-xs text-slate-500 py-2">불러오는 중...</div>
       ) : results.length === 0 ? (
-        <div className="text-xs text-slate-400 py-2">등록된 경기결과가 없습니다.</div>
+        <div className="text-xs text-slate-500 py-2">등록된 경기결과가 없습니다.</div>
       ) : (
         <div className="space-y-1.5">
           {results.map((r) => (
@@ -1170,13 +1170,13 @@ function AthleteEventResultsSection() {
                   {statusBadge(r.status)}
                   <span className="font-semibold truncate">{r.eventName}</span>
                 </div>
-                <div className="text-[10px] text-slate-400">
+                <div className="text-[12.5px] text-slate-500">
                   {r.eventDate ? new Date(r.eventDate).toLocaleDateString('ko-KR') : '-'}
                   {r.tour ? ` · ${r.tour}` : ''}{r.rank != null ? ` · ${r.rank}위` : ''}{r.score ? ` · ${r.score}` : ''}
                 </div>
               </div>
               {r.source === 'ATHLETE_SELF' && (
-                <button type="button" onClick={() => deleteMut.mutate(r.id)} className="text-[10px] text-rose-500 hover:text-rose-700 font-bold shrink-0">삭제</button>
+                <button type="button" onClick={() => deleteMut.mutate(r.id)} className="text-[12.5px] text-rose-500 hover:text-rose-700 font-bold shrink-0">삭제</button>
               )}
             </div>
           ))}
@@ -1220,7 +1220,7 @@ function YoutubeChannelSection({ profile }: { profile: any }) {
   return (
     <div className="pt-3 sm:pt-4 border-t border-slate-200">
       <h3 className="text-xs sm:text-sm font-semibold text-slate-900 mb-3 sm:mb-4 inline-flex items-center gap-2">
-        🎥 YouTube 채널 연동 <span className="text-[10px] text-slate-400 font-normal">Phase 2 · SNS</span>
+        🎥 YouTube 채널 연동 <span className="text-[12.5px] text-slate-500 font-normal">Phase 2 · SNS</span>
       </h3>
 
       {!yt ? (
@@ -1241,7 +1241,7 @@ function YoutubeChannelSection({ profile }: { profile: any }) {
               {connectMut.isPending ? '연결 중...' : '연결'}
             </button>
           </div>
-          <p className="text-[10px] sm:text-xs text-slate-500">
+          <p className="text-[12.5px] sm:text-xs text-slate-500">
             예: https://www.youtube.com/@yenisfree · 또는 @yenisfree · 또는 UCxxxxx<br />
             연결 시 구독자/조회수/좋아요 등이 ROI 대시보드 "콘텐츠 반응" 카테고리에 자동 반영됩니다.
           </p>
@@ -1257,23 +1257,23 @@ function YoutubeChannelSection({ profile }: { profile: any }) {
             )}
             <div className="flex-1 min-w-0">
               <div className="font-extrabold text-sm text-slate-900 truncate">{yt.title}</div>
-              <div className="text-[11px] text-slate-500 truncate">{yt.channelHandle || yt.channelId}</div>
+              <div className="text-[12px] text-slate-500 truncate">{yt.channelHandle || yt.channelId}</div>
               <div className="mt-1.5 grid grid-cols-3 gap-2 text-center text-xs">
                 <div>
-                  <div className="text-[10px] text-slate-500">구독자</div>
+                  <div className="text-[12.5px] text-slate-500">구독자</div>
                   <div className="font-bold text-slate-900">{yt.subscriberCount?.toLocaleString() ?? '-'}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-slate-500">총 영상</div>
+                  <div className="text-[12.5px] text-slate-500">총 영상</div>
                   <div className="font-bold text-slate-900">{yt.videoCount?.toLocaleString() ?? '-'}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-slate-500">총 조회수</div>
+                  <div className="text-[12.5px] text-slate-500">총 조회수</div>
                   <div className="font-bold text-slate-900">{yt.totalViews?.toLocaleString() ?? '-'}</div>
                 </div>
               </div>
               {yt.syncStatus === 'FAILED' && (
-                <div className="mt-2 text-[10px] text-rose-600 bg-rose-50 px-2 py-1 rounded">
+                <div className="mt-2 text-[12.5px] text-rose-600 bg-rose-50 px-2 py-1 rounded">
                   ⚠ 동기화 실패: {yt.syncError}
                 </div>
               )}
@@ -1282,13 +1282,13 @@ function YoutubeChannelSection({ profile }: { profile: any }) {
               <button
                 onClick={() => syncMut.mutate()}
                 disabled={syncMut.isPending}
-                className="text-[11px] font-bold px-2 py-1 bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 disabled:opacity-50"
+                className="text-[12px] font-bold px-2 py-1 bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 disabled:opacity-50"
               >
                 {syncMut.isPending ? '동기화 중...' : '재동기화'}
               </button>
               <button
                 onClick={() => { if (confirm('YouTube 채널 연결을 해제할까요?')) disconnectMut.mutate(); }}
-                className="text-[11px] font-bold px-2 py-1 bg-slate-100 text-slate-600 rounded hover:bg-slate-200"
+                className="text-[12px] font-bold px-2 py-1 bg-slate-100 text-slate-600 rounded hover:bg-slate-200"
               >
                 해제
               </button>
@@ -1298,7 +1298,7 @@ function YoutubeChannelSection({ profile }: { profile: any }) {
           {/* 최근 영상 5개 (있으면) */}
           {yt.recent?.videos?.length > 0 && (
             <div>
-              <div className="text-[11px] font-bold text-slate-500 mb-2">최근 영상 (조회수 합계: {yt.recent.viewSum.toLocaleString()})</div>
+              <div className="text-[12px] font-bold text-slate-500 mb-2">최근 영상 (조회수 합계: {yt.recent.viewSum.toLocaleString()})</div>
               <div className="space-y-1.5">
                 {yt.recent.videos.map((v: any) => (
                   <a
@@ -1311,7 +1311,7 @@ function YoutubeChannelSection({ profile }: { profile: any }) {
                     {v.thumbnailUrl && <img src={v.thumbnailUrl} alt="" className="w-12 h-9 rounded object-cover" />}
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-semibold text-slate-900 truncate">{v.title}</div>
-                      <div className="text-[10px] text-slate-500">
+                      <div className="text-[12.5px] text-slate-500">
                         👁 {v.viewCount.toLocaleString()} · 👍 {v.likeCount.toLocaleString()} · 💬 {v.commentCount.toLocaleString()}
                       </div>
                     </div>
@@ -1321,7 +1321,7 @@ function YoutubeChannelSection({ profile }: { profile: any }) {
             </div>
           )}
           {yt.lastSyncedAt && (
-            <p className="text-[10px] text-slate-400">
+            <p className="text-[12.5px] text-slate-500">
               마지막 동기화: {new Date(yt.lastSyncedAt).toLocaleString('ko-KR')}
             </p>
           )}
@@ -1385,12 +1385,12 @@ function AthleteMentionSection({ profile }: { profile: any }) {
   return (
     <div className="pt-3 sm:pt-4 border-t border-slate-200">
       <h3 className="text-xs sm:text-sm font-semibold text-slate-900 mb-3 sm:mb-4 inline-flex items-center gap-2">
-        🎬 출연 영상 (3rd-party 채널) <span className="text-[10px] text-slate-400 font-normal">Phase 2 · 검색+확인</span>
+        🎬 출연 영상 (3rd-party 채널) <span className="text-[12.5px] text-slate-500 font-normal">Phase 2 · 검색+확인</span>
       </h3>
 
       {/* 1) URL 직접 추가 */}
       <div className="mb-3">
-        <label className="text-[11px] font-bold text-slate-500 mb-1 block">출연 영상 URL 직접 추가 (즉시 등록)</label>
+        <label className="text-[12px] font-bold text-slate-500 mb-1 block">출연 영상 URL 직접 추가 (즉시 등록)</label>
         <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
@@ -1411,7 +1411,7 @@ function AthleteMentionSection({ profile }: { profile: any }) {
 
       {/* 2) 자동 검색 */}
       <div className="mb-4 bg-slate-50 rounded-lg p-3">
-        <label className="text-[11px] font-bold text-slate-500 mb-1 block">자동 검색 (선택 검토)</label>
+        <label className="text-[12px] font-bold text-slate-500 mb-1 block">자동 검색 (선택 검토)</label>
         <div className="flex flex-col sm:flex-row gap-2 mb-2">
           <input
             type="text"
@@ -1428,7 +1428,7 @@ function AthleteMentionSection({ profile }: { profile: any }) {
             {searchMut.isPending ? '검색 중...' : '🔍 YouTube 검색'}
           </button>
         </div>
-        <p className="text-[10px] text-slate-500">
+        <p className="text-[12.5px] text-slate-500">
           내 이름이 영상 제목/설명에 포함된 영상을 자동으로 검색하여 후보로 등록합니다. 후보는 본인이 ✓ 승인 / ✗ 거절해야 ROI에 반영됩니다.
         </p>
       </div>
@@ -1436,7 +1436,7 @@ function AthleteMentionSection({ profile }: { profile: any }) {
       {/* 3) PENDING 후보 (검토 대기) */}
       {pending.length > 0 && (
         <div className="mb-4">
-          <div className="text-[11px] font-bold text-amber-700 mb-2 flex items-center gap-1">
+          <div className="text-[12px] font-bold text-amber-700 mb-2 flex items-center gap-1">
             ⏳ 검토 대기 ({pending.length}개) — 본인 출연 영상이 맞으면 ✓ 승인
           </div>
           <div className="space-y-1.5">
@@ -1458,10 +1458,10 @@ function AthleteMentionSection({ profile }: { profile: any }) {
       {approved.length > 0 && (
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-[11px] font-bold text-emerald-700">
+            <div className="text-[12px] font-bold text-emerald-700">
               ✅ ROI 반영 중 ({approved.length}개)
             </div>
-            <div className="text-[10px] text-slate-600">
+            <div className="text-[12.5px] text-slate-600">
               합계: 👁 {totalViews.toLocaleString()} · 👍 {totalLikes.toLocaleString()}
             </div>
           </div>
@@ -1485,7 +1485,7 @@ function AthleteMentionSection({ profile }: { profile: any }) {
           <summary className="cursor-pointer">거절된 영상 ({rejected.length}개)</summary>
           <div className="mt-2 space-y-1">
             {rejected.map((m: any) => (
-              <div key={m.id} className="flex items-center gap-2 text-[11px] text-slate-400 py-1">
+              <div key={m.id} className="flex items-center gap-2 text-[12px] text-slate-500 py-1">
                 <span className="line-through truncate flex-1">{m.videoTitle}</span>
                 <button onClick={() => approveMut.mutate(m.id)} className="text-emerald-600 hover:underline">복원</button>
                 <button onClick={() => removeMut.mutate(m.id)} className="text-rose-500 hover:underline">완전 삭제</button>
@@ -1496,7 +1496,7 @@ function AthleteMentionSection({ profile }: { profile: any }) {
       )}
 
       {mentions.length === 0 && (
-        <p className="text-xs text-slate-400 text-center py-3">
+        <p className="text-xs text-slate-500 text-center py-3">
           아직 등록된 출연 영상이 없습니다. URL 추가 또는 자동 검색으로 시작하세요.
         </p>
       )}
@@ -1517,14 +1517,14 @@ function MentionRow({ m, actions }: { m: any; actions: Array<{ label: string; cl
           className="text-xs font-semibold text-slate-900 truncate block hover:text-emerald-600">
           {m.videoTitle}
         </a>
-        <div className="text-[10px] text-slate-500 truncate">
+        <div className="text-[12.5px] text-slate-500 truncate">
           {m.channelTitle && <span>{m.channelTitle} · </span>}
           👁 {(m.viewCount || 0).toLocaleString()} · 👍 {(m.likeCount || 0).toLocaleString()} · 💬 {(m.commentCount || 0).toLocaleString()}
         </div>
       </div>
       <div className="flex flex-col gap-1">
         {actions.map((a, i) => (
-          <button key={i} onClick={a.onClick} className={`text-[11px] font-bold px-2 py-1 rounded ${a.cls}`}>
+          <button key={i} onClick={a.onClick} className={`text-[12px] font-bold px-2 py-1 rounded ${a.cls}`}>
             {a.label}
           </button>
         ))}

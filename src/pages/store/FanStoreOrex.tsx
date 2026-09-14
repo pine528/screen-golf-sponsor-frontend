@@ -71,25 +71,25 @@ export default function FanStoreOrex() {
               <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
                 <Ticket className="w-4 h-4 text-emerald-600 shrink-0" />
                 <div className="leading-tight">
-                  <div className="text-[11px] font-bold text-slate-900">팬 할인코드</div>
-                  <div className="text-[11px] font-black text-emerald-700 tracking-wide">{OREX_STORE.fanCode}</div>
+                  <div className="text-[12px] font-bold text-slate-900">팬 할인코드</div>
+                  <div className="text-[12px] font-black text-emerald-700 tracking-wide">{OREX_STORE.fanCode}</div>
                 </div>
               </div>
               <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
-                <span className="w-4 h-4 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shrink-0">P</span>
+                <span className="w-4 h-4 rounded-full bg-emerald-600 text-white text-[12.5px] font-black flex items-center justify-center shrink-0">P</span>
                 <div className="leading-tight">
-                  <div className="text-[11px] font-bold text-slate-900">팬포인트</div>
-                  <div className="text-[10px] text-slate-400">사용 가능</div>
+                  <div className="text-[12px] font-bold text-slate-900">팬포인트</div>
+                  <div className="text-[12.5px] text-slate-500">사용 가능</div>
                 </div>
               </div>
               <Link
                 to={`${OREX_STORE.path}/ar`}
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 hover:border-emerald-300 transition-colors"
               >
-                <Box className="w-4 h-4 text-slate-400 shrink-0" />
+                <Box className="w-4 h-4 text-slate-500 shrink-0" />
                 <div className="leading-tight">
-                  <div className="text-[11px] font-bold text-slate-900">AR 선수 이미지 보기</div>
-                  <div className="text-[10px] text-slate-400">AR 체험 가능</div>
+                  <div className="text-[12px] font-bold text-slate-900">AR 선수 이미지 보기</div>
+                  <div className="text-[12.5px] text-slate-500">AR 체험 가능</div>
                 </div>
               </Link>
             </div>
@@ -169,20 +169,20 @@ export default function FanStoreOrex() {
                       {OREX_PRODUCTS.indexOf(p) + 1}
                     </span>
                     <div className="aspect-square bg-slate-50 flex items-center justify-center p-4">
-                      <span className="text-xs text-slate-400 text-center break-keep leading-relaxed">{p.name}</span>
+                      <span className="text-xs text-slate-500 text-center break-keep leading-relaxed">{p.name}</span>
                     </div>
                     <div className="p-3 flex flex-col flex-1">
                       <div className="text-[12px] text-slate-600 line-clamp-2 min-h-[2.1rem] mb-1.5">{p.name}</div>
                       <div className="flex items-baseline gap-1.5 mb-1">
                         <span className="text-[15px] font-black text-slate-900 tabular-nums">{p.price.toLocaleString()}원</span>
-                        <span className="text-[10px] text-slate-400 tabular-nums">
+                        <span className="text-[12.5px] text-slate-500 tabular-nums">
                           (1개당 {Math.round(p.price / p.unitCount).toLocaleString()}원)
                         </span>
                       </div>
-                      <div className="text-[10px] text-slate-400 mb-1">
+                      <div className="text-[12.5px] text-slate-500 mb-1">
                         배송비 {OREX_STORE.shippingFee.toLocaleString()}원 | {tomorrowLabel()} 도착 예정
                       </div>
-                      <div className="text-[10px] font-bold text-amber-500 mb-2.5">
+                      <div className="text-[12.5px] font-bold text-amber-500 mb-2.5">
                         최대 {Math.round(p.price * OREX_STORE.earnRate).toLocaleString()}P 적립
                       </div>
                       <span className="mt-auto inline-flex items-center justify-center gap-1.5 h-9 rounded-lg bg-emerald-600 text-white text-[12px] font-bold">
@@ -214,7 +214,7 @@ function FilterCheck({ label, count, checked, onToggle }: { label: string; count
         className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
       />
       <span className="text-xs text-slate-600 flex-1">{label}</span>
-      <span className="text-[11px] text-slate-400 tabular-nums">{count}</span>
+      <span className="text-[12px] text-slate-500 tabular-nums">{count}</span>
     </label>
   );
 }

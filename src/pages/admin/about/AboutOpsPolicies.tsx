@@ -121,8 +121,8 @@ export default function AboutOpsPolicies() {
                           {p.status}
                         </Tag>
                       </div>
-                      <p className="text-[11.5px] text-slate-400">{p.summary ?? '설명 없음'}</p>
-                      <p className="text-[11px] text-slate-400 mt-0.5 tabular-nums">
+                      <p className="text-[12.5px] text-slate-500">{p.summary ?? '설명 없음'}</p>
+                      <p className="text-[12px] text-slate-500 mt-0.5 tabular-nums">
                         시행 {fmtDate(p.effectiveFrom)}
                       </p>
                     </button>
@@ -228,7 +228,7 @@ export default function AboutOpsPolicies() {
                         {rules.map((r: any, i: number) => (
                           <div key={i} className="rounded-2xl border border-slate-200 p-4">
                             <div className="flex items-center gap-2 mb-3">
-                              <span className="inline-flex h-6 px-2 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold items-center">
+                              <span className="inline-flex h-6 px-2 rounded-lg bg-emerald-50 text-emerald-700 text-[12px] font-bold items-center">
                                 KPI {i + 1}
                               </span>
                               <input value={r.label ?? ''} disabled={detail && !detail.editable}
@@ -254,7 +254,7 @@ export default function AboutOpsPolicies() {
                                 { k: 'source', l: '데이터 출처', type: 'text' },
                               ].map((f) => (
                                 <div key={f.k}>
-                                  <label className="block text-[11px] font-semibold text-slate-400 mb-1">{f.l}</label>
+                                  <label className="block text-[12px] font-semibold text-slate-500 mb-1">{f.l}</label>
                                   <input type={f.type} value={r[f.k] ?? ''} disabled={detail && !detail.editable}
                                     onChange={(e) => setRule(i, { [f.k]: f.type === 'number' ? Number(e.target.value) : e.target.value })}
                                     className="w-full h-9 px-2.5 rounded-lg border border-slate-200 text-[12.5px] focus:outline-none focus:border-slate-400 disabled:bg-slate-50" />
@@ -262,7 +262,7 @@ export default function AboutOpsPolicies() {
                               ))}
                             </div>
                             <div className="mt-2">
-                              <label className="block text-[11px] font-semibold text-slate-400 mb-1">집계 정의</label>
+                              <label className="block text-[12px] font-semibold text-slate-500 mb-1">집계 정의</label>
                               <input value={r.definition ?? ''} disabled={detail && !detail.editable}
                                 onChange={(e) => setRule(i, { definition: e.target.value })}
                                 placeholder="중복 제거 기준 등"
@@ -326,7 +326,7 @@ export default function AboutOpsPolicies() {
                         </div>
                       )}
                       {detail?.policy?.legalApprovedAt && (
-                        <p className="px-5 pb-5 text-[11.5px] text-emerald-600 font-semibold">
+                        <p className="px-5 pb-5 text-[12.5px] text-emerald-600 font-semibold">
                           법무 승인 완료 · {fmtDate(detail.policy.legalApprovedAt, true)}
                         </p>
                       )}

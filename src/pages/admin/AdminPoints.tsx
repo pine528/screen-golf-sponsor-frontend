@@ -101,7 +101,7 @@ export default function AdminPoints() {
           <h2 className="text-lg font-semibold text-slate-900 mb-4">사용자 검색</h2>
           <form onSubmit={handleSearch} className="flex gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
                 type="text"
                 value={searchEmail}

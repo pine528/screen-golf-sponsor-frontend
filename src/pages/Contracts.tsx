@@ -178,7 +178,7 @@ export function Contracts() {
         <div className="card p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
                 type="text"
                 placeholder="슬롯명, 선수명, 이벤트 검색..."
@@ -188,7 +188,7 @@ export function Contracts() {
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-400" />
+              <Filter className="w-5 h-5 text-slate-500" />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
@@ -359,14 +359,14 @@ export function Contracts() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <span className="px-3 py-1 text-sm text-slate-600">페이지 {page}</span>
               <button
                 onClick={() => setPage((p) => p + 1)}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -717,7 +717,7 @@ function ContractDetailModal({
                         <p className="text-slate-600">
                           {assetFile ? assetFile.name : '클릭하여 파일을 선택하세요'}
                         </p>
-                        <p className="text-sm text-slate-400 mt-1">
+                        <p className="text-sm text-slate-500 mt-1">
                           PNG, JPG, SVG (최대 10MB)
                         </p>
                       </label>
@@ -762,7 +762,7 @@ function ContractDetailModal({
                         {asset.fileUrl ? (
                           <img src={asset.fileUrl} alt="Asset" className="w-full h-full object-cover" />
                         ) : (
-                          <Image className="w-8 h-8 text-slate-400" />
+                          <Image className="w-8 h-8 text-slate-500" />
                         )}
                       </div>
                       <div className="flex-1">
@@ -819,7 +819,7 @@ function ContractDetailModal({
                       <label htmlFor="verification-upload" className="cursor-pointer">
                         <Camera className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                         <p className="text-slate-600">클릭하여 사진을 선택하세요</p>
-                        <p className="text-sm text-slate-400 mt-1">PNG, JPG (최대 10MB/장)</p>
+                        <p className="text-sm text-slate-500 mt-1">PNG, JPG (최대 10MB/장)</p>
                       </label>
                     </div>
 
@@ -976,7 +976,7 @@ function ContractDetailModal({
                       <div className="flex-1">
                         <p className={cn(
                           'font-medium',
-                          step.status === 'pending' ? 'text-slate-400' : 'text-slate-900'
+                          step.status === 'pending' ? 'text-slate-500' : 'text-slate-900'
                         )}>
                           {step.title}
                         </p>

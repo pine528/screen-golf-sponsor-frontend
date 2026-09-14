@@ -390,7 +390,7 @@ export function AdminPenalties() {
             <div className="flex-1 min-w-[250px]">
               <label className="label">검색</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <input
                   type="text"
                   value={searchQuery}
@@ -412,7 +412,7 @@ export function AdminPenalties() {
           ) : !penalties || penalties.length === 0 ? (
             <div className="p-12 text-center">
               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ShieldAlert className="w-8 h-8 text-slate-400" />
+                <ShieldAlert className="w-8 h-8 text-slate-500" />
               </div>
               <h3 className="text-lg font-semibold text-slate-900 mb-2">페널티가 없습니다</h3>
               <p className="text-slate-500 text-sm">조건에 맞는 페널티가 없습니다</p>
@@ -485,7 +485,7 @@ export function AdminPenalties() {
                               {formatDate(penalty.expiresAt)}
                             </div>
                           ) : (
-                            <span className="text-sm text-slate-400">-</span>
+                            <span className="text-sm text-slate-500">-</span>
                           )}
                         </td>
                         <td className="px-4 py-3">
@@ -496,7 +496,7 @@ export function AdminPenalties() {
                             {penalty.status === 'ACTIVE' && (
                               <button
                                 onClick={() => setRemoveModalId(penalty.id)}
-                                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                 title="제거"
                               >
                                 <Trash2 className="w-4 h-4" />

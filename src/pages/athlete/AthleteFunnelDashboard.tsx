@@ -81,7 +81,7 @@ export default function AthleteFunnelDashboard() {
         )}
 
         {isLoading ? (
-          <div className="text-center py-12 text-sm text-slate-400">로딩 중...</div>
+          <div className="text-center py-12 text-sm text-slate-500">로딩 중...</div>
         ) : (
           <>
             {/* 어필용 자동 요약 */}
@@ -134,7 +134,7 @@ export default function AthleteFunnelDashboard() {
                     </div>
                   ))}
                   {(!report?.contents || report.contents.length === 0) && (
-                    <div className="text-center py-8 text-xs text-slate-400">콘텐츠별 데이터가 없습니다</div>
+                    <div className="text-center py-8 text-xs text-slate-500">콘텐츠별 데이터가 없습니다</div>
                   )}
                 </div>
               </div>
@@ -149,11 +149,11 @@ export default function AthleteFunnelDashboard() {
                     {assets.codes?.map((c: any) => (
                       <div key={c.id} className="flex items-center gap-2 p-2 bg-emerald-50/30 border border-emerald-100 rounded">
                         <code className="text-xs font-bold flex-1">{c.code}</code>
-                        <span className="text-[10px] text-slate-500">사용 {c.usageCount}</span>
+                        <span className="text-[12.5px] text-slate-500">사용 {c.usageCount}</span>
                         <ActionBar actions={[{ type: 'copy', value: c.code }]} />
                       </div>
                     ))}
-                    {(!assets.codes || assets.codes.length === 0) && <div className="text-xs text-slate-400">발급된 코드가 없습니다</div>}
+                    {(!assets.codes || assets.codes.length === 0) && <div className="text-xs text-slate-500">발급된 코드가 없습니다</div>}
                   </div>
                 </div>
 
@@ -164,7 +164,7 @@ export default function AthleteFunnelDashboard() {
                       <div key={l.id} className="p-2 bg-slate-50 border border-slate-100 rounded">
                         <div className="flex items-center gap-2 mb-1">
                           <code className="text-xs flex-1 font-mono">{window.location.origin}/s/{l.shortCode}</code>
-                          <span className="text-[10px] text-slate-500">{l.clickCount}회</span>
+                          <span className="text-[12.5px] text-slate-500">{l.clickCount}회</span>
                         </div>
                         <div className="flex gap-2 items-center">
                           {l.qrUrl && <img src={l.qrUrl} alt="" className="w-12 h-12 rounded border" />}
@@ -175,7 +175,7 @@ export default function AthleteFunnelDashboard() {
                         </div>
                       </div>
                     ))}
-                    {(!assets.links || assets.links.length === 0) && <div className="text-xs text-slate-400">발급된 링크가 없습니다</div>}
+                    {(!assets.links || assets.links.length === 0) && <div className="text-xs text-slate-500">발급된 링크가 없습니다</div>}
                   </div>
                 </div>
               </div>

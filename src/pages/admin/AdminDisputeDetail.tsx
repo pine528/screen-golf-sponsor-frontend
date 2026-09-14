@@ -348,7 +348,7 @@ export function AdminDisputeDetail() {
                       )}
                     >
                       <div className="flex items-center gap-2 mb-2">
-                        <User className="w-4 h-4 text-slate-400" />
+                        <User className="w-4 h-4 text-slate-500" />
                         <span className="text-sm font-medium text-slate-700">
                           {comment.userId.slice(0, 8)}...
                         </span>

@@ -70,18 +70,18 @@ function AiMatchCompareInner() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="text-[16px] font-extrabold text-slate-900">{r.name} 프로</div>
-                      <div className="text-[11px] text-slate-400 mb-2">{r.tour} 🇰🇷</div>
+                      <div className="text-[12px] text-slate-500 mb-2">{r.tour} 🇰🇷</div>
                       <div className="grid grid-cols-3 gap-1 text-center">
                         <div>
-                          <div className="text-[9px] text-slate-400">적합도</div>
+                          <div className="text-[9px] text-slate-500">적합도</div>
                           <div className="text-[15px] font-black text-emerald-700 tabular-nums">{r.matchScore}</div>
                         </div>
                         <div>
-                          <div className="text-[9px] text-slate-400">슬롯</div>
+                          <div className="text-[9px] text-slate-500">슬롯</div>
                           <div className="text-[15px] font-black text-slate-900 tabular-nums">{r.metrics?.availableSlots}</div>
                         </div>
                         <div>
-                          <div className="text-[9px] text-slate-400">팬 관심</div>
+                          <div className="text-[9px] text-slate-500">팬 관심</div>
                           <div className="text-[15px] font-black text-slate-900 tabular-nums">{r.metrics?.favoriteCount ?? 0}</div>
                         </div>
                       </div>
@@ -90,27 +90,27 @@ function AiMatchCompareInner() {
 
                   {/* 추천 슬롯 */}
                   <div className="flex items-start gap-2 mb-2">
-                    <span className="text-[11px] font-bold text-slate-400 w-16 shrink-0 pt-0.5">추천 슬롯</span>
+                    <span className="text-[12px] font-bold text-slate-500 w-16 shrink-0 pt-0.5">추천 슬롯</span>
                     <div className="flex flex-wrap gap-1">
                       {(r.package?.slots || []).map((s: any) => (
-                        <span key={s.code} className="px-1.5 py-0.5 rounded-md border border-slate-200 text-[10px] font-bold text-slate-600">{s.name}</span>
+                        <span key={s.code} className="px-1.5 py-0.5 rounded-md border border-slate-200 text-[12.5px] font-bold text-slate-600">{s.name}</span>
                       ))}
                     </div>
                   </div>
                   <div className="flex items-start gap-2 mb-2">
-                    <span className="text-[11px] font-bold text-slate-400 w-16 shrink-0 pt-0.5">계약 방식</span>
-                    <span className="px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[10px] font-bold">
+                    <span className="text-[12px] font-bold text-slate-500 w-16 shrink-0 pt-0.5">계약 방식</span>
+                    <span className="px-1.5 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[12.5px] font-bold">
                       {METHOD_LABEL[r.package?.method]}{r.package?.sns ? ' + SNS 연계' : ''}
                     </span>
                   </div>
                   <div className="flex items-start gap-2 mb-4">
-                    <span className="text-[11px] font-bold text-slate-400 w-16 shrink-0 pt-0.5">신뢰도</span>
-                    <span className="text-[11px] font-bold text-slate-700">{CONFIDENCE_LABEL[r.confidence]}</span>
+                    <span className="text-[12px] font-bold text-slate-500 w-16 shrink-0 pt-0.5">신뢰도</span>
+                    <span className="text-[12px] font-bold text-slate-700">{CONFIDENCE_LABEL[r.confidence]}</span>
                   </div>
 
                   <div className="mt-auto rounded-xl bg-slate-50 border border-slate-100 px-3.5 py-3 flex items-center justify-between gap-2">
                     <div>
-                      <div className="text-[10px] text-slate-400">추천 예산</div>
+                      <div className="text-[12.5px] text-slate-500">추천 예산</div>
                       <div className="text-[16px] font-black text-slate-900 tabular-nums">₩{r.package?.priceConfirmed?.toLocaleString()}~</div>
                     </div>
                     <Link
@@ -128,7 +128,7 @@ function AiMatchCompareInner() {
             <div className="rounded-2xl border border-slate-200 overflow-x-auto mb-6">
               <table className="w-full text-[12px]">
                 <thead>
-                  <tr className="bg-slate-50 text-left text-slate-400">
+                  <tr className="bg-slate-50 text-left text-slate-500">
                     <th className="px-4 py-3 font-bold w-32">항목</th>
                     {selected.map((r) => (
                       <th key={r.athleteId} className="px-4 py-3 font-extrabold text-slate-900">{r.name} 프로</th>
@@ -168,7 +168,7 @@ function CompareRow({ label, cells, strongFirst = false }: { label: string; cell
   const max = strongFirst ? Math.max(...cells.map((c) => parseInt(c) || 0)) : null;
   return (
     <tr className="border-t border-slate-100">
-      <td className="px-4 py-2.5 text-slate-400 font-bold">{label}</td>
+      <td className="px-4 py-2.5 text-slate-500 font-bold">{label}</td>
       {cells.map((c, i) => {
         const best = strongFirst && parseInt(c) === max;
         return (

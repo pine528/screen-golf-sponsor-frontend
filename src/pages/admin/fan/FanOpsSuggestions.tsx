@@ -69,7 +69,7 @@ export default function FanOpsSuggestions() {
               <div key={c.code} className={`rounded-2xl border border-slate-200 border-t-4 bg-white ${COL_TONE[c.code] ?? 'border-t-slate-200'}`}>
                 <div className="px-3.5 py-3 border-b border-slate-100 flex items-center justify-between">
                   <span className="text-[13px] font-bold text-slate-800">{c.label}</span>
-                  <span className="text-[12px] font-extrabold text-slate-400 tabular-nums">{c.total}</span>
+                  <span className="text-[12px] font-extrabold text-slate-500 tabular-nums">{c.total}</span>
                 </div>
                 <div className="p-2 space-y-2 max-h-[440px] overflow-y-auto">
                   {c.cards.length ? c.cards.map((card: any) => (
@@ -86,14 +86,14 @@ export default function FanOpsSuggestions() {
                         )}
                       </div>
                       <p className="text-[12px] font-semibold text-slate-700 truncate">{card.brandName ?? card.category}</p>
-                      <p className="text-[10px] text-slate-400 mt-1">{card.category}</p>
-                      <p className="text-[10px] text-slate-300 mt-1">{fmtDate(card.createdAt)}</p>
+                      <p className="text-[12.5px] text-slate-500 mt-1">{card.category}</p>
+                      <p className="text-[12.5px] text-slate-300 mt-1">{fmtDate(card.createdAt)}</p>
                     </button>
                   )) : (
-                    <p className="text-[11px] text-slate-300 text-center py-6">없음</p>
+                    <p className="text-[12px] text-slate-300 text-center py-6">없음</p>
                   )}
                   {c.total > c.cards.length && (
-                    <p className="text-[11px] text-slate-400 text-center py-1">+{c.total - c.cards.length}건 더</p>
+                    <p className="text-[12px] text-slate-500 text-center py-1">+{c.total - c.cards.length}건 더</p>
                   )}
                 </div>
               </div>
@@ -112,11 +112,11 @@ export default function FanOpsSuggestions() {
                   ].map((r) => (
                     <div key={r.l} className="text-center">
                       <p className="text-[19px] font-extrabold text-slate-900 tabular-nums">{r.v}</p>
-                      <p className="text-[11px] text-slate-400 mt-1">{r.l}</p>
+                      <p className="text-[12px] text-slate-500 mt-1">{r.l}</p>
                     </div>
                   ))}
                 </div>
-                <p className="px-5 pb-4 text-[11px] text-slate-400">{i.window} 기준</p>
+                <p className="px-5 pb-4 text-[12px] text-slate-500">{i.window} 기준</p>
               </Panel>
 
               <Panel title="리워드 자동 지급 규칙">
@@ -128,7 +128,7 @@ export default function FanOpsSuggestions() {
                     </div>
                   ))}
                 </div>
-                <p className="px-4 pb-4 text-[11px] text-slate-400 leading-relaxed">{data.notice}</p>
+                <p className="px-4 pb-4 text-[12px] text-slate-500 leading-relaxed">{data.notice}</p>
               </Panel>
             </div>
 
@@ -136,7 +136,7 @@ export default function FanOpsSuggestions() {
             <Panel className="lg:col-span-2" title="추천 상세"
               right={detail && (
                 <button onClick={() => setSelected(null)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center">
-                  <X className="w-4 h-4 text-slate-400" />
+                  <X className="w-4 h-4 text-slate-500" />
                 </button>
               )}>
               {!detail ? (
@@ -146,34 +146,34 @@ export default function FanOpsSuggestions() {
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusTag label={detail.statusLabel} tone={detail.status === 'ADOPTED' ? 'emerald' : 'sky'} />
                     <span className="text-[13px] font-bold text-slate-900">{detail.athlete?.name}</span>
-                    <span className="ml-auto text-[11px] text-slate-400 tabular-nums">
+                    <span className="ml-auto text-[12px] text-slate-500 tabular-nums">
                       접수 {fmtDate(detail.createdAt, true)}
                     </span>
                   </div>
 
                   <div className="grid sm:grid-cols-2 gap-3 text-[13px]">
                     <div>
-                      <p className="text-[11px] font-semibold text-slate-400 mb-1">추천 브랜드</p>
+                      <p className="text-[12px] font-semibold text-slate-500 mb-1">추천 브랜드</p>
                       <p className="font-bold text-slate-800">{detail.brandName ?? '(브랜드명 미입력)'}</p>
                     </div>
                     <div>
-                      <p className="text-[11px] font-semibold text-slate-400 mb-1">카테고리</p>
+                      <p className="text-[12px] font-semibold text-slate-500 mb-1">카테고리</p>
                       <p className="font-semibold text-slate-700">{detail.category}</p>
                     </div>
                     <div>
-                      <p className="text-[11px] font-semibold text-slate-400 mb-1">이해관계</p>
+                      <p className="text-[12px] font-semibold text-slate-500 mb-1">이해관계</p>
                       <p className={`font-semibold ${detail.interest === 'NONE' ? 'text-slate-700' : 'text-amber-700'}`}>
                         {detail.interestLabel}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[11px] font-semibold text-slate-400 mb-1">중복 추천</p>
+                      <p className="text-[12px] font-semibold text-slate-500 mb-1">중복 추천</p>
                       <p className="font-semibold text-slate-700 tabular-nums">{nf(detail.duplicates)}건</p>
                     </div>
                   </div>
 
                   <div>
-                    <p className="text-[11px] font-semibold text-slate-400 mb-1.5">팬 작성 추천 이유</p>
+                    <p className="text-[12px] font-semibold text-slate-500 mb-1.5">팬 작성 추천 이유</p>
                     <div className="rounded-2xl bg-slate-50 border border-slate-100 p-4">
                       <p className="text-[13px] text-slate-700 leading-relaxed whitespace-pre-line">{detail.reason}</p>
                     </div>
@@ -187,7 +187,7 @@ export default function FanOpsSuggestions() {
                   )}
 
                   <div className="rounded-2xl border border-slate-200 px-4 py-3 flex items-start gap-2.5">
-                    <ShieldCheck className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+                    <ShieldCheck className="w-4 h-4 text-slate-500 mt-0.5 shrink-0" />
                     <p className="text-[12px] text-slate-500">{detail.privacyNotice}</p>
                   </div>
 

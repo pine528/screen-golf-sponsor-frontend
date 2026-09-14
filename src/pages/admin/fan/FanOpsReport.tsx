@@ -61,7 +61,7 @@ export default function FanOpsReport() {
                       <span className="text-[13px] font-semibold text-slate-700">{f.label}</span>
                       <span className="text-[13px] font-extrabold text-slate-900 tabular-nums">
                         {nf(f.value)}
-                        {f.rate !== null && <span className="text-[11px] text-slate-400 ml-1.5">{f.rate}%</span>}
+                        {f.rate !== null && <span className="text-[12px] text-slate-500 ml-1.5">{f.rate}%</span>}
                       </span>
                     </div>
                     <div className="h-7 rounded-lg bg-slate-100 overflow-hidden">
@@ -71,7 +71,7 @@ export default function FanOpsReport() {
                   </div>
                 ))}
                 {data.funnel.every((f: any) => f.value === 0) && (
-                  <p className="text-[12px] text-slate-400 text-center py-4">
+                  <p className="text-[12px] text-slate-500 text-center py-4">
                     선택 기간에 스토어 이동 기록이 없습니다.
                   </p>
                 )}
@@ -84,7 +84,7 @@ export default function FanOpsReport() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-[13px]">
                     <thead>
-                      <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                      <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                         <th className="text-left font-semibold px-5 py-2.5">선수</th>
                         <th className="text-right font-semibold py-2.5">활성 팬</th>
                         <th className="text-right font-semibold py-2.5">활동</th>
@@ -97,7 +97,7 @@ export default function FanOpsReport() {
                         <tr key={a.athlete?.id ?? i} className="border-b border-slate-50 last:border-0">
                           <td className="px-5 py-3">
                             <div className="flex items-center gap-2.5">
-                              <span className="text-[11px] font-extrabold text-slate-300 tabular-nums w-4">{i + 1}</span>
+                              <span className="text-[12px] font-extrabold text-slate-300 tabular-nums w-4">{i + 1}</span>
                               <span className="font-semibold text-slate-800">{a.athlete?.name ?? '—'}</span>
                             </div>
                           </td>
@@ -120,11 +120,11 @@ export default function FanOpsReport() {
 
           {/* 개인정보 고지 */}
           <div className="rounded-2xl border border-slate-200 bg-white px-5 py-4 flex items-start gap-3">
-            <ShieldCheck className="w-4.5 h-4.5 text-slate-400 mt-0.5 shrink-0" />
+            <ShieldCheck className="w-4.5 h-4.5 text-slate-500 mt-0.5 shrink-0" />
             <div>
               <p className="text-[13px] font-bold text-slate-700">개인정보 보호 및 집계 기준</p>
               <p className="text-[12px] text-slate-500 mt-1 leading-relaxed">{data.privacy.notice}</p>
-              <p className="text-[11px] text-slate-400 mt-1.5 tabular-nums">
+              <p className="text-[12px] text-slate-500 mt-1.5 tabular-nums">
                 집계 기간 {fmtDate(data.period.from)} ~ {fmtDate(data.period.to)} ({data.period.days}일) ·
                 생성 {fmtDate(data.generatedAt, true)} (KST)
               </p>

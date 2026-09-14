@@ -61,7 +61,7 @@ export function ScoreGauge({ score, size = 72 }: { score: number; size?: number 
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="font-black text-slate-900 tabular-nums" style={{ fontSize: size / 3.4 }}>{score}</span>
-        <span className="text-[8px] font-bold text-slate-400">매칭 적합도</span>
+        <span className="text-[8px] font-bold text-slate-500">매칭 적합도</span>
       </div>
     </div>
   );
@@ -212,11 +212,11 @@ function AiMatchResultsInner() {
                 {(data.roleSlots || []).length > 0 && (
                   <>
                     <h2 className="text-lg font-extrabold text-slate-900 mb-1">역할별 추천 선수</h2>
-                    <p className="text-[12px] text-slate-400 mb-4">각 슬롯은 '순위'가 아니라 이번 브랜드에서 맡을 역할을 뜻합니다.</p>
+                    <p className="text-[12px] text-slate-500 mb-4">각 슬롯은 '순위'가 아니라 이번 브랜드에서 맡을 역할을 뜻합니다.</p>
                     <div className="flex gap-3 overflow-x-auto snap-x pb-2 -mx-5 px-5 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 xl:grid-cols-5 sm:overflow-visible mb-8">
                       {data.roleSlots.map((s: any) => (
                         <div key={s.role} className="snap-start shrink-0 w-[78%] sm:w-auto sm:shrink rounded-2xl border border-slate-200 bg-white overflow-hidden flex flex-col">
-                          <div className={`px-3 py-1.5 text-[10px] font-black tracking-wide ${ROLE_STYLE[s.role] || 'bg-slate-100 text-slate-600'}`}>
+                          <div className={`px-3 py-1.5 text-[12.5px] font-black tracking-wide ${ROLE_STYLE[s.role] || 'bg-slate-100 text-slate-600'}`}>
                             {s.label}
                           </div>
                           {s.athleteId ? (
@@ -227,31 +227,31 @@ function AiMatchResultsInner() {
                                 </span>
                                 <div className="min-w-0 flex-1">
                                   <div className="text-[13px] font-extrabold text-slate-900 truncate">{s.name} 프로</div>
-                                  <div className="text-[10px] text-slate-400">{s.desc}</div>
+                                  <div className="text-[12.5px] text-slate-500">{s.desc}</div>
                                 </div>
                                 <span className="shrink-0 text-[17px] font-black text-emerald-700 tabular-nums">{s.roleScore}</span>
                               </div>
                               {s.reasonSummary && (
-                                <p className="text-[11px] text-slate-500 break-keep leading-snug line-clamp-2 mb-2">{s.reasonSummary}</p>
+                                <p className="text-[12px] text-slate-500 break-keep leading-snug line-clamp-2 mb-2">{s.reasonSummary}</p>
                               )}
-                              <div className="flex items-center justify-between text-[10px] text-slate-400 mb-2.5">
+                              <div className="flex items-center justify-between text-[12.5px] text-slate-500 mb-2.5">
                                 <span>근거 {s.evidenceCount}건 · 신뢰도 {CONFIDENCE_LABEL[s.confidence] || s.confidence}</span>
                                 {s.budget != null && <span className="font-bold text-slate-600 tabular-nums">{Number(s.budget).toLocaleString()}원~</span>}
                               </div>
                               <div className="mt-auto grid grid-cols-2 gap-1.5">
                                 <Link to={`/ai-match/${requestId}/proposal/${s.athleteId}`}
-                                  className="h-8 inline-flex items-center justify-center rounded-lg bg-emerald-600 text-white text-[11px] font-bold">
+                                  className="h-8 inline-flex items-center justify-center rounded-lg bg-emerald-600 text-white text-[12px] font-bold">
                                   상세 분석
                                 </Link>
                                 <button onClick={() => excludeAthlete(s.athleteId)} disabled={!!rerunning}
-                                  className="h-8 inline-flex items-center justify-center rounded-lg border border-slate-200 text-[11px] font-bold text-slate-500 hover:bg-slate-50 disabled:opacity-50">
+                                  className="h-8 inline-flex items-center justify-center rounded-lg border border-slate-200 text-[12px] font-bold text-slate-500 hover:bg-slate-50 disabled:opacity-50">
                                   {rerunning === `exclude-${s.athleteId}` ? '반영 중…' : '이 선수 제외'}
                                 </button>
                               </div>
                             </div>
                           ) : (
                             <div className="p-3 flex-1 flex flex-col items-center justify-center text-center py-8">
-                              <p className="text-[11px] text-slate-400 break-keep">{s.emptyReason || '기준을 충족하는 후보가 부족합니다'}</p>
+                              <p className="text-[12px] text-slate-500 break-keep">{s.emptyReason || '기준을 충족하는 후보가 부족합니다'}</p>
                             </div>
                           )}
                         </div>
@@ -265,29 +265,29 @@ function AiMatchResultsInner() {
                   <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 mb-8">
                     <div className="flex items-baseline justify-between mb-1">
                       <h2 className="text-[15px] font-extrabold text-slate-900">선수 구성 제안</h2>
-                      <span className="text-[11px] font-bold text-slate-400">
+                      <span className="text-[12px] font-bold text-slate-500">
                         {data.portfolio.mode === 'SINGLE' ? '1명 집중 기준' : data.portfolio.mode === 'MULTI' ? '2~3명 조합 우선' : 'AI 판단'}
                       </span>
                     </div>
-                    <p className="text-[12px] text-slate-400 mb-4 break-keep">같은 예산으로 한 선수에 집중할지, 역할이 다른 선수 2~3명에 나눌지 비교해보세요.</p>
+                    <p className="text-[12px] text-slate-500 mb-4 break-keep">같은 예산으로 한 선수에 집중할지, 역할이 다른 선수 2~3명에 나눌지 비교해보세요.</p>
                     <div className={`grid grid-cols-1 ${data.portfolio.multi && data.portfolio.mode !== 'MULTI' ? 'md:grid-cols-2' : ''} gap-3`}>
                       {data.portfolio.mode !== 'MULTI' && data.portfolio.single && (
                         <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
-                          <div className="text-[11px] font-black text-slate-500 tracking-wide mb-2.5">A안 · 1명 집중</div>
+                          <div className="text-[12px] font-black text-slate-500 tracking-wide mb-2.5">A안 · 1명 집중</div>
                           <div className="flex items-center gap-2.5 mb-3">
                             <span className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 shrink-0">
                               {data.portfolio.single.profileImageUrl && <img src={data.portfolio.single.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
                             </span>
                             <div className="min-w-0">
                               <div className="text-[13px] font-extrabold text-slate-900">{data.portfolio.single.name} 프로</div>
-                              <div className="text-[11px] text-slate-400">슬롯 {data.portfolio.single.slots?.length || 0}개 구성</div>
+                              <div className="text-[12px] text-slate-500">슬롯 {data.portfolio.single.slots?.length || 0}개 구성</div>
                             </div>
                             <span className="ml-auto text-[14px] font-black text-slate-900 tabular-nums">₩{Number(data.portfolio.single.total).toLocaleString()}~</span>
                           </div>
                           <ul className="space-y-1">
                             {(data.portfolio.single.slots || []).map((sl: any) => (
-                              <li key={sl.name} className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                                <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-500 shrink-0">{sl.saleModeLabel}</span>
+                              <li key={sl.name} className="flex items-center gap-1.5 text-[12px] text-slate-600">
+                                <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[12.5px] font-bold text-slate-500 shrink-0">{sl.saleModeLabel}</span>
                                 <span className="truncate">{sl.name}</span>
                                 <span className="ml-auto tabular-nums font-bold text-slate-700 shrink-0">{Number(sl.price).toLocaleString()}원</span>
                               </li>
@@ -297,7 +297,7 @@ function AiMatchResultsInner() {
                       )}
                       {data.portfolio.multi && (
                         <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-4">
-                          <div className="text-[11px] font-black text-emerald-700 tracking-wide mb-2.5">
+                          <div className="text-[12px] font-black text-emerald-700 tracking-wide mb-2.5">
                             {data.portfolio.mode === 'MULTI' ? '추천 조합' : 'B안'} · {data.portfolio.multi.members.length}명 역할 분산
                           </div>
                           <ul className="space-y-2 mb-2.5">
@@ -307,18 +307,18 @@ function AiMatchResultsInner() {
                                   {m.profileImageUrl && <img src={m.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
                                 </span>
                                 <div className="min-w-0 flex-1">
-                                  <div className="text-[12px] font-extrabold text-slate-900 truncate">{m.name} 프로 <span className="ml-1 text-[10px] font-bold text-emerald-700">{m.role}</span></div>
-                                  <div className="text-[10px] text-slate-500 truncate">{m.slot.saleModeLabel} · {m.slot.name}</div>
+                                  <div className="text-[12px] font-extrabold text-slate-900 truncate">{m.name} 프로 <span className="ml-1 text-[12.5px] font-bold text-emerald-700">{m.role}</span></div>
+                                  <div className="text-[12.5px] text-slate-500 truncate">{m.slot.saleModeLabel} · {m.slot.name}</div>
                                 </div>
-                                <span className="shrink-0 text-[11px] font-bold text-slate-700 tabular-nums">{Number(m.slot.price).toLocaleString()}원</span>
+                                <span className="shrink-0 text-[12px] font-bold text-slate-700 tabular-nums">{Number(m.slot.price).toLocaleString()}원</span>
                               </li>
                             ))}
                           </ul>
                           <div className="flex items-center justify-between border-t border-emerald-100 pt-2">
-                            <span className="text-[11px] text-slate-500">합계 (예산 내)</span>
+                            <span className="text-[12px] text-slate-500">합계 (예산 내)</span>
                             <span className="text-[14px] font-black text-emerald-700 tabular-nums">₩{Number(data.portfolio.multi.total).toLocaleString()}~</span>
                           </div>
-                          {data.portfolio.multi.note && <p className="mt-1.5 text-[10px] text-slate-400 break-keep">ⓘ {data.portfolio.multi.note}</p>}
+                          {data.portfolio.multi.note && <p className="mt-1.5 text-[12.5px] text-slate-500 break-keep">ⓘ {data.portfolio.multi.note}</p>}
                         </div>
                       )}
                       {data.portfolio.mode === 'MULTI' && !data.portfolio.multi && (
@@ -343,12 +343,12 @@ function AiMatchResultsInner() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="text-[15px] font-extrabold text-slate-900 mb-0.5">{r.name} 프로</div>
-                          <div className="text-[11px] text-slate-400 mb-2">{r.tour}</div>
+                          <div className="text-[12px] text-slate-500 mb-2">{r.tour}</div>
                           <div className="flex flex-wrap gap-1">
                             {r.roleLabel && (
-                              <span className="inline-flex px-2 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-bold">{r.roleLabel}</span>
+                              <span className="inline-flex px-2 py-1 rounded-lg bg-slate-900 text-white text-[12px] font-bold">{r.roleLabel}</span>
                             )}
-                            <span className="inline-flex px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold">
+                            <span className="inline-flex px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[12px] font-bold">
                               {r.package?.methodLabel || METHOD_LABEL[r.package?.method] || r.package?.method}
                             </span>
                           </div>
@@ -358,13 +358,13 @@ function AiMatchResultsInner() {
 
                       <ul className="space-y-1 mb-3">
                         {(r.reasons || []).map((rs: any) => (
-                          <li key={rs.code} className="flex items-start gap-1.5 text-[11px] text-slate-600 break-keep">
+                          <li key={rs.code} className="flex items-start gap-1.5 text-[12px] text-slate-600 break-keep">
                             <Check className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" /> {rs.text}
                           </li>
                         ))}
                       </ul>
 
-                      <dl className="text-[11px] space-y-1 mb-3 mt-auto">
+                      <dl className="text-[12px] space-y-1 mb-3 mt-auto">
                         <MetricRow label="추천 예산" value={`${r.package?.priceConfirmed?.toLocaleString()}원~`} strong />
                         <MetricRow label="가용 슬롯" value={`${r.metrics?.availableSlots}개`} />
                         <MetricRow label="SNS 팔로워" value={r.metrics?.followers ? `${r.metrics.followers.toLocaleString()}명` : '데이터 준비 중'} />
@@ -420,7 +420,7 @@ function AiMatchResultsInner() {
                       onClick={() => rerun({ recommendationStyle: 'BEST' }, 'best')} />
                   </div>
                   {data.diversityMode && (
-                    <p className="mt-2.5 text-[10px] text-slate-400">현재 추천 스타일: {data.diversityMode === 'DISCOVERY' ? '새로운 선수 발견' : data.diversityMode === 'BEST' ? '최적 매칭' : '균형 있게'}</p>
+                    <p className="mt-2.5 text-[12.5px] text-slate-500">현재 추천 스타일: {data.diversityMode === 'DISCOVERY' ? '새로운 선수 발견' : data.diversityMode === 'BEST' ? '최적 매칭' : '균형 있게'}</p>
                   )}
                 </div>
 
@@ -434,7 +434,7 @@ function AiMatchResultsInner() {
                         </span>
                         <div className="min-w-0">
                           <div className="text-[12px] font-bold text-slate-900 break-keep">{it.title}</div>
-                          <p className="text-[11px] text-slate-500 break-keep leading-relaxed">{it.desc}</p>
+                          <p className="text-[12px] text-slate-500 break-keep leading-relaxed">{it.desc}</p>
                         </div>
                       </div>
                     ))}
@@ -447,7 +447,7 @@ function AiMatchResultsInner() {
                     <div className="inline-block"><ScoreGauge score={top3[0].matchScore} size={116} /></div>
                     <div className="mt-3 rounded-xl bg-emerald-50/70 border border-emerald-100 px-3 py-2.5 text-left flex items-start gap-2">
                       <Lightbulb className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                      <div className="text-[11px] text-slate-600 break-keep">
+                      <div className="text-[12px] text-slate-600 break-keep">
                         <b>TIP</b> 조건을 세부 조정하면 더 정확한 매칭 결과를 확인할 수 있어요.
                         <button onClick={() => navigate('/ai-match')} className="block mt-1 font-bold text-emerald-700">조건 수정하기 ›</button>
                       </div>
@@ -459,7 +459,7 @@ function AiMatchResultsInner() {
                 {data.sourceStatus && (
                   <div className="rounded-2xl border border-slate-200 p-4">
                     <h3 className="text-[13px] font-extrabold text-slate-900 mb-2.5">조사 소스</h3>
-                    <ul className="space-y-1.5 text-[11px]">
+                    <ul className="space-y-1.5 text-[12px]">
                       <SourceRow label="SPONPIK 선수·슬롯·계약 데이터" ok />
                       <SourceRow label="SPONPIK 팬·대회 성적 데이터" ok />
                       <SourceRow label="뉴스·YouTube 공개 자료" ok={false} note="연동 예정" />
@@ -467,7 +467,7 @@ function AiMatchResultsInner() {
                     </ul>
                   </div>
                 )}
-                <div className="rounded-2xl bg-slate-50 border border-slate-100 px-4 py-3 text-[10px] text-slate-400 break-keep">
+                <div className="rounded-2xl bg-slate-50 border border-slate-100 px-4 py-3 text-[12.5px] text-slate-500 break-keep">
                   기준일 {data.dataAsOf ? new Date(data.dataAsOf).toLocaleDateString('ko-KR') : '-'} · 규칙 {data.ruleVersion} · 후보 {data.candidateCount}명 중 상위 추천
                 </div>
               </div>
@@ -485,7 +485,7 @@ function AiMatchResultsInner() {
                   onClick={() => compareIds.size >= 2 && navigate(`/ai-match/${requestId}/compare?ids=${[...compareIds].join(',')}`)}
                   disabled={compareIds.size < 2}
                   className={`inline-flex items-center gap-1.5 h-9 px-4 rounded-lg text-[12px] font-bold ${
-                    compareIds.size >= 2 ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-400'
+                    compareIds.size >= 2 ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'bg-slate-100 text-slate-500'
                   }`}
                 >
                   <Users className="w-3.5 h-3.5" /> 선택 비교 ({compareIds.size}/3) <ArrowRight className="w-3.5 h-3.5" />
@@ -494,7 +494,7 @@ function AiMatchResultsInner() {
               <div className="overflow-x-auto">
                 <table className="w-full text-[12px]">
                   <thead>
-                    <tr className="bg-slate-50 text-slate-400 text-left">
+                    <tr className="bg-slate-50 text-slate-500 text-left">
                       <th className="px-5 py-2.5 font-bold">선수</th>
                       <th className="px-3 py-2.5 font-bold">적합도</th>
                       <th className="px-3 py-2.5 font-bold">가용 슬롯</th>
@@ -521,7 +521,7 @@ function AiMatchResultsInner() {
                         <td className="px-3 py-2.5 tabular-nums">{r.metrics?.followers ? r.metrics.followers.toLocaleString() : '—'}</td>
                         <td className="px-3 py-2.5 tabular-nums">{r.metrics?.favoriteCount ?? 0}</td>
                         <td className="px-3 py-2.5">
-                          <span className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold whitespace-nowrap">
+                          <span className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[12px] font-bold whitespace-nowrap">
                             {r.package?.methodLabel || METHOD_LABEL[r.package?.method] || '-'}
                           </span>
                         </td>
@@ -536,7 +536,7 @@ function AiMatchResultsInner() {
           {compareIds.size > 0 && (
             <div className="lg:hidden fixed bottom-14 inset-x-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex items-center gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
               <div className="min-w-0 flex-1">
-                <div className="text-[11px] text-slate-500">비교함에 담김</div>
+                <div className="text-[12px] text-slate-500">비교함에 담김</div>
                 <div className="text-sm font-extrabold text-slate-900 truncate">
                   {recs.filter((r) => compareIds.has(r.athleteId)).map((r) => r.name).join(' · ')} ({compareIds.size}/3)
                 </div>
@@ -545,7 +545,7 @@ function AiMatchResultsInner() {
                 onClick={() => compareIds.size >= 2 && navigate(`/ai-match/${requestId}/compare?ids=${[...compareIds].join(',')}`)}
                 disabled={compareIds.size < 2}
                 className={`shrink-0 h-10 px-4 rounded-xl text-sm font-bold ${
-                  compareIds.size >= 2 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'
+                  compareIds.size >= 2 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'
                 }`}
               >
                 {compareIds.size >= 2 ? '비교하기' : '2명 이상 담기'}
@@ -573,7 +573,7 @@ function Shell({ children }: { children: React.ReactNode }) {
 function Cond({ label, value }: { label: string; value: string }) {
   return (
     <span className="inline-flex items-center gap-1.5 text-[12px]">
-      <span className="text-slate-400">{label} :</span>
+      <span className="text-slate-500">{label} :</span>
       <span className="font-bold text-emerald-700">{value}</span>
     </span>
   );
@@ -597,8 +597,8 @@ function SourceRow({ label, ok, note }: { label: string; ok: boolean; note?: str
   return (
     <li className="flex items-center gap-1.5">
       <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ok ? 'bg-emerald-500' : 'bg-slate-300'}`} />
-      <span className={ok ? 'text-slate-600' : 'text-slate-400'}>{label}</span>
-      {note && <span className="ml-auto text-[10px] text-slate-300">{note}</span>}
+      <span className={ok ? 'text-slate-600' : 'text-slate-500'}>{label}</span>
+      {note && <span className="ml-auto text-[12.5px] text-slate-300">{note}</span>}
     </li>
   );
 }
@@ -606,7 +606,7 @@ function SourceRow({ label, ok, note }: { label: string; ok: boolean; note?: str
 function MetricRow({ label, value, strong = false }: { label: string; value: string; strong?: boolean }) {
   return (
     <div className="flex items-center justify-between gap-2">
-      <dt className="text-slate-400">{label}</dt>
+      <dt className="text-slate-500">{label}</dt>
       <dd className={`tabular-nums ${strong ? 'font-black text-slate-900' : 'font-bold text-slate-700'}`}>{value}</dd>
     </div>
   );

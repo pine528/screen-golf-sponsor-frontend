@@ -58,7 +58,7 @@ export default function SeasonLeaderboard() {
 
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Crown className="w-5 h-5 text-amber-500" />;
-    if (rank === 2) return <Medal className="w-5 h-5 text-slate-400" />;
+    if (rank === 2) return <Medal className="w-5 h-5 text-slate-500" />;
     if (rank === 3) return <Medal className="w-5 h-5 text-amber-600" />;
     return null;
   };
@@ -185,7 +185,7 @@ export default function SeasonLeaderboard() {
                     {/* Rank */}
                     <div className="w-10 text-center">
                       {getRankIcon(entry.rank) || (
-                        <span className="text-lg font-bold text-slate-400">
+                        <span className="text-lg font-bold text-slate-500">
                           {entry.rank}
                         </span>
                       )}

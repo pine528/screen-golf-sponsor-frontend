@@ -155,7 +155,7 @@ export default function BrandRegister() {
           ) : requests?.length === 0 ? (
             <div className="p-8 text-center">
               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Building2 className="w-8 h-8 text-slate-400" />
+                <Building2 className="w-8 h-8 text-slate-500" />
               </div>
               <p className="text-slate-500 mb-4">아직 신청 내역이 없습니다</p>
               <button
@@ -180,18 +180,18 @@ export default function BrandRegister() {
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div className="flex items-center gap-2 text-slate-600">
-                      <Mail className="w-4 h-4 text-slate-400" />
+                      <Mail className="w-4 h-4 text-slate-500" />
                       {request.contactEmail}
                     </div>
                     {request.contactPhone && (
                       <div className="flex items-center gap-2 text-slate-600">
-                        <Phone className="w-4 h-4 text-slate-400" />
+                        <Phone className="w-4 h-4 text-slate-500" />
                         {request.contactPhone}
                       </div>
                     )}
                     {request.website && (
                       <div className="flex items-center gap-2 text-slate-600 col-span-2">
-                        <Globe className="w-4 h-4 text-slate-400" />
+                        <Globe className="w-4 h-4 text-slate-500" />
                         <a
                           href={request.website}
                           target="_blank"

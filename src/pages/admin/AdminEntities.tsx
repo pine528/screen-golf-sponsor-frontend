@@ -250,7 +250,7 @@ export default function AdminEntities() {
             <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-medium text-slate-700 mb-1">검색</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <input
                   type="text"
                   value={search}
@@ -420,7 +420,7 @@ export default function AdminEntities() {
                                 />
                               ) : (
                                 <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
-                                  <Users className="w-5 h-5 text-slate-400" />
+                                  <Users className="w-5 h-5 text-slate-500" />
                                 </div>
                               )}
                               <div>
@@ -448,7 +448,7 @@ export default function AdminEntities() {
                                 className={`flex items-center gap-1 text-sm font-medium transition-colors ${
                                   athlete.user?.isActive
                                     ? 'text-emerald-600 hover:text-emerald-700'
-                                    : 'text-slate-400 hover:text-slate-500'
+                                    : 'text-slate-500 hover:text-slate-500'
                                 }`}
                               >
                                 {athlete.user?.isActive ? (
@@ -506,7 +506,7 @@ export default function AdminEntities() {
                                   className={`flex items-center gap-1 text-sm font-medium transition-colors ${
                                     brand.user?.isActive
                                       ? 'text-emerald-600 hover:text-emerald-700'
-                                      : 'text-slate-400 hover:text-slate-500'
+                                      : 'text-slate-500 hover:text-slate-500'
                                   }`}
                                 >
                                   {brand.user?.isActive ? (
@@ -564,7 +564,7 @@ export default function AdminEntities() {
                                 className={`flex items-center gap-1 text-sm font-medium ${
                                   fan.isActive
                                     ? 'text-emerald-600'
-                                    : 'text-slate-400'
+                                    : 'text-slate-500'
                                 }`}
                               >
                                 {fan.isActive ? (

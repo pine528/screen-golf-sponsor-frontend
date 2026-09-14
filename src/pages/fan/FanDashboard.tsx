@@ -137,7 +137,7 @@ export default function FanDashboard() {
       case 1:
         return <Crown className="w-5 h-5 text-amber-500" />;
       case 2:
-        return <Medal className="w-5 h-5 text-slate-400" />;
+        return <Medal className="w-5 h-5 text-slate-500" />;
       case 3:
         return <Medal className="w-5 h-5 text-amber-600" />;
       default:
@@ -361,7 +361,7 @@ export default function FanDashboard() {
                           {vote._count?.entries || 0}명 참여 · 당첨 {vote.winnersCount}명
                         </p>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-slate-400" />
+                      <ChevronRight className="w-4 h-4 text-slate-500" />
                     </div>
                   </Link>
                 ))}
@@ -530,7 +530,7 @@ export default function FanDashboard() {
                             {athlete.profileImageUrl ? (
                               <img src={athlete.profileImageUrl} alt="" className="w-full h-full object-cover" />
                             ) : (
-                              <Users className="w-3 h-3 m-1 text-slate-400" />
+                              <Users className="w-3 h-3 m-1 text-slate-500" />
                             )}
                           </div>
                           <span className="text-sm text-slate-700">{athlete.name}</span>

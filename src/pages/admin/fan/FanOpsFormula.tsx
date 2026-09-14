@@ -100,13 +100,13 @@ export default function FanOpsFormula() {
                   { l: '적용 시작', v: data.current.effectiveAt ? fmtDate(data.current.effectiveAt, true) : '—' },
                 ].map((r) => (
                   <div key={r.l} className="flex items-center justify-between">
-                    <span className="text-slate-400">{r.l}</span>
+                    <span className="text-slate-500">{r.l}</span>
                     <span className="font-semibold text-slate-800 tabular-nums">{r.v}</span>
                   </div>
                 ))}
                 <div className="pt-3 border-t border-slate-100">
                   <StatusTag label={data.current.status === 'ACTIVE' ? '운영 중' : data.current.status} tone="emerald" />
-                  {data.current.note && <p className="text-[11px] text-slate-400 mt-2">{data.current.note}</p>}
+                  {data.current.note && <p className="text-[12px] text-slate-500 mt-2">{data.current.note}</p>}
                 </div>
               </div>
             </Panel>
@@ -175,7 +175,7 @@ export default function FanOpsFormula() {
                         새 버전 발행
                       </button>
                     </div>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[12px] text-slate-500">
                       발행해도 과거 스냅샷은 이전 버전으로 보존됩니다. 소급 재계산은 하지 않습니다.
                     </p>
                   </div>
@@ -203,7 +203,7 @@ export default function FanOpsFormula() {
                     <Thermometer className="w-5 h-5 text-slate-300" />
                     <span className="text-[36px] font-extrabold text-slate-900 tabular-nums leading-none">
                       {snap.score === null ? '—' : snap.score.toFixed(1)}
-                      {snap.score !== null && <span className="text-[16px] text-slate-400 ml-1">℃</span>}
+                      {snap.score !== null && <span className="text-[16px] text-slate-500 ml-1">℃</span>}
                     </span>
                   </div>
                   {snap.tier && <StatusTag label={snap.tier.label} tone="amber" />}
@@ -216,7 +216,7 @@ export default function FanOpsFormula() {
                       { l: '마지막 계산', v: snap.calculatedAt ? fmtDate(snap.calculatedAt, true) : '—' },
                     ].map((r) => (
                       <div key={r.l} className="flex items-center justify-between">
-                        <span className="text-slate-400">{r.l}</span>
+                        <span className="text-slate-500">{r.l}</span>
                         <span className="font-semibold text-slate-800 tabular-nums">{r.v}</span>
                       </div>
                     ))}
@@ -239,13 +239,13 @@ export default function FanOpsFormula() {
                             style={{ height: `${Math.max(3, (t.score / maxT) * 100)}%` }} title={`${t.score.toFixed(1)}℃`} />
                         ))}
                       </div>
-                      <div className="flex justify-between mt-2 text-[11px] text-slate-400">
+                      <div className="flex justify-between mt-2 text-[12px] text-slate-500">
                         <span>{fmtDate(trend[0].date)}</span>
                         <span>{fmtDate(trend[trend.length - 1].date)}</span>
                       </div>
                     </>
                   ) : (
-                    <p className="text-[13px] text-slate-400 py-8 text-center">스냅샷이 2일 이상 쌓여야 추이를 볼 수 있습니다.</p>
+                    <p className="text-[13px] text-slate-500 py-8 text-center">스냅샷이 2일 이상 쌓여야 추이를 볼 수 있습니다.</p>
                   )}
 
                   {/* 기여 이벤트 */}
@@ -253,7 +253,7 @@ export default function FanOpsFormula() {
                   {snap.contributions?.length ? (
                     <table className="w-full text-[13px]">
                       <thead>
-                        <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                        <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                           <th className="text-left font-semibold py-2">활동</th>
                           <th className="text-left font-semibold py-2">구성요소</th>
                           <th className="text-right font-semibold py-2">건수</th>
@@ -274,7 +274,7 @@ export default function FanOpsFormula() {
                       </tbody>
                     </table>
                   ) : (
-                    <p className="text-[13px] text-slate-400 py-4">최근 7일 활동 기록이 없습니다.</p>
+                    <p className="text-[13px] text-slate-500 py-4">최근 7일 활동 기록이 없습니다.</p>
                   )}
                 </div>
               </div>
@@ -294,7 +294,7 @@ export default function FanOpsFormula() {
                       { l: '평균 처리 시간', v: data.batch.durationMs ? `${(data.batch.durationMs / 1000).toFixed(1)}초` : '—' },
                     ].map((r) => (
                       <div key={r.l}>
-                        <p className="text-[11px] text-slate-400 font-semibold">{r.l}</p>
+                        <p className="text-[12px] text-slate-500 font-semibold">{r.l}</p>
                         <p className="text-[16px] font-extrabold text-slate-900 tabular-nums mt-0.5">{r.v}</p>
                       </div>
                     ))}
@@ -307,7 +307,7 @@ export default function FanOpsFormula() {
 
             <Panel title="이상 징후 알림"
               right={data.alerts?.length > 0 && (
-                <span className="inline-flex h-6 px-2 rounded-lg bg-rose-50 text-rose-600 text-[11px] font-bold">
+                <span className="inline-flex h-6 px-2 rounded-lg bg-rose-50 text-rose-600 text-[12px] font-bold">
                   {data.alerts.reduce((s: number, a: any) => s + a.count, 0)}건
                 </span>
               )}>
@@ -318,7 +318,7 @@ export default function FanOpsFormula() {
                       <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                       <div className="min-w-0">
                         <p className="text-[13px] font-semibold text-slate-800">{a.label}</p>
-                        <p className="text-[11px] text-slate-400 mt-0.5">{a.athletes.join(', ')}</p>
+                        <p className="text-[12px] text-slate-500 mt-0.5">{a.athletes.join(', ')}</p>
                       </div>
                       <span className="ml-auto text-[13px] font-extrabold text-rose-500 tabular-nums">{a.count}</span>
                     </div>
@@ -335,7 +335,7 @@ export default function FanOpsFormula() {
             <Panel title="버전 히스토리">
               <table className="w-full text-[13px]">
                 <thead>
-                  <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                  <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                     <th className="text-left font-semibold px-5 py-2.5">버전</th>
                     <th className="text-left font-semibold py-2.5">적용 기간</th>
                     <th className="text-left font-semibold py-2.5">상태</th>

@@ -140,7 +140,7 @@ export function BrandROISettings() {
               </span>
             ))}
             {keywords.length === 0 && (
-              <span className="text-sm text-slate-400">키워드를 추가하세요</span>
+              <span className="text-sm text-slate-500">키워드를 추가하세요</span>
             )}
           </div>
           <div className="flex gap-2">
@@ -180,7 +180,7 @@ export function BrandROISettings() {
               </span>
             ))}
             {competitors.length === 0 && (
-              <span className="text-sm text-slate-400">경쟁사를 추가하세요</span>
+              <span className="text-sm text-slate-500">경쟁사를 추가하세요</span>
             )}
           </div>
           <div className="flex gap-2">
@@ -220,7 +220,7 @@ export function BrandROISettings() {
               </span>
             ))}
             {blockedCategories.length === 0 && (
-              <span className="text-sm text-slate-400">금지 업종을 추가하세요</span>
+              <span className="text-sm text-slate-500">금지 업종을 추가하세요</span>
             )}
           </div>
           <div className="flex gap-2">

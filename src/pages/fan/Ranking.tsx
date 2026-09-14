@@ -131,7 +131,7 @@ export default function Ranking() {
                 <p className="text-white font-medium text-sm truncate max-w-[80px]">
                   {rankings[1]?.name}
                 </p>
-                <p className="text-slate-400 text-xs">{rankings[1]?.totalPoints.toLocaleString()}P</p>
+                <p className="text-slate-500 text-xs">{rankings[1]?.totalPoints.toLocaleString()}P</p>
               </div>
 
               {/* 1st Place */}
@@ -186,7 +186,7 @@ export default function Ranking() {
                 <p className="text-white font-medium text-sm truncate max-w-[80px]">
                   {rankings[2]?.name}
                 </p>
-                <p className="text-slate-400 text-xs">{rankings[2]?.totalPoints.toLocaleString()}P</p>
+                <p className="text-slate-500 text-xs">{rankings[2]?.totalPoints.toLocaleString()}P</p>
               </div>
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function Ranking() {
           {!rankings || rankings.length === 0 ? (
             <div className="py-12 text-center">
               <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Trophy className="w-6 h-6 text-slate-400" />
+                <Trophy className="w-6 h-6 text-slate-500" />
               </div>
               <p className="text-slate-500">아직 랭킹 데이터가 없습니다</p>
               <Link to="/votes" className="text-sm text-emerald-600 hover:underline mt-2 inline-block">
@@ -232,7 +232,7 @@ export default function Ranking() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Users className="w-6 h-6 text-slate-400" />
+                        <Users className="w-6 h-6 text-slate-500" />
                       </div>
                     )}
                   </div>
@@ -286,7 +286,7 @@ export default function Ranking() {
               </p>
               <p className="text-xs text-slate-500">선수 응원하기</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-400 ml-auto group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="w-4 h-4 text-slate-500 ml-auto group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
           </Link>
           <Link
             to="/points"
@@ -301,7 +301,7 @@ export default function Ranking() {
               </p>
               <p className="text-xs text-slate-500">포인트 현황</p>
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-400 ml-auto group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="w-4 h-4 text-slate-500 ml-auto group-hover:text-emerald-600 group-hover:translate-x-1 transition-all" />
           </Link>
         </div>
       </div>

@@ -215,34 +215,34 @@ export function AuctionDetail() {
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-1.5">
                 {auctionData.status === 'LIVE' && (
-                  <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-rose-50 text-rose-600 text-[10px] font-extrabold tracking-wide">
+                  <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-rose-50 text-rose-600 text-[12.5px] font-extrabold tracking-wide">
                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" /> LIVE
                   </span>
                 )}
                 <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 truncate">{template?.name}</h1>
-                <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 text-[11px] font-bold">{statusInfo.label}</span>
-                <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[11px] font-semibold">
+                <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 text-[12px] font-bold">{statusInfo.label}</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[12px] font-semibold">
                   {isPublicAuction ? '공개 경매' : '비공개 경매'}
                 </span>
                 <span className={cn(
-                  'ml-auto inline-flex items-center gap-1 text-[11px] font-semibold',
-                  isConnected ? 'text-emerald-600' : 'text-slate-400'
+                  'ml-auto inline-flex items-center gap-1 text-[12px] font-semibold',
+                  isConnected ? 'text-emerald-600' : 'text-slate-500'
                 )}>
                   {isConnected ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
                   {isConnected ? '실시간' : '연결 중...'}
-                  {auctionData.status === 'LIVE' && viewerCount > 0 && <span className="ml-1.5 text-slate-400">· {viewerCount}명</span>}
+                  {auctionData.status === 'LIVE' && viewerCount > 0 && <span className="ml-1.5 text-slate-500">· {viewerCount}명</span>}
                 </span>
               </div>
 
               <p className="text-sm text-slate-500 mb-4">{athlete?.name} 프로 · {getEventMonthLabel(event)}</p>
 
-              <p className="text-[11px] text-slate-400 mb-0.5">{bidCount > 0 ? '현재가' : '경매 시작가'}</p>
+              <p className="text-[12px] text-slate-500 mb-0.5">{bidCount > 0 ? '현재가' : '경매 시작가'}</p>
               <p className="text-3xl sm:text-4xl font-black text-slate-900 tabular-nums mb-3">
                 {formatCurrency(auctionData.currentPrice || slot?.reservePrice || 0)}
               </p>
 
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2.5 py-1.5 rounded-lg bg-slate-100 text-[11px] font-bold text-slate-600 tabular-nums">
+                <span className="px-2.5 py-1.5 rounded-lg bg-slate-100 text-[12px] font-bold text-slate-600 tabular-nums">
                   다음 최소 입찰가 {formatCurrency(nextMinBid)}
                 </span>
                 {auctionData.status === 'LIVE' && (
@@ -294,7 +294,7 @@ export function AuctionDetail() {
               <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-5">
                 <div className="flex flex-col items-center justify-center rounded-xl bg-slate-50 border border-slate-100 p-4">
                   <SlotShape code={template?.code} />
-                  <span className="mt-2 text-[11px] text-slate-400">위치 미리보기</span>
+                  <span className="mt-2 text-[12px] text-slate-500">위치 미리보기</span>
                 </div>
 
                 <dl className="grid grid-cols-2 gap-2.5 content-start">
@@ -309,10 +309,10 @@ export function AuctionDetail() {
 
               {template?.forbiddenNotes && (
                 <div className="mt-4 rounded-xl bg-amber-50 border border-amber-100 px-3.5 py-3">
-                  <div className="text-[11px] font-bold text-amber-800 mb-0.5 flex items-center gap-1.5">
+                  <div className="text-[12px] font-bold text-amber-800 mb-0.5 flex items-center gap-1.5">
                     <AlertCircle className="w-3.5 h-3.5" /> 주의사항
                   </div>
-                  <p className="text-[11px] text-amber-900/80 leading-relaxed break-keep">{template.forbiddenNotes}</p>
+                  <p className="text-[12px] text-amber-900/80 leading-relaxed break-keep">{template.forbiddenNotes}</p>
                 </div>
               )}
             </div>
@@ -324,7 +324,7 @@ export function AuctionDetail() {
                   <TrendingUp className="w-4 h-4 text-emerald-500" /> 입찰 현황
                 </h2>
                 <span className={cn(
-                  'px-2 py-0.5 rounded-md text-[11px] font-bold',
+                  'px-2 py-0.5 rounded-md text-[12px] font-bold',
                   bidCount > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
                 )}>
                   {bidCount > 0 ? '입찰 진행 중' : '입찰 시작 전'}
@@ -342,16 +342,16 @@ export function AuctionDetail() {
                 {/* 중: 경쟁 지수 게이지 */}
                 <div className="flex flex-col items-center">
                   <CompetitionGauge bidCount={bidCount} />
-                  <span className="mt-1.5 text-[11px] text-slate-400">경쟁 지수</span>
+                  <span className="mt-1.5 text-[12px] text-slate-500">경쟁 지수</span>
                 </div>
 
                 {/* 우: 최근 입찰 내역 */}
                 <div className="min-w-0">
-                  <div className="text-[11px] font-bold text-slate-700 mb-1.5">최근 입찰 내역</div>
+                  <div className="text-[12px] font-bold text-slate-700 mb-1.5">최근 입찰 내역</div>
                   {bids.length === 0 ? (
                     <div className="rounded-xl bg-slate-50 border border-slate-100 px-3.5 py-4 text-center">
                       <p className="text-xs font-semibold text-slate-600">아직 입찰이 없습니다</p>
-                      <p className="text-[11px] text-slate-400 mt-0.5">첫 번째 입찰의 주인공이 되어보세요</p>
+                      <p className="text-[12px] text-slate-500 mt-0.5">첫 번째 입찰의 주인공이 되어보세요</p>
                     </div>
                   ) : (
                     <ul className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
@@ -359,18 +359,18 @@ export function AuctionDetail() {
                         <li key={b.id || i} className="flex items-center justify-between gap-2 rounded-lg bg-slate-50 px-2.5 py-1.5">
                           <span className="flex items-center gap-1.5 min-w-0">
                             {i === 0 && <span className="text-[9px] font-extrabold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">최고</span>}
-                            <span className="text-[11px] font-semibold text-slate-700 truncate">
+                            <span className="text-[12px] font-semibold text-slate-700 truncate">
                               {maskBrandName(b.brand?.name)}
                             </span>
                           </span>
-                          <span className="text-[11px] font-bold text-slate-900 tabular-nums shrink-0">
+                          <span className="text-[12px] font-bold text-slate-900 tabular-nums shrink-0">
                             {formatCurrency(b.currentProxy ?? b.maxBid ?? 0)}
                           </span>
                         </li>
                       ))}
                     </ul>
                   )}
-                  <p className="mt-2 text-[10px] text-slate-400 break-keep">
+                  <p className="mt-2 text-[12.5px] text-slate-500 break-keep">
                     {auctionData.status === 'LIVE'
                       ? '입찰이 접수되면 실시간으로 현황이 갱신됩니다.'
                       : '종료된 경매입니다.'}
@@ -408,7 +408,7 @@ export function AuctionDetail() {
                   <Link to={`/athletes/${athlete?.id}`} className="block text-base font-extrabold text-slate-900 hover:text-emerald-600 truncate">
                     {athlete?.name} 프로
                   </Link>
-                  <span className="text-[11px] text-slate-400">{athlete?.tourQualification || athlete?.tour || ''}</span>
+                  <span className="text-[12px] text-slate-500">{athlete?.tourQualification || athlete?.tour || ''}</span>
                 </div>
               </div>
 
@@ -421,7 +421,7 @@ export function AuctionDetail() {
               )}
 
               {athlete?.kycStatus === 'APPROVED' && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px] font-bold">
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[12px] font-bold">
                   <CheckCircle className="w-3 h-3" /> KYC 인증됨
                 </span>
               )}
@@ -453,7 +453,7 @@ export function AuctionDetail() {
         {auctionData.status === 'LIVE' && (
           <div className="lg:hidden fixed bottom-14 inset-x-0 z-40 bg-white border-t border-slate-200 px-4 py-2.5 flex items-center gap-3 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
             <div className="min-w-0 flex-1">
-              <div className="text-[11px] text-slate-500 truncate tabular-nums">
+              <div className="text-[12px] text-slate-500 truncate tabular-nums">
                 {bidCount > 0 ? '현재가' : '시작가'} · 남은 시간 {formatTimeRemaining(auctionData.endAt)}
               </div>
               <div className="text-sm font-extrabold text-slate-900 tabular-nums">
@@ -528,7 +528,7 @@ export function AuctionDetail() {
               <div className="mb-6">
                 <label className="label">최대 입찰가</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-slate-400 leading-none">₩</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-slate-500 leading-none">₩</span>
                   <input
                     type="number"
                     className="input pl-10"
@@ -547,7 +547,7 @@ export function AuctionDetail() {
                 {/* 자동입찰 안내 (핸드오프 §12.2/12.3) */}
                 <div className="mt-3 p-3 rounded-lg bg-slate-50 border border-slate-200">
                   <div className="text-xs font-bold text-slate-800 mb-1">자동입찰로 진행됩니다</div>
-                  <p className="text-[11px] text-slate-600 leading-relaxed break-keep">
+                  <p className="text-[12px] text-slate-600 leading-relaxed break-keep">
                     입력하신 금액은 <b>최대 한도</b>입니다. 실제로는 다른 입찰자를 이기는 데 필요한 만큼만
                     {' '}{formatCurrency(minIncrement)} 단위로 자동 입찰되며, 한도는 다른 참여자에게 공개되지 않습니다.
                     한도를 넘어서면 알림을 보내드립니다.
@@ -555,7 +555,7 @@ export function AuctionDetail() {
                 </div>
 
                 {/* 마감 임박 연장 · 취소 제한 안내 */}
-                <p className="mt-2 text-[11px] text-slate-500 break-keep">
+                <p className="mt-2 text-[12px] text-slate-500 break-keep">
                   종료 {Math.round((auctionData.softCloseSec ?? 120) / 60)}분 이내 입찰이 들어오면 종료시간이 자동 연장됩니다.
                   입찰은 철회할 수 없으며, 낙찰 시 계약이 생성됩니다.
                 </p>
@@ -563,7 +563,7 @@ export function AuctionDetail() {
                 {/* 계약조건 확인 (§12.2) */}
                 <label className="flex items-start gap-2 mt-3 cursor-pointer">
                   <input type="checkbox" checked={bidAgreed} onChange={(e) => setBidAgreed(e.target.checked)} className="mt-0.5 w-4 h-4 accent-slate-900" />
-                  <span className="text-[11px] text-slate-600 break-keep">
+                  <span className="text-[12px] text-slate-600 break-keep">
                     계약조건과 권리관계 안내를 확인했으며, 낙찰 시 계약 체결에 동의합니다.
                   </span>
                 </label>
@@ -609,12 +609,12 @@ export function AuctionDetail() {
 function HeroStat({ label, value, sub, icon }: { label: string; value: string; sub?: string; icon?: React.ReactNode }) {
   return (
     <div className="px-4 py-3">
-      <div className="flex items-center gap-1 text-[10px] text-slate-400 mb-1">
+      <div className="flex items-center gap-1 text-[12.5px] text-slate-500 mb-1">
         {icon}
         {label}
       </div>
       <div className="text-sm font-extrabold tabular-nums truncate">{value}</div>
-      {sub && <div className="text-[10px] text-slate-500 truncate">{sub}</div>}
+      {sub && <div className="text-[12.5px] text-slate-500 truncate">{sub}</div>}
     </div>
   );
 }
@@ -767,7 +767,7 @@ function TrustItem({ icon, title, desc }: { icon: React.ReactNode; title: string
       <span className="mt-0.5 text-emerald-600 shrink-0">{icon}</span>
       <span className="min-w-0">
         <span className="block text-xs font-bold text-slate-800">{title}</span>
-        <span className="block text-[11px] text-slate-500 break-keep">{desc}</span>
+        <span className="block text-[12px] text-slate-500 break-keep">{desc}</span>
       </span>
     </div>
   );
@@ -777,7 +777,7 @@ function TrustItem({ icon, title, desc }: { icon: React.ReactNode; title: string
 function SpecBox({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white px-3 py-2">
-      <dt className="text-[10px] text-slate-400 mb-0.5">{label}</dt>
+      <dt className="text-[12.5px] text-slate-500 mb-0.5">{label}</dt>
       <dd className={`tabular-nums truncate ${strong ? 'text-base font-extrabold text-slate-900' : 'text-xs font-bold text-slate-800'}`}>
         {value}
       </dd>
@@ -801,7 +801,7 @@ function CompetitionGauge({ bidCount }: { bidCount: number }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="text-xl font-black text-slate-900 leading-none">{label}</span>
-        <span className="text-[10px] text-slate-400 mt-0.5">입찰 {bidCount}건</span>
+        <span className="text-[12.5px] text-slate-500 mt-0.5">입찰 {bidCount}건</span>
       </div>
     </div>
   );
@@ -811,8 +811,8 @@ function CompetitionGauge({ bidCount }: { bidCount: number }) {
 function SideRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start justify-between gap-3">
-      <dt className="text-[11px] text-slate-400 shrink-0">{label}</dt>
-      <dd className="text-[11px] font-semibold text-slate-800 text-right break-keep">{value}</dd>
+      <dt className="text-[12px] text-slate-500 shrink-0">{label}</dt>
+      <dd className="text-[12px] font-semibold text-slate-800 text-right break-keep">{value}</dd>
     </div>
   );
 }
@@ -821,7 +821,7 @@ function SideRow({ label, value }: { label: string; value: string }) {
 function SideLink({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
   return (
     <Link to={to} className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors">
-      <span className="text-slate-400">{icon}</span>
+      <span className="text-slate-500">{icon}</span>
       <span className="text-xs font-semibold text-slate-700 flex-1">{label}</span>
       <span className="text-slate-300">›</span>
     </Link>
@@ -832,8 +832,8 @@ function SideLink({ to, icon, label }: { to: string; icon: React.ReactNode; labe
 function AthleteFact({ icon, text }: { icon: string; text: string }) {
   return (
     <li className="flex items-start gap-1.5">
-      <span className="text-[11px] shrink-0">{icon}</span>
-      <span className="text-[11px] text-slate-600 leading-relaxed break-keep line-clamp-2">{text}</span>
+      <span className="text-[12px] shrink-0">{icon}</span>
+      <span className="text-[12px] text-slate-600 leading-relaxed break-keep line-clamp-2">{text}</span>
     </li>
   );
 }

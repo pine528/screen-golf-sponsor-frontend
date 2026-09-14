@@ -44,7 +44,7 @@ export default function AboutOpsAudit() {
           <div className="rounded-2xl border border-slate-200 bg-white px-5 py-3.5 flex flex-wrap items-center gap-3">
             <span className="text-[12px] font-semibold text-slate-500">보관 기간</span>
             <Tag>{data.retention.years}년 · {data.retention.policy}</Tag>
-            <span className="text-[12px] text-slate-400 tabular-nums ml-auto">
+            <span className="text-[12px] text-slate-500 tabular-nums ml-auto">
               총 {nf(data.total)}건 (조회 범위 내)
             </span>
           </div>
@@ -87,7 +87,7 @@ export default function AboutOpsAudit() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-[13px]">
                       <thead>
-                        <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                        <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                           <th className="text-left font-semibold px-5 py-2.5">시간</th>
                           <th className="text-left font-semibold py-2.5">액터</th>
                           <th className="text-left font-semibold py-2.5">액션</th>
@@ -135,7 +135,7 @@ export default function AboutOpsAudit() {
             <Panel title="이벤트 상세"
               right={selected && (
                 <button onClick={() => setSelected(null)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center">
-                  <X className="w-4 h-4 text-slate-400" />
+                  <X className="w-4 h-4 text-slate-500" />
                 </button>
               )}>
               {!selected ? (
@@ -147,7 +147,7 @@ export default function AboutOpsAudit() {
                       <AlertTriangle className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />
                       <div>
                         <p className="text-[13px] font-bold text-rose-700">민감 작업</p>
-                        <p className="text-[11.5px] text-rose-600 mt-0.5">공개범위·성과·권리·정산에 영향을 주는 변경입니다.</p>
+                        <p className="text-[12.5px] text-rose-600 mt-0.5">공개범위·성과·권리·정산에 영향을 주는 변경입니다.</p>
                       </div>
                     </div>
                   )}
@@ -162,8 +162,8 @@ export default function AboutOpsAudit() {
                       { l: 'IP', v: selected.ip ?? '—' },
                     ].map((r) => (
                       <div key={r.l} className="flex items-start justify-between gap-3">
-                        <dt className="text-slate-400 shrink-0">{r.l}</dt>
-                        <dd className="font-mono text-[11.5px] text-slate-700 text-right break-all">{r.v}</dd>
+                        <dt className="text-slate-500 shrink-0">{r.l}</dt>
+                        <dd className="font-mono text-[12.5px] text-slate-700 text-right break-all">{r.v}</dd>
                       </div>
                     ))}
                   </dl>
@@ -178,14 +178,14 @@ export default function AboutOpsAudit() {
                   {selected.body && (
                     <div>
                       <p className="text-[12px] font-bold text-slate-500 mb-1.5">변경 내용</p>
-                      <pre className="rounded-xl bg-slate-900 text-slate-200 p-3.5 text-[11px] leading-relaxed overflow-x-auto">
+                      <pre className="rounded-xl bg-slate-900 text-slate-200 p-3.5 text-[12px] leading-relaxed overflow-x-auto">
                         {JSON.stringify(selected.body, null, 2)}
                       </pre>
                     </div>
                   )}
 
                   <div className="rounded-2xl bg-slate-50 border border-slate-100 px-4 py-3 flex items-start gap-2.5">
-                    <Lock className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+                    <Lock className="w-4 h-4 text-slate-500 mt-0.5 shrink-0" />
                     <p className="text-[12px] text-slate-500 leading-relaxed">{data.notice}</p>
                   </div>
                 </div>

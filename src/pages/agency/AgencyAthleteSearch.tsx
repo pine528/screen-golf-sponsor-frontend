@@ -132,7 +132,7 @@ export function AgencyAthleteSearch() {
         <form onSubmit={handleSearch} className="card p-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
               <input
                 type="text"
                 placeholder="선수명 또는 이메일로 검색"
@@ -180,7 +180,7 @@ export function AgencyAthleteSearch() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Users className="w-7 h-7 text-slate-400" />
+                          <Users className="w-7 h-7 text-slate-500" />
                         </div>
                       )}
                     </div>

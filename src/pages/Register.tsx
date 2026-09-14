@@ -135,7 +135,7 @@ export function Register() {
                     {...register('role')}
                   />
                   <div className="text-center">
-                    <Heart className={`w-6 h-6 mx-auto mb-2 ${role === 'FAN' ? 'text-pink-500' : 'text-slate-400'}`} />
+                    <Heart className={`w-6 h-6 mx-auto mb-2 ${role === 'FAN' ? 'text-pink-500' : 'text-slate-500'}`} />
                     <div className={`font-semibold text-sm ${role === 'FAN' ? 'text-slate-900' : 'text-slate-500'}`}>일반(팬)</div>
                     <div className="text-xs text-slate-500 mt-1">팬으로 참여</div>
                   </div>
@@ -154,7 +154,7 @@ export function Register() {
                     {...register('role')}
                   />
                   <div className="text-center">
-                    <Target className={`w-6 h-6 mx-auto mb-2 ${role === 'BRAND' ? 'text-sky-500' : 'text-slate-400'}`} />
+                    <Target className={`w-6 h-6 mx-auto mb-2 ${role === 'BRAND' ? 'text-sky-500' : 'text-slate-500'}`} />
                     <div className={`font-semibold text-sm ${role === 'BRAND' ? 'text-slate-900' : 'text-slate-500'}`}>브랜드</div>
                     <div className="text-xs text-slate-500 mt-1">광고주로 참여</div>
                   </div>
@@ -173,7 +173,7 @@ export function Register() {
                     {...register('role')}
                   />
                   <div className="text-center">
-                    <Users className={`w-6 h-6 mx-auto mb-2 ${role === 'ATHLETE' ? 'text-emerald-500' : 'text-slate-400'}`} />
+                    <Users className={`w-6 h-6 mx-auto mb-2 ${role === 'ATHLETE' ? 'text-emerald-500' : 'text-slate-500'}`} />
                     <div className={`font-semibold text-sm ${role === 'ATHLETE' ? 'text-slate-900' : 'text-slate-500'}`}>선수</div>
                     <div className="text-xs text-slate-500 mt-1">프로선수로 참여</div>
                   </div>
@@ -192,7 +192,7 @@ export function Register() {
                     {...register('role')}
                   />
                   <div className="text-center">
-                    <Briefcase className={`w-6 h-6 mx-auto mb-2 ${role === 'AGENCY' ? 'text-purple-500' : 'text-slate-400'}`} />
+                    <Briefcase className={`w-6 h-6 mx-auto mb-2 ${role === 'AGENCY' ? 'text-purple-500' : 'text-slate-500'}`} />
                     <div className={`font-semibold text-sm ${role === 'AGENCY' ? 'text-slate-900' : 'text-slate-500'}`}>에이전시</div>
                     <div className="text-xs text-slate-500 mt-1">선수 매니지먼트</div>
                   </div>

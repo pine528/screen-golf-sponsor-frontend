@@ -92,7 +92,7 @@ export function AgencyAthletes() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
         <input
           type="text"
           placeholder="선수명 또는 이메일로 검색"
@@ -121,14 +121,14 @@ export function AgencyAthletes() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Users className="w-7 h-7 text-slate-400" />
+                      <Users className="w-7 h-7 text-slate-500" />
                     </div>
                   )}
                 </div>
                 <div>
                   <p className="font-semibold text-slate-900">{athlete.name}</p>
                   <p className="text-sm text-slate-500">{athlete.user.email}</p>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-slate-500 mt-1">
                     {athlete.tour} · 슬롯 {athlete._count.slotInstances}개 · 계약 {athlete._count.contracts}건
                   </p>
                 </div>
@@ -149,7 +149,7 @@ export function AgencyAthletes() {
                     ? 'KYC 심사중'
                     : 'KYC 미제출'}
                 </span>
-                <ChevronRight className="w-5 h-5 text-slate-400" />
+                <ChevronRight className="w-5 h-5 text-slate-500" />
               </div>
             </Link>
           ))}

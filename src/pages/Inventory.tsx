@@ -133,7 +133,7 @@ export function Inventory() {
                 'p-2 rounded-lg transition-colors',
                 viewMode === 'grid'
                   ? 'bg-emerald-100 text-emerald-600'
-                  : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
+                  : 'text-slate-500 hover:text-slate-600 hover:bg-slate-100'
               )}
             >
               <Grid3X3 className="w-5 h-5" />
@@ -144,7 +144,7 @@ export function Inventory() {
                 'p-2 rounded-lg transition-colors',
                 viewMode === 'list'
                   ? 'bg-emerald-100 text-emerald-600'
-                  : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
+                  : 'text-slate-500 hover:text-slate-600 hover:bg-slate-100'
               )}
             >
               <List className="w-5 h-5" />
@@ -156,7 +156,7 @@ export function Inventory() {
         <div className="card p-3 sm:p-4">
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-500" />
               <input
                 type="text"
                 placeholder="선수명, 슬롯명, 이벤트 검색..."
@@ -258,7 +258,7 @@ export function Inventory() {
                     </td>
                     <td className="px-6 py-4">
                       <p className="text-sm text-slate-600">{getEventMonthLabel(slot.event)}</p>
-                      <p className="text-xs text-slate-400">{formatDate(slot.event?.dateStart)}</p>
+                      <p className="text-xs text-slate-500">{formatDate(slot.event?.dateStart)}</p>
                     </td>
                     <td className="px-6 py-4">
                       <p className="font-semibold text-slate-900">
@@ -294,14 +294,14 @@ export function Inventory() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
+                className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <span className="px-3 py-1 text-sm text-slate-600">페이지 {page}</span>
               <button
                 onClick={() => setPage((p) => p + 1)}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-2 text-slate-500 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -379,7 +379,7 @@ function SlotCard({ slot, onSelect, formatCurrency, formatDate }: SlotCardProps)
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-medium text-slate-900 text-sm sm:text-base truncate">{slot.athlete?.name}</p>
-            <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-slate-500">
+            <div className="flex items-center gap-1 sm:gap-2 text-[12.5px] sm:text-xs text-slate-500">
               <span>랭킹 {slot.athlete?.rank}위</span>
               <span>•</span>
               <span className="truncate">{slot.athlete?.averageViewers?.toLocaleString()}명</span>
@@ -402,13 +402,13 @@ function SlotCard({ slot, onSelect, formatCurrency, formatDate }: SlotCardProps)
             {slot.auction?.status === 'LIVE' && slot.enableDirectBuy && slot.directBuyPrice ? (
               <>
                 <div className="flex items-center gap-2">
-                  <p className="text-[10px] sm:text-xs text-amber-600 font-medium">시작가:</p>
+                  <p className="text-[12.5px] sm:text-xs text-amber-600 font-medium">시작가:</p>
                   <p className="text-sm font-bold text-amber-700">
                     {formatCurrency(slot.reservePrice || slot.auction?.currentPrice || 0)}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <p className="text-[10px] sm:text-xs text-violet-600 font-medium">즉시구매:</p>
+                  <p className="text-[12.5px] sm:text-xs text-violet-600 font-medium">즉시구매:</p>
                   <p className="text-sm font-bold text-violet-700">
                     {formatCurrency(Number(slot.directBuyPrice))}
                   </p>
@@ -416,14 +416,14 @@ function SlotCard({ slot, onSelect, formatCurrency, formatDate }: SlotCardProps)
               </>
             ) : slot.enableDirectBuy && slot.directBuyPrice ? (
               <>
-                <p className="text-[10px] sm:text-xs text-violet-600 font-medium">즉시구매가</p>
+                <p className="text-[12.5px] sm:text-xs text-violet-600 font-medium">즉시구매가</p>
                 <p className="text-base sm:text-lg font-bold text-violet-700">
                   {formatCurrency(Number(slot.directBuyPrice))}
                 </p>
               </>
             ) : (
               <>
-                <p className="text-[10px] sm:text-xs text-slate-500">시작가</p>
+                <p className="text-[12.5px] sm:text-xs text-slate-500">시작가</p>
                 <p className="text-base sm:text-lg font-bold text-slate-900">
                   {formatCurrency(slot.reservePrice || slot.auction?.startingPrice || 0)}
                 </p>
@@ -464,23 +464,23 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate }: SlotDeta
           {/* Slot Details */}
           <div className="grid grid-cols-2 gap-2 sm:gap-4">
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-              <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">위치</p>
+              <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">위치</p>
               <p className="font-medium text-slate-900 text-sm sm:text-base">{slot.slotTemplate?.bodyPart}</p>
             </div>
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-              <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">노출 시간</p>
+              <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">노출 시간</p>
               <p className="font-medium text-slate-900 text-sm sm:text-base">
                 {slot.slotTemplate?.duration ? `${slot.slotTemplate.duration}초` : '-'}
               </p>
             </div>
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-              <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">예상 노출</p>
+              <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">예상 노출</p>
               <p className="font-medium text-slate-900 text-sm sm:text-base">
                 {slot.slotTemplate?.estimatedImpressions ? `${slot.slotTemplate.estimatedImpressions.toLocaleString()}회` : '-'}
               </p>
             </div>
             <div className="p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-              <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">이벤트 기간</p>
+              <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">이벤트 기간</p>
               <p className="font-medium text-slate-900 text-sm sm:text-base">
                 {formatDate(slot.event?.dateStart)} - {formatDate(slot.event?.dateEnd)}
               </p>
@@ -492,11 +492,11 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate }: SlotDeta
             <h3 className="text-xs sm:text-sm font-semibold text-slate-900 mb-2 sm:mb-3">선수 정보</h3>
             <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
               <div className="w-12 h-12 sm:w-16 sm:h-16 bg-slate-200 rounded-full flex items-center justify-center flex-shrink-0">
-                <Users className="w-6 h-6 sm:w-8 sm:h-8 text-slate-400" />
+                <Users className="w-6 h-6 sm:w-8 sm:h-8 text-slate-500" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-slate-900 text-sm sm:text-base">{slot.athlete?.name}</p>
-                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[10px] sm:text-sm text-slate-600 mt-1">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[12.5px] sm:text-sm text-slate-600 mt-1">
                   <span className="flex items-center gap-1">
                     <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
                     랭킹 {slot.athlete?.rank}위
@@ -519,17 +519,17 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate }: SlotDeta
             <h3 className="text-xs sm:text-sm font-semibold text-slate-900 mb-2 sm:mb-3">경매 정보</h3>
             <div className="grid grid-cols-3 gap-2 sm:gap-4">
               <div className="p-2.5 sm:p-4 bg-emerald-50 rounded-lg sm:rounded-xl border border-emerald-200">
-                <p className="text-[10px] sm:text-xs text-emerald-600 mb-0.5 sm:mb-1">현재 가격</p>
+                <p className="text-[12.5px] sm:text-xs text-emerald-600 mb-0.5 sm:mb-1">현재 가격</p>
                 <p className="text-sm sm:text-xl font-bold text-emerald-700">
                   {formatCurrency(slot.auction?.currentPrice || slot.auction?.startingPrice || 0)}
                 </p>
               </div>
               <div className="p-2.5 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">입찰 수</p>
+                <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">입찰 수</p>
                 <p className="text-sm sm:text-xl font-bold text-slate-900">{slot.auction?.bidCount || 0}건</p>
               </div>
               <div className="p-2.5 sm:p-4 bg-slate-50 rounded-lg sm:rounded-xl">
-                <p className="text-[10px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">마감</p>
+                <p className="text-[12.5px] sm:text-xs text-slate-500 mb-0.5 sm:mb-1">마감</p>
                 <p className="text-sm sm:text-xl font-bold text-slate-900">
                   {slot.auction?.endTime
                     ? new Date(slot.auction.endTime).toLocaleString('ko-KR', {
@@ -550,14 +550,14 @@ function SlotDetailModal({ slot, onClose, formatCurrency, formatDate }: SlotDeta
             <div className="grid grid-cols-2 gap-2 sm:gap-4">
               {slot.enableDirectBuy && slot.directBuyPrice && (
                 <div className="p-3 sm:p-4 bg-violet-50 rounded-lg sm:rounded-xl border border-violet-200">
-                  <p className="text-[10px] sm:text-xs text-violet-600 mb-0.5 sm:mb-1">즉시구매가</p>
+                  <p className="text-[12.5px] sm:text-xs text-violet-600 mb-0.5 sm:mb-1">즉시구매가</p>
                   <p className="text-base sm:text-xl font-bold text-violet-700">
                     {formatCurrency(Number(slot.directBuyPrice))}
                   </p>
                 </div>
               )}
               <div className="p-3 sm:p-4 bg-emerald-50 rounded-lg sm:rounded-xl border border-emerald-200">
-                <p className="text-[10px] sm:text-xs text-emerald-600 mb-0.5 sm:mb-1">
+                <p className="text-[12.5px] sm:text-xs text-emerald-600 mb-0.5 sm:mb-1">
                   {slot.auction?.currentPrice ? '현재 입찰가' : '시작가'}
                 </p>
                 <p className="text-base sm:text-xl font-bold text-emerald-700">

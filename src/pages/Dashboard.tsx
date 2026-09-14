@@ -205,7 +205,7 @@ function BrandDashboard() {
                         <Link to={`/sponsor/applications/${a.id}`} className="block rounded-xl border border-slate-200 px-3 py-2.5 hover:border-emerald-300">
                           <span className="flex items-center gap-2">
                             <span className="text-[13px] font-bold text-slate-800 truncate">{a.planName || (a.items?.[0]?.athlete?.name ? `${a.items[0].athlete.name} 외` : '후원 신청')}</span>
-                            <span className={`ml-auto shrink-0 px-1.5 py-0.5 rounded text-[11px] font-bold ${st.cls}`}>{st.label}</span>
+                            <span className={`ml-auto shrink-0 px-1.5 py-0.5 rounded text-[12px] font-bold ${st.cls}`}>{st.label}</span>
                           </span>
                           <span className="block text-[12px] text-slate-500">{a.items?.length ?? 0}개 항목 · {a.submittedAt ? formatDate(a.submittedAt) : '미제출'}</span>
                         </Link>
@@ -243,7 +243,7 @@ function BrandDashboard() {
                       </span>
                     </span>
                     <span className="shrink-0 text-right">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[11.5px] font-bold"><CheckCircle2 className="w-3 h-3" /> 진행 중</span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[12.5px] font-bold"><CheckCircle2 className="w-3 h-3" /> 진행 중</span>
                       <span className="block mt-1 text-[12px] text-slate-500">다음: 소재 · 실행 확인</span>
                     </span>
                   </Link>
@@ -357,7 +357,7 @@ function AthleteDashboard() {
                           {r.application?.approvalDueAt ? `응답 기한 ${formatTimeRemaining(r.application.approvalDueAt)}` : '기한 정보 없음'}
                         </span>
                       </span>
-                      <span className={`shrink-0 px-2 py-0.5 rounded-md text-[11.5px] font-bold ${st.cls}`}>{st.label}</span>
+                      <span className={`shrink-0 px-2 py-0.5 rounded-md text-[12.5px] font-bold ${st.cls}`}>{st.label}</span>
                     </Link>
                   </li>
                 );

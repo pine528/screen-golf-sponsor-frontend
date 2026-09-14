@@ -102,7 +102,7 @@ export default function AdminOfferPlacements() {
             <ArrowLeft className="w-4 h-4" /> 상품 목록
           </Link>
           <div>
-            <p className="text-[12px] font-bold text-slate-400">A07 진열 배치관리</p>
+            <p className="text-[12px] font-bold text-slate-500">A07 진열 배치관리</p>
             <h1 className="text-[20px] font-black">홈 화면과 주요 영역의 후원 상품 진열 위치를 관리합니다.</h1>
           </div>
           <div className="ml-auto inline-flex rounded-xl border border-slate-200 bg-white p-1">
@@ -129,11 +129,11 @@ export default function AdminOfferPlacements() {
             <div className="rounded-2xl bg-white border border-slate-200 p-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-[13.5px] font-extrabold">진열 대상</h2>
-                <button onClick={load} aria-label="새로고침" className="text-slate-400 hover:text-slate-700">
+                <button onClick={load} aria-label="새로고침" className="text-slate-500 hover:text-slate-700">
                   <RotateCcw className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <p className="mt-0.5 text-[11px] text-slate-400">발행된 후원 상품 {candidates.length}건</p>
+              <p className="mt-0.5 text-[12px] text-slate-500">발행된 후원 상품 {candidates.length}건</p>
               <div className="relative mt-3">
                 <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-slate-300" />
                 <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="상품명, 코드 검색"
@@ -154,15 +154,15 @@ export default function AdminOfferPlacements() {
                       >
                         <span className="flex items-center gap-2">
                           {(o.preApproved ? ['즉시구매'] : ['선수확인']).map((b) => (
-                            <span key={b} className={`px-1.5 py-0.5 rounded text-[10px] font-black ${BADGE_STYLE[b]}`}>{b}</span>
+                            <span key={b} className={`px-1.5 py-0.5 rounded text-[12.5px] font-black ${BADGE_STYLE[b]}`}>{b}</span>
                           ))}
-                          {placed && <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold">배치됨</span>}
+                          {placed && <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[12.5px] font-bold">배치됨</span>}
                           {o.daysLeft != null && o.daysLeft <= 14 && (
-                            <span className="ml-auto text-[10.5px] font-black text-rose-600">D-{o.daysLeft}</span>
+                            <span className="ml-auto text-[12.5px] font-black text-rose-600">D-{o.daysLeft}</span>
                           )}
                         </span>
                         <span className="mt-1.5 block text-[12.5px] font-extrabold break-keep">{o.title}</span>
-                        <span className="mt-0.5 block text-[11px] text-slate-400">
+                        <span className="mt-0.5 block text-[12px] text-slate-500">
                           {o.athletes[0]?.name ?? '—'} · {o.supplyAmount.toLocaleString()}원
                         </span>
                       </button>
@@ -171,7 +171,7 @@ export default function AdminOfferPlacements() {
                 })}
               </ul>
               {target && (
-                <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-[11.5px] font-bold text-emerald-700 break-keep">
+                <p className="mt-3 rounded-lg bg-emerald-50 px-3 py-2 text-[12.5px] font-bold text-emerald-700 break-keep">
                   {SECTION_LABEL[target.section]} {target.rank}번 슬롯에 넣을 상품을 선택하세요.
                   <button onClick={() => setTarget(null)} className="ml-2 underline">취소</button>
                 </p>
@@ -188,7 +188,7 @@ export default function AdminOfferPlacements() {
                       <h3 className="text-[13.5px] font-extrabold">
                         {SURFACES.find((s) => s.code === surface)?.label} &gt; {SECTION_LABEL[key]}
                       </h3>
-                      <span className="ml-auto text-[11.5px] text-slate-400">{items.length} / {SLOTS_PER_SECTION}</span>
+                      <span className="ml-auto text-[12.5px] text-slate-500">{items.length} / {SLOTS_PER_SECTION}</span>
                     </div>
 
                     <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
@@ -204,7 +204,7 @@ export default function AdminOfferPlacements() {
                             }`}
                           >
                             <span className="flex items-center gap-1">
-                              <span className="text-[11px] font-black text-slate-400">{rank}</span>
+                              <span className="text-[12px] font-black text-slate-500">{rank}</span>
                               {p.pinned && <Pin className="w-3 h-3 text-emerald-600" />}
                               {p.isSponsored && <span className="px-1 py-0.5 rounded bg-amber-100 text-amber-700 text-[9px] font-black">광고</span>}
                               <button
@@ -215,8 +215,8 @@ export default function AdminOfferPlacements() {
                                 <X className="w-3 h-3" />
                               </button>
                             </span>
-                            <span className="mt-1.5 block text-[11.5px] font-bold break-keep line-clamp-2">{p.offer.title}</span>
-                            <span className="mt-1 block text-[10px] text-slate-400">
+                            <span className="mt-1.5 block text-[12.5px] font-bold break-keep line-clamp-2">{p.offer.title}</span>
+                            <span className="mt-1 block text-[12.5px] text-slate-500">
                               {OFFER_STATUS[p.offer.displayStatus]?.label}
                             </span>
                           </button>
@@ -228,7 +228,7 @@ export default function AdminOfferPlacements() {
                               isTarget ? 'border-emerald-500 bg-emerald-50/50' : 'border-slate-200 hover:border-slate-300'
                             }`}
                           >
-                            <span className="text-[11px] font-black text-slate-300">{rank}</span>
+                            <span className="text-[12px] font-black text-slate-300">{rank}</span>
                             <Plus className={`w-4 h-4 ${isTarget ? 'text-emerald-600' : 'text-slate-300'}`} />
                           </button>
                         );
@@ -237,7 +237,7 @@ export default function AdminOfferPlacements() {
                   </div>
                 );
               })}
-              <p className="text-[11.5px] text-slate-400">
+              <p className="text-[12.5px] text-slate-500">
                 빈 슬롯을 누른 뒤 왼쪽에서 상품을 선택하면 배치됩니다. 배치된 슬롯을 누르면 오른쪽에서 노출 규칙을 설정할 수 있습니다.
               </p>
             </div>
@@ -254,13 +254,13 @@ export default function AdminOfferPlacements() {
               </div>
 
               {!picked ? (
-                <p className="py-16 text-center text-[12.5px] text-slate-400 break-keep">
+                <p className="py-16 text-center text-[12.5px] text-slate-500 break-keep">
                   배치된 슬롯을 선택하면<br />노출 규칙을 설정할 수 있습니다.
                 </p>
               ) : (
                 <div className="mt-4 space-y-4">
                   <div className="rounded-xl bg-slate-50 p-3.5">
-                    <p className="text-[11px] text-slate-400">적용 위치</p>
+                    <p className="text-[12px] text-slate-500">적용 위치</p>
                     <p className="mt-0.5 text-[12.5px] font-bold break-keep">
                       {SURFACES.find((s) => s.code === surface)?.label} &gt; {SECTION_LABEL[picked.sectionKey]} &gt; {picked.rank}번
                     </p>
@@ -281,7 +281,7 @@ export default function AdminOfferPlacements() {
                         className="mt-1.5 w-full h-10 px-3 rounded-lg border border-slate-200 text-[12.5px]" />
                     </label>
                   </div>
-                  <p className="text-[11px] text-slate-400">상품 판매 종료일 이후로는 설정할 수 없습니다.</p>
+                  <p className="text-[12px] text-slate-500">상품 판매 종료일 이후로는 설정할 수 없습니다.</p>
 
                   <div className="grid grid-cols-2 gap-3">
                     <label className="block">
@@ -289,7 +289,7 @@ export default function AdminOfferPlacements() {
                       <input type="number" defaultValue={picked.rank}
                         onBlur={(e) => update({ rank: Number(e.target.value) })}
                         className="mt-1.5 w-full h-10 px-3 rounded-lg border border-slate-200 text-[12.5px]" />
-                      <span className="mt-1 block text-[10.5px] text-slate-400">숫자가 낮을수록 먼저 노출됩니다.</span>
+                      <span className="mt-1 block text-[12.5px] text-slate-500">숫자가 낮을수록 먼저 노출됩니다.</span>
                     </label>
                     <label className="block">
                       <span className="text-[12px] font-bold text-slate-500">노출 상한 (1일)</span>
@@ -323,7 +323,7 @@ export default function AdminOfferPlacements() {
                       <span className="text-[12.5px] font-bold">유료 · 제휴 우선노출</span>
                     </label>
                     {picked.isSponsored && (
-                      <p className="text-[11px] text-amber-700 break-keep">
+                      <p className="text-[12px] text-amber-700 break-keep">
                         브랜드 화면에 광고성 표시가 함께 노출됩니다.
                       </p>
                     )}

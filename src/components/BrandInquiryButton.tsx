@@ -98,14 +98,14 @@ export default function BrandInquiryButton() {
                   href={channelHomeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 block text-center text-xs text-slate-400 hover:text-slate-600"
+                  className="mt-2 block text-center text-xs text-slate-500 hover:text-slate-600"
                 >
                   스폰픽 카카오 채널 추가하기
                 </a>
               )}
 
               {!channelChatUrl && (
-                <p className="mt-3 text-center text-xs text-slate-400">
+                <p className="mt-3 text-center text-xs text-slate-500">
                   카카오 채널 준비 중 — 현재는 {FALLBACK_EMAIL} 으로 연결됩니다.
                 </p>
               )}

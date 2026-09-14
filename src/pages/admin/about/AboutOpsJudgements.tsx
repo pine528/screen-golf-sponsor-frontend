@@ -94,7 +94,7 @@ export default function AboutOpsJudgements() {
               <div className="px-4 py-3 border-b border-slate-100 flex flex-wrap gap-1.5">
                 {[{ code: 'ALL', label: '전체' }, ...(list.byStatus ?? []).map((b: any) => ({ code: b.code, label: `${b.code} ${b.count}` }))].map((b: any) => (
                   <button key={b.code} onClick={() => setStatus(b.code)}
-                    className={`h-7 px-2.5 rounded-lg text-[11.5px] font-bold border transition ${
+                    className={`h-7 px-2.5 rounded-lg text-[12.5px] font-bold border transition ${
                       status === b.code ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200'
                     }`}>
                     {b.label}
@@ -110,13 +110,13 @@ export default function AboutOpsJudgements() {
                       }`}>
                       <div className="flex items-center gap-2 mb-1">
                         <Tag tone={RESULT_TONE[it.autoResult] ?? 'slate'}>{it.autoResult}</Tag>
-                        <span className="font-mono text-[11px] text-slate-400">{it.policyVersion}</span>
-                        {it.finalized && <Lock className="w-3 h-3 text-slate-400" />}
+                        <span className="font-mono text-[12px] text-slate-500">{it.policyVersion}</span>
+                        {it.finalized && <Lock className="w-3 h-3 text-slate-500" />}
                       </div>
                       <p className="text-[13.5px] font-bold text-slate-800 truncate">
                         {it.brandName} × {it.athleteName}
                       </p>
-                      <p className="text-[11.5px] text-slate-400 mt-0.5 tabular-nums">
+                      <p className="text-[12.5px] text-slate-500 mt-0.5 tabular-nums">
                         측정 {fmtDate(it.measureStart)} ~ {fmtDate(it.measureEnd)}
                       </p>
                     </button>
@@ -146,7 +146,7 @@ export default function AboutOpsJudgements() {
                         { l: '판정 방식', v: s.judgeMode + (s.minScore ? ` (${s.minScore}%)` : '') },
                       ].map((r) => (
                         <div key={r.l}>
-                          <p className="text-[11px] text-slate-400 font-semibold">{r.l}</p>
+                          <p className="text-[12px] text-slate-500 font-semibold">{r.l}</p>
                           <p className="mt-0.5 font-semibold text-slate-800 tabular-nums">{r.v}</p>
                         </div>
                       ))}
@@ -154,12 +154,12 @@ export default function AboutOpsJudgements() {
                   </Panel>
 
                   {/* KPI 비교 */}
-                  <Panel title="성과 지표별 실적 및 판정" right={<span className="text-[11.5px] text-slate-400">자동 산출</span>}>
+                  <Panel title="성과 지표별 실적 및 판정" right={<span className="text-[12.5px] text-slate-500">자동 산출</span>}>
                     {detail.observations.length ? (
                       <div className="overflow-x-auto">
                         <table className="w-full text-[13px]">
                           <thead>
-                            <tr className="text-[11px] text-slate-400 border-b border-slate-100">
+                            <tr className="text-[12px] text-slate-500 border-b border-slate-100">
                               <th className="text-left font-semibold px-5 py-2.5">지표</th>
                               <th className="text-left font-semibold py-2.5">출처</th>
                               <th className="text-right font-semibold py-2.5">실적</th>
@@ -175,7 +175,7 @@ export default function AboutOpsJudgements() {
                               <tr key={o.id} className="border-b border-slate-50 last:border-0">
                                 <td className="px-5 py-3">
                                   <p className="font-semibold text-slate-800">{o.label}</p>
-                                  {!o.required && <span className="text-[10.5px] text-slate-400">보조 지표</span>}
+                                  {!o.required && <span className="text-[12.5px] text-slate-500">보조 지표</span>}
                                 </td>
                                 <td className="py-3 text-slate-500">{o.sourceName ?? '—'}</td>
                                 <td className="py-3 text-right tabular-nums">
@@ -199,7 +199,7 @@ export default function AboutOpsJudgements() {
                                 <td className="px-5 py-3">
                                   <select value={o.excludeReason ?? 'NONE'} disabled={busy || s.locked}
                                     onChange={(e) => updateObs(o.id, { excludeReason: e.target.value, sourceName: o.sourceName })}
-                                    className="h-8 px-2 rounded-lg border border-slate-200 text-[11.5px] font-semibold focus:outline-none disabled:bg-slate-50">
+                                    className="h-8 px-2 rounded-lg border border-slate-200 text-[12.5px] font-semibold focus:outline-none disabled:bg-slate-50">
                                     {detail.exclusions.map((x: any) => <option key={x.code} value={x.code}>{x.label}</option>)}
                                   </select>
                                 </td>
@@ -207,7 +207,7 @@ export default function AboutOpsJudgements() {
                             ))}
                           </tbody>
                         </table>
-                        <p className="px-5 py-3 border-t border-slate-100 text-[11.5px] text-slate-400">
+                        <p className="px-5 py-3 border-t border-slate-100 text-[12.5px] text-slate-500">
                           달성률은 소수점 반올림이며, 최종 판정은 가중 합산 및 정책 규칙에 따릅니다.
                           미수집 지표는 0으로 간주하지 않습니다.
                         </p>
@@ -221,14 +221,14 @@ export default function AboutOpsJudgements() {
                     {/* 자동 판정 */}
                     <Panel title="판정 및 조치">
                       <div className="p-5">
-                        <p className="text-[12px] font-semibold text-slate-400 mb-1.5">자동 예비 판정</p>
+                        <p className="text-[12px] font-semibold text-slate-500 mb-1.5">자동 예비 판정</p>
                         <p className={`text-[24px] font-extrabold tabular-nums ${
                           auto?.status === 'MET' ? 'text-emerald-600'
                             : auto?.status === 'NOT_MET' ? 'text-rose-600' : 'text-amber-600'
                         }`}>
                           {auto?.status}
                           {auto?.score !== null && auto?.score !== undefined && (
-                            <span className="text-[15px] text-slate-400 ml-2">{auto.score}%</span>
+                            <span className="text-[15px] text-slate-500 ml-2">{auto.score}%</span>
                           )}
                         </p>
                         <p className="mt-2 text-[13px] text-slate-600 leading-relaxed">{auto?.reason}</p>
@@ -240,7 +240,7 @@ export default function AboutOpsJudgements() {
                               {nf(detail.remedyEstimate.amount)}원
                               <span className="text-[12px] text-violet-500 ml-2">({detail.remedyEstimate.ratio}%)</span>
                             </p>
-                            <p className="mt-1 text-[11px] text-violet-600">
+                            <p className="mt-1 text-[12px] text-violet-600">
                               상한 {nf(detail.remedyEstimate.cap)}원 · 사용 기한 {detail.remedyEstimate.validMonths}개월
                             </p>
                           </div>
@@ -273,14 +273,14 @@ export default function AboutOpsJudgements() {
                     </Panel>
 
                     {/* 감사 추적 */}
-                    <Panel title="감사 추적" right={<span className="text-[11.5px] text-slate-400">{detail.auditTrail.length}건</span>}>
+                    <Panel title="감사 추적" right={<span className="text-[12.5px] text-slate-500">{detail.auditTrail.length}건</span>}>
                       {detail.auditTrail.length ? (
                         <div className="divide-y divide-slate-50 max-h-[320px] overflow-y-auto">
                           {detail.auditTrail.map((l: any, i: number) => (
                             <div key={i} className="px-5 py-3">
                               <div className="flex items-center gap-2.5">
-                                <span className="text-[11px] text-slate-400 tabular-nums w-24 shrink-0">{fmtDate(l.at, true)}</span>
-                                <span className="font-mono text-[11px] text-slate-500 truncate">{l.actor.slice(0, 10)}</span>
+                                <span className="text-[12px] text-slate-500 tabular-nums w-24 shrink-0">{fmtDate(l.at, true)}</span>
+                                <span className="font-mono text-[12px] text-slate-500 truncate">{l.actor.slice(0, 10)}</span>
                               </div>
                               <p className="text-[12.5px] text-slate-700 mt-0.5">{l.reason || l.action}</p>
                             </div>
@@ -305,7 +305,7 @@ export default function AboutOpsJudgements() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-[17px] font-extrabold text-slate-900">최종 판정 확정</h2>
               <button onClick={() => setConfirm(false)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center">
-                <X className="w-4 h-4 text-slate-400" />
+                <X className="w-4 h-4 text-slate-500" />
               </button>
             </div>
             <div className="rounded-2xl bg-rose-50 border border-rose-100 px-4 py-3.5 flex items-start gap-2.5">

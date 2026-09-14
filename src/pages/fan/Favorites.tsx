@@ -161,7 +161,7 @@ export default function Favorites() {
             {favorites?.athletes.length === 0 ? (
               <div className="card p-12 text-center">
                 <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-slate-400" />
+                  <Heart className="w-8 h-8 text-slate-500" />
                 </div>
                 <p className="text-slate-500 mb-4">즐겨찾기한 선수가 없습니다</p>
                 <button
@@ -189,7 +189,7 @@ export default function Favorites() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <User className="w-7 h-7 text-slate-400" />
+                        <User className="w-7 h-7 text-slate-500" />
                       </div>
                     )}
                   </div>
@@ -197,13 +197,13 @@ export default function Favorites() {
                     <h3 className="font-semibold text-slate-900">{athlete.name}</h3>
                     <p className="text-sm text-slate-500">{athlete.tour}</p>
                     {athlete.bio && (
-                      <p className="text-xs text-slate-400 mt-1 line-clamp-1">{athlete.bio}</p>
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-1">{athlete.bio}</p>
                     )}
                   </div>
                   <button
                     onClick={() => removeAthleteMutation.mutate(athlete.id)}
                     disabled={removeAthleteMutation.isPending}
-                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     {removeAthleteMutation.isPending ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -220,7 +220,7 @@ export default function Favorites() {
             {favorites?.brands.length === 0 ? (
               <div className="card p-12 text-center">
                 <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="w-8 h-8 text-slate-400" />
+                  <Heart className="w-8 h-8 text-slate-500" />
                 </div>
                 <p className="text-slate-500 mb-4">즐겨찾기한 브랜드가 없습니다</p>
                 <button
@@ -260,7 +260,7 @@ export default function Favorites() {
                   <button
                     onClick={() => removeBrandMutation.mutate(brand.id)}
                     disabled={removeBrandMutation.isPending}
-                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     {removeBrandMutation.isPending ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
@@ -294,7 +294,7 @@ export default function Favorites() {
             {/* Search */}
             <div className="p-4 border-b">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                 <input
                   type="text"
                   placeholder={activeTab === 'athletes' ? '선수 이름 검색...' : '브랜드 이름 검색...'}
@@ -332,7 +332,7 @@ export default function Favorites() {
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <User className="w-5 h-5 text-slate-400" />
+                                <User className="w-5 h-5 text-slate-500" />
                               </div>
                             )}
                           </div>

@@ -179,14 +179,14 @@ export function AgencySentRequests() {
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Users className="w-7 h-7 text-slate-400" />
+                              <Users className="w-7 h-7 text-slate-500" />
                             </div>
                           )}
                         </div>
                         <div>
                           <p className="font-semibold text-slate-900">{request.athlete.name}</p>
                           <p className="text-sm text-slate-500">{request.athlete.user.email}</p>
-                          <p className="text-xs text-slate-400 mt-1">
+                          <p className="text-xs text-slate-500 mt-1">
                             {request.athlete.tour} · 요청일: {formatDate(request.createdAt)}
                           </p>
                         </div>
@@ -229,7 +229,7 @@ export function AgencySentRequests() {
                           </p>
                         )}
                         {request.respondedAt && (
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-slate-500">
                             응답일: {formatDate(request.respondedAt)}
                           </p>
                         )}
