@@ -111,6 +111,7 @@ function BrandDashboard() {
   const { data: saved } = useQuery({ queryKey: ['brand-saved-offers'], queryFn: () => api.getSavedOffers(), retry: 1 });
   const { data: drafts } = useQuery({ queryKey: ['brand-direct-drafts'], queryFn: () => api.listDirectDrafts(), retry: 1 });
   const { data: stats } = useQuery({ queryKey: ['brand-stats'], queryFn: () => api.getMyBrandStats(), retry: 1 });
+  const { data: reports } = useQuery({ queryKey: ['brand-new-reports'], queryFn: () => api.getMyRoiReports(30), retry: 0 });
 
   const list: any[] = useMemo(() => (Array.isArray(apps?.data) ? apps.data : apps?.data?.applications || []), [apps]);
   const campaignList: any[] = useMemo(() => (Array.isArray(campaigns?.data) ? campaigns.data : []), [campaigns]);
@@ -152,7 +153,7 @@ function BrandDashboard() {
           <ActionTile icon={Clock} label="승인 대기" count={counts.approval} to={approvalTo} tone="warn" hint="선수 응답을 기다리는 신청" />
           <ActionTile icon={CreditCard} label="결제 대기" count={counts.payment} to={paymentTo} tone="info" hint="승인 완료 · 결제 진행 필요" />
           <ActionTile icon={PlayCircle} label="진행 중" count={counts.running} to="/campaigns" tone="ok" hint="계약 · 캠페인 실행 중" />
-          <ActionTile icon={BarChart3} label="새 리포트" count={null} to="/brand/reports/roi" tone="muted" hint="ROI 리포트 보기" />
+          <ActionTile icon={BarChart3} label="새 리포트" count={reports ? (reports.data?.count ?? 0) : null} to="/brand/reports/roi" tone={reports?.data?.count ? 'info' : 'muted'} hint="최근 30일 완료된 성과 리포트" />
         </div>
 
         {/* 2. 이어서 하기 */}

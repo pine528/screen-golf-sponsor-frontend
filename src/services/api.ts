@@ -3782,6 +3782,11 @@ class ApiService {
   }
 
   /* ── 디지털 파트너 월 구독 (핸드오프 v1.0 §8.2) ── */
+  /** 브랜드 최근 완료 리포트 — 대시보드 새 리포트 타일 */
+  async getMyRoiReports(days = 30) {
+    const r = await this.client.get<ApiResponse<{ count: number; items: any[]; since: string | null }>>('/roi/my/reports', { params: { days } });
+    return r.data;
+  }
   async getAdminDigitalPlans() {
     const r = await this.client.get<ApiResponse<any>>('/digital-partner/admin/plans');
     return r.data;
