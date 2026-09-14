@@ -117,6 +117,15 @@ export default function DirectCart() {
 
   const issueOf = (itemId: string) => issues.filter((i) => i.itemId === itemId);
 
+  /* 상단 Summary — 요청 가능 / 확인 필요 / 충돌 (UI 가이드 §6.4) */
+  const tally = useMemo(() => {
+    const items: any[] = draft?.items || [];
+    const errIds = new Set(issues.filter((i) => i.severity === 'ERROR').map((i) => i.itemId));
+    const conflict = items.filter((i) => errIds.has(i.id)).length;
+    const pending = items.filter((i) => !errIds.has(i.id) && i.status === 'NEEDS_CONFIRMATION').length;
+    return { ready: items.length - conflict - pending, pending, conflict };
+  }, [draft, issues]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
@@ -135,8 +144,8 @@ export default function DirectCart() {
       <DirectStepBar current={5} crumbs={[{ label: '견적함' }]} backTo="/sponsor/direct/athletes" backLabel="선수 더 둘러보기" />
 
       <div className="max-w-[1400px] mx-auto px-5 pt-6">
-        <h1 className="text-[26px] sm:text-[32px] font-black tracking-tight">선택한 후원 구성을 확인하세요</h1>
-        <p className="mt-2 text-[13.5px] text-slate-500">선수별 상품 · 기간 · 가격과 확인이 필요한 조건을 검토하세요.</p>
+        <h1 className="text-[26px] sm:text-[32px] font-extrabold tracking-[-0.02em]">후원 구성안을 확인하세요</h1>
+        <p className="mt-2 text-[14px] text-slate-600">선수별 구성안의 상품 · 기간 · 가격과 확인이 필요한 조건을 검토합니다. 승인 요청 전까지 선수에게 보이지 않습니다.</p>
 
         {empty ? (
           <div className="mt-8 rounded-2xl border border-dashed border-slate-300 py-20 text-center">
@@ -157,6 +166,15 @@ export default function DirectCart() {
                 </span>
                 <span className="inline-flex items-center gap-2 text-[13px] font-bold">
                   <Box className="w-4 h-4 text-slate-400" /> 상품 {s.itemCount}개
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-[13px] font-bold text-emerald-700">
+                  <CheckCircle2 className="w-4 h-4" /> 요청 가능 {tally.ready}
+                </span>
+                <span className={`inline-flex items-center gap-1.5 text-[13px] font-bold ${tally.pending ? 'text-amber-700' : 'text-slate-400'}`}>
+                  <Clock className="w-4 h-4" /> 확인 필요 {tally.pending}
+                </span>
+                <span className={`inline-flex items-center gap-1.5 text-[13px] font-bold ${tally.conflict ? 'text-rose-700' : 'text-slate-400'}`}>
+                  <AlertTriangle className="w-4 h-4" /> 충돌 {tally.conflict}
                 </span>
                 {holdEnd != null && (
                   <span className={`inline-flex items-center gap-2 text-[13px] font-bold ${expired ? 'text-rose-600' : 'text-emerald-700'}`}>
@@ -200,7 +218,7 @@ export default function DirectCart() {
                         <li key={i.id} className={`rounded-xl border p-3.5 ${bad ? 'border-rose-200 bg-rose-50/40' : 'border-slate-100'}`}>
                           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                             <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold">
-                              {i.kind === 'ONLINE_PRODUCT' ? '온라인 전용' : '착장'}
+                              {i.kind === 'ONLINE_PRODUCT' ? '온라인 전용' : '후원 위치'}
                             </span>
                             <span className="text-[13.5px] font-extrabold">{i.slotName}</span>
                             <span className="text-[12px] text-slate-400">{i.months > 1 ? `${i.months}개월` : i.durationCode === 'SINGLE_EVENT' ? '대회 1회' : '30일'}</span>

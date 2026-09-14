@@ -1,46 +1,51 @@
 /**
- * 스폰픽 추천 PICK — 시작(랜딩) 화면
- * 추천 PICK 핸드오프 v1.0 §2.1 (자연어 우선 입력) · 시안 2026-08-21
+ * 스폰픽 추천 PICK — 시작 화면
+ * UI/UX 통합 가이드 v1.0 §7.1 · 통합 핸드오프 v2.1 §7
  *
- * 자연어 한 문장 + 목표 칩만으로 시작하고, 상세 질문은 다음 단계(brief)에서 받는다.
- * 비로그인도 입력·미리보기까지 가능하며 값은 localStorage에 24시간 보관한다(§1.2).
+ *  - "AI가 선수를 순위대로 뽑아주는 검색창"처럼 보이지 않게 한다.
+ *    추천 PICK은 실행 가능한 후원안 1~3개를 조합해 주는 의사결정 서비스다.
+ *  - 첫 질문 하나: "이번 후원에서 가장 얻고 싶은 것은 무엇인가요?"
+ *  - 자연어 1~500자 + 예시 chip → 자동 추출한 조건을 사용자가 확인·수정한다.
+ *  - 비로그인도 입력·미리보기까지 가능. 값은 localStorage 24시간 보관.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ChevronRight, ShieldCheck } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight, Check, ChevronRight, ListChecks, ShieldCheck, Target, Users } from 'lucide-react';
 import PublicHeader from '../../components/PublicHeader';
-import { Link } from 'react-router-dom';
 
 export const BRIEF_STORAGE_KEY = 'sponpik.recommend.brief';
 
+/** 예시 chip — 누르면 문장이 입력된다 (§7.1) */
 const OBJECTIVES = [
-  { key: 'AWARENESS', label: '브랜드 인지도' },
-  { key: 'TRIAL', label: '제품 체험' },
-  { key: 'PURCHASE', label: '구매 전환' },
-  { key: 'LOCAL', label: '지역 홍보' },
+  { key: 'AWARENESS', label: '인지도', example: '신제품을 3040 골퍼에게 알리고 싶어요. 대회 노출과 SNS를 같이 활용하고 싶습니다.' },
+  { key: 'TRIAL', label: '제품 체험', example: '선수가 실제로 우리 제품을 써보고 후기를 남겨주면 좋겠어요.' },
+  { key: 'SNS', label: 'SNS 확산', example: '선수 인스타그램과 릴스로 브랜드 콘텐츠를 확산하고 싶어요.' },
+  { key: 'PURCHASE', label: '판매 전환', example: '할인코드와 팬스토어로 실제 구매까지 이어지게 하고 싶어요.' },
+  { key: 'LOCAL', label: '지역 상생', example: '우리 지역 매장 방문과 동네 홍보에 도움이 되는 선수를 찾고 있어요.' },
 ];
 
 const BUDGETS = [
-  { key: 'UNDER_30', label: '월 30만원 이하', short: '월 30만원' },
-  { key: 'M30_60', label: '월 30–60만원', short: '월 30–60만원' },
-  { key: 'M60_100', label: '월 60–100만원', short: '월 60–100만원' },
-  { key: 'OVER_100', label: '월 100만원 이상', short: '월 100만원' },
+  { key: 'UNDER_30', label: '월 30만원 이하' },
+  { key: 'M30_60', label: '월 30–60만원' },
+  { key: 'M60_100', label: '월 60–100만원' },
+  { key: 'OVER_100', label: '월 100만원 이상' },
 ];
 
 const DURATIONS = [
-  { key: 'M1', label: '1개월 이내', short: '1개월' },
-  { key: 'M1_3', label: '1–3개월', short: '3개월' },
-  { key: 'M3_6', label: '3–6개월', short: '6개월' },
-  { key: 'M6_PLUS', label: '6개월 이상', short: '6개월+' },
+  { key: 'M1', label: '1개월 이내' },
+  { key: 'M1_3', label: '1–3개월' },
+  { key: 'M3_6', label: '3–6개월' },
+  { key: 'M6_PLUS', label: '6개월 이상' },
 ];
 
-/** 자연어에서 예산·목표·기간 힌트를 뽑아 칩을 자동 선택 (§3.2 확인용 초안) */
+/** 자연어에서 힌트 추출 — 서버와 같은 규칙. 확인용 초안이며 사용자가 고친 값이 우선한다 */
 function extractHints(text: string) {
   const out: { objective?: string; budget?: string; duration?: string } = {};
   if (/인지도|알리|브랜딩|노출/.test(text)) out.objective = 'AWARENESS';
-  if (/체험|리뷰|사용후기|시식/.test(text)) out.objective = 'TRIAL';
+  if (/체험|리뷰|사용후기|후기|시식/.test(text)) out.objective = 'TRIAL';
+  if (/SNS|인스타|릴스|숏폼|확산|바이럴/i.test(text)) out.objective = 'SNS';
   if (/구매|판매|전환|매출/.test(text)) out.objective = 'PURCHASE';
-  if (/지역|매장|방문|동네/.test(text)) out.objective = 'LOCAL';
+  if (/지역|매장|방문|동네|상권/.test(text)) out.objective = 'LOCAL';
   const man = text.match(/(\d{1,4})\s*만\s*원/);
   if (man) {
     const v = Number(man[1]);
@@ -54,6 +59,12 @@ function extractHints(text: string) {
   return out;
 }
 
+const STEPS = [
+  { icon: Target, title: '목표 정리', desc: '문장에서 목표·예산·타깃·기간을 뽑아 확인합니다.' },
+  { icon: ListChecks, title: '실행 가능성 검증', desc: '선수 재고 · 일정 · 권리 · 업종 제한을 실제 데이터로 거릅니다.' },
+  { icon: Users, title: '후원안 1~3개', desc: '안정형 · 균형형 · 도전형으로 조합하고 근거와 위험을 함께 보여드립니다.' },
+];
+
 export default function RecommendLanding() {
   const navigate = useNavigate();
   const [text, setText] = useState('');
@@ -61,13 +72,12 @@ export default function RecommendLanding() {
   const [budget, setBudget] = useState<string | null>(null);
   const [duration, setDuration] = useState<string | null>(null);
 
-  /* 이전 입력 복구 (§1.2) */
   useEffect(() => {
     try {
       const raw = localStorage.getItem(BRIEF_STORAGE_KEY);
       if (!raw) return;
       const d = JSON.parse(raw);
-      if (d.savedAt && Date.now() - d.savedAt > 86_400_000) return; // 24h
+      if (d.savedAt && Date.now() - d.savedAt > 86_400_000) return;
       if (d.freeText) setText(d.freeText);
       if (d.objective) setObjective(d.objective);
       if (d.budget) setBudget(d.budget);
@@ -75,7 +85,6 @@ export default function RecommendLanding() {
     } catch { /* 무시 */ }
   }, []);
 
-  /* 자연어 입력에서 조건 자동 추출 — 사용자가 직접 고른 값은 덮어쓰지 않는다 */
   const hints = useMemo(() => extractHints(text), [text]);
   useEffect(() => {
     if (hints.objective && !objective) setObjective(hints.objective);
@@ -84,154 +93,174 @@ export default function RecommendLanding() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hints]);
 
+  const canSubmit = text.trim().length > 0 || !!objective;
+
   const submit = () => {
+    if (!canSubmit) return;
     const payload = { freeText: text.trim(), objective, budget, duration, savedAt: Date.now() };
     try { localStorage.setItem(BRIEF_STORAGE_KEY, JSON.stringify(payload)); } catch { /* 무시 */ }
     navigate('/sponsor/recommended/brief');
   };
 
-  const label = (list: { key: string; short: string }[], key: string | null, fallback: string) =>
-    list.find((x) => x.key === key)?.short || fallback;
+  const useExample = (o: typeof OBJECTIVES[number]) => {
+    setObjective(o.key);
+    if (!text.trim()) setText(o.example);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f4faf6] to-white text-slate-900">
+    <div className="min-h-screen bg-white text-slate-900">
       <PublicHeader />
 
-      <section className="max-w-4xl mx-auto px-5 pt-14 sm:pt-20 pb-20">
-        <p className="text-center text-[12.5px] font-black tracking-[0.14em] text-emerald-600">
-          SPONPIK RECOMMEND PICK
-        </p>
-        <h1 className="mt-4 text-center text-[28px] sm:text-[42px] font-black tracking-tight leading-tight break-keep">
-          어떤 후원 <span className="text-emerald-500">성과</span>를 만들고 싶으세요?
-        </h1>
-        <p className="mt-4 text-center text-[14px] sm:text-[15px] text-slate-500 break-keep">
-          목표와 예산을 문장으로 입력하면 스폰픽이 선수·슬롯·콘텐츠를 조합해 추천합니다.
-        </p>
+      <div className="max-w-[1180px] mx-auto px-5 pt-6">
+        <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[13px]">
+          <Link to="/" className="text-slate-500 hover:text-slate-700">홈</Link>
+          <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+          <Link to="/sponsor" className="text-slate-500 hover:text-slate-700">후원하기</Link>
+          <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+          <span className="font-bold text-rose-600">스폰픽 추천 PICK</span>
+        </nav>
+      </div>
 
-        {/* 자연어 입력 */}
-        <div className="mt-9 relative">
-          <label htmlFor="brief-free" className="sr-only">후원 목표와 예산</label>
-          <textarea
-            id="brief-free"
-            value={text}
-            onChange={(e) => setText(e.target.value.slice(0, 500))}
-            onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submit(); }}
-            rows={3}
-            placeholder="예: 월 300만원으로 3040 여성 골퍼에게 화장품을 알리고 구매로 연결하고 싶어요."
-            className="w-full rounded-2xl border-2 border-emerald-400/70 bg-white px-5 py-5 pr-16 text-[15px] leading-relaxed placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 resize-none shadow-[0_10px_30px_-18px_rgba(16,185,129,0.5)]"
-          />
-          <button
-            onClick={submit}
-            aria-label="추천 조건 입력 계속하기"
-            className="absolute right-4 bottom-4 w-11 h-11 rounded-full bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition-colors"
-          >
-            <ArrowRight className="w-5 h-5" />
-          </button>
-          <span className="absolute right-[74px] bottom-6 text-[11px] text-slate-300 tabular-nums">{text.length}/500</span>
-        </div>
-
-        {/* 목표 칩 */}
-        <div className="mt-6 flex flex-wrap justify-center gap-2.5">
-          {OBJECTIVES.map((o) => {
-            const on = objective === o.key;
-            return (
-              <button
-                key={o.key}
-                onClick={() => setObjective(on ? null : o.key)}
-                aria-pressed={on}
-                className={`h-11 px-5 rounded-full border text-[13.5px] font-bold inline-flex items-center gap-2 transition-colors ${
-                  on ? 'border-emerald-500 bg-white text-emerald-700' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
-                }`}
-              >
-                {o.label}
-                {on && (
-                  <span className="w-4 h-4 rounded-full bg-emerald-500 text-white text-[9px] font-black flex items-center justify-center">✓</span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 요약 바 */}
-        <div className="mt-7 rounded-2xl bg-white border border-slate-100 shadow-[0_12px_36px_-20px_rgba(15,23,42,0.25)] px-6 py-5 flex flex-col sm:flex-row items-stretch sm:items-center gap-5">
-          <dl className="flex-1 grid grid-cols-3 divide-x divide-slate-100">
-            <div className="px-1 sm:px-3">
-              <dt className="text-[11.5px] text-slate-400 font-bold">목표</dt>
-              <dd className="mt-1 text-[15px] sm:text-[17px] font-black text-emerald-600 truncate">
-                {OBJECTIVES.find((o) => o.key === objective)?.label || '선택 전'}
-              </dd>
-            </div>
-            <div className="px-3">
-              <dt className="text-[11.5px] text-slate-400 font-bold">예산</dt>
-              <dd className="mt-1 text-[15px] sm:text-[17px] font-black text-slate-900 truncate">
-                {label(BUDGETS, budget, '미정')}
-              </dd>
-            </div>
-            <div className="px-3">
-              <dt className="text-[11.5px] text-slate-400 font-bold">추천 기간</dt>
-              <dd className="mt-1 text-[15px] sm:text-[17px] font-black text-slate-900 truncate">
-                {label(DURATIONS, duration, '미정')}
-              </dd>
-            </div>
-          </dl>
-          <button
-            onClick={submit}
-            className="shrink-0 h-12 px-7 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-white text-[14.5px] font-bold hover:bg-emerald-600 transition-colors"
-          >
-            추천 PICK 만들기 <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* 예산·기간 빠른 선택 */}
-        <div className="mt-5 grid sm:grid-cols-2 gap-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="text-[12px] font-black text-slate-500 mb-2.5">월 예산</p>
-            <div className="flex flex-wrap gap-2">
-              {BUDGETS.map((b) => (
-                <button
-                  key={b.key}
-                  onClick={() => setBudget(budget === b.key ? null : b.key)}
-                  aria-pressed={budget === b.key}
-                  className={`px-3 py-1.5 rounded-lg text-[12.5px] font-bold border transition-colors ${
-                    budget === b.key ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-200 text-slate-600 hover:border-slate-300'
-                  }`}
-                >
-                  {b.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="text-[12px] font-black text-slate-500 mb-2.5">희망 기간</p>
-            <div className="flex flex-wrap gap-2">
-              {DURATIONS.map((d) => (
-                <button
-                  key={d.key}
-                  onClick={() => setDuration(duration === d.key ? null : d.key)}
-                  aria-pressed={duration === d.key}
-                  className={`px-3 py-1.5 rounded-lg text-[12.5px] font-bold border transition-colors ${
-                    duration === d.key ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-slate-200 text-slate-600 hover:border-slate-300'
-                  }`}
-                >
-                  {d.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* 성과보장 안내 */}
-        <p className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[12.5px] text-slate-500">
-          <span className="inline-flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-500" />
-            약정 활동과 성과기준 미달 시 차기 후원 최대 50% 보정 지원.
+      <section className="max-w-[1180px] mx-auto px-5 pt-8 sm:pt-10 pb-24 grid lg:grid-cols-[minmax(0,1fr)_340px] gap-8 lg:gap-12 items-start">
+        {/* 좌: 한 질문 + 브리프 */}
+        <div>
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-rose-500 text-white text-[10.5px] font-black tracking-wide">
+            SPONPIK RECOMMENDED
           </span>
-          <span className="hidden sm:inline w-px h-3 bg-slate-200" />
-          <Link to="/about/guarantee" className="inline-flex items-center gap-0.5 font-bold text-emerald-600 hover:text-emerald-700">
-            성과보장 프로그램 자세히 <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
-        </p>
+          <h1 className="mt-4 text-[27px] sm:text-[36px] font-extrabold tracking-[-0.02em] leading-tight break-keep">
+            이번 후원에서 가장 얻고 싶은 것은 무엇인가요?
+          </h1>
+          <p className="mt-3 text-[15px] text-slate-600 leading-relaxed break-keep">
+            문장으로 편하게 적어주세요. 스폰픽이 목표를 정리하고 실제로 진행할 수 있는 후원안을 조합합니다.
+            선수 순위를 매기는 화면이 아닙니다.
+          </p>
+
+          {/* 예시 chip */}
+          <div className="mt-6">
+            <p className="text-[13px] font-bold text-slate-600">예시로 시작하기</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {OBJECTIVES.map((o) => {
+                const on = objective === o.key;
+                return (
+                  <button
+                    key={o.key}
+                    onClick={() => useExample(o)}
+                    aria-pressed={on}
+                    className={`h-10 px-4 rounded-full border text-[13.5px] font-bold inline-flex items-center gap-1.5 transition-colors ${
+                      on ? 'border-rose-500 bg-rose-50 text-rose-700' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400'
+                    }`}
+                  >
+                    {on && <Check className="w-3.5 h-3.5" />}
+                    {o.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 자연어 입력 */}
+          <div className="mt-5 rounded-3xl border-2 border-slate-200 bg-white focus-within:border-rose-400 transition-colors">
+            <label htmlFor="brief-free" className="block px-5 pt-4 text-[13px] font-bold text-slate-600">
+              후원 목표 <span className="font-normal text-slate-500">(1~500자)</span>
+            </label>
+            <textarea
+              id="brief-free"
+              value={text}
+              onChange={(e) => setText(e.target.value.slice(0, 500))}
+              onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submit(); }}
+              rows={4}
+              placeholder="예: 월 300만원으로 3040 여성 골퍼에게 화장품을 알리고 구매로 연결하고 싶어요."
+              className="w-full px-5 py-3 text-[15.5px] leading-relaxed placeholder:text-slate-400 focus:outline-none resize-none bg-transparent"
+            />
+            <div className="px-5 pb-3 flex items-center justify-between text-[12px] text-slate-500">
+              <span>브랜드명 · 제품 · 타깃 · 지역 · 예산 · 기간을 적으면 더 정확해집니다.</span>
+              <span className="tabular-nums">{text.length}/500</span>
+            </div>
+          </div>
+
+          {/* 자동 추출 확인 — 사용자가 고칠 수 있다 (§7.2 B층) */}
+          <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+            <p className="text-[13.5px] font-bold text-slate-800">이렇게 이해했어요. 다르면 바꿔주세요.</p>
+            <div className="mt-3 grid sm:grid-cols-3 gap-3">
+              <Field label="목표">
+                <select value={objective ?? ''} onChange={(e) => setObjective(e.target.value || null)} className={selectCls}>
+                  <option value="">선택 전</option>
+                  {OBJECTIVES.map((o) => <option key={o.key} value={o.key}>{o.label}</option>)}
+                </select>
+              </Field>
+              <Field label="월 예산">
+                <select value={budget ?? ''} onChange={(e) => setBudget(e.target.value || null)} className={selectCls}>
+                  <option value="">미정 (다음 단계에서)</option>
+                  {BUDGETS.map((b) => <option key={b.key} value={b.key}>{b.label}</option>)}
+                </select>
+              </Field>
+              <Field label="희망 기간">
+                <select value={duration ?? ''} onChange={(e) => setDuration(e.target.value || null)} className={selectCls}>
+                  <option value="">미정 (다음 단계에서)</option>
+                  {DURATIONS.map((d) => <option key={d.key} value={d.key}>{d.label}</option>)}
+                </select>
+              </Field>
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
+            <button
+              onClick={submit}
+              disabled={!canSubmit}
+              className="h-[52px] px-8 inline-flex items-center justify-center gap-2 rounded-2xl bg-rose-500 text-white text-[15px] font-bold hover:bg-rose-600 transition-colors disabled:opacity-40"
+            >
+              다음 · 조건 확인하기 <ArrowRight className="w-4 h-4" />
+            </button>
+            <p className="text-[13px] text-slate-600">
+              로그인 없이 3문항까지 미리 볼 수 있어요. 추천안 확인 단계에서 브랜드 로그인이 필요합니다.
+            </p>
+          </div>
+        </div>
+
+        {/* 우: 이 화면이 하는 일 */}
+        <aside className="rounded-3xl border border-slate-200 p-6">
+          <p className="text-[13px] font-bold text-slate-500">추천 PICK은 이렇게 진행됩니다</p>
+          <ol className="mt-4 space-y-4">
+            {STEPS.map((s, i) => {
+              const I = s.icon;
+              return (
+                <li key={s.title} className="flex gap-3">
+                  <span className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 inline-flex items-center justify-center shrink-0">
+                    <I className="w-[18px] h-[18px]" />
+                  </span>
+                  <div>
+                    <p className="text-[14px] font-extrabold">{i + 1}. {s.title}</p>
+                    <p className="mt-0.5 text-[13px] text-slate-600 leading-relaxed break-keep">{s.desc}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+          <div className="mt-5 pt-5 border-t border-slate-100 text-[13px] text-slate-600 leading-relaxed break-keep">
+            <p className="flex items-start gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+              <span>
+                추천안에 성과보장 정책이 붙은 경우, 계약 KPI 미달 시 약정에 따른 보완지원을 받습니다.
+                <Link to="/about/performance-guarantee" className="ml-1 font-bold text-emerald-700 hover:text-emerald-800">자세히</Link>
+              </span>
+            </p>
+            <p className="mt-3 text-slate-500">
+              가격 · 재고 · 승인 가능 여부는 서버 데이터로 검증하며, 후보가 부족하면 억지로 3안을 만들지 않습니다.
+            </p>
+          </div>
+        </aside>
       </section>
     </div>
+  );
+}
+
+const selectCls = 'w-full h-11 px-3 rounded-xl border border-slate-200 bg-white text-[13.5px] font-bold text-slate-800 focus:outline-none focus:border-rose-400';
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="block mb-1.5 text-[12.5px] font-bold text-slate-600">{label}</span>
+      {children}
+    </label>
   );
 }

@@ -20,6 +20,7 @@ const OBJECTIVES = [
   { key: 'AWARENESS', label: '브랜드 인지도 향상' },
   { key: 'PURCHASE', label: '구매 전환' },
   { key: 'TRIAL', label: '제품 체험/리뷰 생성' },
+  { key: 'SNS', label: 'SNS 확산' },
   { key: 'LOCAL', label: '지역 홍보 · 매장 방문' },
 ];
 const CHANNELS = [

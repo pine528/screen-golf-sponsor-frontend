@@ -37,12 +37,6 @@ const AVAILABILITY: Record<string, { label: string; cls: string }> = {
   CLOSED: { label: '모집 마감', cls: 'bg-slate-400 text-white' },
 };
 
-const DATA_STATUS: Record<string, { label: string; cls: string }> = {
-  FRESH: { label: '최신', cls: 'text-emerald-600' },
-  DUE: { label: '일부 확인 필요', cls: 'text-amber-600' },
-  NEW: { label: '신규', cls: 'text-sky-600' },
-};
-
 export default function DirectAthletes() {
   const navigate = useNavigate();
   const [athletes, setAthletes] = useState<any[]>([]);
@@ -79,11 +73,11 @@ export default function DirectAthletes() {
       <DirectStepBar current={1} crumbs={[{ label: '선수 탐색' }]} />
 
       <section className="max-w-[1400px] mx-auto px-5 pt-6">
-        <h1 className="text-[27px] sm:text-[34px] font-black tracking-tight break-keep">
-          후원할 선수를 직접 <span className="text-emerald-600">PICK</span>하세요
+        <h1 className="text-[27px] sm:text-[34px] font-extrabold tracking-[-0.02em] break-keep">
+          어떤 선수를 후원하시겠어요?
         </h1>
-        <p className="mt-2.5 text-[13.5px] text-slate-500 break-keep">
-          선수정보와 후원 가능 상품을 비교하고 원하는 선수를 선택하세요.
+        <p className="mt-2.5 text-[14.5px] text-slate-600 break-keep">
+          카드에는 핵심 신호만 보여드립니다. 자세한 판단은 <b className="text-slate-800">선수 정보</b>에서, 원자료는 전체 프로필에서 확인하세요.
         </p>
 
         {/* 검색 · 필터 · 정렬 */}
@@ -124,9 +118,9 @@ export default function DirectAthletes() {
           </div>
         </div>
 
-        <p className="mt-5 text-[13px] font-bold text-slate-500">
+        <p className="mt-5 text-[13.5px] font-bold text-slate-600">
           전체 선수 <b className="text-slate-900">{athletes.length}명</b>
-          <span className="ml-2 font-normal text-slate-400">추천 알고리즘이 아닌 선택한 정렬 기준으로 나열됩니다</span>
+          <span className="ml-2 font-normal text-slate-500">선택한 정렬 기준으로 나열됩니다</span>
         </p>
 
         {/* 카드 */}
@@ -140,86 +134,76 @@ export default function DirectAthletes() {
             </button>
           </div>
         ) : (
-          <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {athletes.map((a) => {
               const av = AVAILABILITY[a.availability] || AVAILABILITY.OPEN;
-              const ds = DATA_STATUS[a.dataStatus] || DATA_STATUS.FRESH;
               const picked = compare.some((x) => x.id === a.id);
+              const temp = typeof a.fanTemp === 'number' && a.fanTemp > 0 ? a.fanTemp : null;
+              const traits: string[] = (a.modes || []).slice(0, 2);
               return (
-                <article key={a.id} className="rounded-2xl border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-[0_12px_32px_-14px_rgba(15,23,42,0.16)] transition-all flex flex-col">
-                  <button onClick={() => setOpenId(a.id)} className="relative aspect-[4/3] bg-slate-100 text-left w-full">
-                    {a.profileImageUrl && <img src={a.profileImageUrl} alt={a.name} loading="lazy" className="w-full h-full object-cover object-top" />}
-                    <span className={`absolute top-3 left-3 px-2 py-1 rounded-md text-[10.5px] font-black ${av.cls}`}>{av.label}</span>
+                <article key={a.id} className={`rounded-3xl border overflow-hidden transition-all flex flex-col ${
+                  picked ? 'border-emerald-400 shadow-[0_12px_32px_-14px_rgba(16,185,129,0.35)]' : 'border-slate-200 hover:border-emerald-300 hover:shadow-[0_12px_32px_-14px_rgba(15,23,42,0.16)]'
+                }`}>
+                  <button onClick={() => setOpenId(a.id)} className="relative aspect-[4/5] sm:aspect-[4/3] bg-slate-100 text-left w-full overflow-hidden shrink-0">
+                    {a.profileImageUrl
+                      ? <img src={a.profileImageUrl} alt={a.name} loading="lazy" className="w-full h-full object-cover object-top" />
+                      : <span className="w-full h-full flex items-center justify-center text-[40px] font-extrabold text-slate-300">{a.name?.slice(0, 1)}</span>}
+                    <span className={`absolute top-3 left-3 px-2 py-1 rounded-lg text-[11px] font-extrabold ${av.cls}`}>{av.label}</span>
                   </button>
 
                   <div className="p-4 flex-1 flex flex-col">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="text-[15px] font-extrabold truncate">{a.name} <span className="text-[11.5px] font-bold text-slate-400">프로</span></p>
-                        <p className="mt-0.5 text-[11.5px] text-slate-400 truncate">{[a.tour, a.region].filter(Boolean).join(' · ')}</p>
+                    <button onClick={() => setOpenId(a.id)} className="text-left min-w-0">
+                      <p className="text-[16px] font-extrabold truncate">{a.name} <span className="text-[12px] font-bold text-slate-500">프로</span></p>
+                      <p className="mt-0.5 text-[12.5px] text-slate-500 truncate">{[a.tour, a.region].filter(Boolean).join(' · ') || '선수'}</p>
+                    </button>
+
+                    {traits.length > 0 && (
+                      <div className="mt-2.5 flex flex-wrap gap-1">
+                        {traits.map((m) => (
+                          <span key={m} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11.5px] font-bold">{m}</span>
+                        ))}
                       </div>
-                      <span className={`shrink-0 text-[10.5px] font-bold ${ds.cls}`}>{ds.label}</span>
+                    )}
+
+                    <div className="mt-3 pt-3 border-t border-slate-100 flex items-end justify-between gap-2">
+                      <div>
+                        <p className="text-[12px] text-slate-500">팬온도</p>
+                        <p className="mt-0.5 text-[14px] font-extrabold inline-flex items-center gap-1 tabular-nums">
+                          <Thermometer className="w-3.5 h-3.5 text-emerald-600" />
+                          {temp !== null ? `${temp.toFixed(1)}℃` : <span className="text-slate-500 font-bold">집계 중</span>}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[12px] text-slate-500">시작가</p>
+                        <p className="mt-0.5 text-[15px] font-extrabold text-emerald-600 tabular-nums">
+                          {a.minPrice != null ? `${(a.minPrice / 10000).toLocaleString()}만원~` : '협의'}
+                        </p>
+                      </div>
                     </div>
 
-                    <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-[11.5px] pt-3 border-t border-slate-100">
-                      <div>
-                        <dt className="text-slate-400">팬온도</dt>
-                        <dd className="mt-0.5 font-extrabold text-[13px] inline-flex items-center gap-1">
-                          <Thermometer className="w-3.5 h-3.5 text-emerald-600" />{a.fanTemp.toFixed(1)}℃
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-slate-400">최근 성적</dt>
-                        <dd className="mt-0.5 font-extrabold text-[13px]">
-                          {a.recentAvgRank != null ? `평균 ${a.recentAvgRank}위` : <span className="text-slate-400 font-bold">정보 확인 필요</span>}
-                        </dd>
-                      </div>
-                      <div className="col-span-2">
-                        <dt className="text-slate-400">후원 현황</dt>
-                        <dd className="mt-0.5 font-extrabold text-[13px]">
-                          슬롯 {a.slotOpen}/{a.slotTotal}
-                          {a.offerCount > 0 && <span className="ml-1.5 font-bold text-slate-500">온라인 {a.offerCount}종</span>}
-                        </dd>
-                      </div>
-                    </dl>
-
-                    <div className="mt-2.5 flex flex-wrap gap-1">
-                      {a.modes.map((m: string) => (
-                        <span key={m} className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10.5px] font-bold">{m}</span>
-                      ))}
-                    </div>
-
-                    <p className="mt-3 text-right text-[13px]">
-                      <span className="text-slate-400">시작가 </span>
-                      <b className="text-[15px] text-emerald-600">
-                        {a.minPrice != null ? `${(a.minPrice / 10000).toLocaleString()}만원` : '협의'}
-                      </b>
-                      <span className="text-slate-400">부터</span>
-                    </p>
-
-                    <div className="mt-3 grid grid-cols-2 gap-2">
+                    <Link
+                      to={`/sponsor/direct/build/${a.id}`}
+                      className="mt-3 h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 text-white text-[13.5px] font-bold hover:bg-emerald-700"
+                    >
+                      이 선수 선택 <ArrowRight className="w-4 h-4" />
+                    </Link>
+                    <div className="mt-1.5 grid grid-cols-2 gap-1.5">
                       <button
                         onClick={() => setOpenId(a.id)}
-                        className="h-10 rounded-xl border border-slate-200 text-[12.5px] font-bold text-slate-600 hover:bg-slate-50"
+                        className="h-9 rounded-lg text-[12.5px] font-bold text-slate-600 hover:bg-slate-50"
                       >
                         선수 정보
                       </button>
-                      <Link
-                        to={`/sponsor/direct/build/${a.id}`}
-                        className="h-10 inline-flex items-center justify-center rounded-xl bg-emerald-600 text-white text-[12.5px] font-bold hover:bg-emerald-700"
+                      <button
+                        onClick={() => toggleCompare(a)}
+                        disabled={!picked && compare.length >= 3}
+                        className={`h-9 inline-flex items-center justify-center gap-1 rounded-lg text-[12.5px] font-bold transition-colors ${
+                          picked ? 'bg-emerald-50 text-emerald-700' : 'text-slate-600 hover:bg-slate-50 disabled:opacity-40'
+                        }`}
                       >
-                        후원 항목 보기
-                      </Link>
+                        {picked ? <><Check className="w-3.5 h-3.5" /> 비교 중</> : <><Scale className="w-3.5 h-3.5" /> 비교</>}
+                      </button>
                     </div>
-                    <button
-                      onClick={() => toggleCompare(a)}
-                      disabled={!picked && compare.length >= 3}
-                      className={`mt-2 h-9 w-full inline-flex items-center justify-center gap-1.5 rounded-lg text-[12px] font-bold transition-colors ${
-                        picked ? 'bg-emerald-50 text-emerald-700' : 'text-slate-400 hover:text-slate-600 disabled:opacity-40'
-                      }`}
-                    >
-                      {picked ? <><Check className="w-3.5 h-3.5" /> 비교함에 담김</> : <><Scale className="w-3.5 h-3.5" /> 비교하기</>}
-                    </button>
                   </div>
                 </article>
               );
@@ -271,7 +255,7 @@ export default function DirectAthletes() {
                 <dl className="mt-1.5 space-y-1 text-[11.5px]">
                   <Row k="시작가" v={a.minPrice != null ? `${(a.minPrice / 10000).toLocaleString()}만원` : '정보 확인 필요'} />
                   <Row k="가능 슬롯" v={`${a.slotOpen}/${a.slotTotal}`} />
-                  <Row k="팬온도" v={`${a.fanTemp.toFixed(1)}℃`} />
+                  <Row k="팬온도" v={a.fanTemp > 0 ? `${a.fanTemp.toFixed(1)}℃` : '집계 중'} />
                   <Row k="최근 성적" v={a.recentAvgRank != null ? `평균 ${a.recentAvgRank}위` : '정보 확인 필요'} />
                   <Row k="TOP10" v={a.recentResults.length ? `${a.top10Count}회` : '정보 확인 필요'} />
                 </dl>
@@ -302,7 +286,7 @@ function Row({ k, v }: { k: string; v: string }) {
   return (
     <div className="flex justify-between gap-2">
       <dt className="text-slate-400 shrink-0">{k}</dt>
-      <dd className={`font-bold text-right ${v === '정보 확인 필요' ? 'text-slate-400' : ''}`}>{v}</dd>
+      <dd className={`font-bold text-right ${v === '정보 확인 필요' || v === '집계 중' ? 'text-slate-500' : ''}`}>{v}</dd>
     </div>
   );
 }
@@ -364,7 +348,7 @@ function QuickProfile({ athleteId, onClose, onPick }: {
                   ))}
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-3 rounded-xl border border-slate-200 p-3">
-                  <Stat label="팬온도" value={`${data.fanTemp.toFixed(1)}℃`} />
+                  <Stat label="팬온도" value={data.fanTemp > 0 ? `${data.fanTemp.toFixed(1)}℃` : '집계 중'} />
                   <Stat label="최근 5경기" value={data.recentAvgRank != null ? `평균 ${data.recentAvgRank}위` : '수집 중'} />
                   <Stat label="시작가" value={data.minPrice != null ? `${(data.minPrice / 10000).toLocaleString()}만원` : '협의'} />
                 </div>

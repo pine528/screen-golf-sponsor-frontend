@@ -21,7 +21,6 @@ export default function DirectBuild() {
 
   const [profile, setProfile] = useState<any>(null);
   const [offers, setOffers] = useState<any>(null);
-  const [others, setOthers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<'FRONT' | 'BACK'>('FRONT');
   const [slotCode, setSlotCode] = useState<string | null>(sp.get('slot'));
@@ -31,14 +30,12 @@ export default function DirectBuild() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [p, o, l]: any[] = await Promise.all([
+      const [p, o]: any[] = await Promise.all([
         api.getQuickProfile(athleteId!),
         api.getAthleteOffers(athleteId!),
-        api.getPickAthletes({ limit: 8 }),
       ]);
       setProfile(p?.data || null);
       setOffers(o?.data || null);
-      setOthers((l?.data?.athletes || []).filter((x: any) => x.id !== athleteId));
     } finally { setLoading(false); }
   }, [athleteId]);
   useEffect(() => { load(); }, [load]);
@@ -98,7 +95,7 @@ export default function DirectBuild() {
   const placed = slots.filter((s) => s.view === view && s.x != null && s.y != null);
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 pb-16">
+    <div className="min-h-screen bg-white text-slate-900 pb-28 lg:pb-16">
       <PublicHeader />
       <DirectStepBar
         current={3}
@@ -107,66 +104,38 @@ export default function DirectBuild() {
         backLabel="선수 다시 선택"
       />
 
-      <div className="max-w-[1400px] mx-auto px-5 pt-5 grid lg:grid-cols-[minmax(0,280px)_minmax(0,1fr)_minmax(0,360px)] gap-5 items-start">
-        {/* 좌: 선택한 선수 · 다른 선수 */}
-        <aside>
-          <div className="rounded-2xl border border-slate-200 p-4">
-            <div className="flex items-center gap-3">
-              <span className="w-16 h-16 rounded-xl overflow-hidden bg-slate-100 shrink-0">
-                {a?.profileImageUrl && <img src={a.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
-              </span>
-              <div className="min-w-0">
-                <p className="text-[16px] font-extrabold">{a?.name} <span className="text-[11.5px] font-bold text-slate-400">프로</span></p>
-                <p className="text-[11.5px] text-slate-400">{[a?.tour, a?.region].filter(Boolean).join(' · ')}</p>
-                <span className="mt-1 inline-block px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 text-[10.5px] font-bold">
-                  판매 슬롯 {profile.slotOpen}/{profile.slotTotal}
-                </span>
-              </div>
-            </div>
-            <dl className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-[12px]">
-              <div>
-                <dt className="text-slate-400">팬온도</dt>
-                <dd className="font-extrabold">{profile.fanTemp.toFixed(1)}℃</dd>
-              </div>
-              <div>
-                <dt className="text-slate-400">최근 성적</dt>
-                <dd className="font-extrabold">{profile.recentAvgRank != null ? `평균 ${profile.recentAvgRank}위` : '수집 중'}</dd>
-              </div>
-            </dl>
+      <div className="max-w-[1280px] mx-auto px-5 pt-5">
+        {/* 선택한 선수 — 한 줄 요약 */}
+        <div className="rounded-2xl border border-slate-200 px-4 py-3 flex items-center gap-3">
+          <span className="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 shrink-0">
+            {a?.profileImageUrl && <img src={a.profileImageUrl} alt="" className="w-full h-full object-cover object-top" />}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[15px] font-extrabold truncate">{a?.name} <span className="text-[12px] font-bold text-slate-500">프로</span>
+              <span className="ml-2 text-[12.5px] font-semibold text-slate-500">{[a?.tour, a?.region].filter(Boolean).join(' · ')}</span>
+            </p>
+            <p className="mt-0.5 text-[12.5px] text-slate-600">
+              판매 슬롯 <b>{profile.slotOpen}/{profile.slotTotal}</b>
+              <span className="mx-1.5 text-slate-300">|</span>
+              팬온도 <b>{profile.fanTemp > 0 ? `${profile.fanTemp.toFixed(1)}℃` : '집계 중'}</b>
+              <span className="mx-1.5 text-slate-300">|</span>
+              최근 성적 <b>{profile.recentAvgRank != null ? `평균 ${profile.recentAvgRank}위` : '확인 필요'}</b>
+            </p>
           </div>
+          <Link to={`/athletes/${athleteId}`} className="shrink-0 text-[12.5px] font-bold text-slate-600 hover:text-emerald-700 inline-flex items-center gap-0.5">
+            전체 프로필 <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      </div>
 
-          {others.length > 0 && (
-            <div className="mt-4 rounded-2xl border border-slate-200 p-3">
-              <p className="text-[12px] font-bold text-slate-400 mb-2">다른 선수</p>
-              <ul className="space-y-2">
-                {others.slice(0, 5).map((x) => (
-                  <li key={x.id}>
-                    <Link to={`/sponsor/direct/build/${x.id}`} className="flex items-center gap-3 p-2 rounded-xl border border-slate-200 hover:border-emerald-300 transition-colors">
-                      <span className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100 shrink-0">
-                        {x.profileImageUrl && <img src={x.profileImageUrl} alt="" loading="lazy" className="w-full h-full object-cover object-top" />}
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-[13px] font-extrabold truncate">{x.name} 프로</span>
-                        <span className="block text-[11px] text-slate-400 truncate">{x.tour}</span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <Link to="/sponsor/direct/athletes" className="mt-2 h-10 w-full inline-flex items-center justify-between px-3 rounded-xl text-[12.5px] font-bold text-slate-600 hover:bg-slate-50">
-                더 많은 선수 보기 <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-          )}
-        </aside>
-
+      <div className="max-w-[1280px] mx-auto px-5 pt-4 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)] gap-5 items-start">
         {/* 중: 도식 + 슬롯 목록 */}
         <div>
-          <h1 className="text-[24px] sm:text-[30px] font-black tracking-tight break-keep">
-            후원할 위치와 상품을 <span className="text-emerald-600">PICK</span>하세요
+          <h1 className="text-[24px] sm:text-[30px] font-extrabold tracking-[-0.02em] break-keep">
+            어디에 후원하시겠어요?
           </h1>
-          <p className="mt-2 text-[13px] text-slate-500 break-keep">
-            먼저 원하는 위치나 온라인 상품을 선택하세요. 기간과 추가 활동은 다음 단계에서 정합니다.
+          <p className="mt-2 text-[14px] text-slate-600 break-keep">
+            도식이나 목록에서 위치 하나를 고르세요. 온라인 상품은 오른쪽에서 함께 담을 수 있고, 기간·추가 활동은 다음 단계에서 정합니다.
           </p>
 
           <div className="mt-4 rounded-2xl bg-slate-50/70 border border-slate-100 p-5">
@@ -230,8 +199,8 @@ export default function DirectBuild() {
             )}
 
             <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-              {['AVAILABLE', 'NEEDS_CONFIRMATION', 'HOLD', 'SOLD', 'AUCTION'].map((k) => (
-                <span key={k} className="inline-flex items-center gap-1.5 text-[11.5px] text-slate-500">
+              {['AVAILABLE', 'NEEDS_CONFIRMATION', 'HOLD', 'RESERVED', 'SOLD', 'AUCTION', 'BLOCKED', 'EXPIRED'].map((k) => (
+                <span key={k} className="inline-flex items-center gap-1.5 text-[12.5px] text-slate-600">
                   <span className={`w-2 h-2 rounded-full ${SLOT_STATUS[k].dot}`} />
                   <span aria-hidden className="text-[10px]">{SLOT_STATUS[k].icon}</span>
                   {SLOT_STATUS[k].label}
@@ -379,6 +348,21 @@ export default function DirectBuild() {
             선택 완료 · 조건 구성 <ArrowRight className="w-4 h-4" />
           </button>
         </aside>
+      </div>
+
+      {/* 모바일 고정 CTA — 화면의 핵심 행동 1개 (UI 가이드 §6.3) */}
+      <div className="lg:hidden fixed inset-x-0 bottom-0 z-30 bg-white border-t border-slate-200 px-5 py-3 flex items-center gap-3 shadow-[0_-8px_24px_-16px_rgba(15,23,42,0.25)]" style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
+        <div className="min-w-0">
+          <p className="text-[12px] text-slate-500">선택 {count}개 · VAT 별도</p>
+          <p className="text-[17px] font-extrabold text-emerald-600 tabular-nums">{total > 0 ? `${(total / 10000).toLocaleString()}만원` : '-'}</p>
+        </div>
+        <button
+          onClick={next}
+          disabled={count === 0}
+          className="ml-auto h-12 px-5 inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 text-white text-[14px] font-bold disabled:opacity-40"
+        >
+          조건 구성 <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );
