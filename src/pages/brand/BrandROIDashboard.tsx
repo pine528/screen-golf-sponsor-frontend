@@ -76,7 +76,9 @@ export default function BrandROIDashboard() {
     const list: any[] = Array.isArray(appsData?.data) ? appsData.data : appsData?.data?.applications || [];
     return list.filter((a) => ['APPROVED', 'PAYMENT_PENDING', 'ACTIVE'].includes(a.status) && a.snapshot?.plan?.expected);
   }, [appsData]);
-  const selectedApp = contracted.find((a) => a.id === selectedAppId) || contracted[0] || null;
+  /* 선택한 캠페인에 연결된 신청이 있으면 그 스냅샷을, 없으면 선택/첫 건 */
+  const linked = selectedCampaignId ? contracted.find((a) => a.campaignId === selectedCampaignId) : null;
+  const selectedApp = (selectedAppId ? contracted.find((a) => a.id === selectedAppId) : null) || linked || contracted[0] || null;
   const expected: any = selectedApp?.snapshot?.plan?.expected || null;
   const expectedOf = (metric: string) => {
     const m = (expected?.metrics || []).find((x: any) => String(x.metric).includes(metric));
@@ -214,7 +216,7 @@ export default function BrandROIDashboard() {
             {contracted.length > 0 && (
               <select value={selectedApp?.id || ''} onChange={(e) => setSelectedAppId(e.target.value)} className="input w-64 ml-auto shrink-0" aria-label="예상 범위 기준 신청">
                 {contracted.map((a) => (
-                  <option key={a.id} value={a.id}>{a.planName || a.snapshot?.plan?.name || '후원 신청'} · {a.submittedAt ? new Date(a.submittedAt).toLocaleDateString('ko-KR') : ''}</option>
+                  <option key={a.id} value={a.id}>{a.planName || a.snapshot?.plan?.name || '후원 신청'} · {a.submittedAt ? new Date(a.submittedAt).toLocaleDateString('ko-KR') : ''}{a.campaignId === selectedCampaignId && selectedCampaignId ? ' · 이 캠페인' : ''}</option>
                 ))}
               </select>
             )}
