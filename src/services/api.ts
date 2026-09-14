@@ -3782,6 +3782,14 @@ class ApiService {
   }
 
   /* ── 디지털 파트너 월 구독 (핸드오프 v1.0 §8.2) ── */
+  async getAdminDigitalPlans() {
+    const r = await this.client.get<ApiResponse<any>>('/digital-partner/admin/plans');
+    return r.data;
+  }
+  async updateAdminDigitalPlan(code: string, body: any) {
+    const r = await this.client.patch<ApiResponse<any>>(`/digital-partner/admin/plans/${code}`, body);
+    return r.data;
+  }
   async getDigitalPlans() {
     const r = await this.client.get<ApiResponse<any>>('/digital-partner/plans');
     return r.data;

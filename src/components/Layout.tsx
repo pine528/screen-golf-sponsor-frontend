@@ -301,6 +301,7 @@ export function Layout({ children }: LayoutProps) {
       { path: '/admin/offers', label: '후원상품', icon: ShoppingBag },
       { path: '/admin/offers/placements', label: '진열 · 배지', icon: Layers },
       { path: '/admin/offers/dashboard', label: '상품 성과', icon: BarChart3 },
+      { path: '/admin/digital-plans', label: '디지털 플랜 가격', icon: CreditCard },
       { path: '/admin/auctions', label: '경매 모니터링', icon: Gavel },
       { path: '/admin/featured-auctions', label: '추천 경매', icon: Star },
     ] },

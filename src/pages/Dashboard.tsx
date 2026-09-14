@@ -471,7 +471,7 @@ const CONSOLES: { key: string; title: string; role: string; desc: string; icon: 
   { key: 'athlete', title: '선수운영', role: 'AthleteOps', desc: '프로필 · 일정 · 슬롯 · 가격 · 권리 · 데이터 최신성', icon: Users, tone: 'bg-sky-50 text-sky-600', to: '/admin/entities',
     links: [{ label: 'KYC 심사', to: '/admin/kyc' }, { label: '대회 · 이벤트', to: '/admin/events' }, { label: '슬롯 템플릿', to: '/admin/slot-templates' }, { label: '경기 결과', to: '/admin/athletes/event-results' }] },
   { key: 'offer', title: '상품운영', role: 'OfferEditor · Merchandiser', desc: 'Offer builder · 템플릿 · 재고 · 진열 · 발행', icon: ShoppingBagIcon, tone: 'bg-emerald-50 text-emerald-600', to: '/admin/offers',
-    links: [{ label: '후원상품', to: '/admin/offers' }, { label: '진열 · 배지', to: '/admin/offers/placements' }, { label: '상품 성과', to: '/admin/offers/dashboard' }, { label: '경매 모니터링', to: '/admin/auctions' }] },
+    links: [{ label: '후원상품', to: '/admin/offers' }, { label: '진열 · 배지', to: '/admin/offers/placements' }, { label: '상품 성과', to: '/admin/offers/dashboard' }, { label: '디지털 플랜 가격', to: '/admin/digital-plans' }] },
   { key: 'reco', title: '추천운영', role: 'Recommendation Ops', desc: 'brief · 후보 · 점수 · diversity · rerun · 품질', icon: Sparkles, tone: 'bg-rose-50 text-rose-500', to: '/admin/offers/dashboard',
     links: [{ label: '엔진 버전 · 품질 (준비 중)', to: '/admin/offers/dashboard' }] },
   { key: 'tx', title: '거래운영', role: 'Transaction · Finance', desc: '신청 · 승인 · 계약 · 결제 · 환불 · 정산', icon: CreditCard, tone: 'bg-violet-50 text-violet-600', to: '/admin/payments',

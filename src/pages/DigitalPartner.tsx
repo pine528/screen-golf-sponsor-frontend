@@ -8,29 +8,18 @@
  *  - 가격은 월액 + 12개월 약정 + 연간 총액 + VAT 를 동시에 표시한다.
  *  - 플랜 금액은 출시 권장 기본값(S4). 운영 Pricing Config로 옮기는 것은 백로그 C8.
  */
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { api } from '../services/api';
+import { ErrorState, LoadingState } from '../components/ui/StateView';
 import {
   ArrowRight, BadgeCheck, Check, ChevronRight, Globe, Info, Share2, Store, ShoppingBag, XCircle,
 } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
 
-const PLANS = [
-  {
-    name: 'START', monthly: 49000,
-    includes: ['선수 승인 공식 디지털 배지', '팬스토어 기본 입점', '웹 배너 3종', '기본 리포트'],
-    excludes: ['SNS 게시', '매장 POP', '업종 독점'],
-  },
-  {
-    name: 'GROW', monthly: 99000, recommended: true,
-    includes: ['START 전체 포함', 'SNS 템플릿 제공', '등록 매장 POP', '할인코드 · QR 리포트'],
-    excludes: ['선수 개인 계정 게시', '매장 방문'],
-  },
-  {
-    name: 'PLUS', monthly: 199000,
-    includes: ['GROW 전체 포함', '분기 소재 리프레시', '동일 업종 제한', '상세 리포트'],
-    excludes: ['출연 · 촬영', '경기복 부착'],
-  },
-];
+/** 플랜은 관리자 Pricing Config(DB)가 단일 출처다 — 화면에 금액 상수를 두지 않는다 (v2.1 §9.2) */
+type Plan = { code: string; name: string; monthlyPrice: number; termMonths: number; benefits?: string[] | null; exclusions?: string[] | null };
+const RECOMMENDED = 'GROW';
 
 const USES = [
   { icon: Globe, title: 'WEB', desc: '브랜드 사이트 · 상세페이지에 공식 파트너 배지와 배너' },
@@ -42,6 +31,14 @@ const USES = [
 const STEPS = ['선수 · 플랜 선택', '선수 승인', '구독 결제', '자산 발급 · 사용', '월간 리포트'];
 
 export default function DigitalPartner() {
+  const [plans, setPlans] = useState<Plan[] | null>(null);
+  const [err, setErr] = useState<any>(null);
+  const load = () => {
+    setErr(null);
+    api.getDigitalPlans().then((r: any) => setPlans(r?.data || [])).catch((e) => setErr(e));
+  };
+  useEffect(load, []);
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <PublicHeader />
@@ -114,37 +111,42 @@ export default function DigitalPartner() {
           <h2 className="text-[22px] sm:text-[26px] font-extrabold tracking-[-0.02em]">플랜</h2>
           <p className="mt-2 text-[14px] text-slate-600">월 구독료와 12개월 약정 총액을 함께 확인하세요. 모든 금액은 VAT 별도입니다.</p>
 
+          {err ? (
+            <div className="mt-6"><ErrorState error={err} title="플랜 가격을 불러오지 못했습니다" onRetry={load} /></div>
+          ) : !plans ? (
+            <LoadingState label="플랜을 불러오는 중…" />
+          ) : (
           <div className="mt-6 grid sm:grid-cols-3 gap-4">
-            {PLANS.map((p) => (
+            {plans.map((p) => (
               <article
-                key={p.name}
+                key={p.code}
                 className={`relative rounded-3xl border p-6 flex flex-col ${
-                  p.recommended
+                  p.code === RECOMMENDED
                     ? 'border-emerald-300 bg-emerald-50/40 shadow-[0_16px_40px_-16px_rgba(16,185,129,0.35)]'
                     : 'border-slate-200 bg-white'
                 }`}
               >
-                {p.recommended && (
+                {p.code === RECOMMENDED && (
                   <span className="absolute -top-3 left-6 px-3 py-1 rounded-full bg-emerald-500 text-white text-[12px] font-black">
                     추천
                   </span>
                 )}
                 <h3 className="text-[15px] font-black tracking-widest text-slate-900">{p.name}</h3>
                 <p className="mt-3 text-[28px] font-extrabold text-slate-900 leading-none tabular-nums">
-                  월 {p.monthly.toLocaleString()}원
+                  월 {p.monthlyPrice.toLocaleString()}원
                 </p>
                 <dl className="mt-3 space-y-1 text-[13px] text-slate-600 tabular-nums">
-                  <div className="flex justify-between"><dt>약정</dt><dd className="font-bold text-slate-800">12개월</dd></div>
-                  <div className="flex justify-between"><dt>연간 총액</dt><dd className="font-bold text-slate-800">{(p.monthly * 12).toLocaleString()}원</dd></div>
+                  <div className="flex justify-between"><dt>약정</dt><dd className="font-bold text-slate-800">{p.termMonths}개월</dd></div>
+                  <div className="flex justify-between"><dt>연간 총액</dt><dd className="font-bold text-slate-800">{(p.monthlyPrice * p.termMonths).toLocaleString()}원</dd></div>
                   <div className="flex justify-between"><dt>VAT</dt><dd className="font-bold text-slate-800">별도 (10%)</dd></div>
                 </dl>
                 <ul className="mt-5 pt-4 border-t border-slate-100 space-y-2 flex-1">
-                  {p.includes.map((f) => (
+                  {(p.benefits || []).map((f) => (
                     <li key={f} className="flex items-start gap-2 text-[13.5px] text-slate-700">
                       <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-[2px]" /> {f}
                     </li>
                   ))}
-                  {p.excludes.map((f) => (
+                  {(p.exclusions || []).map((f) => (
                     <li key={f} className="flex items-start gap-2 text-[13px] text-slate-500">
                       <XCircle className="w-4 h-4 text-slate-300 shrink-0 mt-[2px]" /> {f} 미포함
                     </li>
@@ -153,7 +155,7 @@ export default function DigitalPartner() {
                 <Link
                   to="/digital-partner/athletes"
                   className={`mt-5 h-12 inline-flex items-center justify-center gap-1.5 rounded-2xl text-[14px] font-bold transition-colors ${
-                    p.recommended ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'border border-slate-300 text-slate-800 hover:border-slate-500'
+                    p.code === RECOMMENDED ? 'bg-emerald-600 text-white hover:bg-emerald-700' : 'border border-slate-300 text-slate-800 hover:border-slate-500'
                   }`}
                 >
                   {p.name} 로 선수 고르기 <ArrowRight className="w-4 h-4" />
@@ -161,6 +163,7 @@ export default function DigitalPartner() {
               </article>
             ))}
           </div>
+          )}
           <p className="mt-3 text-[12.5px] text-slate-500">
             자동 갱신은 기본 꺼짐입니다. 만료 60 · 30 · 7일 전에 안내드리고, 명시적으로 동의한 경우에만 갱신됩니다.
           </p>
