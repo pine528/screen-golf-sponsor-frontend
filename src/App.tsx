@@ -277,6 +277,12 @@ function LegacyStoreRedirect({ kind }: { kind?: 'product' | 'checkout' }) {
 }
 
 /** 이전 /sponsor/pick/* 경로를 직접 선택 PICK 9단계 경로로 넘긴다 */
+/** /market/stores/:id → /fan/store/:id (v2.1 canonical 별칭) */
+function MarketStoreRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/fan/store/${id}`} replace />;
+}
+
 /** /build/:id/configure → /build/:id (v2.1 §3: 구성은 build 한 화면) — 선택값 query는 유지 */
 function ConfigureRedirect() {
   const { athleteId } = useParams();
@@ -389,6 +395,9 @@ function App() {
       <Route path="/athlete/requests" element={<ProtectedRoute><AthleteRequests /></ProtectedRoute>} />
       {/* 팬 참여 — 리디자인 v2.0 시안 img_05~08 */}
       <Route path="/fan/store" element={<FanStoreHome />} />
+      {/* v2.1 canonical route 별칭 */}
+      <Route path="/market" element={<Navigate to="/fan/store" replace />} />
+      <Route path="/market/stores/:id" element={<MarketStoreRedirect />} />
       <Route path="/fan/store/product/:id" element={<FanStoreProduct />} />
       <Route path="/fan/store/:idOrSlug" element={<FanStoreDetail />} />
       <Route path="/fan/store-legacy" element={<FanStore />} />

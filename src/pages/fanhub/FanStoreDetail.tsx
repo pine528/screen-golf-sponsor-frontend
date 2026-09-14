@@ -76,7 +76,17 @@ export default function FanStoreDetail() {
       </h1>
       {data.summary && <p className="mt-2.5 text-[14px] text-slate-500 leading-relaxed">{data.summary}</p>}
 
-      {/* 혜택 코드 */}
+      {/* 1. 스토리 — 선수 × 브랜드가 왜 함께하는지 (§11.5: 스토리 → 혜택 → 상품) */}
+      {data.story && (
+        <section className="mt-5">
+          <h2 className="text-[15px] font-bold text-slate-900 mb-2.5">이 협업을 시작한 이유</h2>
+          <Card className="p-5">
+            <p className="text-[14px] text-slate-600 leading-[1.75] whitespace-pre-line">{data.story}</p>
+          </Card>
+        </section>
+      )}
+
+      {/* 2. 팬 혜택 */}
       {data.benefit && (
         <Card className="mt-5 p-5 border-amber-200 bg-amber-50/50">
           <div className="flex items-center gap-1.5 mb-2">
@@ -96,19 +106,12 @@ export default function FanStoreDetail() {
         </Card>
       )}
 
-      {/* 협업 이유 */}
-      {data.story && (
-        <section className="mt-6">
-          <h2 className="text-[15px] font-bold text-slate-900 mb-2.5">이 협업을 시작한 이유</h2>
-          <Card className="p-5">
-            <p className="text-[14px] text-slate-600 leading-[1.75] whitespace-pre-line">{data.story}</p>
-          </Card>
-        </section>
-      )}
-
-      {/* 상품 */}
+      {/* 3. 상품 */}
       <section className="mt-6">
         <h2 className="text-[15px] font-bold text-slate-900 mb-3">상품</h2>
+        <p className="text-[12.5px] text-slate-500 mb-3 inline-flex items-center gap-1">
+          <ExternalLink className="w-3.5 h-3.5" /> 구매는 브랜드몰에서 진행됩니다. SPONPIK 주문이 아닙니다.
+        </p>
         {data.products?.length ? (
           <div className="space-y-2.5">
             {data.products.map((p: any) => (
@@ -178,7 +181,7 @@ export default function FanStoreDetail() {
           </div>
           <button onClick={() => goExternal()} disabled={exiting}
             className="mt-4 w-full h-13 py-4 rounded-2xl bg-slate-900 text-white text-[15px] font-bold hover:bg-slate-800 transition inline-flex items-center justify-center gap-2 disabled:bg-slate-200 disabled:text-slate-400">
-            {exiting ? '이동 중…' : <>브랜드몰에서 보기 <ExternalLink className="w-4 h-4" /></>}
+            {exiting ? '이동 중…' : <>브랜드몰에서 구매하기 <ExternalLink className="w-4 h-4" /></>}
           </button>
         </>
       )}

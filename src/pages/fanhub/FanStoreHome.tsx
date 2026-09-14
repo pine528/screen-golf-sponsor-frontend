@@ -31,7 +31,7 @@ export default function FanStoreHome() {
       </Link>
 
       <FanHeader eyebrow="FAN STORE" title="팬스토어"
-        desc="선수와 브랜드가 함께 만든 협업 스토어입니다. 팬 혜택을 확인하고 브랜드몰에서 구매하세요." />
+        desc="선수와 브랜드가 왜 함께하는지 먼저 읽고, 팬 혜택을 확인한 뒤 브랜드몰에서 구매합니다. 구매는 외부 브랜드몰에서 이뤄지며 SPONPIK 주문이 아닙니다." />
 
       {/* 이용 방법 */}
       {data?.howItWorks && (
