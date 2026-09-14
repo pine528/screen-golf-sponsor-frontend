@@ -78,7 +78,7 @@ export default function DirectAthletes() {
   return (
     <div className="min-h-screen bg-white text-slate-900 pb-32">
       <PublicHeader />
-      <DirectStepBar current={1} crumbs={[{ label: '선수 탐색' }]} />
+      <DirectStepBar current={1} crumbs={[{ label: '선수 탐색' }]} backTo="/sponsor" backLabel="후원 방식 다시 선택" />
 
       <section className="max-w-[1400px] mx-auto px-5 pt-6">
         <h1 className="text-[27px] sm:text-[34px] font-extrabold tracking-[-0.02em] break-keep">

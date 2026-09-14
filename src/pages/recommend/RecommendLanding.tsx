@@ -119,6 +119,9 @@ export default function RecommendLanding() {
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="font-bold text-rose-600">스폰픽 추천 PICK</span>
         </nav>
+        <Link to="/sponsor" className="mt-2 inline-flex items-center gap-1 text-[13px] font-bold text-emerald-700 hover:text-emerald-800">
+          <ChevronRight className="w-4 h-4 rotate-180" /> 후원 방식 다시 선택
+        </Link>
       </div>
 
       <section className="max-w-[1180px] mx-auto px-5 pt-8 sm:pt-10 pb-24 grid lg:grid-cols-[minmax(0,1fr)_340px] gap-8 lg:gap-12 items-start">

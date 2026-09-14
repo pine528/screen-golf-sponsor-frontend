@@ -23,7 +23,7 @@ export default function MobileTabBar() {
   /* v2.0 §1.1 1차 메뉴와 같은 축: 홈 · 후원하기 · 선수 · 팬 참여 · 마이 */
   const tabs = [
     { to: '/', label: '홈', icon: Home, exact: true },
-    { to: '/sponsor/available', label: '후원하기', icon: Target, match: ['/sponsor', '/digital-partner'] },
+    { to: '/sponsor', label: '후원하기', icon: Target, match: ['/sponsor', '/digital-partner'] },
     { to: '/athletes', label: '선수', icon: Search, match: ['/athletes'] },
     { to: '/fan', label: '팬 참여', icon: Heart, match: ['/fan'] },
     { to: isAuthenticated ? '/dashboard' : '/login', label: '마이', icon: UserRound, match: ['/dashboard', '/profile'] },

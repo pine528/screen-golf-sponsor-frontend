@@ -9,7 +9,7 @@
  * 페이지로 연결하고, 세부 핸드오프 수령 시 라우트를 교체한다.
  */
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   BookOpen,
   CalendarCheck,
@@ -45,10 +45,11 @@ type MegaItem = {
   highlight?: boolean;
 };
 
-const MENUS: { key: string; label: string; items: MegaItem[]; note?: string }[] = [
+const MENUS: { key: string; label: string; to: string; items: MegaItem[]; note?: string }[] = [
   {
     key: 'sponsor',
     label: '후원하기',
+    to: '/sponsor',
     items: [
       { icon: Crosshair, title: '선수·후원슬롯 직접 PICK', desc: '경기 착장 위치를 직접 선택', to: '/sponsor/direct/athletes' },
       { icon: Sparkles, title: '스폰픽 추천 PICK', desc: '목표와 예산에 맞는 조합 추천', to: '/sponsor/recommended' },
@@ -60,6 +61,7 @@ const MENUS: { key: string; label: string; items: MegaItem[]; note?: string }[] 
   {
     key: 'athletes',
     label: '선수',
+    to: '/athletes',
     items: [
       { icon: Users, title: '전체 선수', desc: '투어·지역·활동으로 탐색', to: '/athletes' },
       { icon: Star, title: '추천 선수', desc: '스폰픽 추천 기준 선별', to: '/athletes?recommended=1' },
@@ -70,6 +72,7 @@ const MENUS: { key: string; label: string; items: MegaItem[]; note?: string }[] 
   {
     key: 'fan',
     label: '팬 참여',
+    to: '/fan',
     items: [
       { icon: Heart, title: '팬 참여 홈', desc: '투표·온도·포인트·스토어 한눈에', to: '/fan' },
       { icon: Vote, title: '팬 VOTE', desc: '의견과 예측으로 응원하기', to: '/fan/vote' },
@@ -81,6 +84,7 @@ const MENUS: { key: string; label: string; items: MegaItem[]; note?: string }[] 
   {
     key: 'about',
     label: '스폰픽 소개',
+    to: '/about/service',
     items: [
       { icon: Info, title: '서비스 소개', desc: '스폰픽이 해결하는 후원 문제', to: '/about/service' },
       { icon: BookOpen, title: '이용방법', desc: '선택부터 성과 확인까지', to: '/about/how-it-works' },
@@ -105,6 +109,7 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
   const [mobileAccordion, setMobileAccordion] = useState<string | null>('sponsor');
   const { isAuthenticated } = useAuth();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const openTimer = useRef<ReturnType<typeof setTimeout>>();
   const closeTimer = useRef<ReturnType<typeof setTimeout>>();
   const navRef = useRef<HTMLElement>(null);
@@ -160,7 +165,7 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
                 >
                   <button
                     onFocus={() => scheduleOpen(m.key)}
-                    onClick={() => setOpen(open === m.key ? null : m.key)}
+                    onClick={() => { setOpen(null); navigate(m.to); }}
                     aria-expanded={open === m.key}
                     aria-haspopup="true"
                     className={`relative px-2 py-2 text-[15px] font-bold transition-colors ${
@@ -296,6 +301,13 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
                 </button>
                 {mobileAccordion === m.key && (
                   <div className="pb-3 space-y-0.5">
+                    <Link
+                      to={m.to}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center justify-between px-2 py-2.5 rounded-xl bg-slate-50 text-[14px] font-bold text-emerald-700"
+                    >
+                      {m.label} 홈으로 <ChevronRight className="w-4 h-4" />
+                    </Link>
                     {m.items.map((it) => (
                       <Link
                         key={it.title}

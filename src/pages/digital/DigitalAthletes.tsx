@@ -56,7 +56,9 @@ export default function DigitalAthletes() {
           <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px] mb-4">
             <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <Link to="/digital-partner" className="text-slate-500 hover:text-slate-600">디지털 파트너 월 구독</Link>
+            <Link to="/sponsor" className="text-slate-500 hover:text-slate-600">후원하기</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+            <Link to="/digital-partner" className="text-slate-500 hover:text-slate-600">디지털 파트너</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             <span className="font-bold text-emerald-700">선수 선택</span>
           </nav>

@@ -142,6 +142,8 @@ export default function OfferDetail() {
           <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px] min-w-0">
             <Link to="/" className="text-slate-500 hover:text-slate-600 shrink-0">홈</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
+            <Link to="/sponsor" className="text-slate-500 hover:text-slate-600 shrink-0">후원하기</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
             <Link to="/sponsor/available" className="text-slate-500 hover:text-slate-600 shrink-0">지금 가능한 후원</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
             <span className="font-bold text-emerald-700 truncate">상품 상세</span>

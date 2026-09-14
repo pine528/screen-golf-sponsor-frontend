@@ -146,7 +146,7 @@ export default function RecommendBrief() {
           <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px]">
             <Link to="/" className="text-slate-500 hover:text-slate-600">홈</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <span className="text-slate-500">후원하기</span>
+            <Link to="/sponsor" className="text-slate-500 hover:text-slate-700">후원하기</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             <span className="font-bold text-emerald-700">스폰픽 추천 PICK</span>
           </nav>
