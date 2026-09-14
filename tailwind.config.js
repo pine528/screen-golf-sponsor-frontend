@@ -6,6 +6,7 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: { script: ['"Great Vibes"', 'cursive'] },
       colors: {
         primary: {
           50: '#f0fdf4',

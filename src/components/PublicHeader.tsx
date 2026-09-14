@@ -11,7 +11,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  BarChart3,
   BookOpen,
   CalendarCheck,
   ChevronDown,
@@ -54,7 +53,6 @@ const MENUS: { key: string; label: string; items: MegaItem[]; note?: string }[] 
       { icon: Crosshair, title: '선수·후원슬롯 직접 PICK', desc: '경기 착장 위치를 직접 선택', to: '/sponsor/direct/athletes' },
       { icon: Sparkles, title: '스폰픽 추천 PICK', desc: '목표와 예산에 맞는 조합 추천', to: '/sponsor/recommended' },
       { icon: ShoppingBag, title: '지금 가능한 후원', desc: '미리 구성된 상품을 바로 비교·구매', to: '/sponsor/available', badge: 'NEW' },
-      { icon: BarChart3, title: '진행 중 후원기회', desc: '직접구매·경매·장기계약 비교', to: '/auctions' },
       { icon: CalendarCheck, title: '디지털 파트너 월 구독', desc: '월 부담으로 1년간 온라인·등록매장 파트너', to: '/digital-partner', badge: 'NEW', highlight: true },
     ],
     note: '경기복 부착 없이 디지털 채널과 등록매장 홍보물에 활용하는 상품입니다.',
