@@ -11,18 +11,20 @@ import { ArrowRight, BarChart3, Heart, Info, Share2, Trophy } from 'lucide-react
 import { api } from '../../services/api';
 import { FAN_TEMP_NOTE } from '../fanhub/FanKit';
 
-const TABS = [
-  { key: 'profile', label: '프로필', anchor: '[data-section="profile-detail"]' },
-  { key: 'games', label: '경기', anchor: '[data-section="results"]' },
-  { key: 'sponsor', label: '후원', anchor: '[data-section="purchase"]' },
-  { key: 'fan', label: '팬', to: (id: string) => `/fan/community/${id}` },
-  { key: 'content', label: '콘텐츠', anchor: '[data-section="sns"]' },
+export type AthleteTab = 'profile' | 'games' | 'sponsor' | 'fan' | 'content';
+const TABS: { key: AthleteTab; label: string; desc: string }[] = [
+  { key: 'profile', label: '프로필', desc: '기본 정보 · 운영 현황' },
+  { key: 'games', label: '경기', desc: '경기 결과 · 추이 · 일정' },
+  { key: 'sponsor', label: '후원', desc: '슬롯 · 경매 · 구매' },
+  { key: 'fan', label: '팬', desc: '팬온도 · 응원' },
+  { key: 'content', label: '콘텐츠', desc: 'SNS · 유튜브 · ROI' },
 ];
 
 export default function AthleteSnapshot({
-  athlete, eventResults, slotInstances, social, youtube, userRole,
+  athlete, eventResults, slotInstances, social, youtube, userRole, tab, onTab,
 }: {
   athlete: any; eventResults: any[]; slotInstances: any[]; social: Record<string, string>; youtube: any; userRole?: string;
+  tab: AthleteTab; onTab: (t: AthleteTab) => void;
 }) {
   const id = athlete.id as string;
   const { data: tempResp } = useQuery({
@@ -50,7 +52,6 @@ export default function AthleteSnapshot({
   const subs: number | null = youtube?.channel?.subscriberCount ?? youtube?.subscriberCount ?? null;
 
   const isFan = userRole === 'FAN';
-  const scrollTo = (sel: string) => document.querySelector(sel)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const cards = [
     {
@@ -59,7 +60,7 @@ export default function AthleteSnapshot({
         { k: '최근 5경기', v: avgRank != null ? `평균 ${avgRank}위` : null },
         { k: 'TOP10', v: top10 != null ? `${top10}회` : null },
       ],
-      cta: { label: '경기 상세', onClick: () => scrollTo('[data-section="results"]') },
+      cta: { label: '경기 상세', onClick: () => onTab('games') },
     },
     {
       key: 'brand', icon: BarChart3, tone: 'bg-emerald-50 text-emerald-600', title: '브랜드',
@@ -75,7 +76,7 @@ export default function AthleteSnapshot({
         { k: '팬온도', v: temp?.score != null && temp.score > 0 ? `${Number(temp.score).toFixed(1)}℃` : null, note: FAN_TEMP_NOTE },
         { k: '표본', v: temp?.sampleSize != null ? `최근 30일 ${temp.sampleSize}건` : null },
       ],
-      cta: { label: '응원하기', to: `/fan/community/${id}`, primary: isFan },
+      cta: { label: '응원하기', onClick: () => onTab('fan'), primary: isFan },
     },
     {
       key: 'content', icon: Share2, tone: 'bg-violet-50 text-violet-600', title: '콘텐츠',
@@ -83,7 +84,7 @@ export default function AthleteSnapshot({
         { k: 'SNS 채널', v: channels ? `${channels}개` : '미등록' },
         { k: '유튜브 구독', v: subs != null ? `${subs >= 10000 ? `${(subs / 10000).toFixed(1)}만` : subs.toLocaleString()}` : null },
       ],
-      cta: { label: '콘텐츠 보기', onClick: () => scrollTo('[data-section="sns"]') },
+      cta: { label: '콘텐츠 보기', onClick: () => onTab('content') },
     },
   ];
 
@@ -125,7 +126,9 @@ export default function AthleteSnapshot({
               ) : (
                 <button
                   onClick={'onClick' in c.cta ? c.cta.onClick : undefined}
-                  className="mt-3 h-10 inline-flex items-center justify-center gap-1 rounded-xl border border-slate-200 text-[13px] font-bold text-slate-700 hover:border-slate-400"
+                  className={`mt-3 h-10 inline-flex items-center justify-center gap-1 rounded-xl text-[13px] font-bold transition-colors ${
+                    'primary' in c.cta && c.cta.primary ? 'bg-rose-500 text-white hover:bg-rose-600' : 'border border-slate-200 text-slate-700 hover:border-slate-400'
+                  }`}
                 >
                   {c.cta.label} <ArrowRight className="w-3.5 h-3.5" />
                 </button>
@@ -138,22 +141,25 @@ export default function AthleteSnapshot({
         <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {FAN_TEMP_NOTE}
       </p>
 
-      {/* 탭 — 한 탭에 모든 데이터를 몰아넣지 않는다 */}
+      {/* 탭 — 한 탭에 모든 데이터를 몰아넣지 않는다 (§10.2) */}
       <nav aria-label="선수 상세 구간" className="mt-4 sticky top-16 z-20 bg-slate-50/95 backdrop-blur -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 border-b border-slate-200">
-        <ul className="flex gap-1 overflow-x-auto">
-          {TABS.map((t) => (
-            <li key={t.key} className="shrink-0">
-              {'to' in t && t.to ? (
-                <Link to={t.to(id)} className="h-9 px-4 inline-flex items-center rounded-full text-[13.5px] font-bold text-slate-700 hover:bg-white hover:text-emerald-700">
-                  {t.label}
-                </Link>
-              ) : (
-                <button onClick={() => scrollTo(t.anchor!)} className="h-9 px-4 rounded-full text-[13.5px] font-bold text-slate-700 hover:bg-white hover:text-emerald-700">
+        <ul role="tablist" className="flex gap-1 overflow-x-auto">
+          {TABS.map((t) => {
+            const on = tab === t.key;
+            return (
+              <li key={t.key} className="shrink-0">
+                <button
+                  role="tab"
+                  aria-selected={on}
+                  onClick={() => onTab(t.key)}
+                  title={t.desc}
+                  className={`h-10 px-4 rounded-full text-[13.5px] font-bold transition-colors ${on ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-white hover:text-emerald-700'}`}
+                >
                   {t.label}
                 </button>
-              )}
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </div>

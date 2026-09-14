@@ -15,7 +15,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft, Trophy, Instagram,
@@ -28,7 +28,8 @@ import LegalNotice from '../components/LegalNotice';
 import UnifiedPurchase from '../components/purchase/UnifiedPurchase';
 import Breadcrumb from '../components/Breadcrumb';
 import PublicHeader from '../components/PublicHeader';
-import AthleteSnapshot from '../components/athlete/AthleteSnapshot';
+import AthleteSnapshot, { type AthleteTab } from '../components/athlete/AthleteSnapshot';
+import AthleteFanPanel from '../components/athlete/AthleteFanPanel';
 
 // 빈 값 → '-' 표기 헬퍼
 const dash = (v: any, suffix = ''): string => {
@@ -47,6 +48,15 @@ export default function PublicAthleteDetail() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   const queryClient = useQueryClient();
+
+  /* 탭 — 프로필 / 경기 / 후원 / 팬 / 콘텐츠. 브랜드는 후원 탭이 기본 (UI 가이드 §10.2) */
+  const [sp, setSp] = useSearchParams();
+  const tab: AthleteTab = ((sp.get('tab') as AthleteTab) || (user?.role === 'BRAND' ? 'sponsor' : 'profile'));
+  const setTab = (t: AthleteTab) => {
+    const next = new URLSearchParams(sp);
+    next.set('tab', t);
+    setSp(next, { replace: true });
+  };
 
   // ROI 대시보드 view mode (BASIC/EXTENDED) — RoiDashboard ↔ ScoringAndDataSources 동기화
   // docx §10 G-1/G-2 — 점수 산정 기준은 현재 보고 있는 viewMode와 반드시 일치해야 함
@@ -148,6 +158,7 @@ export default function PublicAthleteDetail() {
   // 슬롯 데이터가 따로 로드돼 섹션이 늦게 그려지므로 나타날 때까지 잠깐 기다린다.
   useEffect(() => {
     if (window.location.hash !== '#slots') return;
+    setTab('sponsor');
     let tries = 0;
     const timer = setInterval(() => {
       const el = document.querySelector('[data-section="purchase"]');
@@ -216,8 +227,12 @@ export default function PublicAthleteDetail() {
         social={social}
         youtube={youtube}
         userRole={user?.role}
+        tab={tab}
+        onTab={setTab}
       />
 
+      {/* ── 후원 탭: 통합 구매 + 진행 중 경매 ── */}
+      {tab === 'sponsor' && (<>
       {/* 중단: 슬롯별 실시간 경매 현황 (3-2 + 3-3 + 3-4) */}
       {/* 개편 Phase 2 (WF-04): 선수정보·슬롯 인벤토리·구매 패널 통합 3열 */}
       <UnifiedPurchase
@@ -276,12 +291,17 @@ export default function PublicAthleteDetail() {
         <LegalNotice className="mt-4" />
       </section>
       )}
+      </>)}
 
-      {/* ROI 대시보드 풀 섹션 (docx §13 화면명: 선수 상세 > ROI 대시보드) */}
-      <section data-section="roi" className="max-w-7xl mx-auto px-4 sm:px-6 pb-6">
+      {/* ── 팬 탭 ── */}
+      {tab === 'fan' && <AthleteFanPanel athleteId={athlete.id} name={athlete.name} />}
+
+      {/* ── 콘텐츠 탭: SNS · 유튜브 · ROI 대시보드 ── */}
+      {tab === 'content' && (
+      <section data-section="roi" className="max-w-7xl mx-auto px-4 sm:px-6 pb-6 pt-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xl font-extrabold text-slate-900 inline-flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-emerald-500" /> ROI 대시보드
+            <TrendingUp className="w-5 h-5 text-emerald-500" /> 콘텐츠 · ROI 대시보드
           </h2>
           {roi?.meta && (
             <span className="text-[12.5px] text-slate-500">
@@ -291,9 +311,11 @@ export default function PublicAthleteDetail() {
         </div>
         <RoiDashboard roi={roi} youtube={youtube} mentions={mentions} viewMode={roiViewMode} onViewModeChange={setRoiViewMode} isAuthenticated={isAuthenticated} onLoginClick={() => navigate('/login')} />
       </section>
+      )}
 
-      {/* === E. 운영 현황 (docx §8 — 슬롯 / 최근 대회 / 예정 대회) === */}
-      <section data-section="profile-detail" className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 scroll-mt-28">
+      {/* ── 프로필 탭: 운영 현황 ── */}
+      {tab === 'profile' && (
+      <section data-section="profile-detail" className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 pt-4 scroll-mt-28">
         <h2 className="text-xl font-extrabold text-slate-900 mb-4 inline-flex items-center gap-2">
           <Gavel className="w-5 h-5 text-emerald-500" />
           운영 현황
@@ -416,11 +438,14 @@ export default function PublicAthleteDetail() {
         </div>
         </div>
       </section>
+      )}
 
-      {/* 경기결과 + 메인 스폰서 (별도 행) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* 경기결과(경기 탭) + 메인 스폰서(프로필 탭) */}
+      {(tab === 'games' || (tab === 'profile' && sponsors.length > 0)) && (
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 pt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* === F. 경기결과 / 분석 (docx §9) === */}
+        {tab === 'games' && (
         <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-base font-extrabold text-slate-900 inline-flex items-center gap-2">
@@ -527,9 +552,10 @@ export default function PublicAthleteDetail() {
             </div>
           )}
         </div>
+        )}
 
         {/* 메인 스폰서 */}
-        {sponsors.length > 0 && (
+        {tab === 'profile' && sponsors.length > 0 && (
           <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5">
             <h2 className="text-base font-extrabold text-slate-900 mb-3">🏆 메인 스폰서</h2>
             <div className="flex flex-wrap gap-2">
@@ -542,6 +568,7 @@ export default function PublicAthleteDetail() {
           </div>
         )}
       </section>
+      )}
 
       {/* G. 점수 산정 기준 / 데이터 출처 섹션은 사용자 요청으로 페이지에서 숨김.
           ScoringAndDataSources 컴포넌트는 코드에 보존 (가중치는 B-1 카드의 호버 툴팁으로 노출). */}
