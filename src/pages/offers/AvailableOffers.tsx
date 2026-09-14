@@ -25,7 +25,7 @@ const TABS = [
 const TRUST = [
   { icon: ShieldCheck, title: '검증된 상품만 제공', desc: '구성이 완료된 상품만 등록됩니다.' },
   { icon: Megaphone, title: '간편 비교 & 빠른 시작', desc: '조건 비교 후 즉시 후원을 시작하세요.' },
-  { icon: Lock, title: '안전한 거래', desc: 'SPONPIK이 안전한 후원을 보장합니다.' },
+  { icon: Lock, title: '안전한 거래', desc: '선수 승인 전에는 결제가 진행되지 않습니다.' },
 ];
 
 export default function AvailableOffers() {
@@ -143,13 +143,13 @@ export default function AvailableOffers() {
           <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[12.5px] mb-4">
             <Link to="/" className="text-slate-400 hover:text-slate-600">홈</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <span className="text-slate-400">후원하기</span>
+            <Link to="/sponsor" className="text-slate-500 hover:text-slate-700">후원하기</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
             <span className="font-bold text-emerald-700">지금 가능한 후원</span>
           </nav>
           <h1 className="text-[28px] sm:text-[38px] font-black tracking-tight">지금 가능한 후원</h1>
-          <p className="mt-2.5 text-[14px] text-slate-500 break-keep">
-            선수와 스폰픽이 미리 구성한 후원상품을 비교하고 바로 시작하세요.
+          <p className="mt-2.5 text-[15px] text-slate-600 break-keep">
+            선수와 스폰픽이 미리 구성한 후원상품입니다. 핵심 구성은 고정돼 있고, 바로 구매 · 선수확인 · 협의 · 월 구독 · 경매 중 어떤 방식인지 카드에서 바로 알 수 있습니다.
           </p>
         </div>
       </section>

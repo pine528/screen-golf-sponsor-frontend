@@ -349,9 +349,13 @@ function App() {
       <Route path="/slots" element={<SponsorshipSlots />} />
       <Route path="/growth-market" element={<GrowthMarket />} />
       <Route path="/digital-partner" element={<DigitalPartner />} />
+      {/* legacy redirect (통합 핸드오프 v2.1 §3.1) */}
+      <Route path="/sponsor/digital" element={<Navigate to="/digital-partner" replace />} />
+      <Route path="/opportunities" element={<Navigate to="/sponsor/available" replace />} />
+      <Route path="/opportunities/:id" element={<Navigate to="/sponsor/available" replace />} />
       {/* 스폰픽 소개 — 리디자인 v2.0 §9 */}
       {/* 스폰픽 소개 v1.0 (핸드오프 2026-08-22) */}
-      <Route path="/about" element={<ServiceIntro />} />
+      <Route path="/about" element={<Navigate to="/about/service" replace />} />
       <Route path="/about/service" element={<ServiceIntro />} />
       <Route path="/about/cases" element={<CaseList />} />
       <Route path="/about/cases/:slug" element={<CaseDetail />} />
@@ -363,8 +367,10 @@ function App() {
       <Route path="/about/brands/:slug" element={<BrandDetail />} />
       {/* 구 소개 화면 */}
       <Route path="/about/legacy" element={<AboutService />} />
-      <Route path="/about/how" element={<AboutHow />} />
-      <Route path="/about/guarantee" element={<AboutGuarantee />} />
+      <Route path="/about/how" element={<Navigate to="/about/how-it-works" replace />} />
+      <Route path="/about/guarantee" element={<Navigate to="/about/performance-guarantee" replace />} />
+      <Route path="/about/how-legacy" element={<AboutHow />} />
+      <Route path="/about/guarantee-legacy" element={<AboutGuarantee />} />
       <Route path="/about/brands-legacy" element={<AboutBrands />} />
       <Route path="/about/cases-legacy" element={<AboutCases />} />
       {/* 추천 PICK — 핸드오프 v1.0 §1.1 */}

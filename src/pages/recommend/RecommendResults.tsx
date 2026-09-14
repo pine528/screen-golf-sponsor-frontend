@@ -119,10 +119,12 @@ export default function RecommendResults() {
       <section className="max-w-7xl mx-auto px-5 pt-8">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
           <div>
-            <h1 className="text-[24px] sm:text-[30px] font-black tracking-tight break-keep">
-              브랜드에 맞는 {plans.length}가지 후원안을 찾았습니다
+            <h1 className="text-[24px] sm:text-[30px] font-extrabold tracking-[-0.02em] break-keep">
+              실행 가능한 후원안 {plans.length}개를 조합했습니다
             </h1>
-            <p className="mt-2 text-[13.5px] text-slate-500">예산 안에서 선수·후원 위치·콘텐츠 구성을 비교해보세요.</p>
+            <p className="mt-2 text-[14px] text-slate-600 break-keep">
+              선수 순위가 아니라 예산 안에서 실제로 진행할 수 있는 조합입니다. 근거 · 기준일 · 데이터 충분도를 함께 확인하세요.
+            </p>
           </div>
           <div className="flex gap-2.5 shrink-0">
             <Link to="/sponsor/recommended/brief" className="h-11 px-4 inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white text-slate-700 text-[13px] font-bold hover:bg-slate-50">
@@ -239,21 +241,21 @@ export default function RecommendResults() {
                         <span className="block px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold whitespace-nowrap">
                           {m.slot?.name || m.role}
                         </span>
-                        <span className="block mt-1 text-[11.5px] font-black text-emerald-600">핏 {m.fitScore}%</span>
+                        <span className="block mt-1 text-[11.5px] font-bold text-slate-600">적합도 {m.fitScore}%</span>
                       </span>
                     </li>
                   ))}
                 </ul>
 
-                {/* 추천 이유 (균형형만 펼침) */}
-                {p.key === 'BALANCED' && (
-                  <div className="mt-4 rounded-xl bg-emerald-50/70 p-3.5">
-                    <p className="flex items-center gap-1.5 text-[12px] font-black text-emerald-800 mb-2">
-                      <Sparkles className="w-3.5 h-3.5" /> 이 조합을 추천하는 이유
+                {/* 근거 — 모든 안에 최대 3개 (§7.4 근거를 숨기지 않는다) */}
+                {(p.reasons?.length ?? 0) > 0 && (
+                  <div className={`mt-4 rounded-xl p-3.5 ${p.key === 'BALANCED' ? 'bg-emerald-50/70' : 'bg-slate-50'}`}>
+                    <p className={`flex items-center gap-1.5 text-[12.5px] font-extrabold mb-2 ${p.key === 'BALANCED' ? 'text-emerald-800' : 'text-slate-700'}`}>
+                      <Sparkles className="w-3.5 h-3.5" /> 이 조합의 근거
                     </p>
                     <ul className="space-y-1.5">
-                      {p.reasons.map((r: any) => (
-                        <li key={r.code} className="flex items-start gap-1.5 text-[11.5px] text-slate-600 break-keep">
+                      {p.reasons.slice(0, 3).map((r: any) => (
+                        <li key={r.code} className="flex items-start gap-1.5 text-[12.5px] text-slate-600 break-keep">
                           <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
                           <span><b className="text-slate-800">{r.label}</b> {r.text}</span>
                         </li>
@@ -262,14 +264,21 @@ export default function RecommendResults() {
                   </div>
                 )}
 
+                {p.key === 'CHALLENGE' && (
+                  <p className="mt-3 flex items-start gap-1.5 rounded-xl bg-violet-50 px-3 py-2.5 text-[12.5px] text-violet-800 break-keep">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                    성장 가능성을 우선한 조합입니다. 데이터가 적은 선수가 포함될 수 있어 예상 범위의 불확실성이 큽니다.
+                  </p>
+                )}
+
                 {/* 실측 지표 */}
                 <div className="mt-4 pt-4 border-t border-slate-100">
-                  <p className="text-[11px] font-black text-slate-400 mb-2.5">구성 지표 <span className="font-bold">(실측)</span></p>
+                  <p className="text-[12px] font-extrabold text-slate-500 mb-2.5">구성 지표 <span className="font-bold">(실측 · 추정 없음)</span></p>
                   <div className="grid grid-cols-3 gap-2">
                     {[
                       { icon: Users, k: '선수', v: `${p.metrics.athletes}명` },
                       { icon: Eye, k: 'SNS 팔로워', v: p.metrics.totalFollowers ? `${(p.metrics.totalFollowers / 10000).toFixed(1)}만` : '수집 중' },
-                      { icon: BadgeCheck, k: '평균 적합도', v: `${p.metrics.avgFit}%` },
+                      { icon: BadgeCheck, k: '데이터 충분도', v: p.members.every((m: any) => m.confidence !== 'LOW') ? '충분' : '일부 수집 중' },
                     ].map((s) => (
                       <div key={s.k} className="text-center">
                         <s.icon className="w-4 h-4 text-slate-400 mx-auto" />
@@ -285,7 +294,7 @@ export default function RecommendResults() {
                     to={`/sponsor/recommended/results/${data.requestId}/plan/${p.key}`}
                     className="h-11 inline-flex items-center justify-center rounded-xl border border-slate-200 text-slate-700 text-[13px] font-bold hover:bg-slate-50"
                   >
-                    상세 보기
+                    근거 보기
                   </Link>
                   <button
                     onClick={() => setSelected(p.key)}
@@ -293,7 +302,7 @@ export default function RecommendResults() {
                       on ? 'bg-emerald-700 text-white' : 'bg-emerald-600 text-white hover:bg-emerald-700'
                     }`}
                   >
-                    {on ? '선택됨' : '이 추천안 선택'}
+                    {on ? '검토 중' : '이 추천안 검토'}
                   </button>
                 </div>
               </article>
@@ -301,9 +310,13 @@ export default function RecommendResults() {
           })}
         </div>
 
-        <p className="mt-5 flex items-center gap-1.5 text-[12px] text-slate-400">
-          <Info className="w-3.5 h-3.5" />
-          추천 점수는 최신 선수정보와 후원 가능 일정에 따라 달라질 수 있습니다. 금액은 VAT 별도이며 신청 시 재검증됩니다.
+        <p className="mt-5 flex items-start gap-1.5 text-[12.5px] text-slate-500 break-keep">
+          <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+          <span>
+            기준일 {data.dataAsOf ? new Date(data.dataAsOf).toLocaleDateString('ko-KR') : '-'}
+            {data.engineVersion ? ` · 엔진 ${data.engineVersion}` : ''} · 금액은 VAT 별도이며 신청 시 재고·가격·승인 가능 여부를 다시 검증합니다.
+            같은 선수는 여러 안에 반복 노출하지 않습니다.
+          </span>
         </p>
       </section>
 
