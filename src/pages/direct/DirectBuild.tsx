@@ -16,6 +16,7 @@ import {
   AlertTriangle, ArrowRight, Check, ChevronRight, Info, Loader2, Minus, Plus, Search, X,
 } from 'lucide-react';
 import PublicHeader from '../../components/PublicHeader';
+import { ErrorState, LoadingState, useSlowLoading } from '../../components/ui/StateView';
 import DirectStepBar, { SLOT_STATUS } from '../../components/direct/DirectStepBar';
 import { api } from '../../services/api';
 
@@ -41,6 +42,8 @@ export default function DirectBuild() {
   const [offers, setOffers] = useState<any>(null);
   const [options, setOptions] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loadErr, setLoadErr] = useState<any>(null);
+  const slow = useSlowLoading(loading);
   const [view, setView] = useState<'FRONT' | 'BACK'>('FRONT');
   const [slotCode, setSlotCode] = useState<string | null>(sp.get('slot'));
   const [offerCodes, setOfferCodes] = useState<string[]>((sp.get('offers') || '').split(',').filter(Boolean));
@@ -61,6 +64,7 @@ export default function DirectBuild() {
 
   const load = useCallback(async () => {
     setLoading(true);
+    setLoadErr(null);
     try {
       const [p, o, opt]: any[] = await Promise.all([
         api.getQuickProfile(athleteId!),
@@ -85,6 +89,8 @@ export default function DirectBuild() {
           }
         }
       } catch { /* 저장값이 깨졌으면 기본값 */ }
+    } catch (e) {
+      setLoadErr(e);
     } finally { setLoading(false); }
   }, [athleteId]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, [load]);
@@ -202,11 +208,23 @@ export default function DirectBuild() {
     } finally { setBusy(false); }
   };
 
-  if (loading || !options) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-white">
         <PublicHeader />
-        <div className="py-24 text-center"><Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto" /></div>
+        <LoadingState label="선수 슬롯과 가격 정책을 불러오는 중…" slow={slow} onRetry={load} />
+      </div>
+    );
+  }
+  if (loadErr || !options || !profile?.athlete) {
+    return (
+      <div className="min-h-screen bg-white">
+        <PublicHeader />
+        <div className="max-w-2xl mx-auto px-5 py-16">
+          <ErrorState error={loadErr} title={loadErr ? undefined : '선수 정보를 찾을 수 없습니다'} onRetry={load}>
+            <Link to="/sponsor/direct/athletes" className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl border border-slate-200 text-[13px] font-bold text-slate-700">선수 다시 선택</Link>
+          </ErrorState>
+        </div>
       </div>
     );
   }

@@ -10,6 +10,7 @@ import {
   ArrowRight, Check, Info, Loader2, Scale, Search, Thermometer, X,
 } from 'lucide-react';
 import PublicHeader from '../../components/PublicHeader';
+import { EmptyState, ErrorState, LoadingState, useSlowLoading } from '../../components/ui/StateView';
 import DirectStepBar from '../../components/direct/DirectStepBar';
 import { api } from '../../services/api';
 import { FAN_TEMP_NOTE } from '../../components/fanhub/FanKit';
@@ -42,6 +43,8 @@ export default function DirectAthletes() {
   const navigate = useNavigate();
   const [athletes, setAthletes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadErr, setLoadErr] = useState<any>(null);
+  const slow = useSlowLoading(loading);
   const [q, setQ] = useState('');
   const [chip, setChip] = useState('ALL');
   const [sort, setSort] = useState('RECENT');
@@ -50,10 +53,14 @@ export default function DirectAthletes() {
 
   const load = useCallback(async () => {
     setLoading(true);
+    setLoadErr(null);
     try {
       const patch = CHIPS.find((c) => c.key === chip)?.patch || {};
       const r: any = await api.getPickAthletes({ q: q.trim() || undefined, sort, limit: 60, ...patch });
       setAthletes(r?.data?.athletes || []);
+    } catch (e) {
+      setLoadErr(e);
+      setAthletes([]);
     } finally { setLoading(false); }
   }, [q, chip, sort]);
 
@@ -126,13 +133,15 @@ export default function DirectAthletes() {
 
         {/* 카드 */}
         {loading ? (
-          <div className="py-24 text-center"><Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto" /></div>
+          <LoadingState label="선수 목록을 불러오는 중…" slow={slow} onRetry={load} />
+        ) : loadErr ? (
+          <div className="mt-5"><ErrorState error={loadErr} onRetry={load} /></div>
         ) : athletes.length === 0 ? (
-          <div className="mt-5 rounded-2xl border border-dashed border-slate-300 py-16 text-center">
-            <p className="text-[14px] font-bold text-slate-600">조건에 맞는 선수가 없습니다</p>
-            <button onClick={() => { setQ(''); setChip('ALL'); }} className="mt-4 h-11 px-5 inline-flex items-center rounded-xl bg-emerald-600 text-white text-sm font-bold">
-              필터 초기화
-            </button>
+          <div className="mt-5">
+            <EmptyState title="조건에 맞는 선수가 없습니다" desc="검색어·필터를 넓히거나, 목표와 예산으로 추천을 받아보세요.">
+              <button onClick={() => { setQ(''); setChip('ALL'); }} className="h-10 px-4 inline-flex items-center rounded-xl border border-slate-200 text-[13px] font-bold text-slate-700">필터 초기화</button>
+              <Link to="/sponsor/recommended" className="h-10 px-4 inline-flex items-center rounded-xl bg-emerald-600 text-white text-[13px] font-bold">추천 PICK 받기</Link>
+            </EmptyState>
           </div>
         ) : (
           <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">

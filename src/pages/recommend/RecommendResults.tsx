@@ -11,6 +11,7 @@ import {
   Sparkles, Users, Wallet,
 } from 'lucide-react';
 import PublicHeader from '../../components/PublicHeader';
+import { ErrorState, LoadingState, useSlowLoading } from '../../components/ui/StateView';
 import { api } from '../../services/api';
 import { RESULT_STORAGE_KEY } from './RecommendAnalyzing';
 
@@ -30,6 +31,8 @@ export default function RecommendResults() {
   const [selected, setSelected] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitErr, setSubmitErr] = useState<string | null>(null);
+  const [loadErr, setLoadErr] = useState<any>(null);
+  const slow = useSlowLoading(!data && !loadErr);
 
   /* 추천안으로 신청 — 브랜드 로그인 필요(§16.1), 비로그인은 로그인 후 복귀 */
   const submitPlan = async (plan: any) => {
@@ -75,8 +78,8 @@ export default function RecommendResults() {
       try {
         const r: any = await api.getRecommendPick(requestId);
         if (r?.data) setData(r.data);
-        else navigate('/sponsor/recommended', { replace: true });
-      } catch { navigate('/sponsor/recommended', { replace: true }); }
+        else setLoadErr({ response: { status: 404, data: { error: { message: '추천 결과가 없거나 만료되었습니다' } } } });
+      } catch (e) { setLoadErr(e); }
     })();
   }, [data, requestId, navigate]);
 
@@ -89,9 +92,14 @@ export default function RecommendResults() {
     return (
       <div className="min-h-screen bg-white">
         <PublicHeader />
-        <div className="max-w-4xl mx-auto px-5 py-24 text-center">
-          <div className="w-10 h-10 rounded-full border-4 border-emerald-100 border-t-emerald-500 animate-spin mx-auto" />
-          <p className="mt-4 text-[13.5px] text-slate-500">추천 결과를 불러오는 중…</p>
+        <div className="max-w-2xl mx-auto px-5 py-16">
+          {loadErr ? (
+            <ErrorState error={loadErr} onRetry={() => { setLoadErr(null); }}>
+              <Link to="/sponsor/recommended" className="inline-flex items-center gap-1.5 h-10 px-4 rounded-xl border border-slate-200 text-[13px] font-bold text-slate-700">조건 다시 입력</Link>
+            </ErrorState>
+          ) : (
+            <LoadingState label="추천 결과를 불러오는 중…" slow={slow} />
+          )}
         </div>
       </div>
     );

@@ -7,10 +7,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  Bookmark, CheckCircle2, ChevronRight, Loader2, Lock, Megaphone,
+  Bookmark, CheckCircle2, ChevronRight, Lock, Megaphone,
   RotateCcw, Search, ShieldCheck, ShoppingCart,
 } from 'lucide-react';
 import PublicHeader from '../../components/PublicHeader';
+import { ErrorState, LoadingState, useSlowLoading } from '../../components/ui/StateView';
 import OfferCard from '../../components/offer/OfferCard';
 import { api } from '../../services/api';
 
@@ -36,6 +37,8 @@ export default function AvailableOffers() {
   const [data, setData] = useState<any>(null);
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadErr, setLoadErr] = useState<any>(null);
+  const slow = useSlowLoading(loading);
   const [msg, setMsg] = useState<string | null>(null);
 
   const state = sp.get('state') || 'ALL';
@@ -55,6 +58,7 @@ export default function AvailableOffers() {
 
   const load = useCallback(async () => {
     setLoading(true);
+    setLoadErr(null);
     try {
       const r: any = await api.listAvailableOffers({
         q: q.trim() || undefined,
@@ -70,6 +74,9 @@ export default function AvailableOffers() {
       /* 화면에 그려진 카드만 노출로 집계한다 (§11.4) */
       const ids = (r?.data?.offers || []).map((o: any) => o.id);
       if (ids.length) api.trackOfferImpressions(ids).catch(() => null);
+    } catch (e) {
+      setLoadErr(e);
+      setData(null);
     } finally { setLoading(false); }
   }, [q, purpose, budget, duration, mode, state, sort]);
 
@@ -224,7 +231,9 @@ export default function AvailableOffers() {
 
         {/* 카드 */}
         {loading ? (
-          <div className="py-24 text-center"><Loader2 className="w-8 h-8 text-emerald-500 animate-spin mx-auto" /></div>
+          <LoadingState label="후원상품을 불러오는 중…" slow={slow} onRetry={load} />
+        ) : loadErr ? (
+          <div className="mt-6"><ErrorState error={loadErr} onRetry={load} /></div>
         ) : offers.length === 0 ? (
           <div className="mt-6 rounded-2xl border border-dashed border-slate-300 py-20 text-center">
             <Bookmark className="w-10 h-10 text-slate-300 mx-auto" />
