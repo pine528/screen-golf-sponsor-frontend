@@ -16,6 +16,9 @@ export const TEMP_COLORS: Record<string, { from: string; to: string; text: strin
   열광: { from: '#F2415B', to: '#7C5CFF', text: 'text-fuchsia-700', bg: 'bg-fuchsia-50', ring: 'ring-fuchsia-100' },
 };
 
+/** 팬온도 고정 문구 — UI 가이드 §11.4. 모든 팬온도 표시 옆에 이 문장을 쓴다 */
+export const FAN_TEMP_NOTE = '팬온도는 선수의 실력이나 절대 인기순위가 아니라, 최근 팬 활동의 활성도입니다.';
+
 export const tempColor = (tier?: string) => TEMP_COLORS[tier || '새싹'] || TEMP_COLORS['새싹'];
 
 export const nf = (n: number | null | undefined) =>

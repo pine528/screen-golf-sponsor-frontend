@@ -9,8 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BarChart3, Heart, Info, Share2, Trophy } from 'lucide-react';
 import { api } from '../../services/api';
-
-export const FAN_TEMP_NOTE = '팬온도는 선수의 실력이나 절대 인기순위가 아니라, 최근 팬 활동의 활성도입니다.';
+import { FAN_TEMP_NOTE } from '../fanhub/FanKit';
 
 const TABS = [
   { key: 'profile', label: '프로필', anchor: '[data-section="profile-detail"]' },

@@ -12,6 +12,7 @@ import {
 import PublicHeader from '../../components/PublicHeader';
 import DirectStepBar from '../../components/direct/DirectStepBar';
 import { api } from '../../services/api';
+import { FAN_TEMP_NOTE } from '../../components/fanhub/FanKit';
 
 const SORTS = [
   { key: 'RECENT', label: '최근 활동순' },
@@ -167,7 +168,7 @@ export default function DirectAthletes() {
 
                     <div className="mt-3 pt-3 border-t border-slate-100 flex items-end justify-between gap-2">
                       <div>
-                        <p className="text-[12px] text-slate-500">팬온도</p>
+                        <p className="text-[12px] text-slate-500" title={FAN_TEMP_NOTE}>팬온도</p>
                         <p className="mt-0.5 text-[14px] font-extrabold inline-flex items-center gap-1 tabular-nums">
                           <Thermometer className="w-3.5 h-3.5 text-emerald-600" />
                           {temp !== null ? `${temp.toFixed(1)}℃` : <span className="text-slate-500 font-bold">집계 중</span>}

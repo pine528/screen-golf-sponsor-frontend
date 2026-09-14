@@ -11,6 +11,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Thermometer, Loader2, RotateCcw, Sparkles, ArrowRight } from 'lucide-react';
 import PublicHeader from '../components/PublicHeader';
 import { api } from '../services/api';
+import { FAN_TEMP_NOTE } from '../components/fanhub/FanKit';
 
 const SORTS = [
   { key: 'RECENT', label: '추천순' },
@@ -178,7 +179,7 @@ export default function PublicAthletes() {
 
                     <dl className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-x-3 gap-y-2 text-[12.5px]">
                       <div>
-                        <dt className="text-slate-500">팬온도</dt>
+                        <dt className="text-slate-500" title={FAN_TEMP_NOTE}>팬온도</dt>
                         <dd className="mt-0.5 font-extrabold text-[13px] inline-flex items-center gap-1 tabular-nums">
                           <Thermometer className="w-3.5 h-3.5 text-emerald-600" />
                           {temp !== null ? `${temp.toFixed(1)}℃` : <span className="text-slate-500 font-bold">집계 중</span>}

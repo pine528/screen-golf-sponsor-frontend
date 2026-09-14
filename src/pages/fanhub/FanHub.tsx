@@ -6,12 +6,21 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Vote, Thermometer, Coins, ShoppingBag, ArrowRight, Sparkles, Megaphone, Heart,
+  TrendingUp, Target, ChevronRight, Info,
 } from 'lucide-react';
 import { api } from '../../services/api';
 import {
   SectionTitle, Card, Chip, TempBar, AthleteAvatar, Countdown,
-  EmptyState, Skeleton, nf,
+  EmptyState, Skeleton, nf, FAN_TEMP_NOTE,
 } from '../../components/fanhub/FanKit';
+
+/** 응원이 가치가 되는 구조 — VOTE·관심·커뮤니티·스토어 → 팬온도·팬기여도 → 선수 성장 신호 → 추천/브랜드 ROI (§11.1) */
+const FLYWHEEL = [
+  { icon: Heart, title: '응원하기', desc: 'VOTE · 관심 선수 · 커뮤니티 · 스토어', tone: 'bg-rose-50 text-rose-500' },
+  { icon: Thermometer, title: '팬온도 · 팬기여도', desc: '최근 30일 활동이 지표로 쌓임', tone: 'bg-orange-50 text-orange-500' },
+  { icon: TrendingUp, title: '선수 성장 신호', desc: '브랜드가 보는 선수의 팬 가치', tone: 'bg-emerald-50 text-emerald-600' },
+  { icon: Target, title: '추천 · 브랜드 후원', desc: '후원 추천과 성과(ROI)에 반영', tone: 'bg-sky-50 text-sky-600' },
+];
 
 const ENTRY_ICON: Record<string, any> = {
   VOTE: Vote, TEMPERATURE: Thermometer, POINT: Coins, STORE: ShoppingBag,
@@ -50,10 +59,10 @@ export default function FanHub() {
             <Sparkles className="w-3 h-3" /> FAN ENGAGEMENT
           </div>
           <h1 className="text-[28px] sm:text-[38px] font-extrabold text-white leading-[1.15] tracking-[-0.03em]">
-            응원이 쌓이면<br />선수의 기회가 됩니다
+            응원이 선수의 가치가 됩니다.
           </h1>
-          <p className="mt-3 text-[14px] sm:text-[15px] text-white/60 leading-relaxed max-w-md">
-            투표하고, 이야기 나누고, 함께 만든 팬온도가 브랜드에게 선수를 소개합니다.
+          <p className="mt-3 text-[14.5px] sm:text-[15.5px] text-white/70 leading-relaxed max-w-md break-keep">
+            투표하고, 이야기 나누고, 응원한 기록이 팬온도가 되어 브랜드에게 선수를 소개합니다.
             참여한 만큼 팬포인트로 돌아옵니다.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
@@ -68,6 +77,31 @@ export default function FanHub() {
           </div>
         </div>
       </div>
+
+      {/* 내 활동이 왜 중요한지 — 기능 나열보다 먼저 (§11.1) */}
+      <section className="mb-8 rounded-3xl border border-slate-200 bg-white p-5 sm:p-6">
+        <p className="text-[13px] font-bold text-slate-500">내 응원은 이렇게 선수에게 돌아갑니다</p>
+        <ol className="mt-4 grid grid-cols-2 lg:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] gap-3 lg:gap-2 items-stretch">
+          {FLYWHEEL.map((f, i) => {
+            const I = f.icon;
+            return (
+              <li key={f.title} className="contents">
+                <div className="rounded-2xl bg-slate-50 p-4">
+                  <span className={`w-9 h-9 rounded-xl inline-flex items-center justify-center ${f.tone}`}><I className="w-4 h-4" /></span>
+                  <p className="mt-2.5 text-[14px] font-extrabold text-slate-900">{i + 1}. {f.title}</p>
+                  <p className="mt-1 text-[12.5px] text-slate-600 leading-relaxed break-keep">{f.desc}</p>
+                </div>
+                {i < FLYWHEEL.length - 1 && (
+                  <span aria-hidden className="hidden lg:flex items-center text-slate-300"><ChevronRight className="w-5 h-5" /></span>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+        <p className="mt-3 flex items-start gap-1.5 text-[12.5px] text-slate-500 break-keep">
+          <Info className="w-3.5 h-3.5 shrink-0 mt-0.5" /> {FAN_TEMP_NOTE} 브랜드에는 개인 팬 데이터가 아니라 집계·추세만 전달됩니다.
+        </p>
+      </section>
 
       {/* 4축 진입 */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-10">

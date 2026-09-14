@@ -8,7 +8,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, Info, Vote, MessageCircle, ShoppingBag, Users, Repeat, Reply } from 'lucide-react';
 import { api } from '../../services/api';
 import {
-  Card, Chip, TempGauge, AthleteAvatar, Notice, Skeleton, tempColor, nf,
+  Card, Chip, TempGauge, AthleteAvatar, Notice, Skeleton, tempColor, nf, FAN_TEMP_NOTE,
 } from '../../components/fanhub/FanKit';
 
 const SOURCE_COMP: Record<string, string> = {
@@ -70,6 +70,7 @@ export default function FanTemperature() {
           <TempGauge score={data.score} tier={data.tier?.label} lowSample={data.lowSample} size={200} />
         </div>
         <p className="mt-3 text-[14px] font-semibold text-slate-600">{data.tier?.meaning || data.tier?.label}</p>
+        <p className="mt-1 text-[12.5px] text-slate-500">최근 30일 팬 활동 기준 · 실력 점수가 아닙니다</p>
 
         {data.lowSample ? (
           <p className="mt-3 text-[13px] text-slate-500 leading-relaxed">
@@ -193,7 +194,7 @@ export default function FanTemperature() {
 
       <div className="mt-4 flex items-center gap-2 justify-center">
         <Info className="w-3.5 h-3.5 text-slate-300" />
-        <p className="text-[12px] text-slate-500">팬온도는 선수 간 순위를 매기기 위한 지표가 아닙니다.</p>
+        <p className="text-[12.5px] text-slate-500 break-keep">{FAN_TEMP_NOTE}</p>
       </div>
     </div>
   );
