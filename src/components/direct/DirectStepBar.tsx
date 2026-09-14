@@ -1,15 +1,14 @@
 /**
- * 직접 PICK 공통 스텝바 — UI/UX 통합 가이드 v1.0 §6.1
- * 사용자에게는 5단계(선수 → 후원 위치 → 구성 → 검토 → 승인)만 보여준다.
- * 내부 9단계 번호(현 페이지들이 넘기는 값)는 5단계로 접어서 표시한다.
+ * 직접 PICK 공통 9단계 스텝바 — 시안 2026-09-14 (숫자 원 + 연결선 + 단계명)
+ * 브레드크럼 홈 > 후원하기(/sponsor) > 직접 PICK > 현재 단계. 이전 단계 링크는 각 화면이 넘긴다.
  */
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Check, ChevronRight, Home, Save } from 'lucide-react';
 
-export const DIRECT_STEPS = ['선수', '후원 위치', '구성', '검토', '승인'] as const;
-
-/** 내부 단계(1~9) → 표시 단계(1~5). 결제·완료는 승인 이후이므로 모두 완료로 표시한다. */
-const FOLD: Record<number, number> = { 1: 1, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 5, 8: 6, 9: 6 };
+export const DIRECT_STEPS = [
+  '선수 탐색', '선수 확인', '상품 PICK', '조건 구성', '견적함',
+  '승인 요청', '선수 승인', '결제', '완료',
+] as const;
 
 export default function DirectStepBar({
   current,
@@ -17,15 +16,53 @@ export default function DirectStepBar({
   backTo,
   backLabel = '이전 단계',
   onSaveDraft,
+  bare,
 }: {
-  /** 내부 단계 1~9 */
+  /** 1~9 */
   current: number;
   crumbs?: { label: string; to?: string }[];
   backTo?: string;
   backLabel?: string;
   onSaveDraft?: () => void;
+  /** 브레드크럼·이전 단계를 화면이 직접 그릴 때 스텝 표시만 */
+  bare?: boolean;
 }) {
-  const shown = FOLD[current] ?? current;
+  const steps = (
+    <ol className="flex items-start gap-0 overflow-x-auto pb-1" aria-label="진행 단계">
+      {DIRECT_STEPS.map((s, i) => {
+        const n = i + 1;
+        const done = n < current;
+        const active = n === current;
+        return (
+          <li key={s} className="flex items-start shrink-0">
+            <div className="flex flex-col items-center w-[64px] sm:w-[92px]">
+              <span
+                aria-current={active ? 'step' : undefined}
+                className={`w-8 h-8 rounded-full text-[13px] font-black flex items-center justify-center ${
+                  done ? 'bg-emerald-100 text-emerald-700'
+                    : active ? 'bg-emerald-500 text-white shadow-[0_8px_18px_-8px_rgba(16,185,129,0.8)]'
+                    : 'bg-slate-100 text-slate-500'
+                }`}
+              >
+                {done ? <Check className="w-4 h-4" /> : n}
+              </span>
+              <span className={`mt-1.5 text-[11.5px] sm:text-[12.5px] font-bold whitespace-nowrap ${
+                active ? 'text-emerald-700' : done ? 'text-slate-600' : 'text-slate-500'
+              }`}>
+                {s}
+              </span>
+            </div>
+            {n < DIRECT_STEPS.length && (
+              <span aria-hidden className={`mt-4 h-px w-4 sm:w-8 ${done ? 'bg-emerald-300' : 'bg-slate-200'}`} />
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+
+  if (bare) return <div className="rounded-2xl bg-white border border-slate-200 px-4 py-4">{steps}</div>;
+
   return (
     <div className="border-b border-slate-100 bg-white">
       <div className="max-w-[1400px] mx-auto px-5 pt-4 pb-3">
@@ -57,35 +94,7 @@ export default function DirectStepBar({
           )}
         </div>
 
-        <ol className="mt-3 flex items-center gap-1 overflow-x-auto pb-1" aria-label="진행 단계">
-          {DIRECT_STEPS.map((s, i) => {
-            const n = i + 1;
-            const done = n < shown;
-            const active = n === shown;
-            return (
-              <li key={s} className="flex items-center gap-1.5 shrink-0">
-                <span
-                  aria-current={active ? 'step' : undefined}
-                  className={`w-7 h-7 rounded-full text-[12px] font-black flex items-center justify-center ${
-                    done ? 'bg-emerald-100 text-emerald-700'
-                      : active ? 'bg-emerald-500 text-white'
-                      : 'bg-slate-100 text-slate-500'
-                  }`}
-                >
-                  {done ? <Check className="w-3.5 h-3.5" /> : n}
-                </span>
-                <span className={`text-[13px] font-bold whitespace-nowrap ${
-                  active ? 'text-emerald-700' : done ? 'text-slate-600' : 'text-slate-500'
-                }`}>
-                  {s}
-                </span>
-                {n < DIRECT_STEPS.length && (
-                  <span className={`w-6 h-px mx-1.5 ${done ? 'bg-emerald-300' : 'bg-slate-200'}`} />
-                )}
-              </li>
-            );
-          })}
-        </ol>
+        <div className="mt-3">{steps}</div>
 
         {backTo && (
           <Link to={backTo} className="mt-2 inline-flex items-center gap-1.5 text-[13px] font-bold text-emerald-700 hover:text-emerald-800">
