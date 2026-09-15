@@ -1,33 +1,35 @@
 /**
- * F05 선수 팬커뮤니티 (핸드오프 §18.1 · §10)
- * 선수 소식과 팬 응원을 한 타임라인에 두되, 무엇이 공식 글인지 구분해서 보여준다.
- * 팬레터는 목록에서 본문을 노출하지 않는다 (작성자·선수만 열람).
+ * F05 선수 커뮤니티 `/fan/community/:athleteId` — 시안 2026-09-15 (Desktop · Mobile)
+ *
+ *  히어로 → 검색 + 선수 칩 슬라이더(좌우 화살표) → 선수 카드(사진·필기체 이름·이력 한 줄·팬온도·참여 팬/최근 응원/시즌 TOP10
+ *  ·응원 편지 쓰기/브랜드 추천하기/선수 정보 보기/팬스토어 보기) → 글쓰기(사진·이모지·태그) → 탭(전체/선수 소식/팬 응원/경기 이야기/사진·영상)
+ *  → 타임라인(공지 강조·좋아요·댓글) / 우측: 커뮤니티 안내 · 오늘의 인기 반응 · 이번 주 응원 랭킹 · SPONPIK 배너.
+ *  값은 실데이터만(참여 팬 수·최근 30일 응원 수·시즌 TOP10·좋아요·이번 주 활동 건수). 팬레터는 목록에 본문을 노출하지 않는다.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
-  ArrowLeft, Heart, MessageCircle, Mail, Send, PenLine, Search,
-  Lightbulb, Thermometer, ChevronRight,
+  BadgeCheck, ChevronLeft, ChevronRight, Flame, Hash, Heart, ImagePlus, Info, Lightbulb, Loader2, Mail, MessageCircle,
+  MoreHorizontal, Search, Send, ShoppingBag, Smile, Trophy, UserRound, Users, X,
 } from 'lucide-react';
+import PublicHeader from '../../components/PublicHeader';
 import { api } from '../../services/api';
-import {
-  Card, Chip, AthleteAvatar, TempBar, EmptyState, Notice, Skeleton, nf,
-} from '../../components/fanhub/FanKit';
+import { useAuth } from '../../hooks/useAuth';
+import { AthleteAvatar, Skeleton, nf, FAN_TEMP_NOTE } from '../../components/fanhub/FanKit';
 
 const TABS = [
-  { key: 'ALL', label: '전체' },
-  { key: 'NOTICE', label: '선수 소식' },
-  { key: 'CHEER', label: '팬 응원' },
-  { key: 'MATCH_TALK', label: '경기 이야기' },
+  { key: 'ALL', label: '전체' }, { key: 'NOTICE', label: '선수 소식' }, { key: 'CHEER', label: '팬 응원' },
+  { key: 'MATCH_TALK', label: '경기 이야기' }, { key: 'MEDIA', label: '사진 · 영상' },
 ];
-
-const TYPE_META: Record<string, { label: string; tone: 'emerald' | 'slate' | 'rose' | 'sky' | 'amber' }> = {
-  NOTICE: { label: '선수 소식', tone: 'emerald' },
-  CHEER: { label: '팬 응원', tone: 'slate' },
-  LETTER: { label: '팬레터', tone: 'rose' },
-  MATCH_TALK: { label: '경기 이야기', tone: 'sky' },
-  BRAND: { label: '브랜드 추천', tone: 'amber' },
+const TYPE_META: Record<string, { label: string; cls: string }> = {
+  NOTICE: { label: '선수 소식', cls: 'bg-emerald-600 text-white' },
+  CHEER: { label: '팬 응원', cls: 'bg-rose-50 text-rose-600' },
+  LETTER: { label: '팬레터', cls: 'bg-violet-50 text-violet-600' },
+  MATCH_TALK: { label: '경기 이야기', cls: 'bg-sky-50 text-sky-700' },
+  BRAND: { label: '브랜드 추천', cls: 'bg-amber-50 text-amber-700' },
 };
+const EMOJIS = ['💚', '🔥', '👏', '💪', '⛳', '🏆', '😊', '🙌'];
+const NOTICE_ITEMS = ['비방·개인정보·광고성 글은 신고 후 즉시 숨김 처리됩니다.', '팬레터는 작성자와 선수만 볼 수 있습니다.', '응원 내용은 팬온도와 포인트에 반영됩니다.'];
 
 const ago = (iso: string) => {
   const m = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
@@ -39,79 +41,97 @@ const ago = (iso: string) => {
 
 export default function FanCommunityNew() {
   const { athleteId } = useParams();
-  const nav = useNavigate();
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
   const [sp, setSp] = useSearchParams();
   const tab = sp.get('tab') || 'ALL';
 
   const [athletes, setAthletes] = useState<any[]>([]);
   const [board, setBoard] = useState<any>(null);
-  const [temp, setTemp] = useState<any>(null);
+  const [summary, setSummary] = useState<any>(null);
   const [q, setQ] = useState('');
-  const [draft, setDraft] = useState('');
-  const [posting, setPosting] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
+
+  /* 글쓰기 */
+  const [draft, setDraft] = useState('');
+  const [postType, setPostType] = useState<'CHEER' | 'MATCH_TALK'>('CHEER');
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [posting, setPosting] = useState(false);
+  const [emojiOpen, setEmojiOpen] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const textRef = useRef<HTMLTextAreaElement>(null);
+
+  /* 댓글 */
   const [openComments, setOpenComments] = useState<string | null>(null);
   const [comments, setComments] = useState<any[]>([]);
   const [commentDraft, setCommentDraft] = useState('');
 
+  const chipRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    api.getCommunityAthletes({})
-      .then((r: any) => {
-        const list = r?.data?.athletes || [];
-        setAthletes(list);
-        if (!athleteId && list[0]) nav(`/fan/community/${list[0].id}`, { replace: true });
-      })
-      .catch(() => setAthletes([]))
-      .finally(() => setLoading(false));
-  }, [athleteId, nav]);
+    api.getCommunityAthletes({ limit: 40 }).then((r: any) => {
+      const list = r?.data?.athletes || [];
+      setAthletes(list);
+      if (!athleteId && list[0]) navigate(`/fan/community/${list[0].id}`, { replace: true });
+    }).catch(() => setAthletes([]));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const load = useCallback(async () => {
     if (!athleteId) return;
-    const [b, t]: any[] = await Promise.all([
-      api.getCommunityPosts(athleteId, tab).catch(() => null),
-      api.getFanTemperature(athleteId).catch(() => null),
+    setLoading(true); setErr(null);
+    const [b, s]: any[] = await Promise.all([
+      api.getCommunityPosts(athleteId, tab === 'MEDIA' ? 'ALL' : tab).catch(() => null),
+      api.getCommunitySummary(athleteId).catch(() => null),
     ]);
-    setBoard(b?.data || null);
-    setTemp(t?.data || null);
+    setBoard(b?.data ?? null); setSummary(s?.data ?? null);
+    setLoading(false);
   }, [athleteId, tab]);
   useEffect(() => { load(); }, [load]);
+  useEffect(() => { chipRef.current?.querySelector<HTMLElement>('[data-active="true"]')?.scrollIntoView({ inline: 'center', block: 'nearest' }); }, [athleteId, athletes]);
 
-  const needLogin = (e: any) => {
-    if (e?.response?.status === 401) {
-      nav(`/login?returnUrl=${encodeURIComponent(window.location.pathname)}`);
-      return true;
-    }
-    return false;
+  const requireLogin = () => { navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`); };
+
+  const onFile = async (f?: File | null) => {
+    if (!f) return;
+    if (!/^image\//.test(f.type)) { setErr('이미지 파일만 올릴 수 있습니다'); return; }
+    if (f.size > 10 * 1024 * 1024) { setErr('10MB 이하 이미지만 올릴 수 있습니다'); return; }
+    setUploading(true); setErr(null);
+    try { const r: any = await api.uploadFile(f, 'asset'); setImageUrl(r?.data?.fileUrl || null); }
+    catch (e: any) { setErr(e?.response?.data?.error?.message || '사진을 올리지 못했습니다'); }
+    finally { setUploading(false); if (fileRef.current) fileRef.current.value = ''; }
   };
-
+  const insert = (text: string) => {
+    const el = textRef.current;
+    if (!el) { setDraft((d) => d + text); return; }
+    const s = el.selectionStart ?? draft.length, e = el.selectionEnd ?? draft.length;
+    const next = draft.slice(0, s) + text + draft.slice(e);
+    setDraft(next.slice(0, 1000));
+    requestAnimationFrame(() => { el.focus(); el.setSelectionRange(s + text.length, s + text.length); });
+  };
   const post = async () => {
-    if (!draft.trim() || !athleteId) return;
+    if (!isAuthenticated) return requireLogin();
+    if (!athleteId || !draft.trim()) return;
     setPosting(true); setErr(null);
     try {
-      await api.createCommunityPost(athleteId, { type: 'CHEER', content: draft.trim() });
-      setDraft('');
+      await api.createCommunityPost(athleteId, { type: postType, content: draft.trim(), imageUrl: imageUrl || undefined });
+      setDraft(''); setImageUrl(null); setEmojiOpen(false);
       await load();
-    } catch (e: any) {
-      if (needLogin(e)) return;
-      setErr(e?.response?.data?.error?.message || '등록하지 못했습니다');
-    } finally { setPosting(false); }
+    } catch (e: any) { setErr(e?.response?.data?.error?.message || '등록하지 못했습니다'); } finally { setPosting(false); }
   };
-
   const like = async (postId: string) => {
-    try { await api.likeCommunityPost(postId); await load(); }
-    catch (e: any) { needLogin(e); }
+    if (!isAuthenticated) return requireLogin();
+    try { await api.likeCommunityPost(postId); await load(); } catch (e: any) { setErr(e?.response?.data?.error?.message || '실패했습니다'); }
   };
-
   const toggleComments = async (postId: string) => {
     if (openComments === postId) { setOpenComments(null); return; }
-    setOpenComments(postId);
-    setComments([]);
+    setOpenComments(postId); setCommentDraft('');
     const r: any = await api.getCommunityComments(postId).catch(() => null);
     setComments(r?.data?.comments || []);
   };
-
   const addComment = async (postId: string) => {
+    if (!isAuthenticated) return requireLogin();
     if (!commentDraft.trim()) return;
     try {
       await api.addCommunityComment(postId, commentDraft.trim());
@@ -119,196 +139,273 @@ export default function FanCommunityNew() {
       const r: any = await api.getCommunityComments(postId).catch(() => null);
       setComments(r?.data?.comments || []);
       await load();
-    } catch (e: any) { needLogin(e); }
+    } catch (e: any) { setErr(e?.response?.data?.error?.message || '댓글을 남기지 못했습니다'); }
   };
 
-  const a = board?.athlete;
-  const filtered = q.trim() ? athletes.filter((x) => x.name.includes(q.trim())) : athletes;
-
-  if (loading) {
-    return <div className="max-w-2xl mx-auto px-4 py-10 space-y-3"><Skeleton className="h-[120px]" /><Skeleton className="h-[300px]" /></div>;
-  }
+  const a = summary?.athlete || board?.athlete;
+  const st = summary?.stats;
+  const temp = summary?.temperature;
+  const filteredChips = q.trim() ? athletes.filter((x) => x.name.includes(q.trim())) : athletes;
+  const posts: any[] = (board?.posts || []).filter((p: any) => (tab === 'MEDIA' ? !!p.imageUrl : true));
+  const scrollChips = (dir: number) => chipRef.current?.scrollBy({ left: dir * 280, behavior: 'smooth' });
+  const myInitial = ((user as any)?.nickname || (user as any)?.name || user?.email || '팬').slice(0, 1);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-      <Link to="/fan" className="inline-flex items-center gap-1 text-[13px] font-semibold text-slate-500 hover:text-slate-700 mb-5">
-        <ArrowLeft className="w-4 h-4" /> 팬 참여
-      </Link>
+    <div className="min-h-screen bg-[#f3faf6] text-slate-900 pb-16">
+      <PublicHeader />
 
-      {/* 선수 선택 */}
-      <div className="mb-5">
-        <div className="relative mb-3">
-          <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-300" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="선수 이름으로 커뮤니티 찾기"
-            className="w-full h-11 pl-10 pr-3 rounded-2xl border border-slate-200 bg-white text-[14px] placeholder:text-slate-300 focus:outline-none focus:border-slate-400" />
+      {/* ── 히어로 ── */}
+      <section className="relative overflow-hidden bg-[#ecf8f1]">
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute right-[-120px] top-[-160px] w-[520px] h-[520px] rounded-full bg-emerald-200/50 blur-3xl" />
+          <p className="absolute right-8 top-1/2 -translate-y-1/2 hidden md:block text-right text-[15px] font-extrabold tracking-[0.22em] leading-[1.7] text-emerald-800/50 select-none">SPORTS<br />CONNECTS<br /><span className="border-b-2 border-emerald-500/60">US</span></p>
         </div>
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-          {filtered.map((x) => (
-            <Link key={x.id} to={`/fan/community/${x.id}`}
-              className={`shrink-0 flex items-center gap-2 pl-1.5 pr-3.5 py-1.5 rounded-full border transition ${
-                x.id === athleteId ? 'border-slate-900 bg-slate-900 text-white' : 'border-slate-200 bg-white hover:border-slate-300'
-              }`}>
-              <AthleteAvatar athlete={x} size={26} />
-              <span className="text-[13px] font-semibold whitespace-nowrap">{x.name}</span>
-            </Link>
-          ))}
+        <div className="max-w-[1180px] mx-auto px-5 pt-5 pb-7 relative">
+          <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-[13px]">
+            <Link to="/" className="text-slate-500 hover:text-slate-700">홈</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+            <Link to="/fan" className="text-slate-500 hover:text-slate-700">팬 참여</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+            <span className="font-bold text-emerald-700">선수 커뮤니티</span>
+          </nav>
+          <h1 className="mt-4 text-[28px] sm:text-[36px] font-extrabold tracking-[-0.03em] leading-tight">선수 커뮤니티</h1>
+          <p className="mt-1.5 text-[14px] text-slate-600 break-keep">좋아하는 선수를 더 가까이, 함께 응원하는 특별한 공간입니다.</p>
         </div>
-      </div>
+      </section>
 
-      {a && (
-        <>
-          {/* 선수 헤더 */}
-          <Card className="p-5 mb-4">
-            <div className="flex items-center gap-3.5 mb-4">
-              <AthleteAvatar athlete={a} size={52} />
-              <div className="min-w-0 flex-1">
-                <p className="text-[17px] font-bold text-slate-900">{a.name}</p>
-                <p className="text-[12px] text-slate-500">{[a.tour, a.region].filter(Boolean).join(' · ') || '선수'}</p>
-              </div>
-              <Link to={`/athletes/${a.id}`} className="text-[12px] font-bold text-slate-500 hover:text-slate-900 inline-flex items-center">
-                선수 정보 <ChevronRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-            {temp && (
-              <Link to={`/fan/temperature/${a.id}`} className="block pt-4 border-t border-slate-100">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <Thermometer className="w-3.5 h-3.5 text-slate-500" />
-                  <span className="text-[12px] font-semibold text-slate-500">팬온도</span>
-                  <span className="ml-auto text-[12px] text-slate-500">자세히 보기</span>
-                </div>
-                <TempBar score={temp.score} tier={temp.tier?.label} lowSample={temp.lowSample} />
-              </Link>
-            )}
-            <div className="grid grid-cols-2 gap-2 mt-4">
-              <Link to={`/fan/letter/${a.id}`}
-                className="h-11 rounded-2xl bg-slate-100 text-slate-700 text-[13px] font-bold flex items-center justify-center gap-1.5 hover:bg-slate-200 transition">
-                <Mail className="w-4 h-4" /> 응원 편지
-              </Link>
-              <Link to={`/fan/brand-suggest/${a.id}`}
-                className="h-11 rounded-2xl bg-slate-900 text-white text-[13px] font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 transition">
-                <Lightbulb className="w-4 h-4" /> 브랜드 추천
-              </Link>
-            </div>
-          </Card>
+      <div className="max-w-[1180px] mx-auto px-5 -mt-3 relative grid lg:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+        {/* ── 본문 ── */}
+        <div className="min-w-0 space-y-3">
+          {/* 검색 */}
+          <label className="flex items-center gap-2 h-12 px-4 rounded-2xl bg-white border border-slate-200 shadow-sm focus-within:border-emerald-400">
+            <Search className="w-4 h-4 text-slate-400" />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="선수 이름으로 커뮤니티 찾기" className="flex-1 min-w-0 text-[14px] outline-none bg-transparent placeholder:text-slate-400" />
+            {q && <button onClick={() => setQ('')} aria-label="지우기" className="text-slate-400"><X className="w-4 h-4" /></button>}
+          </label>
 
-          {/* 글쓰기 */}
-          <Card className="p-4 mb-4">
-            <div className="flex gap-3">
-              <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                <PenLine className="w-4 h-4 text-slate-500" />
-              </div>
-              <div className="flex-1">
-                <textarea value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 1000))}
-                  placeholder={`${a.name} 선수에게 응원을 남겨보세요`} rows={draft ? 3 : 1}
-                  className="w-full text-[14px] text-slate-700 placeholder:text-slate-300 border-0 resize-none focus:outline-none leading-relaxed" />
-                {draft && (
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
-                    <span className="text-[12px] text-slate-500 tabular-nums">{draft.length}/1,000</span>
-                    <button onClick={post} disabled={posting || !draft.trim()}
-                      className="h-9 px-4 rounded-xl bg-slate-900 text-white text-[13px] font-bold disabled:bg-slate-200 disabled:text-slate-400 hover:bg-slate-800 transition inline-flex items-center gap-1.5">
-                      <Send className="w-3.5 h-3.5" /> {posting ? '등록 중…' : '응원 남기기'}
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
-
-          {err && <div className="mb-4 rounded-2xl bg-rose-50 px-4 py-3 text-[13px] font-semibold text-rose-600">{err}</div>}
-
-          {/* 탭 */}
-          <div className="flex gap-1.5 mb-4 overflow-x-auto pb-1 -mx-1 px-1">
-            {TABS.map((t) => (
-              <button key={t.key} onClick={() => setSp(t.key === 'ALL' ? {} : { tab: t.key })}
-                className={`shrink-0 h-8 px-3.5 rounded-full text-[12px] font-semibold transition border ${
-                  tab === t.key ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
-                }`}>
-                {t.label}
-              </button>
-            ))}
-          </div>
-
-          {/* 타임라인 */}
-          {board?.posts?.length ? (
-            <div className="space-y-2.5">
-              {board.posts.map((p: any) => {
-                const meta = TYPE_META[p.type] || TYPE_META.CHEER;
-                const isNotice = p.type === 'NOTICE';
+          {/* 선수 칩 슬라이더 */}
+          <div className="relative">
+            <button onClick={() => scrollChips(-1)} aria-label="이전 선수" className="hidden sm:inline-flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white border border-slate-200 shadow items-center justify-center text-slate-600"><ChevronLeft className="w-4 h-4" /></button>
+            <div ref={chipRef} className="flex gap-2 overflow-x-auto sm:px-10 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden scroll-smooth">
+              {filteredChips.map((x) => {
+                const on = x.id === athleteId;
                 return (
-                  <Card key={p.id} className={`p-4 ${isNotice ? 'border-emerald-200 bg-emerald-50/30' : ''}`}>
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <Chip size="xs" tone={meta.tone}>{meta.label}</Chip>
-                      <span className="text-[12px] font-semibold text-slate-600">{p.authorName}</span>
-                      <span className="text-[12px] text-slate-300">·</span>
-                      <span className="text-[12px] text-slate-500">{ago(p.createdAt)}</span>
-                      {p.isPrivate && <Chip size="xs">비공개</Chip>}
-                    </div>
-                    <p className="text-[14px] text-slate-700 leading-relaxed whitespace-pre-line">{p.content}</p>
-                    {p.imageUrl && (
-                      <img src={p.imageUrl} alt="" className="mt-3 rounded-2xl w-full object-cover max-h-72" />
-                    )}
-                    <div className="flex items-center gap-4 mt-3.5 pt-3 border-t border-slate-100">
-                      <button onClick={() => like(p.id)}
-                        className={`inline-flex items-center gap-1.5 text-[12px] font-semibold transition ${
-                          p.likedByMe ? 'text-rose-500' : 'text-slate-500 hover:text-slate-600'
-                        }`}>
-                        <Heart className={`w-4 h-4 ${p.likedByMe ? 'fill-rose-500' : ''}`} /> {nf(p.likeCount)}
-                      </button>
-                      <button onClick={() => toggleComments(p.id)}
-                        className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-slate-500 hover:text-slate-600 transition">
-                        <MessageCircle className="w-4 h-4" /> {nf(p.commentCount)}
-                      </button>
-                    </div>
-
-                    {openComments === p.id && (
-                      <div className="mt-3 pt-3 border-t border-slate-100">
-                        <div className="space-y-2.5 mb-3">
-                          {comments.length ? comments.map((c: any) => (
-                            <div key={c.id} className="flex gap-2.5">
-                              <span className="w-6 h-6 rounded-full bg-slate-100 shrink-0" />
-                              <div className="min-w-0">
-                                <p className="text-[12px]">
-                                  <b className="text-slate-700">{c.authorName}</b>
-                                  <span className="text-slate-300 mx-1.5">·</span>
-                                  <span className="text-slate-500">{ago(c.createdAt)}</span>
-                                </p>
-                                <p className="text-[13px] text-slate-600 mt-0.5 leading-relaxed">{c.content}</p>
-                              </div>
-                            </div>
-                          )) : (
-                            <p className="text-[12px] text-slate-500 text-center py-2">첫 댓글을 남겨보세요</p>
-                          )}
-                        </div>
-                        <div className="flex gap-2">
-                          <input value={commentDraft} onChange={(e) => setCommentDraft(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && addComment(p.id)}
-                            placeholder="댓글 남기기"
-                            className="flex-1 h-10 px-3.5 rounded-xl bg-slate-50 border border-slate-100 text-[13px] placeholder:text-slate-300 focus:outline-none focus:border-slate-300" />
-                          <button onClick={() => addComment(p.id)}
-                            className="h-10 px-4 rounded-xl bg-slate-900 text-white text-[13px] font-bold hover:bg-slate-800 transition">
-                            등록
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </Card>
+                  <Link key={x.id} to={`/fan/community/${x.id}${sp.get('tab') ? `?tab=${sp.get('tab')}` : ''}`} data-active={on}
+                    className={`shrink-0 flex items-center gap-2 pl-1.5 pr-4 h-12 rounded-full border-2 transition ${on ? 'border-emerald-500 bg-white shadow-[0_6px_16px_-8px_rgba(16,185,129,0.6)]' : 'border-slate-200 bg-white hover:border-emerald-300'}`}>
+                    <span className={`rounded-full ${on ? 'ring-2 ring-emerald-500 ring-offset-1' : ''}`}><AthleteAvatar athlete={x} size={34} /></span>
+                    <span className={`text-[13.5px] font-bold whitespace-nowrap ${on ? 'text-emerald-700' : 'text-slate-800'}`}>{x.name}</span>
+                  </Link>
                 );
               })}
+              {filteredChips.length === 0 && <p className="text-[13px] text-slate-500 px-2 py-3">검색 결과가 없습니다</p>}
             </div>
-          ) : (
-            <EmptyState icon={<MessageCircle className="w-5 h-5" />} title="아직 글이 없습니다"
-              desc={'첫 응원을 남기면 선수에게 전달됩니다.'} />
-          )}
-
-          <div className="mt-8">
-            <Notice title="커뮤니티 이용 안내" items={[
-              '비방·개인정보·광고성 글은 신고 시 즉시 숨김 처리되며 운영팀이 확인합니다.',
-              '팬레터는 작성자와 선수만 볼 수 있고, 목록에서는 본문이 표시되지 않습니다.',
-              '동일 내용을 반복해서 올리면 팬온도와 포인트에 반영되지 않습니다.',
-            ]} />
+            <button onClick={() => scrollChips(1)} aria-label="다음 선수" className="hidden sm:inline-flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white border border-slate-200 shadow items-center justify-center text-slate-600"><ChevronRight className="w-4 h-4" /></button>
           </div>
-        </>
-      )}
+
+          {loading && !a ? (
+            <><Skeleton className="h-[300px] rounded-3xl" /><Skeleton className="h-[110px] rounded-2xl" /></>
+          ) : a && (
+            <>
+              {/* ── 선수 카드 ── */}
+              <section className="rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-[0_14px_40px_-24px_rgba(15,23,42,0.25)]">
+                <div className="grid sm:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)]">
+                  <div className="relative aspect-[4/3] sm:aspect-auto sm:min-h-[280px] bg-gradient-to-br from-emerald-100 to-emerald-50 overflow-hidden">
+                    {a.profileImageUrl ? <img src={a.profileImageUrl} alt={a.name} className="w-full h-full object-cover object-top" /> : <span className="w-full h-full flex items-center justify-center text-6xl font-extrabold text-emerald-300">{a.name.slice(0, 1)}</span>}
+                    <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-900/60 to-transparent" />
+                    {a.quote && <p className="absolute left-4 right-4 bottom-12 text-[12.5px] font-bold text-white/95 leading-snug break-keep drop-shadow">“{a.quote}”</p>}
+                    <p aria-hidden className="absolute left-4 bottom-3 font-script text-[26px] text-white/90 leading-none drop-shadow select-none">{a.name}</p>
+                  </div>
+                  <div className="p-4 sm:p-5">
+                    <div className="flex flex-col md:flex-row md:items-start gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {a.tour && <span className="px-2 py-0.5 rounded-md bg-emerald-600 text-white text-[11.5px] font-extrabold">{a.tour}</span>}
+                          {a.region && <span className="text-[12.5px] text-slate-500">{a.region}</span>}
+                        </div>
+                        <p className="mt-1.5 text-[24px] sm:text-[28px] font-extrabold tracking-[-0.02em] inline-flex items-center gap-1.5">{a.name} 프로 {a.isRecommended && <BadgeCheck className="w-5 h-5 text-emerald-500" aria-label="추천 선수" />}</p>
+                        <p className="text-[13px] text-slate-500 break-keep">꾸준함이 만드는 더 큰 오늘, {a.name} 프로를 함께 응원해주세요!</p>
+                      </div>
+                      <div className="rounded-2xl bg-emerald-50 border border-emerald-100 px-4 py-3 md:w-[210px] shrink-0" title={FAN_TEMP_NOTE}>
+                        <p className="text-[11.5px] font-bold text-slate-600">팬온도</p>
+                        <p className="mt-0.5 inline-flex items-center gap-1.5 text-[26px] font-black text-emerald-700 tabular-nums leading-none"><Flame className="w-5 h-5 text-orange-500" />{temp && !temp.lowSample && temp.score > 0 ? `${Number(temp.score).toFixed(1)}°` : <span className="text-[14px] font-bold text-slate-500">집계 중</span>}</p>
+                        <p className="mt-1 text-[11.5px] text-slate-600 break-keep">{temp && !temp.lowSample && temp.score > 0 ? (temp.tier?.meaning || temp.tier?.label || '지금도 뜨거운 응원이 이어지고 있어요!') : '팬 30명 이상 참여하면 공개됩니다'}</p>
+                      </div>
+                    </div>
+                    <dl className="mt-4 grid grid-cols-3 divide-x divide-slate-100 rounded-2xl bg-slate-50 px-2 py-3">
+                      {[
+                        { icon: Users, k: '참여 팬 수', v: st ? nf(st.fanCount) : '—' },
+                        { icon: Heart, k: '최근 응원 수', v: st ? nf(st.recentCheers) : '—', hint: '30일' },
+                        { icon: Trophy, k: '이번 시즌 TOP 10', v: st ? String(st.seasonTop10) : '—' },
+                      ].map((x) => { const I = x.icon; return (
+                        <div key={x.k} className="px-2 text-center">
+                          <dd className="inline-flex items-center gap-1 text-[16px] sm:text-[18px] font-extrabold tabular-nums"><I className="w-4 h-4 text-slate-400" />{x.v}</dd>
+                          <dt className="text-[11px] text-slate-500">{x.k}</dt>
+                        </div>
+                      ); })}
+                    </dl>
+                    <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-2">
+                      <Link to={`/fan/letter/${a.id}`} className="h-11 rounded-xl bg-emerald-600 text-white text-[13px] font-bold inline-flex items-center justify-center gap-1.5 hover:bg-emerald-700"><Mail className="w-4 h-4" /> 응원 편지 쓰기</Link>
+                      <Link to={`/fan/brand-suggest/${a.id}`} className="h-11 rounded-xl bg-slate-900 text-white text-[13px] font-bold inline-flex items-center justify-center gap-1.5 hover:bg-slate-800"><Lightbulb className="w-4 h-4" /> 브랜드 추천하기</Link>
+                      <Link to={`/athletes/${a.id}`} className="h-11 rounded-xl border border-slate-200 bg-white text-[13px] font-bold text-slate-700 inline-flex items-center justify-center gap-1.5 hover:border-slate-400"><UserRound className="w-4 h-4" /> 선수 정보 보기</Link>
+                    </div>
+                    <div className="mt-2 text-right"><Link to="/fan/store" className="inline-flex items-center gap-1 text-[12.5px] font-bold text-emerald-700 hover:underline"><ShoppingBag className="w-3.5 h-3.5" /> 팬스토어 보기 <ChevronRight className="w-3.5 h-3.5" /></Link></div>
+                  </div>
+                </div>
+              </section>
+
+              {/* ── 글쓰기 ── */}
+              <section className="rounded-2xl bg-white border border-slate-200 p-4">
+                <div className="flex gap-3">
+                  <span className="w-11 h-11 rounded-full bg-emerald-100 text-emerald-700 font-extrabold inline-flex items-center justify-center shrink-0">{myInitial}</span>
+                  <div className="min-w-0 flex-1">
+                    <textarea ref={textRef} value={draft} onChange={(e) => setDraft(e.target.value.slice(0, 1000))} onFocus={() => !isAuthenticated && requireLogin()}
+                      placeholder={`${a.name} 선수에게 응원을 남겨보세요!`} rows={draft ? 3 : 1}
+                      className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-[14px] placeholder:text-slate-400 focus:outline-none focus:border-emerald-400 resize-none leading-relaxed" />
+                    {imageUrl && (
+                      <div className="mt-2 relative inline-block">
+                        <img src={imageUrl} alt="첨부 이미지" className="h-24 rounded-xl border border-slate-200 object-cover" />
+                        <button onClick={() => setImageUrl(null)} aria-label="사진 제거" className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-900 text-white inline-flex items-center justify-center"><X className="w-3.5 h-3.5" /></button>
+                      </div>
+                    )}
+                    {emojiOpen && (
+                      <div className="mt-2 flex flex-wrap gap-1">{EMOJIS.map((e) => <button key={e} onClick={() => insert(e)} className="w-9 h-9 rounded-lg hover:bg-slate-100 text-[18px]">{e}</button>)}</div>
+                    )}
+                    <div className="mt-2 flex items-center gap-1 flex-wrap">
+                      <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
+                      <button onClick={() => (isAuthenticated ? fileRef.current?.click() : requireLogin())} disabled={uploading} className="h-9 px-2.5 rounded-lg text-[12.5px] font-bold text-slate-600 hover:bg-slate-100 inline-flex items-center gap-1.5">{uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />} 사진</button>
+                      <button onClick={() => setEmojiOpen((v) => !v)} className="h-9 px-2.5 rounded-lg text-[12.5px] font-bold text-slate-600 hover:bg-slate-100 inline-flex items-center gap-1.5"><Smile className="w-4 h-4" /> 이모지</button>
+                      <button onClick={() => insert('#')} className="h-9 px-2.5 rounded-lg text-[12.5px] font-bold text-slate-600 hover:bg-slate-100 inline-flex items-center gap-1.5"><Hash className="w-4 h-4" /> 태그</button>
+                      <select value={postType} onChange={(e) => setPostType(e.target.value as any)} className="h-9 px-2 rounded-lg border border-slate-200 text-[12px] font-bold text-slate-600 bg-white">
+                        <option value="CHEER">팬 응원</option><option value="MATCH_TALK">경기 이야기</option>
+                      </select>
+                      <span className="ml-auto text-[11.5px] text-slate-400 tabular-nums">{draft.length}/1,000</span>
+                      <button onClick={post} disabled={posting || !draft.trim()} className="h-9 px-4 rounded-lg bg-emerald-600 text-white text-[13px] font-bold inline-flex items-center gap-1.5 hover:bg-emerald-700 disabled:opacity-40"><Send className="w-3.5 h-3.5" /> {posting ? '등록 중…' : '게시하기'}</button>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              {err && <p className="rounded-xl bg-rose-50 px-4 py-2.5 text-[13px] font-bold text-rose-600 break-keep">{err}</p>}
+
+              {/* ── 탭 ── */}
+              <div className="flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {TABS.map((t) => (
+                  <button key={t.key} onClick={() => setSp(t.key === 'ALL' ? {} : { tab: t.key })} aria-pressed={tab === t.key}
+                    className={`shrink-0 h-10 px-4 rounded-full text-[13px] font-bold border transition ${tab === t.key ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-400'}`}>{t.label}</button>
+                ))}
+              </div>
+
+              {/* ── 타임라인 ── */}
+              {loading ? (
+                <div className="space-y-2.5">{[0, 1].map((i) => <Skeleton key={i} className="h-[120px] rounded-2xl" />)}</div>
+              ) : posts.length ? (
+                <ul className="space-y-2.5">
+                  {posts.map((p: any) => {
+                    const meta = TYPE_META[p.type] || TYPE_META.CHEER;
+                    const notice = p.type === 'NOTICE';
+                    return (
+                      <li key={p.id} className={`relative rounded-2xl border p-4 ${notice ? 'border-emerald-200 bg-emerald-50/50' : 'border-slate-200 bg-white'}`}>
+                        {notice && <span className="absolute -top-2.5 left-4 px-2 py-0.5 rounded-md bg-emerald-600 text-white text-[11px] font-extrabold inline-flex items-center gap-1"><Trophy className="w-3 h-3" /> 공지</span>}
+                        <div className="flex items-start gap-3">
+                          <span className="w-10 h-10 rounded-full overflow-hidden bg-slate-100 shrink-0 inline-flex items-center justify-center text-[13px] font-extrabold text-slate-600">
+                            {notice && a.profileImageUrl ? <img src={a.profileImageUrl} alt="" className="w-full h-full object-cover object-top" /> : p.authorName.slice(0, 1)}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                              <span className="text-[13.5px] font-extrabold">{p.authorName}{notice ? ' 프로' : ''}</span>
+                              <span className="text-[12px] text-slate-500">{ago(p.createdAt)}</span>
+                              {!notice && <span className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${meta.cls}`}>{meta.label}</span>}
+                              {p.isPrivate && <span className="px-1.5 py-0.5 rounded bg-slate-100 text-[11px] font-bold text-slate-500">비공개</span>}
+                              <button aria-label="더보기" className="ml-auto w-7 h-7 rounded-full text-slate-400 hover:bg-slate-100 inline-flex items-center justify-center"><MoreHorizontal className="w-4 h-4" /></button>
+                            </div>
+                            <div className="mt-1.5 flex gap-3">
+                              <p className={`flex-1 text-[14px] leading-relaxed whitespace-pre-line break-keep ${notice ? 'font-semibold text-slate-800' : 'text-slate-700'}`}>{p.content}</p>
+                              {p.imageUrl && <a href={p.imageUrl} target="_blank" rel="noreferrer" className="shrink-0"><img src={p.imageUrl} alt="" className="w-24 h-24 sm:w-32 sm:h-24 rounded-xl object-cover border border-slate-100" /></a>}
+                            </div>
+                            <div className="mt-3 flex items-center gap-4">
+                              <button onClick={() => like(p.id)} className={`inline-flex items-center gap-1.5 text-[12.5px] font-bold ${p.likedByMe ? 'text-rose-500' : 'text-slate-500 hover:text-rose-500'}`}><Heart className={`w-4 h-4 ${p.likedByMe ? 'fill-current' : ''}`} /> {nf(p.likeCount)}</button>
+                              <button onClick={() => toggleComments(p.id)} className="inline-flex items-center gap-1.5 text-[12.5px] font-bold text-slate-500 hover:text-slate-800"><MessageCircle className="w-4 h-4" /> {nf(p.commentCount)}</button>
+                            </div>
+                            {openComments === p.id && (
+                              <div className="mt-3 pt-3 border-t border-slate-100">
+                                <div className="space-y-2.5 mb-3">
+                                  {comments.length ? comments.map((c: any) => (
+                                    <div key={c.id} className="flex gap-2.5">
+                                      <span className="w-6 h-6 rounded-full bg-slate-100 text-[11px] font-bold text-slate-600 inline-flex items-center justify-center shrink-0">{c.authorName.slice(0, 1)}</span>
+                                      <div className="min-w-0">
+                                        <p className="text-[12px]"><b className="text-slate-700">{c.authorName}</b><span className="text-slate-300 mx-1.5">·</span><span className="text-slate-500">{ago(c.createdAt)}</span></p>
+                                        <p className="text-[13px] text-slate-600 mt-0.5 leading-relaxed break-keep">{c.content}</p>
+                                      </div>
+                                    </div>
+                                  )) : <p className="text-[12px] text-slate-500 text-center py-2">첫 댓글을 남겨보세요</p>}
+                                </div>
+                                <div className="flex gap-2">
+                                  <input value={commentDraft} onChange={(e) => setCommentDraft(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addComment(p.id)} placeholder="댓글 남기기" className="flex-1 h-10 px-3.5 rounded-xl bg-slate-50 border border-slate-100 text-[13px] placeholder:text-slate-400 focus:outline-none focus:border-emerald-300" />
+                                  <button onClick={() => addComment(p.id)} className="h-10 px-4 rounded-xl bg-slate-900 text-white text-[13px] font-bold">등록</button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <div className="rounded-2xl bg-white border border-dashed border-slate-200 py-12 text-center">
+                  <span className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 inline-flex items-center justify-center"><MessageCircle className="w-6 h-6" /></span>
+                  <p className="mt-3 text-[15px] font-extrabold">{tab === 'MEDIA' ? '사진·영상 글이 아직 없습니다' : '아직 글이 없습니다'}</p>
+                  <p className="mt-1 text-[13px] text-slate-500">첫 응원을 남기면 선수에게 전달됩니다.</p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        {/* ── 사이드바 ── */}
+        <aside className="space-y-3 lg:sticky lg:top-20">
+          <div className="rounded-2xl bg-white border border-slate-200 p-4">
+            <p className="text-[14px] font-extrabold inline-flex items-center gap-1.5"><Info className="w-4 h-4 text-sky-500" /> 커뮤니티 안내</p>
+            <ul className="mt-2 space-y-1.5">{NOTICE_ITEMS.map((t) => <li key={t} className="flex items-start gap-1.5 text-[12.5px] text-slate-600 break-keep"><span className="w-1 h-1 rounded-full bg-slate-400 mt-2 shrink-0" />{t}</li>)}</ul>
+          </div>
+          <div className="rounded-2xl bg-white border border-slate-200 p-4">
+            <p className="text-[14px] font-extrabold inline-flex items-center gap-1.5"><Flame className="w-4 h-4 text-orange-500" /> 오늘의 인기 반응</p>
+            {summary?.topPosts?.length ? (
+              <ol className="mt-2.5 space-y-2">
+                {summary.topPosts.map((p: any, i: number) => (
+                  <li key={p.id} className="flex items-center gap-2.5 text-[12.5px]">
+                    <span className={`w-5 h-5 rounded-full text-[11px] font-extrabold inline-flex items-center justify-center shrink-0 ${i < 3 ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600'}`}>{i + 1}</span>
+                    <span className="flex-1 truncate text-slate-700">{p.content}</span>
+                    <span className="shrink-0 inline-flex items-center gap-0.5 text-slate-500 tabular-nums"><Heart className="w-3 h-3" /> {nf(p.likeCount)}</span>
+                  </li>
+                ))}
+              </ol>
+            ) : <p className="mt-2 text-[12.5px] text-slate-500">최근 30일 반응이 아직 없습니다.</p>}
+          </div>
+          <div className="rounded-2xl bg-white border border-slate-200 p-4">
+            <p className="text-[14px] font-extrabold inline-flex items-center gap-1.5"><Trophy className="w-4 h-4 text-amber-500" /> 이번 주 응원 랭킹</p>
+            {summary?.weeklyFans?.length ? (
+              <ol className="mt-2.5 space-y-2">
+                {summary.weeklyFans.map((f: any) => (
+                  <li key={f.rank} className="flex items-center gap-2.5 text-[12.5px]">
+                    <span className={`w-5 h-5 rounded-full text-[11px] font-extrabold inline-flex items-center justify-center shrink-0 ${f.rank <= 3 ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600'}`}>{f.rank}</span>
+                    <span className="w-7 h-7 rounded-full overflow-hidden bg-slate-100 shrink-0 inline-flex items-center justify-center text-[11px] font-bold text-slate-600">{f.avatarUrl ? <img src={f.avatarUrl} alt="" className="w-full h-full object-cover" /> : f.nickname.slice(0, 1)}</span>
+                    <span className="flex-1 truncate font-bold text-slate-800">{f.nickname}</span>
+                    <span className="shrink-0 text-slate-500 tabular-nums">활동 {f.activities}건</span>
+                  </li>
+                ))}
+              </ol>
+            ) : <p className="mt-2 text-[12.5px] text-slate-500">이번 주 응원 활동이 아직 없습니다.</p>}
+          </div>
+          <Link to="/fan" className="relative block overflow-hidden rounded-2xl bg-[#0a1411] text-white p-5 hover:bg-[#0e1a16]">
+            <div aria-hidden className="pointer-events-none absolute inset-0"><div className="absolute right-[-40%] bottom-[-60%] w-[120%] h-[120%] rounded-full bg-emerald-500/20 blur-3xl" /></div>
+            <p className="relative text-[11px] font-extrabold tracking-[0.2em] text-emerald-300">SPONPIK</p>
+            <p className="relative mt-2 text-[17px] font-extrabold leading-snug break-keep">응원하는 마음이<br />선수의 오늘을 만듭니다.</p>
+            <p className="relative mt-2 text-[12px] text-white/70 break-keep">커뮤니티의 응원과 참여는 팬온도 상승과 팬포인트로 연결되어 선수에게 더 큰 기회가 됩니다.</p>
+            <span className="relative mt-3 inline-flex h-9 px-3.5 items-center gap-1 rounded-full bg-white text-slate-900 text-[12.5px] font-bold">SPONPIK가 만드는 변화 <ChevronRight className="w-3.5 h-3.5" /></span>
+            <p aria-hidden className="absolute right-4 bottom-3 text-[9px] font-extrabold tracking-[0.2em] text-white/30">GOOD FANS BETTER SPORTS</p>
+          </Link>
+        </aside>
+      </div>
     </div>
   );
 }

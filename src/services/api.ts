@@ -3147,6 +3147,10 @@ class ApiService {
     const r = await this.client.get<ApiResponse<any>>(`/fan-engage/athletes/${athleteId}/temperature`);
     return r.data;
   }
+  async getCommunitySummary(athleteId: string) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-engage/athletes/${athleteId}/summary`);
+    return r.data;
+  }
   async getCommunityPosts(athleteId: string, tab?: string) {
     const r = await this.client.get<ApiResponse<any>>(`/fan-engage/athletes/${athleteId}/posts`, { params: { tab } });
     return r.data;
