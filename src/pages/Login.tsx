@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,8 +15,17 @@ type LoginForm = z.infer<typeof loginSchema>;
 
 export function Login() {
   const navigate = useNavigate();
+  const [sp] = useSearchParams();
   const { login } = useAuth();
   const [error, setError] = useState<string | null>(null);
+
+  /* 로그인 후 이동: returnUrl(같은 출처 경로만) → 역할별 홈(FAN은 /fan) → /dashboard */
+  const afterLogin = () => {
+    const raw = sp.get('returnUrl') || sp.get('redirect') || '';
+    if (raw.startsWith('/') && !raw.startsWith('//')) return raw;
+    const role = useAuth.getState().user?.role;
+    return role === 'FAN' ? '/fan' : '/dashboard';
+  };
 
   const {
     register,
@@ -30,7 +39,7 @@ export function Login() {
     try {
       setError(null);
       await login(data.email, data.password);
-      navigate('/dashboard');
+      navigate(afterLogin(), { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.error?.message || '로그인에 실패했습니다');
     }

@@ -9,7 +9,7 @@
  */
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import {
   Activity, ArrowRight, ArrowUpRight, BarChart3, Bookmark, CalendarCheck, CheckCircle2, ClipboardList,
   Clock, CreditCard, FileSignature, FileText, Heart, PenLine, PlayCircle, ShieldCheck,
@@ -25,6 +25,8 @@ export function Dashboard() {
   const { user } = useAuth();
   if (user?.role === 'BRAND') return <BrandDashboard />;
   if (user?.role === 'ATHLETE') return <AthleteDashboard />;
+  /* 팬 계정의 홈은 팬 참여(/fan). 관리자용 운영 홈을 보여주지 않는다 */
+  if (user?.role === 'FAN') return <Navigate to="/fan" replace />;
   return <AdminDashboard />;
 }
 
