@@ -110,7 +110,7 @@ export default function SlotCheckout() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <div className="text-base font-bold text-slate-900 mb-1">슬롯 정보를 찾을 수 없습니다</div>
-        <Link to="/athletes" className="text-sm text-emerald-600 hover:underline mt-2">선수 목록으로</Link>
+        <Link to="/athletes/find" className="text-sm text-emerald-600 hover:underline mt-2">선수 목록으로</Link>
       </div>
     );
   }

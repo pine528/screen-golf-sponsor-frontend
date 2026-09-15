@@ -444,7 +444,7 @@ export function AuctionDetail() {
             <div className="rounded-2xl border border-slate-200 bg-white p-2">
               <SideLink to="/auctions" icon={<Gavel className="w-4 h-4" />} label="다른 경매 보기" />
               <SideLink to={`/athletes/${athlete?.id}`} icon={<MapPin className="w-4 h-4" />} label="선수 인벤토리" />
-              <SideLink to="/athletes" icon={<User className="w-4 h-4" />} label="다른 선수 둘러보기" />
+              <SideLink to="/athletes/find" icon={<User className="w-4 h-4" />} label="다른 선수 둘러보기" />
             </div>
           </div>
         </div>

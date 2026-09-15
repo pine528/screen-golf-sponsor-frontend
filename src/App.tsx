@@ -198,6 +198,8 @@ import MiniStoreLanding from './pages/store/MiniStoreLanding';
 import MiniStoreProduct from './pages/store/MiniStoreProduct';
 import MiniStoreCheckout from './pages/store/MiniStoreCheckout';
 import { ShortLinkRedirect } from './pages/ShortLinkRedirect';
+import AthletesHub from './pages/athletes/AthletesHub';
+import AthleteCompare from './pages/athletes/AthleteCompare';
 import PublicAthletes from './pages/PublicAthletes';
 import SponsorshipSlots from './pages/SponsorshipSlots';
 import GrowthMarket from './pages/GrowthMarket';
@@ -1280,7 +1282,9 @@ function App() {
       <Route path="/s/:shortCode" element={<ShortLinkRedirect />} />
 
       {/* 공개 선수 둘러보기 */}
-      <Route path="/athletes" element={<PublicAthletes />} />
+      <Route path="/athletes" element={<AthletesHub />} />
+      <Route path="/athletes/find" element={<PublicAthletes />} />
+      <Route path="/athletes/compare" element={<AthleteCompare />} />
       <Route path="/athletes/:id" element={<PublicAthleteDetail />} />
 
       {/* 관리자: 선수 경기결과 관리 (docx 3-6) */}

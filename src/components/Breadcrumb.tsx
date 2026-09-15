@@ -12,7 +12,9 @@ import { ArrowLeft, ChevronRight, Home } from 'lucide-react';
 /** 경로별 표시 이름. 키는 누적 경로 전체(가장 구체적인 것이 우선). */
 const PATH_LABELS: Record<string, string> = {
   // 공개
-  '/athletes': '선수 찾기',
+  '/athletes': '선수',
+  '/athletes/find': '선수 찾기',
+  '/athletes/compare': '선수 비교',
   '/auctions': '라이브 경매',
   '/slots': '스폰서십 슬롯',
   '/growth-market': '성장마켓',

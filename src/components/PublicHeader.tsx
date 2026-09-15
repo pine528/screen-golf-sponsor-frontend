@@ -27,7 +27,7 @@ import {
   Sparkles,
   Star,
   Store,
-  UserPlus,
+  BarChart3,
   Users,
   Vote,
   Wallet,
@@ -63,10 +63,10 @@ const MENUS: { key: string; label: string; to: string; items: MegaItem[]; note?:
     label: '선수',
     to: '/athletes',
     items: [
-      { icon: Users, title: '전체 선수', desc: '투어·지역·활동으로 탐색', to: '/athletes' },
-      { icon: Star, title: '추천 선수', desc: '스폰픽 추천 기준 선별', to: '/athletes?recommended=1' },
-      { icon: Heart, title: '관심 선수', desc: '내가 응원하는 선수와 기여도', to: '/fan/contributions' },
-      { icon: UserPlus, title: '선수 등록', desc: '선수·매니저 온보딩', to: '/register' },
+      { icon: Users, title: '선수 찾기', desc: '등록된 선수를 검색·필터로 탐색', to: '/athletes/find' },
+      { icon: Star, title: '나에게 맞는 선수', desc: '목표·타깃에 맞는 선수를 AI 추천', to: '/sponsor/recommended' },
+      { icon: BarChart3, title: '선수 비교', desc: '최대 3명을 한 번에 비교', to: '/athletes/compare' },
+      { icon: Heart, title: '관심 선수', desc: '저장한 선수와 새 소식', to: '/favorites' },
     ],
   },
   {
