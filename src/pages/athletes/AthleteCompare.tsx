@@ -206,7 +206,7 @@ export default function AthleteCompare() {
         <div className="mt-5">{bar}</div>
       </section>
 
-      <section className="max-w-[1180px] mx-auto px-5 mt-5 grid lg:grid-cols-[160px_minmax(0,1fr)] gap-4 items-start">
+      <section className="max-w-[1180px] mx-auto px-5 mt-5 grid grid-cols-1 lg:grid-cols-[160px_minmax(0,1fr)] gap-4 items-start">
         <nav className="hidden lg:block rounded-2xl bg-white border border-slate-200 p-2 sticky top-20">
           {CATS.map((c) => { const I = c.icon; return <a key={c.key} href={`#cmp-${c.key}`} className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-[13px] font-bold text-slate-700 hover:bg-emerald-50 hover:text-emerald-700"><I className="w-4 h-4" /> {c.label}</a>; })}
         </nav>

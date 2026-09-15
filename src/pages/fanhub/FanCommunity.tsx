@@ -206,7 +206,7 @@ export default function FanCommunity() {
         </div>
       </section>
 
-      <div className="max-w-[1400px] mx-auto px-5 pt-5 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)] gap-5 items-start">
+      <div className="max-w-[1400px] mx-auto px-5 pt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,380px)] gap-5 items-start">
         {/* 좌: 보드 */}
         <div className="rounded-2xl border border-slate-200 p-5">
           {!a ? (

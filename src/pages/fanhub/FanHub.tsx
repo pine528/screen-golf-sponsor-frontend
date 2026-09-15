@@ -74,7 +74,7 @@ export default function FanHub() {
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0a1411] to-transparent" />
           <p className="absolute right-6 sm:right-12 top-1/2 -translate-y-1/2 hidden md:block font-script text-[36px] leading-[1.05] text-emerald-300/70 -rotate-6 select-none whitespace-nowrap">Good Fans<br />Brighter Tomorrow</p>
         </div>
-        <div className="max-w-[1180px] mx-auto px-5 py-9 sm:py-14 relative grid lg:grid-cols-[minmax(0,1fr)_340px] gap-6 items-center">
+        <div className="max-w-[1180px] mx-auto px-5 py-9 sm:py-14 relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] gap-6 items-center">
           <div>
             <p className="text-[13px] font-bold text-emerald-300">Fans Make a Difference</p>
             {isAuthenticated ? (

@@ -89,7 +89,7 @@ export default function FanPoints() {
           VOTE · 팬레터 · 커뮤니티 · 브랜드 추천 · 팬스토어 활동이 하나의 응원 기록으로 남습니다.
         </p>
 
-        <div className="mt-6 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] gap-5 items-start">
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] gap-5 items-start">
           <div className="space-y-4">
             {/* 잔액 */}
             <div className="rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-500 text-white p-6 sm:p-7">

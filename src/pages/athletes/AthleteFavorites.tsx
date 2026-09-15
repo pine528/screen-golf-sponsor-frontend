@@ -131,7 +131,7 @@ export default function AthleteFavorites() {
             <Link to="/athletes/match" className="h-10 px-4 inline-flex items-center rounded-xl border border-slate-200 bg-white text-[13px] font-bold text-slate-700">나에게 맞는 선수</Link>
           </EmptyState>
         ) : (
-          <div className="grid lg:grid-cols-[minmax(0,1fr)_280px] gap-5 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-5 items-start">
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="flex gap-1.5 overflow-x-auto [scrollbar-width:none] flex-1">

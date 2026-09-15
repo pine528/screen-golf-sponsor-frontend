@@ -183,7 +183,7 @@ export default function AthleteMatch() {
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="font-bold text-emerald-700">나에게 맞는 선수</span>
         </nav>
-        <div className="mt-4 grid lg:grid-cols-[minmax(0,1fr)_420px] gap-6 items-end">
+        <div className="mt-4 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-6 items-end">
           <div>
             <h1 className="text-[30px] sm:text-[40px] font-extrabold tracking-[-0.03em] leading-tight">나에게 맞는 선수</h1>
             <p className="mt-2 text-[14.5px] text-slate-600 break-keep leading-relaxed">목표, 타깃, 예산, 활동 목적에 맞는 선수를 추천받아보세요.<br className="hidden sm:block" />브랜드와 잘 맞는 선수를 더 빠르게 찾을 수 있습니다.</p>
@@ -211,7 +211,7 @@ export default function AthleteMatch() {
       </section>
 
       {/* ── 조건 입력 + 가이드 ── */}
-      <section className="max-w-[1180px] mx-auto px-5 mt-6 grid lg:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
+      <section className="max-w-[1180px] mx-auto px-5 mt-6 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
         <div className="rounded-3xl bg-white border border-slate-200 p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-[19px] font-extrabold tracking-[-0.02em]">어떤 선수를 찾고 계신가요?</h2>

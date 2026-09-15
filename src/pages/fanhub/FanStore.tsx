@@ -58,7 +58,7 @@ export default function FanStore() {
         </nav>
 
         {/* 히어로 */}
-        <div className="mt-5 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] gap-6 items-center">
+        <div className="mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,560px)] gap-6 items-center">
           <div>
             <h1 className="text-[27px] sm:text-[36px] font-black tracking-tight leading-[1.25] break-keep">
               팬의 선택과 파트너의 구독이<br />
@@ -114,7 +114,7 @@ export default function FanStore() {
 
         {/* 대표 스토어 */}
         {hero && (
-          <article className="mt-4 rounded-2xl border border-slate-200 overflow-hidden grid md:grid-cols-[minmax(0,240px)_minmax(0,1fr)]">
+          <article className="mt-4 rounded-2xl border border-slate-200 overflow-hidden grid grid-cols-1 md:grid-cols-[minmax(0,240px)_minmax(0,1fr)]">
             <div className="bg-slate-100 min-h-[200px]">
               <img src={hero.heroImage} alt={hero.athleteName} className="w-full h-full object-cover object-top" />
             </div>

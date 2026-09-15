@@ -249,7 +249,7 @@ export default function AthleteSearch() {
       </section>
 
       {/* ── 본문 ── */}
-      <div className="max-w-[1180px] mx-auto px-5 mt-5 grid lg:grid-cols-[220px_minmax(0,1fr)] gap-5 items-start">
+      <div className="max-w-[1180px] mx-auto px-5 mt-5 grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] gap-5 items-start">
         {/* 상세 필터 (데스크톱) */}
         <aside className="hidden lg:block rounded-2xl bg-white border border-slate-200 p-4 sticky top-20">
           <div className="flex items-center justify-between">

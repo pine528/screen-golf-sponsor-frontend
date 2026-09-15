@@ -173,7 +173,7 @@ export default function FanCommunityNew() {
         </div>
       </section>
 
-      <div className="max-w-[1180px] mx-auto px-5 -mt-3 relative grid lg:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
+      <div className="max-w-[1180px] mx-auto px-5 -mt-3 relative grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
         {/* ── 본문 ── */}
         <div className="min-w-0 space-y-3">
           {/* 검색 */}

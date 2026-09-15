@@ -92,7 +92,7 @@ export default function AthletesHub() {
             <span className="font-bold text-emerald-700">선수</span>
           </nav>
 
-          <div className="mt-6 sm:mt-8 grid lg:grid-cols-[minmax(0,1fr)_minmax(0,520px)] gap-8 lg:gap-6 items-center">
+          <div className="mt-6 sm:mt-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,520px)] gap-8 lg:gap-6 items-center">
             <div>
               <h1 className="text-[30px] sm:text-[40px] font-extrabold tracking-[-0.03em] leading-[1.25] break-keep">
                 어떤 선수를<br />찾고 계신가요?

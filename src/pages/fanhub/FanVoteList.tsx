@@ -120,7 +120,7 @@ export default function FanVoteList() {
           </div>
         </div>
 
-        <div className="mt-4 grid lg:grid-cols-[minmax(0,1fr)_260px] gap-4 items-start">
+        <div className="mt-4 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] gap-4 items-start">
           {/* 목록 */}
           <section className="min-w-0">
             {loading ? (

@@ -81,7 +81,7 @@ export default function FanVoteCreate() {
         <h1 className="mt-5 text-[26px] sm:text-[32px] font-extrabold tracking-[-0.03em]">투표 만들기</h1>
         <p className="mt-1.5 text-[13.5px] text-slate-600 break-keep">관심 선수, 경기 예측, 브랜드 설문 등 팬이 직접 투표를 열 수 있어요. 다른 팬이 참여하면 팬포인트가 적립됩니다.</p>
 
-        <div className="mt-5 grid lg:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
+        <div className="mt-5 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] gap-4 items-start">
           <div className="space-y-3">
             <Field n={1} label="투표 유형">
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
