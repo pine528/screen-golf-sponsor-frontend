@@ -35,6 +35,8 @@ const PATH_LABELS: Record<string, string> = {
   '/fan-store/hoi-bakery/products': '추천 스토어 상품',
   '/fan-store/hoi-bakery/ar': '선수 AR 보기',
   '/fan-store/hoi-bakery/ar/download': 'AR 이미지 다운로드',
+  '/fan/vote/create': '투표 만들기',
+  '/fan/vote/mine': '내가 만든 투표',
   '/votes': '무료 투표',
   '/votes/create': '투표 만들기',
   '/votes/my-created': '내가 만든 투표',

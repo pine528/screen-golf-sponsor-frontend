@@ -45,6 +45,8 @@ import FanPoints from './pages/fanhub/FanPoints';
 import FanHub from './pages/fanhub/FanHub';
 import FanVoteList from './pages/fanhub/FanVoteList';
 import FanVoteDetail from './pages/fanhub/FanVoteDetail';
+import FanVoteCreate from './pages/fanhub/FanVoteCreate';
+import FanVoteMine from './pages/fanhub/FanVoteMine';
 import FanTemperature from './pages/fanhub/FanTemperature';
 import FanContributions from './pages/fanhub/FanContributions';
 import FanPointsHome from './pages/fanhub/FanPointsHome';
@@ -421,6 +423,8 @@ function App() {
       <Route path="/fan/brand-suggest/:athleteId" element={<FanBrandSuggest />} />
       <Route path="/fan" element={<FanHub />} />
       <Route path="/fan/vote" element={<FanVoteList />} />
+      <Route path="/fan/vote/create" element={<ProtectedRoute><FanVoteCreate /></ProtectedRoute>} />
+      <Route path="/fan/vote/mine" element={<ProtectedRoute><FanVoteMine /></ProtectedRoute>} />
       <Route path="/fan/vote/:id" element={<FanVoteDetail />} />
       <Route path="/fan/vote-legacy" element={<FanVote />} />
       <Route path="/fan/temperature/:athleteId" element={<FanTemperature />} />

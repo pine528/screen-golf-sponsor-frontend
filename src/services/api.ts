@@ -3189,8 +3189,29 @@ class ApiService {
     const r = await this.client.get<ApiResponse<any>>('/fan-hub');
     return r.data;
   }
-  async listFanVotes(params?: { tab?: string; athleteId?: string; type?: string; sort?: string; limit?: number }) {
+  async listFanVotes(params?: { tab?: string; athleteId?: string; type?: string; sort?: string; limit?: number; favorites?: boolean }) {
     const r = await this.client.get<ApiResponse<any>>('/fan-hub/votes', { params });
+    return r.data;
+  }
+  /* 팬 VOTE 만들기 · 내가 만든 투표 (시안 2026-09-15) */
+  async getFanVoteCreateOptions() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/votes/create-options');
+    return r.data;
+  }
+  async createFanVote(body: { type: string; title: string; description?: string; options?: string[]; athleteId?: string; closeAt: string }) {
+    const r = await this.client.post<ApiResponse<any>>('/fan-hub/votes', body);
+    return r.data;
+  }
+  async getMyFanVotes() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/me/votes');
+    return r.data;
+  }
+  async settleMyFanVote(id: string, correctAnswer: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/fan-hub/me/votes/${id}/settle`, { correctAnswer });
+    return r.data;
+  }
+  async cancelMyFanVote(id: string) {
+    const r = await this.client.post<ApiResponse<any>>(`/fan-hub/me/votes/${id}/cancel`);
     return r.data;
   }
   async getFanVote(id: string) {
