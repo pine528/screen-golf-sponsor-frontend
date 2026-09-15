@@ -337,6 +337,8 @@ function BrandCarousel() {
     const el = ref.current;
     if (!el) return;
     const calc = () => {
+      /* 숨겨진 상태(clientWidth 0)에서는 계산하지 않는다 — Infinity 길이로 Array.from이 터진다 */
+      if (!el.clientWidth) return;
       setPages(Math.max(1, Math.ceil(el.scrollWidth / el.clientWidth)));
       setPage(Math.round(el.scrollLeft / el.clientWidth));
     };

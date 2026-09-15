@@ -4,11 +4,11 @@
  * 브랜드·소재·사용권·일정을 확인하고 선수에게 승인 요청을 보낸다.
  * 이 단계는 결제가 아니며, 조건 변경 시 재승인이 필요하다 (§8.1 동의).
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   AlertTriangle, Ban, Calendar, CheckCircle2, ChevronDown,
-  FileUp, Info, Loader2, Send, ShieldCheck, Tag, Users, Wallet,
+  FileUp, Info, Loader2, Send, ShieldCheck, Tag, Trash2, Upload, Users, Wallet,
 } from 'lucide-react';
 import PublicHeader from '../../components/PublicHeader';
 import DirectStepBar from '../../components/direct/DirectStepBar';
@@ -32,7 +32,32 @@ export default function DirectRequest() {
   const [brand, setBrand] = useState({
     company: '', bizNo: '', manager: '', email: '', phone: '',
     category: '', website: '', target: '', message: '',
+    logoUrl: '', logoFileName: '',
   });
+
+  /* 브랜드 로고 — PC에서 파일을 골라 서버(/upload/asset)에 올리고 URL만 요청에 싣는다 */
+  const logoInput = useRef<HTMLInputElement>(null);
+  const [logoBusy, setLogoBusy] = useState(false);
+  const [logoErr, setLogoErr] = useState<string | null>(null);
+  const onLogoFile = async (file?: File | null) => {
+    if (!file) return;
+    setLogoErr(null);
+    if (!/^image\/(png|jpeg|gif|webp)$/.test(file.type)) { setLogoErr('PNG · JPG · GIF · WebP 이미지만 올릴 수 있습니다'); return; }
+    if (file.size > 10 * 1024 * 1024) { setLogoErr('10MB 이하 파일만 올릴 수 있습니다'); return; }
+    setLogoBusy(true);
+    try {
+      const r: any = await api.uploadFile(file, 'asset');
+      const url = r?.data?.fileUrl;
+      if (!url) throw new Error('업로드 결과에 파일 주소가 없습니다');
+      setBrand((b) => ({ ...b, logoUrl: url, logoFileName: file.name }));
+    } catch (e: any) {
+      setLogoErr(e?.response?.data?.error?.message || e?.message || '로고 업로드에 실패했습니다');
+    } finally {
+      setLogoBusy(false);
+      if (logoInput.current) logoInput.current.value = '';
+    }
+  };
+  const clearLogo = () => setBrand((b) => ({ ...b, logoUrl: '', logoFileName: '' }));
   const [agreed, setAgreed] = useState(false);
 
   const load = useCallback(async () => {
@@ -165,27 +190,62 @@ export default function DirectRequest() {
               </ul>
             </Section>
 
-            {/* 소재 제출 */}
+            {/* 소재 제출 — 로고는 지금 올리고, 패치 아트워크는 결제 후 */}
             <Section
               id="assets" open={open} setOpen={setOpen}
-              icon={FileUp} title="소재 제출" status="PENDING"
-              summary="승인 후 제출 가능"
+              icon={FileUp} title="소재 제출"
+              status={brand.logoUrl ? 'DONE' : 'PENDING'}
+              summary={brand.logoUrl ? `로고 첨부 · ${brand.logoFileName}` : '로고 파일을 올려주세요 (선택)'}
             >
-              <div className="grid sm:grid-cols-2 gap-3">
-                {[
-                  { k: '브랜드 로고', v: '승인 후 제출' },
-                  { k: '캠페인 문구', v: brand.message ? '입력 완료' : '미입력' },
-                  { k: '랜딩 URL', v: brand.website || '미입력' },
-                  { k: '패치/로고 아트워크', v: '결제 후 제출 가능' },
-                ].map((r) => (
-                  <div key={r.k} className="flex items-center justify-between rounded-xl border border-slate-100 px-3.5 py-3">
-                    <span className="text-[12.5px] font-bold">{r.k}</span>
-                    <span className="text-[12px] text-slate-500 truncate max-w-[55%]">{r.v}</span>
-                  </div>
-                ))}
+              <div className="grid sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3">
+                {/* 로고 파일 */}
+                <div className="rounded-xl border border-slate-200 p-3.5">
+                  <p className="text-[12.5px] font-bold">브랜드 로고 <span className="font-normal text-slate-500">(선택 · PNG/JPG/WebP · 10MB 이하)</span></p>
+                  <input
+                    ref={logoInput}
+                    type="file"
+                    accept="image/png,image/jpeg,image/gif,image/webp"
+                    className="hidden"
+                    onChange={(e) => onLogoFile(e.target.files?.[0])}
+                  />
+                  {brand.logoUrl ? (
+                    <div className="mt-2.5 flex items-center gap-3">
+                      <img src={brand.logoUrl} alt="브랜드 로고 미리보기" className="w-16 h-16 rounded-lg border border-slate-200 object-contain bg-white" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[13px] font-bold truncate">{brand.logoFileName || '로고 파일'}</p>
+                        <p className="text-[12px] text-emerald-700 font-bold">업로드 완료</p>
+                      </div>
+                      <button onClick={() => logoInput.current?.click()} disabled={logoBusy} className="h-9 px-3 rounded-lg border border-slate-200 text-[12.5px] font-bold text-slate-700 hover:border-slate-400">교체</button>
+                      <button onClick={clearLogo} aria-label="로고 삭제" className="h-9 w-9 inline-flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200"><Trash2 className="w-4 h-4" /></button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => logoInput.current?.click()}
+                      disabled={logoBusy}
+                      className="mt-2.5 w-full h-20 rounded-xl border-2 border-dashed border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/40 inline-flex flex-col items-center justify-center gap-1 text-[13px] font-bold text-slate-600 disabled:opacity-60"
+                    >
+                      {logoBusy ? <Loader2 className="w-5 h-5 animate-spin text-emerald-500" /> : <Upload className="w-5 h-5 text-emerald-500" />}
+                      {logoBusy ? '올리는 중…' : 'PC에서 파일 선택'}
+                    </button>
+                  )}
+                  {logoErr && <p className="mt-2 text-[12px] font-bold text-rose-600 break-keep">{logoErr}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  {[
+                    { k: '캠페인 문구', v: brand.message ? '입력 완료' : '미입력 (브랜드 / 제품 정보에서 입력)' },
+                    { k: '랜딩 URL', v: brand.website || '미입력 (홈페이지 항목)' },
+                    { k: '패치 / 로고 아트워크', v: '결제 후 제출' },
+                  ].map((r) => (
+                    <div key={r.k} className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 px-3.5 py-3">
+                      <span className="text-[12.5px] font-bold shrink-0">{r.k}</span>
+                      <span className="text-[12px] text-slate-500 truncate">{r.v}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
               <p className="mt-3 text-[12.5px] text-slate-500 break-keep">
-                소재는 선수 승인 후 안내드리는 경로로 제출합니다. 제출 마감일은 승인 완료 시 생성됩니다.
+                로고는 승인 요청과 함께 선수에게 전달됩니다. 유니폼 패치용 아트워크(원본 파일)는 결제 후 안내드리는 경로로 제출하며, 제출 마감일은 승인 완료 시 생성됩니다.
               </p>
             </Section>
 
