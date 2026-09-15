@@ -3,7 +3,7 @@
  * 원장은 삭제되지 않는다. 회수·만료도 거래로 남는다.
  */
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Receipt } from 'lucide-react';
 import { api } from '../../services/api';
 import {
@@ -27,7 +27,8 @@ const KIND_META: Record<string, { tone: 'slate' | 'emerald' | 'amber' | 'rose'; 
 };
 
 export default function FanPointLedger() {
-  const [kind, setKind] = useState('');
+  const [sp] = useSearchParams();
+  const [kind, setKind] = useState(sp.get('kind') || '');
   const [page, setPage] = useState(1);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
