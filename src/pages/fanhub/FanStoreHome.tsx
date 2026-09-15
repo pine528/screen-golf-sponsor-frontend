@@ -91,7 +91,7 @@ export default function FanStoreHome() {
           {values.map((v) => { const I = v.icon; return (
             <div key={v.title} className="rounded-2xl bg-white border border-slate-200 shadow-[0_10px_30px_-20px_rgba(15,23,42,0.35)] px-4 py-3.5 flex items-center gap-3">
               <span className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 inline-flex items-center justify-center shrink-0"><I className="w-5 h-5" /></span>
-              <span className="min-w-0"><span className="block text-[13.5px] font-extrabold truncate">{v.title}</span><span className="block text-[11.5px] text-slate-500 truncate">{v.desc}</span></span>
+              <span className="min-w-0"><span className="block text-[13px] sm:text-[13.5px] font-extrabold break-keep leading-snug">{v.title}</span><span className="block mt-0.5 text-[11.5px] text-slate-500 break-keep line-clamp-2 sm:line-clamp-1">{v.desc}</span></span>
             </div>
           ); })}
         </div>
