@@ -40,7 +40,6 @@ import AdminOfferDashboard from './pages/admin/offers/AdminOfferDashboard';
 import AdminDigitalPlans from './pages/admin/AdminDigitalPlans';
 import FanStore from './pages/fanhub/FanStore';
 import FanCommunity from './pages/fanhub/FanCommunity';
-import FanVote from './pages/fanhub/FanVote';
 import FanPoints from './pages/fanhub/FanPoints';
 import FanHub from './pages/fanhub/FanHub';
 import FanVoteList from './pages/fanhub/FanVoteList';
@@ -215,10 +214,6 @@ import Deliverables from './pages/Deliverables';
 import AdminAthleteEventResults from './pages/admin/AdminAthleteEventResults';
 import AdminMediaExposure from './pages/admin/AdminMediaExposure';
 import AdminTournamentActivation from './pages/admin/AdminTournamentActivation';
-import VotesList from './pages/fan/VoteV2List';
-import VotesDetail from './pages/fan/VoteV2Detail';
-import VoteCreate from './pages/fan/VoteCreate';
-import MyCreatedVotes from './pages/fan/MyCreatedVotes';
 import Faq from './pages/Faq';
 import Guide from './pages/Guide';
 import Contact from './pages/Contact';
@@ -288,6 +283,12 @@ function LegacyStoreRedirect({ kind }: { kind?: 'product' | 'checkout' }) {
 function MarketStoreRedirect() {
   const { id } = useParams();
   return <Navigate to={`/fan/store/${id}`} replace />;
+}
+
+/** /votes/:id → /fan/vote/:id (구 투표 상세 링크 보존) */
+function LegacyVoteRedirect() {
+  const { id } = useParams();
+  return <Navigate to={`/fan/vote/${id}`} replace />;
 }
 
 /** /athletes 에 목록 query(q·tour·region·recommended…)가 있으면 /athletes/search 로 보존 이동, 아니면 Gate (선수 메뉴 v1.0 §1.4) */
@@ -426,7 +427,6 @@ function App() {
       <Route path="/fan/vote/create" element={<ProtectedRoute><FanVoteCreate /></ProtectedRoute>} />
       <Route path="/fan/vote/mine" element={<ProtectedRoute><FanVoteMine /></ProtectedRoute>} />
       <Route path="/fan/vote/:id" element={<FanVoteDetail />} />
-      <Route path="/fan/vote-legacy" element={<FanVote />} />
       <Route path="/fan/temperature/:athleteId" element={<FanTemperature />} />
       <Route path="/fan/contributions" element={<FanContributions />} />
       <Route path="/fan/points" element={<FanPointsHome />} />
@@ -707,7 +707,7 @@ function App() {
         path="/brand/votes"
         element={
           <ProtectedRoute>
-            <Navigate to="/votes" replace />
+            <Navigate to="/fan/vote" replace />
           </ProtectedRoute>
         }
       />
@@ -715,7 +715,7 @@ function App() {
         path="/brand/votes/create"
         element={
           <ProtectedRoute>
-            <Navigate to="/votes/create" replace />
+            <Navigate to="/fan/vote/create" replace />
           </ProtectedRoute>
         }
       />
@@ -839,10 +839,11 @@ function App() {
       />
 
       {/* 투표 (리워드풀 기반 무료 투표) - 비로그인도 목록/상세 접근 가능 */}
-      <Route path="/votes" element={<VotesList />} />
-      <Route path="/votes/create" element={<ProtectedRoute><VoteCreate /></ProtectedRoute>} />
-      <Route path="/votes/my-created" element={<ProtectedRoute><MyCreatedVotes /></ProtectedRoute>} />
-      <Route path="/votes/:id" element={<VotesDetail />} />
+      {/* 구 시드머니 투표 화면 제거 (2026-09-15) — 팬 허브 VOTE로 통일. 같은 VoteV2 id를 쓰므로 상세는 그대로 이어진다 */}
+      <Route path="/votes" element={<Navigate to="/fan/vote" replace />} />
+      <Route path="/votes/create" element={<Navigate to="/fan/vote/create" replace />} />
+      <Route path="/votes/my-created" element={<Navigate to="/fan/vote/mine" replace />} />
+      <Route path="/votes/:id" element={<LegacyVoteRedirect />} />
       <Route
         path="/seasons/:id/leaderboard"
         element={

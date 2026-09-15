@@ -34,7 +34,7 @@ const STEPS = [
 const ROLES = [
   { icon: Building2, title: '브랜드 · 광고주', desc: '우리 브랜드에 맞는 후원을 시작하세요.', link: '브랜드 이용안내', to: '/athletes/search' },
   { icon: User, title: '선수 · 매니지먼트', desc: '나에게 맞는 후원을 구성해보세요.', link: '선수 이용안내', to: '/register' },
-  { icon: Users, title: '팬', desc: '좋아하는 선수를 응원하고 참여하세요.', link: '팬 참여 안내', to: '/votes' },
+  { icon: Users, title: '팬', desc: '좋아하는 선수를 응원하고 참여하세요.', link: '팬 참여 안내', to: '/fan' },
 ];
 
 export default function AboutHow() {

@@ -202,14 +202,14 @@ export default function FanDashboard() {
         {isAuthenticated && (
           <div className="grid grid-cols-4 gap-3">
             <Link
-              to="/votes/my-created"
+              to="/fan/vote/mine"
               className="card p-3 text-center hover:border-emerald-500/30 transition-all group"
             >
               <FileText className="w-5 h-5 text-violet-500 mx-auto mb-1" />
               <span className="text-xs font-medium text-slate-700 group-hover:text-emerald-600">내가 만든 투표</span>
             </Link>
             <Link
-              to="/votes"
+              to="/fan/vote"
               className="card p-3 text-center hover:border-emerald-500/30 transition-all group"
             >
               <Vote className="w-5 h-5 text-emerald-500 mx-auto mb-1" />
@@ -223,7 +223,7 @@ export default function FanDashboard() {
               <span className="text-xs font-medium text-slate-700 group-hover:text-emerald-600">내 주문</span>
             </Link>
             <Link
-              to="/votes/create"
+              to="/fan/vote/create"
               className="card p-3 text-center hover:border-emerald-500/30 transition-all group"
             >
               <Plus className="w-5 h-5 text-sky-500 mx-auto mb-1" />
@@ -240,7 +240,7 @@ export default function FanDashboard() {
               <h2 className="font-bold text-slate-900">진행중 투표</h2>
             </div>
             <Link
-              to="/votes"
+              to="/fan/vote"
               className="text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
             >
               전체보기
@@ -296,7 +296,7 @@ export default function FanDashboard() {
                         </span>
                       ) : (
                         <Link
-                          to={`/votes/${vote.id}`}
+                          to={`/fan/vote/${vote.id}`}
                           className="btn btn-primary text-xs px-4 py-2"
                         >
                           참여하기
@@ -343,7 +343,7 @@ export default function FanDashboard() {
                 {endedVotes.slice(0, 5).map((vote) => (
                   <Link
                     key={vote.id}
-                    to={`/votes/${vote.id}`}
+                    to={`/fan/vote/${vote.id}`}
                     className="block p-4 hover:bg-slate-50 transition-colors"
                   >
                     <div className="flex items-center justify-between gap-3">

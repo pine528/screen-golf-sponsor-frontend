@@ -217,9 +217,9 @@ export function Layout({ children }: LayoutProps) {
       { path: '/auctions', label: '라이브 경매', icon: Gavel, live: true },
       { path: '/brand/funnel/pixel', label: '픽셀 설치', icon: Wrench },
       { path: '/brand/funnel/attribution', label: '멀티터치 기여', icon: Target },
-      { path: '/votes', label: '무료 투표', icon: Gift },
-      { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
-      { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
+      { path: '/fan/vote', label: 'Fan VOTE', icon: Gift },
+      { path: '/fan/vote/create', label: '투표 만들기', icon: PlusCircle },
+      { path: '/fan/vote/mine', label: '내가 만든 투표', icon: ListChecks },
       { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
     ] },
   ];
@@ -249,9 +249,9 @@ export function Layout({ children }: LayoutProps) {
     ] },
     { title: '더보기', collapsed: true, items: [
       { path: '/athlete/point-withdrawals', label: '포인트 출금', icon: Coins },
-      { path: '/votes', label: '무료 투표', icon: Gift },
-      { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
-      { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
+      { path: '/fan/vote', label: 'Fan VOTE', icon: Gift },
+      { path: '/fan/vote/create', label: '투표 만들기', icon: PlusCircle },
+      { path: '/fan/vote/mine', label: '내가 만든 투표', icon: ListChecks },
       { path: '/points/topup', label: '포인트 충전', icon: CreditCard },
     ] },
   ];
@@ -270,9 +270,9 @@ export function Layout({ children }: LayoutProps) {
       { path: '/brand-register', label: '브랜드 등록', icon: Building2 },
     ] },
     { title: '더보기', collapsed: true, items: [
-      { path: '/votes', label: '무료 투표', icon: Gift },
-      { path: '/votes/create', label: '투표 만들기', icon: PlusCircle },
-      { path: '/votes/my-created', label: '내가 만든 투표', icon: ListChecks },
+      { path: '/fan/vote', label: 'Fan VOTE', icon: Gift },
+      { path: '/fan/vote/create', label: '투표 만들기', icon: PlusCircle },
+      { path: '/fan/vote/mine', label: '내가 만든 투표', icon: ListChecks },
       { path: '/my-donations', label: '선수 후원', icon: Heart },
       { path: '/fan/badges', label: '내 뱃지', icon: Award },
       { path: '/ranking', label: '랭킹', icon: Star },

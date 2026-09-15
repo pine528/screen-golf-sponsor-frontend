@@ -93,7 +93,7 @@ export default function HomeVoteSection() {
               <Info className="w-4 h-4 text-slate-300" />
             </span>
           </h2>
-          <Link to="/votes" className="shrink-0 inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-slate-900">
+          <Link to="/fan/vote" className="shrink-0 inline-flex items-center gap-1 text-sm font-semibold text-slate-500 hover:text-slate-900">
             전체 보기 <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -206,7 +206,7 @@ function VoteCard({ vote }: { vote: any }) {
       )}
 
       <Link
-        to={`/votes/${vote.id}`}
+        to={`/fan/vote/${vote.id}`}
         className={`mt-auto inline-flex items-center justify-center h-9 rounded-xl text-xs font-bold transition-colors ${
           settled
             ? 'border border-violet-200 text-violet-700 hover:bg-violet-50'
