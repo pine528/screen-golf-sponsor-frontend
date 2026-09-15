@@ -435,7 +435,7 @@ export default function PublicAthleteDetail() {
       </section>
 
       {/* ═══ 탭 ═══ */}
-      <nav aria-label="선수 프로필 구간" className="max-w-[1180px] mx-auto px-4 sm:px-6 mt-5 sticky top-14 lg:top-16 z-20 bg-white/95 backdrop-blur print:hidden">
+      <nav aria-label="선수 프로필 구간" className="max-w-[1180px] mx-auto px-4 sm:px-6 mt-5 print:hidden">
         <ul role="tablist" className="flex gap-1 sm:gap-2 overflow-x-auto border-b border-slate-200">
           {TABS.map((t) => {
             const on = tab === t.key;
