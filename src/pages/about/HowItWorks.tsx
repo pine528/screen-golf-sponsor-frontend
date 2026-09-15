@@ -329,7 +329,7 @@ export default function HowItWorks() {
                 <Link to="/fan" className="h-12 rounded-2xl bg-violet-600 text-white text-[14px] font-bold flex items-center justify-center gap-1.5 hover:bg-violet-700 transition">
                   팬 참여 시작 <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link to="/athletes/find" className="h-12 rounded-2xl border border-slate-200 text-slate-700 text-[14px] font-bold flex items-center justify-center hover:border-slate-400 transition">
+                <Link to="/athletes/search" className="h-12 rounded-2xl border border-slate-200 text-slate-700 text-[14px] font-bold flex items-center justify-center hover:border-slate-400 transition">
                   관심선수 찾기
                 </Link>
               </div>

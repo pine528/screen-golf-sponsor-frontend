@@ -22,12 +22,12 @@ const MENUS = [
   {
     key: 'find', tone: 'green' as const, icon: Search, title: '선수 찾기',
     desc: '등록된 다양한 선수를 검색하고 필터로 빠르게 찾아보세요.',
-    cta: '선수 찾기 시작', to: '/athletes/find',
+    cta: '선수 찾기 시작', to: '/athletes/search',
   },
   {
     key: 'match', tone: 'coral' as const, icon: Target, title: '나에게 맞는 선수',
     desc: '목표와 타겟에 맞는 선수를 AI가 추천해드립니다.',
-    cta: '추천받기', to: '/sponsor/recommended',
+    cta: '추천받기', to: '/athletes/match',
   },
   {
     key: 'compare', tone: 'blue' as const, icon: BarChart3, title: '선수 비교',
@@ -37,15 +37,15 @@ const MENUS = [
   {
     key: 'favorites', tone: 'yellow' as const, icon: Heart, title: '관심 선수',
     desc: '관심 있는 선수를 저장하고 새로운 소식을 받아보세요.',
-    cta: '관심 선수 보기', to: '/favorites',
+    cta: '관심 선수 보기', to: '/athletes/favorites',
   },
 ];
 
 const SITUATIONS = [
-  { icon: Search, tone: 'bg-emerald-50 text-emerald-600', q: '바로 탐색하고 싶어요', label: '선수 찾기', to: '/athletes/find' },
-  { icon: Target, tone: 'bg-rose-50 text-rose-500', q: '추천이 필요해요', label: '나에게 맞는 선수', to: '/sponsor/recommended' },
+  { icon: Search, tone: 'bg-emerald-50 text-emerald-600', q: '바로 탐색하고 싶어요', label: '선수 찾기', to: '/athletes/search' },
+  { icon: Target, tone: 'bg-rose-50 text-rose-500', q: '추천이 필요해요', label: '나에게 맞는 선수', to: '/athletes/match' },
   { icon: BarChart3, tone: 'bg-sky-50 text-sky-600', q: '몇 명을 비교하고 싶어요', label: '선수 비교', to: '/athletes/compare' },
-  { icon: Heart, tone: 'bg-amber-50 text-amber-600', q: '찜한 선수만 보고 싶어요', label: '관심 선수', to: '/favorites' },
+  { icon: Heart, tone: 'bg-amber-50 text-amber-600', q: '찜한 선수만 보고 싶어요', label: '관심 선수', to: '/athletes/favorites' },
 ];
 
 const STEPS = [

@@ -30,7 +30,7 @@ const FEATURES_RIGHT = [
 ];
 
 const CTAS = [
-  { icon: Crosshair, title: '직접 PICK', desc: '선수와 후원위치를 직접 선택', to: '/athletes/find', tone: 'emerald' },
+  { icon: Crosshair, title: '직접 PICK', desc: '선수와 후원위치를 직접 선택', to: '/athletes/search', tone: 'emerald' },
   { icon: Sparkles, title: '스폰픽 추천 PICK', desc: '목표와 예산에 맞는 조합 추천', to: '/ai-match', tone: 'emerald' },
   { icon: CalendarCheck, title: '디지털 파트너 월 구독', desc: '12개월 파트너십으로 지속 노출', to: '/digital-partner', tone: 'indigo' },
 ];

@@ -237,7 +237,7 @@ export default function PublicAthleteDetail() {
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <div className="text-4xl mb-3">🔍</div>
         <div className="text-base font-semibold text-slate-700 mb-1">선수를 찾을 수 없습니다</div>
-        <Link to="/athletes/find" className="text-sm text-emerald-600 hover:underline mt-3">선수 목록으로</Link>
+        <Link to="/athletes/search" className="text-sm text-emerald-600 hover:underline mt-3">선수 목록으로</Link>
       </div>
     );
   }

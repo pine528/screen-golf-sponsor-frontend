@@ -45,7 +45,7 @@ type MegaItem = {
   highlight?: boolean;
 };
 
-const MENUS: { key: string; label: string; to: string; items: MegaItem[]; note?: string }[] = [
+const MENUS: { key: string; label: string; to: string; items: MegaItem[]; note?: string; footerCta?: { title: string; desc: string; label: string; to: string } }[] = [
   {
     key: 'sponsor',
     label: '후원하기',
@@ -63,11 +63,13 @@ const MENUS: { key: string; label: string; to: string; items: MegaItem[]; note?:
     label: '선수',
     to: '/athletes',
     items: [
-      { icon: Users, title: '선수 찾기', desc: '등록된 선수를 검색·필터로 탐색', to: '/athletes/find' },
-      { icon: Star, title: '나에게 맞는 선수', desc: '목표·타깃에 맞는 선수를 AI 추천', to: '/sponsor/recommended' },
-      { icon: BarChart3, title: '선수 비교', desc: '최대 3명을 한 번에 비교', to: '/athletes/compare' },
-      { icon: Heart, title: '관심 선수', desc: '저장한 선수와 새 소식', to: '/favorites' },
+      { icon: Users, title: '선수 찾기', desc: '종목·투어·지역·활동·후원 가능 조건으로 탐색', to: '/athletes/search' },
+      { icon: Star, title: '나에게 맞는 선수', desc: '목표·타깃·예산·활동 조건에 맞는 선수 후보', to: '/athletes/match' },
+      { icon: BarChart3, title: '선수 비교', desc: '최대 3명의 핵심 지표와 후원 가능성 비교', to: '/athletes/compare' },
+      { icon: Heart, title: '관심 선수', desc: '저장한 선수의 최근 변화와 후원 가능 업데이트', to: '/athletes/favorites' },
     ],
+    /** 탐색 메뉴와 분리한 공급자 CTA (선수 메뉴 v1.0 §1.1) */
+    footerCta: { title: '선수이신가요?', desc: 'SPONPIK에 프로필을 등록하고 후원 기회를 만나보세요.', label: '선수 등록하기', to: '/register' },
   },
   {
     key: 'fan',
@@ -219,6 +221,15 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
                             {m.note}
                           </p>
                         )}
+                        {m.footerCta && (
+                          <Link to={m.footerCta.to} onClick={() => setOpen(null)} className="mt-1.5 flex items-center gap-3 px-3.5 py-3 rounded-xl bg-slate-50 border border-slate-100 hover:border-emerald-200">
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-[13.5px] font-extrabold text-slate-900">{m.footerCta.title}</span>
+                              <span className="block text-[12px] text-slate-500 break-keep">{m.footerCta.desc}</span>
+                            </span>
+                            <span className="shrink-0 h-9 px-3 inline-flex items-center rounded-lg bg-emerald-600 text-white text-[12.5px] font-bold">{m.footerCta.label}</span>
+                          </Link>
+                        )}
                       </div>
                     </div>
                   )}
@@ -331,6 +342,15 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
                         </span>
                       </Link>
                     ))}
+                    {m.footerCta && (
+                      <Link to={m.footerCta.to} onClick={() => setMobileOpen(false)} className="mt-1 flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[13.5px] font-extrabold text-slate-900">{m.footerCta.title}</span>
+                          <span className="block text-[12px] text-slate-500 break-keep">{m.footerCta.desc}</span>
+                        </span>
+                        <span className="shrink-0 h-8 px-2.5 inline-flex items-center rounded-lg bg-emerald-600 text-white text-[12px] font-bold">{m.footerCta.label}</span>
+                      </Link>
+                    )}
                   </div>
                 )}
               </div>

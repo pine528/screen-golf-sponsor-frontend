@@ -13,8 +13,11 @@ import { ArrowLeft, ChevronRight, Home } from 'lucide-react';
 const PATH_LABELS: Record<string, string> = {
   // 공개
   '/athletes': '선수',
+  '/athletes/search': '선수 찾기',
   '/athletes/find': '선수 찾기',
+  '/athletes/match': '나에게 맞는 선수',
   '/athletes/compare': '선수 비교',
+  '/athletes/favorites': '관심 선수',
   '/auctions': '라이브 경매',
   '/slots': '스폰서십 슬롯',
   '/growth-market': '성장마켓',

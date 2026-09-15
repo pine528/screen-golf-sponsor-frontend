@@ -187,7 +187,7 @@ export default function FanHub() {
           <EmptyState icon={<Heart className="w-5 h-5" />} title="아직 응원하는 선수가 없습니다"
             desc={'관심 선수를 등록하면 팬온도 변화를 함께 지켜볼 수 있습니다.'}
             action={
-              <button onClick={() => nav('/athletes/find')}
+              <button onClick={() => nav('/athletes/search')}
                 className="h-10 px-5 rounded-2xl bg-slate-900 text-white text-[13px] font-bold hover:bg-slate-800 transition">
                 선수 둘러보기
               </button>

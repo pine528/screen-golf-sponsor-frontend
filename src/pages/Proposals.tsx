@@ -65,7 +65,7 @@ function ProposalList() {
               {user?.role === 'BRAND' ? '선수 상세에서 장기 파트너십을 제안해 보세요.' : '제안이 도착하면 여기에 표시됩니다.'}
             </p>
             {user?.role === 'BRAND' && (
-              <Link to="/athletes/find" className="inline-block px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">후원 가능한 선수 찾기</Link>
+              <Link to="/athletes/search" className="inline-block px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold">후원 가능한 선수 찾기</Link>
             )}
           </div>
         ) : (

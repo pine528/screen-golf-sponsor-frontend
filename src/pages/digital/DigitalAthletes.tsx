@@ -171,7 +171,7 @@ export default function DigitalAthletes() {
             <p className="text-[15px] font-extrabold">강한 단기 노출이 필요하다면?</p>
             <p className="mt-0.5 text-[12.5px] text-slate-500 break-keep">경기복 · 모자 · 장비에 부착되는 오프라인 후원슬롯을 확인해 보세요.</p>
           </div>
-          <Link to="/athletes/find" className="shrink-0 h-11 px-5 inline-flex items-center gap-1.5 rounded-xl border border-emerald-600 bg-white text-emerald-700 text-[13.5px] font-bold hover:bg-emerald-50">
+          <Link to="/athletes/search" className="shrink-0 h-11 px-5 inline-flex items-center gap-1.5 rounded-xl border border-emerald-600 bg-white text-emerald-700 text-[13.5px] font-bold hover:bg-emerald-50">
             <Shirt className="w-4 h-4" /> 오프라인 후원슬롯 보기 <ChevronRight className="w-4 h-4" />
           </Link>
         </div>

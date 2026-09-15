@@ -3721,8 +3721,30 @@ class ApiService {
   }
   async getPickAthletes(params?: {
     q?: string; tour?: string; region?: string; maxMonthly?: number; mode?: string; sort?: string; limit?: number;
+    ids?: string; activity?: string; sponsorship?: string; online?: string;
   }) {
     const r = await this.client.get<ApiResponse<any>>('/direct-pick/athletes', { params });
+    return r.data;
+  }
+  /* ── 선수 메뉴 v1.0 (리디자인/8) — 관심 선수(계정 단위) · 나에게 맞는 선수 ── */
+  async getMyFavoriteAthletes() {
+    const r = await this.client.get<ApiResponse<any>>('/me/favorite-athletes');
+    return r.data;
+  }
+  async getMyFavoriteAthleteIds() {
+    const r = await this.client.get<ApiResponse<{ ids: string[] }>>('/me/favorite-athletes/ids');
+    return r.data;
+  }
+  async addMyFavoriteAthlete(athleteId: string) {
+    const r = await this.client.put<ApiResponse<any>>(`/me/favorite-athletes/${athleteId}`);
+    return r.data;
+  }
+  async removeMyFavoriteAthlete(athleteId: string) {
+    const r = await this.client.delete<ApiResponse<any>>(`/me/favorite-athletes/${athleteId}`);
+    return r.data;
+  }
+  async matchAthletes(body: any) {
+    const r = await this.client.post<ApiResponse<any>>('/athlete-match', body);
     return r.data;
   }
   async getQuickProfile(id: string) {

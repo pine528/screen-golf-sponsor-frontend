@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { Routes, Route, Navigate, useParams, useLocation } from 'react-router-dom';
 import { Hexagon } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 import BrandInquiryButton from './components/BrandInquiryButton';
@@ -199,8 +199,10 @@ import MiniStoreProduct from './pages/store/MiniStoreProduct';
 import MiniStoreCheckout from './pages/store/MiniStoreCheckout';
 import { ShortLinkRedirect } from './pages/ShortLinkRedirect';
 import AthletesHub from './pages/athletes/AthletesHub';
+import AthleteSearch from './pages/athletes/AthleteSearch';
+import AthleteMatch from './pages/athletes/AthleteMatch';
 import AthleteCompare from './pages/athletes/AthleteCompare';
-import PublicAthletes from './pages/PublicAthletes';
+import AthleteFavorites from './pages/athletes/AthleteFavorites';
 import SponsorshipSlots from './pages/SponsorshipSlots';
 import GrowthMarket from './pages/GrowthMarket';
 import PublicAthleteDetail from './pages/PublicAthleteDetail';
@@ -284,6 +286,15 @@ function LegacyStoreRedirect({ kind }: { kind?: 'product' | 'checkout' }) {
 function MarketStoreRedirect() {
   const { id } = useParams();
   return <Navigate to={`/fan/store/${id}`} replace />;
+}
+
+/** /athletes 에 목록 query(q·tour·region·recommended…)가 있으면 /athletes/search 로 보존 이동, 아니면 Gate (선수 메뉴 v1.0 §1.4) */
+function AthletesGate() {
+  const { search } = useLocation();
+  const sp = new URLSearchParams(search);
+  if (sp.get('recommended')) return <Navigate to="/athletes/match" replace />;
+  if (['q', 'tour', 'region', 'sort', 'page', 'sport', 'activity', 'sponsorship', 'online'].some((k) => sp.has(k))) return <Navigate to={`/athletes/search${search}`} replace />;
+  return <AthletesHub />;
 }
 
 /** /build/:id/configure → /build/:id (v2.1 §3: 구성은 build 한 화면) — 선택값 query는 유지 */
@@ -1282,9 +1293,13 @@ function App() {
       <Route path="/s/:shortCode" element={<ShortLinkRedirect />} />
 
       {/* 공개 선수 둘러보기 */}
-      <Route path="/athletes" element={<AthletesHub />} />
-      <Route path="/athletes/find" element={<PublicAthletes />} />
+      {/* 선수 메뉴 v1.0 (리디자인/8): Gate + 4메뉴. 목록 query가 붙은 /athletes 는 search 로 보존 이동 (§1.4) */}
+      <Route path="/athletes" element={<AthletesGate />} />
+      <Route path="/athletes/search" element={<AthleteSearch />} />
+      <Route path="/athletes/find" element={<Navigate to={`/athletes/search${typeof window !== 'undefined' ? window.location.search : ''}`} replace />} />
+      <Route path="/athletes/match" element={<AthleteMatch />} />
       <Route path="/athletes/compare" element={<AthleteCompare />} />
+      <Route path="/athletes/favorites" element={<AthleteFavorites />} />
       <Route path="/athletes/:id" element={<PublicAthleteDetail />} />
 
       {/* 관리자: 선수 경기결과 관리 (docx 3-6) */}
