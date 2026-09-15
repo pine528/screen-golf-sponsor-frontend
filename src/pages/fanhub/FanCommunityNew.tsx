@@ -209,13 +209,15 @@ export default function FanCommunityNew() {
               {/* ── 선수 카드 ── */}
               <section className="rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-[0_14px_40px_-24px_rgba(15,23,42,0.25)]">
                 <div className="grid sm:grid-cols-[220px_minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)]">
-                  <div className="relative aspect-[4/3] sm:aspect-auto sm:min-h-[280px] bg-gradient-to-br from-emerald-100 to-emerald-50 overflow-hidden">
+                  <div className="relative aspect-[4/3] sm:aspect-auto sm:min-h-[320px] bg-gradient-to-br from-emerald-100 to-emerald-50 overflow-hidden">
                     {a.profileImageUrl ? <img src={a.profileImageUrl} alt={a.name} className="w-full h-full object-cover object-top" /> : <span className="w-full h-full flex items-center justify-center text-6xl font-extrabold text-emerald-300">{a.name.slice(0, 1)}</span>}
                     <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-900/60 to-transparent" />
-                    {a.quote && <p className="absolute left-4 right-4 bottom-12 text-[12.5px] font-bold text-white/95 leading-snug break-keep drop-shadow">“{a.quote}”</p>}
-                    <p aria-hidden className="absolute left-4 bottom-3 font-script text-[26px] text-white/90 leading-none drop-shadow select-none">{a.name}</p>
+                    <div className="absolute left-4 right-4 bottom-4">
+                      {a.quote && <p className="text-[12.5px] font-semibold text-white/90 leading-snug break-keep drop-shadow">“{a.quote}”</p>}
+                      <p className="mt-1.5 text-[22px] font-extrabold tracking-[-0.02em] text-white leading-none drop-shadow">{a.name} <span className="text-[13px] font-bold text-emerald-200 align-middle">PRO</span></p>
+                    </div>
                   </div>
-                  <div className="p-4 sm:p-5">
+                  <div className="p-4 sm:p-6 flex flex-col gap-5">
                     <div className="flex flex-col md:flex-row md:items-start gap-3">
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-1.5">
@@ -231,7 +233,7 @@ export default function FanCommunityNew() {
                         <p className="mt-1 text-[11.5px] text-slate-600 break-keep">{temp && !temp.lowSample && temp.score > 0 ? (temp.tier?.meaning || temp.tier?.label || '지금도 뜨거운 응원이 이어지고 있어요!') : '팬 30명 이상 참여하면 공개됩니다'}</p>
                       </div>
                     </div>
-                    <dl className="mt-4 grid grid-cols-3 divide-x divide-slate-100 rounded-2xl bg-slate-50 px-2 py-3">
+                    <dl className="my-auto grid grid-cols-3 divide-x divide-slate-100 rounded-2xl bg-slate-50 px-2 py-4">
                       {[
                         { icon: Users, k: '참여 팬 수', v: st ? nf(st.fanCount) : '—' },
                         { icon: Heart, k: '최근 응원 수', v: st ? nf(st.recentCheers) : '—', hint: '30일' },
@@ -243,12 +245,12 @@ export default function FanCommunityNew() {
                         </div>
                       ); })}
                     </dl>
-                    <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-2">
+                    <div className="mt-auto grid grid-cols-2 lg:grid-cols-3 gap-2">
                       <Link to={`/fan/letter/${a.id}`} className="h-11 rounded-xl bg-emerald-600 text-white text-[13px] font-bold inline-flex items-center justify-center gap-1.5 hover:bg-emerald-700"><Mail className="w-4 h-4" /> 응원 편지 쓰기</Link>
                       <Link to={`/fan/brand-suggest/${a.id}`} className="h-11 rounded-xl bg-slate-900 text-white text-[13px] font-bold inline-flex items-center justify-center gap-1.5 hover:bg-slate-800"><Lightbulb className="w-4 h-4" /> 브랜드 추천하기</Link>
                       <Link to={`/athletes/${a.id}`} className="h-11 rounded-xl border border-slate-200 bg-white text-[13px] font-bold text-slate-700 inline-flex items-center justify-center gap-1.5 hover:border-slate-400"><UserRound className="w-4 h-4" /> 선수 정보 보기</Link>
                     </div>
-                    <div className="mt-2 text-right"><Link to="/fan/store" className="inline-flex items-center gap-1 text-[12.5px] font-bold text-emerald-700 hover:underline"><ShoppingBag className="w-3.5 h-3.5" /> 팬스토어 보기 <ChevronRight className="w-3.5 h-3.5" /></Link></div>
+                    <div className="-mt-3 text-right"><Link to="/fan/store" className="inline-flex items-center gap-1 text-[12.5px] font-bold text-emerald-700 hover:underline"><ShoppingBag className="w-3.5 h-3.5" /> 팬스토어 보기 <ChevronRight className="w-3.5 h-3.5" /></Link></div>
                   </div>
                 </div>
               </section>
