@@ -3254,6 +3254,10 @@ class ApiService {
     const r = await this.client.get<ApiResponse<any>>('/fan-hub/campaign');
     return r.data;
   }
+  async getFanStoreHome(params?: { tab?: string; limit?: number; athleteId?: string }) {
+    const r = await this.client.get<ApiResponse<any>>('/fan-hub/store-home', { params });
+    return r.data;
+  }
   async listFanStores(params?: { athleteId?: string; limit?: number }) {
     const r = await this.client.get<ApiResponse<any>>('/fan-hub/stores', { params });
     return r.data;
