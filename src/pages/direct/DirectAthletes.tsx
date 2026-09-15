@@ -7,7 +7,7 @@
  *  - 하단 고정 비교 바(최대 3명)
  *  - 미수집 값은 "집계 중"·"확인 필요" (LEG-06). 종목은 현재 골프만 운영한다.
  */
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight, Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Clock, Coins, Flame, Heart,
@@ -68,7 +68,21 @@ export default function DirectAthletes() {
   const [compare, setCompare] = useState<any[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
   const [barOpen, setBarOpen] = useState(true);
+  const [detailOpen, setDetailOpen] = useState(false);
   const [favs, setFavs] = useState<Set<string>>(new Set());
+
+  /* 비교 바는 화면 아래 고정이다. 바가 커져도 아랫줄 카드·페이지 이동이 가려지지 않게 바 높이만큼 본문 여백을 준다 */
+  const barRef = useRef<HTMLDivElement>(null);
+  const [barH, setBarH] = useState(96);
+  useLayoutEffect(() => {
+    const el = barRef.current;
+    if (!el) return;
+    const update = () => setBarH(el.offsetHeight);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -103,9 +117,13 @@ export default function DirectAthletes() {
   const pageItems = useMemo(() => athletes.slice((page - 1) * PAGE, page * PAGE), [athletes, page]);
 
   const toggleCompare = (a: any) => {
-    setCompare((prev) => prev.some((x) => x.id === a.id)
-      ? prev.filter((x) => x.id !== a.id)
-      : prev.length >= 3 ? prev : [...prev, a]);
+    setCompare((prev) => {
+      const next = prev.some((x) => x.id === a.id)
+        ? prev.filter((x) => x.id !== a.id)
+        : prev.length >= 3 ? prev : [...prev, a];
+      if (next.length < 2) setDetailOpen(false);
+      return next;
+    });
   };
   const toggleFav = async (a: any) => {
     const on = favs.has(a.id);
@@ -119,7 +137,7 @@ export default function DirectAthletes() {
   const openProfile = (id: string) => { pushRecent(id); setOpenId(id); };
 
   return (
-    <div className="min-h-screen bg-[#f4fbf7] text-slate-900 pb-36">
+    <div className="min-h-screen bg-[#f4fbf7] text-slate-900" style={{ paddingBottom: barH + 24 }}>
       <PublicHeader />
 
       {/* ── 히어로 ── */}
@@ -304,7 +322,7 @@ export default function DirectAthletes() {
       </div>
 
       {/* ── 비교 바 (최대 3명) ── */}
-      <div className="fixed inset-x-0 bottom-0 z-30 bg-white/95 backdrop-blur border-t border-slate-200 shadow-[0_-8px_24px_-16px_rgba(15,23,42,0.25)]">
+      <div ref={barRef} className="fixed inset-x-0 bottom-0 z-30 bg-white/95 backdrop-blur border-t border-slate-200 shadow-[0_-8px_24px_-16px_rgba(15,23,42,0.25)]">
         <div className="max-w-[1180px] mx-auto px-5 py-3 flex items-center gap-3">
           <div className="min-w-0 shrink-0">
             <p className="text-[12.5px] text-slate-500 hidden sm:block">비교할 선수를 최대 3명까지 선택하세요.</p>
@@ -327,18 +345,25 @@ export default function DirectAthletes() {
             })}
           </div>
           <button
-            onClick={() => setOpenId(compare[0]?.id ?? null)}
+            onClick={() => setDetailOpen((v) => !v)}
             disabled={compare.length < 2}
-            className="ml-auto shrink-0 h-11 px-5 inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 text-white text-[13.5px] font-bold disabled:bg-emerald-100 disabled:text-emerald-400"
+            aria-expanded={detailOpen}
+            className={`ml-auto shrink-0 h-11 px-5 inline-flex items-center gap-1.5 rounded-xl text-[13.5px] font-bold disabled:bg-emerald-100 disabled:text-emerald-400 ${
+              detailOpen ? 'bg-slate-900 text-white' : 'bg-emerald-600 text-white'
+            }`}
           >
-            <Scale className="w-4 h-4" /> 선수 비교
+            <Scale className="w-4 h-4" /> {detailOpen ? '비교 닫기' : '선수 비교'}
           </button>
-          <button onClick={() => setBarOpen((v) => !v)} aria-label={barOpen ? '비교 바 접기' : '비교 바 펼치기'} className="shrink-0 w-9 h-9 rounded-full border border-slate-200 inline-flex items-center justify-center text-slate-500">
+          <button
+            onClick={() => { setBarOpen((v) => !v); setDetailOpen(false); }}
+            aria-label={barOpen ? '비교 바 접기' : '비교 바 펼치기'}
+            className="shrink-0 w-9 h-9 rounded-full border border-slate-200 inline-flex items-center justify-center text-slate-500"
+          >
             {barOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
           </button>
         </div>
-        {barOpen && compare.length >= 2 && (
-          <div className="max-w-[1180px] mx-auto px-5 pb-3 grid gap-2" style={{ gridTemplateColumns: `repeat(${compare.length}, minmax(0,1fr))` }}>
+        {barOpen && detailOpen && compare.length >= 2 && (
+          <div className="max-w-[1180px] mx-auto px-5 pb-3 grid gap-2 max-h-[40vh] overflow-y-auto" style={{ gridTemplateColumns: `repeat(${compare.length}, minmax(0,1fr))` }}>
             {compare.map((a) => (
               <div key={a.id} className="rounded-xl border border-slate-200 p-3 bg-white">
                 <p className="text-[13px] font-extrabold">{a.name} 프로</p>
