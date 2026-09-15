@@ -3,14 +3,16 @@
  *
  *  히어로 → 검색 + 선수 칩 슬라이더(좌우 화살표) → 선수 카드(사진·필기체 이름·이력 한 줄·팬온도·참여 팬/최근 응원/시즌 TOP10
  *  ·응원 편지 쓰기/브랜드 추천하기/선수 정보 보기/팬스토어 보기) → 글쓰기(사진·이모지·태그) → 탭(전체/선수 소식/팬 응원/경기 이야기/사진·영상)
- *  → 타임라인(공지 강조·좋아요·댓글) / 우측: 커뮤니티 안내 · 오늘의 인기 반응 · 이번 주 응원 랭킹 · SPONPIK 배너.
+ *  → 타임라인(공지 강조·좋아요·댓글·게시글/사용자 신고·숨기기) / 우측: 커뮤니티 이용 안내 · 이번 주 Fan VOTE · 팬 온도에 함께해 주신 분들
+ *  · 팬온도는 이렇게 만들어져요 · 오늘의 인기 반응 · 이번 주 응원 랭킹 · SPONPIK 배너. (리디자인/9 · 09 · 16 반영)
  *  값은 실데이터만(참여 팬 수·최근 30일 응원 수·시즌 TOP10·좋아요·이번 주 활동 건수). 팬레터는 목록에 본문을 노출하지 않는다.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
-  BadgeCheck, ChevronLeft, ChevronRight, Flame, Hash, Heart, ImagePlus, Info, Lightbulb, Loader2, Mail, MessageCircle,
+  BadgeCheck, ChevronLeft, ChevronRight, Flame, Hash, Heart, ImagePlus, Lightbulb, Loader2, Mail, MessageCircle,
   MoreHorizontal, Search, Send, ShoppingBag, Smile, Trophy, UserRound, Users, X,
+  EyeOff, Flag, ShieldCheck, Thermometer, UserX, Vote,
 } from 'lucide-react';
 import PublicHeader from '../../components/PublicHeader';
 import { api } from '../../services/api';
@@ -29,7 +31,12 @@ const TYPE_META: Record<string, { label: string; cls: string }> = {
   BRAND: { label: '브랜드 추천', cls: 'bg-amber-50 text-amber-700' },
 };
 const EMOJIS = ['💚', '🔥', '👏', '💪', '⛳', '🏆', '😊', '🙌'];
-const NOTICE_ITEMS = ['비방·개인정보·광고성 글은 신고 후 즉시 숨김 처리됩니다.', '팬레터는 작성자와 선수만 볼 수 있습니다.', '응원 내용은 팬온도와 포인트에 반영됩니다.'];
+const NOTICE_ITEMS = [
+  '선수와 팬이 함께 만드는 따뜻한 공간이에요.', '존중하는 표현과 매너를 지켜주세요.', '선수 비방, 욕설, 허위사실 유포는 금지돼요.',
+  '광고 및 홍보성 글은 등록할 수 없어요.', '신고된 게시글은 운영진이 확인 후 조치해요.',
+];
+const HIDDEN_KEY = 'sponpik.community.hidden';
+const readHidden = (): string[] => { try { return JSON.parse(localStorage.getItem(HIDDEN_KEY) || '[]'); } catch { return []; } };
 
 const ago = (iso: string) => {
   const m = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
@@ -70,6 +77,17 @@ export default function FanCommunityNew() {
 
   const chipRef = useRef<HTMLDivElement>(null);
 
+  /* 이번 주 Fan VOTE · 신고 · 숨기기 (시안 16) */
+  const [weekVote, setWeekVote] = useState<any>(null);
+  const [menuFor, setMenuFor] = useState<string | null>(null);
+  const [hidden, setHidden] = useState<string[]>(readHidden);
+  const [report, setReport] = useState<{ targetType: 'POST' | 'USER'; targetId: string; label: string } | null>(null);
+  const [reasons, setReasons] = useState<any[]>([]);
+  const [reportReason, setReportReason] = useState('');
+  const [reportDetail, setReportDetail] = useState('');
+  const [reportBusy, setReportBusy] = useState(false);
+  const [reportDone, setReportDone] = useState<string | null>(null);
+
   useEffect(() => {
     api.getCommunityAthletes({ limit: 40 }).then((r: any) => {
       const list = r?.data?.athletes || [];
@@ -81,11 +99,12 @@ export default function FanCommunityNew() {
   const load = useCallback(async () => {
     if (!athleteId) return;
     setLoading(true); setErr(null);
-    const [b, s]: any[] = await Promise.all([
+    const [b, s, v]: any[] = await Promise.all([
       api.getCommunityPosts(athleteId, tab === 'MEDIA' ? 'ALL' : tab).catch(() => null),
       api.getCommunitySummary(athleteId).catch(() => null),
+      api.listFanVotes({ tab: 'OPEN', athleteId, sort: 'CLOSING', limit: 1 }).catch(() => null),
     ]);
-    setBoard(b?.data ?? null); setSummary(s?.data ?? null);
+    setBoard(b?.data ?? null); setSummary(s?.data ?? null); setWeekVote(v?.data?.items?.[0] ?? v?.data?.votes?.[0] ?? null);
     setLoading(false);
   }, [athleteId, tab]);
   useEffect(() => { load(); }, [load]);
@@ -142,11 +161,33 @@ export default function FanCommunityNew() {
     } catch (e: any) { setErr(e?.response?.data?.error?.message || '댓글을 남기지 못했습니다'); }
   };
 
+  const hidePost = (id: string) => {
+    const next = [...new Set([...hidden, id])];
+    setHidden(next); setMenuFor(null);
+    try { localStorage.setItem(HIDDEN_KEY, JSON.stringify(next)); } catch { /* noop */ }
+  };
+  const openReport = async (targetType: 'POST' | 'USER', targetId: string, label: string) => {
+    setMenuFor(null);
+    if (!isAuthenticated) return requireLogin();
+    setReport({ targetType, targetId, label }); setReportReason(''); setReportDetail(''); setReportDone(null);
+    if (!reasons.length) { const r: any = await api.getFanReportReasons().catch(() => null); setReasons(r?.data?.reasons || []); }
+  };
+  const sendReport = async () => {
+    if (!report || !reportReason) return;
+    setReportBusy(true);
+    try {
+      const r: any = await api.reportFanContent({ targetType: report.targetType, targetId: report.targetId, reason: reportReason, detail: reportDetail || undefined });
+      setReportDone(r?.data?.duplicate ? '이미 접수된 신고입니다. 운영진이 확인 중이에요.' : `신고가 접수됐습니다 (접수번호 ${r?.data?.code}). 운영진이 확인 후 조치합니다.`);
+      if (report.targetType === 'POST') hidePost(report.targetId);
+    } catch (e: any) { setErr(e?.response?.data?.error?.message || '신고를 접수하지 못했습니다'); setReport(null); }
+    finally { setReportBusy(false); }
+  };
+
   const a = summary?.athlete || board?.athlete;
   const st = summary?.stats;
   const temp = summary?.temperature;
   const filteredChips = q.trim() ? athletes.filter((x) => x.name.includes(q.trim())) : athletes;
-  const posts: any[] = (board?.posts || []).filter((p: any) => (tab === 'MEDIA' ? !!p.imageUrl : true));
+  const posts: any[] = (board?.posts || []).filter((p: any) => (tab === 'MEDIA' ? !!p.imageUrl : true) && !hidden.includes(p.id));
   const scrollChips = (dir: number) => chipRef.current?.scrollBy({ left: dir * 280, behavior: 'smooth' });
   const myInitial = ((user as any)?.nickname || (user as any)?.name || user?.email || '팬').slice(0, 1);
 
@@ -317,7 +358,18 @@ export default function FanCommunityNew() {
                               <span className="text-[12px] text-slate-500">{ago(p.createdAt)}</span>
                               {!notice && <span className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${meta.cls}`}>{meta.label}</span>}
                               {p.isPrivate && <span className="px-1.5 py-0.5 rounded bg-slate-100 text-[11px] font-bold text-slate-500">비공개</span>}
-                              <button aria-label="더보기" className="ml-auto w-7 h-7 rounded-full text-slate-400 hover:bg-slate-100 inline-flex items-center justify-center"><MoreHorizontal className="w-4 h-4" /></button>
+                              {!notice && (
+                                <span className="ml-auto relative">
+                                  <button type="button" aria-label="더보기" aria-expanded={menuFor === p.id} onClick={() => setMenuFor(menuFor === p.id ? null : p.id)} className="w-7 h-7 rounded-full text-slate-400 hover:bg-slate-100 inline-flex items-center justify-center"><MoreHorizontal className="w-4 h-4" /></button>
+                                  {menuFor === p.id && (
+                                    <span role="menu" className="absolute right-0 top-8 z-20 w-40 rounded-xl bg-white border border-slate-200 shadow-[0_12px_30px_-12px_rgba(15,23,42,0.35)] py-1.5 text-[13px]">
+                                      <button type="button" role="menuitem" onClick={() => openReport('POST', p.id, p.content)} className="w-full px-3.5 py-2 text-left inline-flex items-center gap-2 text-rose-600 hover:bg-slate-50"><Flag className="w-4 h-4" /> 게시글 신고</button>
+                                      {p.authorUserId && !p.isMine && <button type="button" role="menuitem" onClick={() => openReport('USER', p.authorUserId, p.authorName)} className="w-full px-3.5 py-2 text-left inline-flex items-center gap-2 text-slate-700 hover:bg-slate-50"><UserX className="w-4 h-4" /> 사용자 신고</button>}
+                                      <button type="button" role="menuitem" onClick={() => hidePost(p.id)} className="w-full px-3.5 py-2 text-left inline-flex items-center gap-2 text-slate-700 hover:bg-slate-50"><EyeOff className="w-4 h-4" /> 숨기기</button>
+                                    </span>
+                                  )}
+                                </span>
+                              )}
                             </div>
                             <div className="mt-1.5 flex gap-3">
                               <p className={`flex-1 text-[14px] leading-relaxed whitespace-pre-line break-keep ${notice ? 'font-semibold text-slate-800' : 'text-slate-700'}`}>{p.content}</p>
@@ -366,9 +418,61 @@ export default function FanCommunityNew() {
         {/* ── 사이드바 ── */}
         <aside className="space-y-3 lg:sticky lg:top-20">
           <div className="rounded-2xl bg-white border border-slate-200 p-4">
-            <p className="text-[14px] font-extrabold inline-flex items-center gap-1.5"><Info className="w-4 h-4 text-sky-500" /> 커뮤니티 안내</p>
+            <p className="text-[14px] font-extrabold inline-flex items-center gap-1.5"><ShieldCheck className="w-4 h-4 text-emerald-600" /> 커뮤니티 이용 안내</p>
             <ul className="mt-2 space-y-1.5">{NOTICE_ITEMS.map((t) => <li key={t} className="flex items-start gap-1.5 text-[12.5px] text-slate-600 break-keep"><span className="w-1 h-1 rounded-full bg-slate-400 mt-2 shrink-0" />{t}</li>)}</ul>
+            <Link to="/fan" className="mt-2 inline-flex items-center gap-0.5 text-[12px] font-bold text-slate-600 hover:text-slate-900">자세히 보기 <ChevronRight className="w-3.5 h-3.5" /></Link>
           </div>
+          {a && (
+            <div className="rounded-2xl bg-white border border-slate-200 p-4">
+              <p className="text-[12px] font-bold text-slate-600 inline-flex items-center gap-1.5"><span className={`px-1.5 py-0.5 rounded text-[10.5px] font-extrabold ${weekVote ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'}`}>{weekVote ? '진행중' : '예정'}</span> 이번 주 Fan VOTE</p>
+              {weekVote ? (
+                <>
+                  <div className="mt-2 flex items-start gap-3">
+                    <p className="flex-1 text-[14px] font-extrabold leading-snug break-keep">{weekVote.title}</p>
+                    <span className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 inline-flex items-center justify-center shrink-0"><Vote className="w-6 h-6" /></span>
+                  </div>
+                  <p className="mt-1.5 text-[11.5px] text-slate-500">마감 {new Date(weekVote.closeAt).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })} · {nf(weekVote.participants ?? 0)}명 참여{weekVote.voted ? ' · 참여함' : ''}</p>
+                  <Link to={`/fan/vote/${weekVote.id}`} className="mt-3 inline-flex h-9 px-4 rounded-lg border border-emerald-600 text-emerald-700 text-[12.5px] font-bold items-center hover:bg-emerald-50">{weekVote.voted ? '내 선택 보기' : '투표하기'}</Link>
+                </>
+              ) : (
+                <>
+                  <p className="mt-2 text-[13px] text-slate-600 break-keep">{a.name} 프로의 진행 중인 투표가 없습니다. 팬이 직접 투표를 만들 수 있어요.</p>
+                  <Link to="/fan/vote/create" className="mt-3 inline-flex h-9 px-4 rounded-lg border border-slate-200 text-slate-700 text-[12.5px] font-bold items-center hover:border-slate-400">투표 만들기</Link>
+                </>
+              )}
+            </div>
+          )}
+          {st && (
+            <div className="rounded-2xl bg-rose-50/60 border border-rose-100 p-4">
+              <p className="text-[14px] font-extrabold text-rose-600">팬 온도에 함께해 주신 분들</p>
+              <p className="text-[11.5px] text-slate-600">따뜻한 응원이 모여 선수에게 큰 힘이 됩니다.</p>
+              <dl className="mt-3 grid grid-cols-3 gap-1 text-center">
+                {[
+                  { icon: Users, k: '응원 참여', v: `${nf(st.fanCount)}명` },
+                  { icon: MessageCircle, k: '응원 메시지', v: `${nf((st.recentCheers ?? 0) + (st.recentLetters ?? 0))}건`, hint: '30일' },
+                  { icon: Thermometer, k: '이번 주 상승', v: temp && !temp.lowSample && temp.weeklyDelta != null ? `${temp.weeklyDelta > 0 ? '+' : ''}${Number(temp.weeklyDelta).toFixed(1)}°C` : '집계 중' },
+                ].map((x) => { const I = x.icon; return (
+                  <div key={x.k}>
+                    <I className="w-4 h-4 mx-auto text-rose-400" />
+                    <dt className="mt-1 text-[10.5px] text-slate-500">{x.k}</dt>
+                    <dd className="text-[14px] font-black tabular-nums text-slate-800">{x.v}</dd>
+                  </div>
+                ); })}
+              </dl>
+              <p className="mt-2.5 text-[10.5px] text-slate-500 break-keep">※ 금액이 아닌 응원 참여와 활동을 기준으로 집계됩니다.</p>
+            </div>
+          )}
+          {a && temp?.components?.length > 0 && (
+            <div className="rounded-2xl bg-white border border-slate-200 p-4">
+              <p className="text-[14px] font-extrabold inline-flex items-center gap-1.5"><Flame className="w-4 h-4 text-orange-500" /> 팬온도는 이렇게 만들어져요</p>
+              <ul className="mt-2.5 space-y-1.5">
+                {temp.components.map((c: any) => (
+                  <li key={c.key} className="flex items-center gap-2 text-[12px]"><span className="w-24 shrink-0 text-slate-600 truncate">{c.label}</span><span className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden"><span className="block h-full rounded-full bg-emerald-600" style={{ width: `${c.weight}%` }} /></span><span className="w-8 text-right font-bold tabular-nums">{c.weight}%</span></li>
+                ))}
+              </ul>
+              <Link to={`/fan/temperature/${a.id}`} className="mt-2.5 inline-flex items-center gap-0.5 text-[12px] font-bold text-emerald-700 hover:underline">팬온도 자세히 보기 <ChevronRight className="w-3.5 h-3.5" /></Link>
+            </div>
+          )}
           <div className="rounded-2xl bg-white border border-slate-200 p-4">
             <p className="text-[14px] font-extrabold inline-flex items-center gap-1.5"><Flame className="w-4 h-4 text-orange-500" /> 오늘의 인기 반응</p>
             {summary?.topPosts?.length ? (
@@ -408,6 +512,38 @@ export default function FanCommunityNew() {
           </Link>
         </aside>
       </div>
+
+      {/* ── 신고 모달 ── */}
+      {report && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-900/50 px-4" onClick={() => setReport(null)}>
+          <div role="dialog" aria-modal className="w-full max-w-md rounded-3xl bg-white p-6 mb-4 sm:mb-0 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start gap-3">
+              <span className="w-11 h-11 rounded-full bg-rose-50 text-rose-500 inline-flex items-center justify-center shrink-0"><Flag className="w-5 h-5" /></span>
+              <div className="min-w-0 flex-1"><h2 className="text-[17px] font-extrabold">{report.targetType === 'POST' ? '게시글 신고' : '사용자 신고'}</h2><p className="text-[12px] text-slate-500 truncate">{report.label}</p></div>
+              <button type="button" onClick={() => setReport(null)} aria-label="닫기" className="w-8 h-8 rounded-full text-slate-400 hover:bg-slate-100 inline-flex items-center justify-center"><X className="w-4 h-4" /></button>
+            </div>
+            {reportDone ? (
+              <>
+                <p className="mt-4 rounded-xl bg-emerald-50 px-4 py-3 text-[13px] text-emerald-800 break-keep">{reportDone}</p>
+                <button type="button" onClick={() => setReport(null)} className="mt-4 w-full h-11 rounded-xl bg-slate-900 text-white text-[14px] font-bold">닫기</button>
+              </>
+            ) : (
+              <>
+                <p className="mt-4 text-[13px] font-bold">신고 사유</p>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {reasons.map((r: any) => <button key={r.code} type="button" onClick={() => setReportReason(r.code)} aria-pressed={reportReason === r.code} className={`h-10 rounded-xl border text-[13px] font-bold ${reportReason === r.code ? 'border-rose-400 bg-rose-50 text-rose-600' : 'border-slate-200 text-slate-700 hover:border-slate-400'}`}>{r.label}</button>)}
+                </div>
+                <textarea value={reportDetail} onChange={(e) => setReportDetail(e.target.value.slice(0, 500))} rows={3} placeholder="상세 내용 (선택)" className="mt-3 w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-[13px] placeholder:text-slate-400 focus:outline-none focus:border-rose-300 resize-none" />
+                <p className="mt-2 text-[11.5px] text-slate-500 break-keep">신고자는 익명으로 처리되며, 허위 신고가 반복되면 이용이 제한될 수 있습니다.</p>
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  <button type="button" onClick={() => setReport(null)} className="h-11 rounded-xl border border-slate-200 text-slate-700 text-[14px] font-bold">취소</button>
+                  <button type="button" onClick={sendReport} disabled={!reportReason || reportBusy} className="h-11 rounded-xl bg-rose-500 text-white text-[14px] font-extrabold hover:bg-rose-600 disabled:bg-slate-200 disabled:text-slate-400">{reportBusy ? '접수 중…' : '신고 접수'}</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

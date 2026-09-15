@@ -3226,8 +3226,17 @@ class ApiService {
     const r = await this.client.post<ApiResponse<any>>(`/fan-hub/votes/${id}/ballot`, { answer });
     return r.data;
   }
-  async getFanTemperature(athleteId: string) {
-    const r = await this.client.get<ApiResponse<any>>(`/fan-hub/athletes/${athleteId}/temperature`);
+  async getFanTemperature(athleteId: string, params?: { days?: number }) {
+    const r = await this.client.get<ApiResponse<any>>(`/fan-hub/athletes/${athleteId}/temperature`, { params });
+    return r.data;
+  }
+  /* 커뮤니티 신고 (시안 2026-09-15) */
+  async getFanReportReasons() {
+    const r = await this.client.get<ApiResponse<any>>('/fan-engage/report-reasons');
+    return r.data;
+  }
+  async reportFanContent(body: { targetType: 'POST' | 'COMMENT' | 'USER'; targetId: string; reason: string; detail?: string }) {
+    const r = await this.client.post<ApiResponse<any>>('/fan-engage/reports', body);
     return r.data;
   }
   async getMyContributions() {
@@ -3292,6 +3301,7 @@ class ApiService {
   }
   async createBrandSuggestion(athleteId: string, body: {
     category: string; brandName?: string; reason: string; interest: string; isPublic?: boolean;
+    brandUrl?: string; collabTypes?: string[];
   }) {
     const r = await this.client.post<ApiResponse<any>>(`/fan-hub/athletes/${athleteId}/brand-suggestions`, body);
     return r.data;
