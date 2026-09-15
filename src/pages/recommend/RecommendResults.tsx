@@ -70,8 +70,9 @@ export default function RecommendResults() {
   useEffect(() => {
     if (data) return;
     try {
+      /* 세션 캐시는 같은 requestId일 때만 쓴다 — 예전 결과가 새 조건에도 그대로 보이던 문제 (2026-09-15) */
       const cached = JSON.parse(sessionStorage.getItem(RESULT_STORAGE_KEY) || 'null');
-      if (cached?.plans?.length) { setData(cached); return; }
+      if (cached?.requestId && cached.requestId === requestId && cached.data?.plans?.length) { setData(cached.data); return; }
     } catch { /* 무시 */ }
     if (!requestId) { navigate('/sponsor/recommended', { replace: true }); return; }
     (async () => {
@@ -217,6 +218,9 @@ export default function RecommendResults() {
                     <p className="text-[22px] font-black leading-none tabular-nums">
                       {Math.round(p.total / 10000)}<span className="text-[13px] font-bold text-slate-500">만원</span>
                     </p>
+                    {p.months > 1 && p.periodTotal && (
+                      <p className="mt-1 text-[11.5px] text-slate-500 tabular-nums">{p.months}개월 {Math.round(p.periodTotal / 10000).toLocaleString()}만원</p>
+                    )}
                   </div>
                 </div>
                 <p className="mt-1.5 text-[12px] text-slate-500 font-semibold">{p.tagline}</p>

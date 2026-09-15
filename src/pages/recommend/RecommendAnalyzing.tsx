@@ -77,7 +77,7 @@ export default function RecommendAnalyzing() {
           clearInterval(tick);
           setProgress(100);
           setStep(STEPS.length - 1);
-          try { sessionStorage.setItem(RESULT_STORAGE_KEY, JSON.stringify(data)); } catch { /* 무시 */ }
+          try { sessionStorage.setItem(RESULT_STORAGE_KEY, JSON.stringify({ requestId: data.requestId, data })); } catch { /* 무시 */ }
           setTimeout(() => navigate(`/sponsor/recommended/results/${data.requestId}`, { replace: true, state: { data } }), 450);
         }, wait);
       } catch (e: any) {
