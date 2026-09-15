@@ -161,7 +161,7 @@ export default function FanPointsHome() {
               const inner = (
                 <>
                   <span className={`w-11 h-11 rounded-xl inline-flex items-center justify-center shrink-0 ${c.tone}`}><I className="w-5 h-5" /></span>
-                  <span className="min-w-0 flex-1"><span className="block text-[12px] text-slate-500">{c.l}</span><span className="block text-[18px] sm:text-[20px] font-extrabold tabular-nums leading-tight truncate">{loading ? '—' : c.v}</span></span>
+                  <span className="min-w-0 flex-1"><span className="block text-[12px] text-slate-500">{c.l}</span><span className="block text-[15px] sm:text-[20px] font-extrabold tabular-nums leading-tight truncate">{loading ? "—" : c.v}</span></span>
                   <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
                 </>
               );
