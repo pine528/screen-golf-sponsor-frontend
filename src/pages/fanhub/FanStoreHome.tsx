@@ -33,11 +33,14 @@ export default function FanStoreHome() {
   const athleteId = sp.get('athleteId') || '';
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  /* 홈에서는 2줄(10개)만 먼저 보여주고 "더 보기"로 늘린다 — 탭·선수 필터가 바뀌면 처음으로 */
+  const PAGE = 10;
+  const [visible, setVisible] = useState(PAGE);
   const [wish, setWish] = useState<Set<string>>(() => { try { return new Set(JSON.parse(localStorage.getItem('sponpik.store.wish') || '[]')); } catch { return new Set(); } });
 
   useEffect(() => {
-    setLoading(true);
-    api.getFanStoreHome({ tab, limit: 20, athleteId: athleteId || undefined })
+    setLoading(true); setVisible(PAGE);
+    api.getFanStoreHome({ tab, limit: 60, athleteId: athleteId || undefined })
       .then((r: any) => setData(r?.data || null)).catch(() => setData(null)).finally(() => setLoading(false));
   }, [tab, athleteId, isAuthenticated]);
 
@@ -97,7 +100,7 @@ export default function FanStoreHome() {
         </div>
 
         {/* ── 상품 탭 · 그리드 ── */}
-        <section className="mt-7">
+        <section id="products" className="mt-7 scroll-mt-20">
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-b border-slate-200 flex-1">
               {TABS.map((t) => (
@@ -116,8 +119,9 @@ export default function FanStoreHome() {
           {loading ? (
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">{[0, 1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-[260px] rounded-2xl" />)}</div>
           ) : products.length ? (
+            <>
             <ul className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-              {products.map((p: any) => {
+              {products.slice(0, visible).map((p: any) => {
                 const b = p.badge ? BADGE[p.badge] : null;
                 return (
                   <li key={p.id} className="group rounded-2xl bg-white border border-slate-200 overflow-hidden hover:border-emerald-300 hover:shadow-[0_12px_28px_-16px_rgba(15,23,42,0.2)]">
@@ -139,6 +143,16 @@ export default function FanStoreHome() {
                 );
               })}
             </ul>
+            <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-2 text-[12.5px] text-slate-500">
+              <span className="tabular-nums">전체 {products.length}개 중 {Math.min(visible, products.length)}개 표시</span>
+              {products.length > visible && (
+                <button onClick={() => setVisible((v) => v + PAGE)} className="h-10 px-5 rounded-xl border border-slate-200 bg-white text-[13px] font-bold text-slate-700 hover:border-emerald-400 hover:text-emerald-700 inline-flex items-center gap-1">
+                  상품 더 보기 <span className="text-slate-400 tabular-nums">(+{Math.min(PAGE, products.length - visible)})</span>
+                </button>
+              )}
+              {visible > PAGE && <button onClick={() => { setVisible(PAGE); document.getElementById('products')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} className="text-[12.5px] font-bold text-slate-500 hover:text-slate-800">접기</button>}
+            </div>
+            </>
           ) : (
             <div className="mt-4 rounded-2xl bg-white border border-dashed border-slate-200 py-12 text-center">
               <span className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 inline-flex items-center justify-center"><ShoppingBag className="w-6 h-6" /></span>
