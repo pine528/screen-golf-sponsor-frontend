@@ -1,6 +1,7 @@
 /**
- * 스폰픽 소개 공용 셸 · 메가메뉴 (핸드오프 v1.0 §2 · §3 · IU12)
+ * 스폰픽 소개 공용 셸 · 메가메뉴 (핸드오프 v1.0 §2 · §3 · IU12) — 시안 2026-09-17 (리디자인/10) 반영
  *
+ *  - 5탭은 시안처럼 테두리 있는 한 줄 탭 바(균등 분할 · 활성 밑줄)로 그린다. 모바일은 가로 스크롤.
  *  - 롤오버만으로 동작하지 않는다. focus / Enter / ESC 를 함께 지원한다 (§3.4).
  *  - 모바일은 아코디언으로 전환하고 breadcrumb 를 1줄로 축약한다 (§2.3).
  *  - 상태는 색상만으로 구분하지 않고 아이콘·텍스트를 함께 쓴다.
@@ -9,17 +10,23 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   ChevronRight, ChevronDown, Compass, Users, ShieldCheck, ClipboardList,
-  Handshake, Gift, Check, Menu, X,
+  Handshake, Gift, Check, Menu, X, Home,
 } from 'lucide-react';
 import PublicHeader from '../PublicHeader';
 
 export const ABOUT_MENU = [
-  { key: 'service', label: '서비스소개', to: '/about/service', icon: Compass, desc: '스폰픽이 제공하는 가치와 차별점을 소개합니다.' },
-  { key: 'cases', label: '매칭사례', to: '/about/cases', icon: Users, desc: '실제 스폰서 매칭 사례를 확인해 보세요.' },
-  { key: 'guarantee', label: '성과보장프로그램', to: '/about/performance-guarantee', icon: ShieldCheck, desc: '스폰픽만의 성과보장 시스템을 안내합니다.' },
+  { key: 'service', label: '서비스 소개', to: '/about/service', icon: Compass, desc: '스폰픽이 제공하는 가치와 차별점을 소개합니다.' },
   { key: 'how', label: '이용방법', to: '/about/how-it-works', icon: ClipboardList, desc: '스폰픽 이용 절차와 방법을 쉽게 안내합니다.' },
+  { key: 'guarantee', label: '성과보장 프로그램', to: '/about/performance-guarantee', icon: ShieldCheck, desc: '스폰픽만의 성과보장 시스템을 안내합니다.' },
   { key: 'brands', label: '함께하는 브랜드', to: '/about/brands', icon: Handshake, desc: '스폰픽과 함께하는 브랜드를 소개합니다.' },
+  { key: 'cases', label: '매칭사례', to: '/about/cases', icon: Users, desc: '실제 스폰서 매칭 사례를 확인해 보세요.' },
 ];
+
+/** 이전 명칭과의 호환 — current 값으로 어떤 탭이 켜지는지 */
+const ALIAS: Record<string, string> = {
+  '서비스소개': 'service', '서비스 소개': 'service', '이용방법': 'how', '성과보장프로그램': 'guarantee', '성과보장 프로그램': 'guarantee',
+  '함께하는 브랜드': 'brands', '매칭사례': 'cases', '매칭 사례': 'cases',
+};
 
 /** 데스크톱 메가메뉴 — hover intent 150ms / leave 250ms (§2.2) */
 export function AboutMegaMenu({ onNavigate }: { onNavigate?: (key: string) => void }) {
@@ -64,7 +71,6 @@ export function AboutMegaMenu({ onNavigate }: { onNavigate?: (key: string) => vo
       {open && (
         <div className="absolute left-1/2 -translate-x-1/2 top-full z-50 w-[760px] rounded-3xl border border-slate-200 bg-white shadow-[0_24px_60px_-24px_rgba(15,23,42,0.35)] overflow-hidden">
           <div className="grid grid-cols-[280px_1fr]">
-            {/* 좌측 소개 */}
             <div className="bg-gradient-to-b from-emerald-50/70 to-white p-6 border-r border-slate-100">
               <p className="text-[19px] font-extrabold text-slate-900 leading-snug tracking-[-0.02em]">
                 함께 성장하는<br />스폰서 매칭 플랫폼,<br />스폰픽
@@ -73,8 +79,6 @@ export function AboutMegaMenu({ onNavigate }: { onNavigate?: (key: string) => vo
                 선수의 가능성을 후원으로 연결하고<br />브랜드의 가치를 함께 키워갑니다.
               </p>
             </div>
-
-            {/* 메뉴 */}
             <div className="p-2">
               {ABOUT_MENU.map((m) => {
                 const I = m.icon;
@@ -134,7 +138,6 @@ export function AboutMobileNav() {
               <X className="w-5 h-5 text-slate-500" />
             </button>
           </div>
-
           <nav className="px-4 py-2">
             {[
               { label: '후원하기', to: '/sponsor/available' },
@@ -146,13 +149,11 @@ export function AboutMobileNav() {
                 {m.label} <ChevronRight className="w-4 h-4 text-slate-300" />
               </Link>
             ))}
-
             <button onClick={() => setExpanded((v) => !v)}
               className="w-full flex items-center justify-between py-4 border-b border-slate-100 text-[15px] font-bold text-emerald-600">
               스폰픽 소개
               <ChevronDown className={`w-4 h-4 transition-transform ${expanded ? 'rotate-180' : ''}`} />
             </button>
-
             {expanded && (
               <div className="py-1">
                 {ABOUT_MENU.map((m) => {
@@ -175,7 +176,6 @@ export function AboutMobileNav() {
               </div>
             )}
           </nav>
-
           <div className="p-4 sticky bottom-0 bg-white border-t border-slate-100">
             <Link to="/register" onClick={() => setOpen(false)}
               className="flex items-center justify-center gap-1.5 h-12 rounded-2xl bg-emerald-600 text-white text-[15px] font-bold">
@@ -188,41 +188,57 @@ export function AboutMobileNav() {
   );
 }
 
-/** 페이지 공통 골격 (§2.4) */
+/** 페이지 공통 골격 (§2.4) — 브레드크럼(홈 › 스폰픽 소개 › 현재) + 5탭 바 */
 export default function AboutShell({
-  current, title, desc, hero, children,
+  current, title, desc, hero, crumb, children,
 }: {
-  current: string; title?: string; desc?: string; hero?: ReactNode; children: ReactNode;
+  current: string; title?: string; desc?: string; hero?: ReactNode;
+  /** 브레드크럼 마지막 항목을 탭 이름과 다르게 쓸 때 (예: 사례 제목) */
+  crumb?: { label: string; to?: string }[];
+  children: ReactNode;
 }) {
+  const activeKey = ALIAS[current] ?? current;
+  const tab = ABOUT_MENU.find((m) => m.key === activeKey);
+  const trail = crumb ?? [{ label: tab?.label ?? current }];
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <PublicHeader />
 
       <div className="max-w-[1280px] mx-auto px-5">
-        {/* breadcrumb — 모바일에서도 1줄 (§2.3) */}
         <nav aria-label="breadcrumb" className="flex items-center gap-1.5 pt-5 text-[12.5px] whitespace-nowrap overflow-hidden">
-          <Link to="/" className="text-slate-500 hover:text-slate-600 shrink-0">홈</Link>
+          <Link to="/" className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-700 shrink-0"><Home className="w-3.5 h-3.5" /> 홈</Link>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-          <span className="text-slate-500 shrink-0">스폰픽 소개</span>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-          <span className="font-bold text-emerald-700 truncate">{current}</span>
-        </nav>
-
-        {/* 데스크톱 탭 */}
-        <div className="mt-4 hidden sm:flex gap-1 border-b border-slate-200">
-          {ABOUT_MENU.map((m) => {
-            const on = m.label === current;
+          <Link to="/about/service" className="text-slate-500 hover:text-slate-700 shrink-0">스폰픽 소개</Link>
+          {trail.map((t, i) => {
+            const last = i === trail.length - 1;
             return (
-              <Link key={m.key} to={m.to}
-                aria-current={on ? 'page' : undefined}
-                className={`relative px-4 py-3 text-[14px] font-bold transition ${
-                  on ? 'text-emerald-700' : 'text-slate-500 hover:text-slate-900'
-                }`}>
-                {m.label}
-                {on && <span className="absolute left-3 right-3 -bottom-px h-[2.5px] rounded-full bg-emerald-500" />}
-              </Link>
+              <span key={`${t.label}-${i}`} className="inline-flex items-center gap-1.5 min-w-0">
+                <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
+                {last || !t.to
+                  ? <span className={`truncate ${last ? 'font-bold text-emerald-700' : 'text-slate-500'}`}>{t.label}</span>
+                  : <Link to={t.to} className="text-slate-500 hover:text-slate-700 truncate">{t.label}</Link>}
+              </span>
             );
           })}
+        </nav>
+
+        {/* 5탭 바 — 시안: 테두리 박스 안 균등 5분할, 활성은 초록 밑줄 */}
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-white overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="grid grid-cols-5 min-w-[640px]">
+            {ABOUT_MENU.map((m) => {
+              const on = m.key === activeKey;
+              return (
+                <Link key={m.key} to={m.to} aria-current={on ? 'page' : undefined}
+                  className={`relative h-12 sm:h-[52px] px-2 flex items-center justify-center text-[13.5px] sm:text-[14.5px] font-bold whitespace-nowrap transition ${
+                    on ? 'text-emerald-700' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}>
+                  {m.label}
+                  {on && <span className="absolute left-3 right-3 bottom-0 h-[3px] rounded-full bg-emerald-500" />}
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
         {(title || hero) && (
@@ -247,6 +263,12 @@ export default function AboutShell({
 export const nf = (n: number | null | undefined) =>
   n === null || n === undefined ? '—' : n.toLocaleString('ko-KR');
 
+export const ym = (d?: string | Date | null) =>
+  d ? new Date(d).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' }).replace(/\.\s?/g, '.').replace(/\.$/, '') : '';
+
+export const ymd = (d?: string | Date | null) =>
+  d ? new Date(d).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\.\s?/g, '.').replace(/\.$/, '') : '';
+
 export function VerifiedBadge({ label = '검증 완료' }: { label?: string }) {
   return (
     <span className="inline-flex items-center gap-1 h-6 px-2 rounded-lg bg-emerald-50 text-emerald-700 text-[12px] font-bold">
@@ -266,7 +288,7 @@ export function Tag({ children, tone = 'slate' }: {
     amber: 'bg-amber-50 text-amber-700',
     rose: 'bg-rose-50 text-rose-600',
   };
-  return <span className={`inline-flex items-center h-6 px-2 rounded-lg text-[12px] font-bold ${tones[tone]}`}>{children}</span>;
+  return <span className={`inline-flex items-center gap-1 h-6 px-2 rounded-lg text-[12px] font-bold ${tones[tone]}`}>{children}</span>;
 }
 
 /** 상태 안내 — 색상만으로 구분하지 않는다 (§3.2 · §3.4) */
@@ -274,9 +296,7 @@ export function StateNotice({ kind, title, desc, action }: {
   kind: 'empty' | 'error' | 'partial' | 'restricted' | 'stale';
   title: string; desc?: string; action?: ReactNode;
 }) {
-  const icon = {
-    empty: '○', error: '!', partial: '◐', restricted: '⌁', stale: '◔',
-  }[kind];
+  const icon = { empty: '○', error: '!', partial: '◐', restricted: '⌁', stale: '◔' }[kind];
   return (
     <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50/60 px-6 py-12 text-center">
       <div className="mx-auto mb-3 w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 text-[15px] font-bold">
@@ -303,4 +323,23 @@ export function visitorKey() {
     }
     return k;
   } catch { return undefined; }
+}
+
+/** 공식 인스타그램 스트립 (시안 서비스소개 하단) */
+export function InstagramStrip({ pageSlug, compact = false }: { pageSlug: string; compact?: boolean }) {
+  const track = () => import('../../services/api').then(({ api }) =>
+    api.trackAboutEvent({ event: 'instagram_click', pageSlug, visitorKey: visitorKey(), params: { placement: `${pageSlug}_footer` } }).catch(() => null));
+  return (
+    <div className={`rounded-3xl border border-slate-200 bg-white ${compact ? 'p-4' : 'p-5 sm:p-6'} flex flex-col sm:flex-row sm:items-center gap-4`}>
+      <span className="w-12 h-12 rounded-2xl bg-gradient-to-br from-fuchsia-500 via-rose-500 to-amber-400 flex items-center justify-center shrink-0">
+        <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" /></svg>
+      </span>
+      <p className="min-w-0 flex-1 text-[14.5px] font-bold text-slate-900 break-keep">스폰픽의 선수 이야기와 최신 소식은 공식 인스타그램에서 확인하세요.</p>
+      <a href="https://www.instagram.com/sponpik_official/" target="_blank" rel="noopener noreferrer" onClick={track}
+        className="shrink-0 text-center">
+        <span className="inline-flex items-center justify-center gap-1.5 h-11 px-5 rounded-xl border-2 border-violet-300 text-violet-700 text-[14px] font-extrabold hover:bg-violet-50">@sponpik_official 바로가기 ↗</span>
+        <span className="block mt-1 text-[11.5px] text-slate-400">instagram.com/sponpik_official</span>
+      </a>
+    </div>
+  );
 }

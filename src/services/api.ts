@@ -3335,7 +3335,7 @@ class ApiService {
     const r = await this.client.get<ApiResponse<any>>(`/about/metrics/${metricId}/evidence`);
     return r.data;
   }
-  async listPartnerBrands(params?: { category?: string; q?: string; hasStore?: string; page?: number; limit?: number }) {
+  async listPartnerBrands(params?: { category?: string; q?: string; hasStore?: string; status?: string; sponsorType?: string; page?: number; limit?: number }) {
     const r = await this.client.get<ApiResponse<any>>('/about/brands', { params });
     return r.data;
   }

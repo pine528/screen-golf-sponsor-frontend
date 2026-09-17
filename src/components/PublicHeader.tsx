@@ -31,7 +31,7 @@ import {
   Users,
   Vote,
   Wallet,
-  X,
+  X, Gift,
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import MobileTabBar from './MobileTabBar';
@@ -45,7 +45,7 @@ type MegaItem = {
   highlight?: boolean;
 };
 
-const MENUS: { key: string; label: string; to: string; items: MegaItem[]; note?: string; footerCta?: { title: string; desc: string; label: string; to: string } }[] = [
+const MENUS: { key: string; label: string; to: string; items: MegaItem[]; note?: string; footerCta?: { title: string; desc: string; label: string; to: string }; intro?: { title: string; desc: string }; hint?: { text: string; strong: string; to: string } }[] = [
   {
     key: 'sponsor',
     label: '후원하기',
@@ -94,6 +94,9 @@ const MENUS: { key: string; label: string; to: string; items: MegaItem[]; note?:
       { icon: Handshake, title: '함께하는 브랜드', desc: '스폰픽과 성장하는 파트너', to: '/about/brands' },
       { icon: LineChart, title: '매칭 사례', desc: '실제 후원과 검증된 성과', to: '/about/cases' },
     ],
+    /** 시안 2026-09-17 메가메뉴: 좌측 소개 패널 + 하단 안내 */
+    intro: { title: '함께 성장하는\n스폰서 매칭 플랫폼,\n스폰픽', desc: '선수의 가능성을 후원으로 연결하고\n브랜드의 가치를 함께 키워갑니다.' },
+    hint: { text: '처음이신가요?', strong: '서비스소개부터 보기', to: '/about/service' },
   },
 ];
 
@@ -186,9 +189,17 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
                     <div
                       onMouseEnter={cancelClose}
                       onMouseLeave={scheduleClose}
-                      className="absolute left-1/2 -translate-x-1/2 top-full pt-4 w-[340px]"
+                      className={`absolute left-1/2 -translate-x-1/2 top-full pt-4 ${m.intro ? 'w-[720px]' : 'w-[340px]'}`}
                     >
-                      <div className="rounded-2xl bg-white border border-slate-100 shadow-[0_18px_50px_-12px_rgba(15,23,42,0.18)] p-2.5">
+                      <div className={`rounded-2xl bg-white border border-slate-100 shadow-[0_18px_50px_-12px_rgba(15,23,42,0.18)] ${m.intro ? 'grid grid-cols-[260px_1fr] overflow-hidden' : 'p-2.5'}`}>
+                        {m.intro && (
+                          <div className="relative bg-gradient-to-b from-emerald-50/80 to-white p-6 border-r border-slate-100 overflow-hidden">
+                            <p className="text-[19px] font-extrabold text-slate-900 leading-snug tracking-[-0.02em] whitespace-pre-line">{m.intro.title}</p>
+                            <p className="mt-3 text-[12.5px] text-slate-500 leading-relaxed whitespace-pre-line">{m.intro.desc}</p>
+                            <img src="/logo-192.png" alt="" aria-hidden className="absolute -right-6 -bottom-6 w-36 h-36 opacity-10 rotate-12" />
+                          </div>
+                        )}
+                        <div className={m.intro ? 'p-2.5' : ''}>
                         {m.items.map((it) => (
                           <Link
                             key={it.title}
@@ -230,6 +241,13 @@ export default function PublicHeader({ fixed = false }: { fixed?: boolean }) {
                             <span className="shrink-0 h-9 px-3 inline-flex items-center rounded-lg bg-emerald-600 text-white text-[12.5px] font-bold">{m.footerCta.label}</span>
                           </Link>
                         )}
+                        {m.hint && (
+                          <Link to={m.hint.to} onClick={() => setOpen(null)} className="mt-1.5 flex items-center justify-center gap-1.5 rounded-xl bg-slate-50 px-3.5 py-3 text-[13px] font-semibold text-slate-600 hover:bg-slate-100">
+                            <span className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 inline-flex items-center justify-center"><Gift className="w-3.5 h-3.5" /></span>
+                            {m.hint.text} <span className="text-emerald-600 font-bold">{m.hint.strong}</span> <ChevronRight className="w-3.5 h-3.5" />
+                          </Link>
+                        )}
+                        </div>
                       </div>
                     </div>
                   )}
